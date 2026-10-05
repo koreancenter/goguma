@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Noto Sans KR", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-ink-base: #0B0C10;
+  --color-ink-panel: #0E1217;
+  --color-ink-card: #13181F;
+  --color-ink-subtle: #18202A;
+
+  --color-brass: #C5A880;
+  --color-brass-hover: #D4AF37;
+  --color-brass-light: #E2CEB4;
+
+  --color-text-primary: #F0F3F6;
+  --color-text-secondary: #9AA5B5;
+  --color-text-muted: #5C6675;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer base {
+  body {
+    background-color: #0B0C10;
+    color: #F0F3F6;
+    font-family: var(--font-sans);
+    letter-spacing: -0.015em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #F0F3F6;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  
+  p {
+    color: #9AA5B5;
+    line-height: 1.65;
+  }
+}
+
+/* Pretendard Variable for modern Korean & global legibility */
+html.lang-ko,
+html.lang-ko body {
+  font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+html.lang-ko h1,
+html.lang-ko h2,
+html.lang-ko h3,
+html.lang-ko h4,
+html.lang-ko h5,
+html.lang-ko h6,
+html.lang-ko button,
+html.lang-ko input,
+html.lang-ko textarea,
+html.lang-ko select,
+html.lang-ko label,
+html.lang-ko span,
+html.lang-ko p,
+html.lang-ko a,
+html.lang-ko td,
+html.lang-ko th,
+html.lang-ko li,
+html.lang-ko div:not(.font-mono) {
+  font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Explicitly protect monospaced/code typography so they don't break key alignments */
+html.lang-ko .font-mono,
+html.lang-ko .font-mono *,
+html.lang-ko code,
+html.lang-ko pre,
+html.lang-ko kbd,
+html.lang-ko samp {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
