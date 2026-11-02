@@ -1,4 +1,4 @@
-export type AIProvider = 'gemini' | 'ollama';
+export type AIProvider = 'gemini' | 'ollama' | 'webllm';
 
 export interface AISettings {
   provider: AIProvider;
@@ -8,7 +8,10 @@ export interface AISettings {
   };
   ollama: {
     endpoint: string; // default 'http://localhost:11434'
-    model: string;    // e.g. 'llama3.2', 'qwen2.5:7b', 'mistral'
+    model: string;    // e.g. 'qwen2.5-coder', 'llama3.2', 'mistral'
+  };
+  webllm: {
+    model: string;    // e.g. 'Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC'
   };
 }
 
@@ -20,9 +23,29 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
   },
   ollama: {
     endpoint: 'http://localhost:11434',
-    model: 'llama3.2',
+    model: 'qwen2.5-coder',
+  },
+  webllm: {
+    model: 'Qwen2.5-Coder-1.5B',
   },
 };
+
+export function getActiveAILabel(settings: AISettings): string {
+  if (settings.provider === 'ollama') {
+    return `Ollama Local (${settings.ollama.model || 'qwen2.5-coder'})`;
+  }
+  if (settings.provider === 'webllm') {
+    return 'WebLLM In-Browser';
+  }
+  // Default: Gemini
+  const modelName = settings.gemini.model.includes('3.8') 
+    ? 'Gemini 3.8-Flash' 
+    : settings.gemini.model.includes('pro') 
+    ? 'Gemini 2.5-Pro' 
+    : 'Gemini 2.5-Flash';
+  const byokTag = settings.gemini.apiKey ? ' (BYOK)' : ' (Server)';
+  return `${modelName}${byokTag}`;
+}
 
 const STORAGE_KEY = 'goguma_ai_settings';
 const KEY_PREFIX = 'enc_k_';
@@ -56,7 +79,11 @@ export function getAISettings(): AISettings {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_AI_SETTINGS;
     const parsed = JSON.parse(raw);
-    const provider: AIProvider = (parsed.provider === 'ollama') ? 'ollama' : 'gemini';
+    const provider: AIProvider = (parsed.provider === 'ollama') 
+      ? 'ollama' 
+      : (parsed.provider === 'webllm') 
+      ? 'webllm' 
+      : 'gemini';
     const rawApiKey = parsed.gemini?.apiKey || '';
 
     return {
@@ -67,7 +94,10 @@ export function getAISettings(): AISettings {
       },
       ollama: {
         endpoint: parsed.ollama?.endpoint || 'http://localhost:11434',
-        model: parsed.ollama?.model || 'llama3.2',
+        model: parsed.ollama?.model || 'qwen2.5-coder',
+      },
+      webllm: {
+        model: parsed.webllm?.model || 'Qwen2.5-Coder-1.5B',
       },
     };
   } catch {

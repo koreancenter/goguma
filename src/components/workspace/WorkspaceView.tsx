@@ -1,11 +1,12 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Download, FolderOpen, HardDriveDownload, PanelRight, LogOut, LayoutTemplate 
+  Download, FolderOpen, HardDriveDownload, PanelRight, LogOut, LayoutTemplate, Cpu
 } from 'lucide-react';
 
 import { ProjectEntity, FormInputEntity, SitePlan } from '../../types';
 import { LocalUser } from '../../lib/localAuth';
+import { getAISettings, getActiveAILabel, AISettings } from '../../lib/aiConfig';
 
 import { ChapterNavBar } from '../classic/ChapterNavBar';
 import { SectionListBar } from '../classic/SectionListBar';
@@ -22,6 +23,9 @@ const WorkspaceDropZoneOverlay = lazy(() =>
 );
 const StandardTemplateModal = lazy(() =>
   import('../classic/StandardTemplateModal').then(m => ({ default: m.StandardTemplateModal }))
+);
+const AISettingsModal = lazy(() =>
+  import('../guide/AISettingsModal').then(m => ({ default: m.AISettingsModal }))
 );
 
 export interface WorkspaceViewProps {
@@ -80,6 +84,21 @@ export default function WorkspaceView({
   const [backupModalTab, setBackupModalTab] = useState<'export' | 'import' | 'storage'>('export');
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isAISettingsModalOpen, setIsAISettingsModalOpen] = useState(false);
+  const [aiSettings, setAiSettings] = useState<AISettings>(getAISettings);
+
+  // Sync AI Settings in real time when changed or saved from modal
+  useEffect(() => {
+    const handleSettingsUpdate = () => {
+      setAiSettings(getAISettings());
+    };
+    window.addEventListener('ai_settings_changed', handleSettingsUpdate);
+    window.addEventListener('storage', handleSettingsUpdate);
+    return () => {
+      window.removeEventListener('ai_settings_changed', handleSettingsUpdate);
+      window.removeEventListener('storage', handleSettingsUpdate);
+    };
+  }, []);
 
   // Ergonomic Split Pane Resizer for real-time preview (Phase 3 High-Fidelity Implementation)
   const [previewWidth, setPreviewWidth] = useState<number>(() => {
@@ -251,12 +270,40 @@ export default function WorkspaceView({
               {saveStatus === 'saving' ? '보존 중' : '자동 보존됨'}
             </span>
           </div>
+
+          {/* Active AI Tier Indicator (1-Click switch to AISettingsModal) */}
+          <div className="hidden xl:flex items-center gap-1.5 shrink-0">
+            <span aria-hidden="true" className="leading-none select-none text-[#78756E]/60">·</span>
+            <button
+              onClick={() => setIsAISettingsModalOpen(true)}
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] bg-[#121216] hover:bg-[#1A1A22] border border-white/[0.06] hover:border-[#C5A880]/40 text-xs font-mono transition-colors cursor-pointer"
+              title="AI 인퍼런스 엔진 설정 열기 (1-Click 전환)"
+            >
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                aiSettings.provider === 'gemini' ? 'bg-[#C5A880] animate-pulse' :
+                aiSettings.provider === 'ollama' ? 'bg-[#93D7AC]' : 'bg-[#91B4D8]'
+              }`} />
+              <span className="text-[11px] text-[#B8B5AC] hover:text-[#F5F3ED] whitespace-nowrap">
+                {getActiveAILabel(aiSettings)}
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* Zone 3: Functional Navigation & Primary Actions */}
         <div className="flex items-center gap-2 shrink-0">
           {/* Secondary Utilities Group */}
           <div className="flex items-center gap-1.5">
+            {/* AI Engine Settings Button (xl:hidden) */}
+            <button
+              onClick={() => setIsAISettingsModalOpen(true)}
+              className="xl:hidden p-1.5 min-h-[34px] min-w-[34px] flex items-center justify-center rounded-[2px] border border-white/[0.06] text-xs font-medium text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#16161C] transition-colors cursor-pointer"
+              title={`AI 엔진: ${getActiveAILabel(aiSettings)}`}
+              aria-label="AI 엔진 설정"
+            >
+              <Cpu size={15} className="text-[#C5A880]" />
+            </button>
+
             {/* Large Text Mode Toggle */}
             <button
               onClick={toggleLargeTextMode}
@@ -448,6 +495,19 @@ export default function WorkspaceView({
             onClose={() => {
               setIsBackupModalOpen(false);
               schedulePersistence();
+            }}
+          />
+        </Suspense>
+      )}
+
+      {/* AI Inference Engine Tier Settings Modal */}
+      {isAISettingsModalOpen && (
+        <Suspense fallback={null}>
+          <AISettingsModal
+            isOpen={isAISettingsModalOpen}
+            onClose={() => {
+              setIsAISettingsModalOpen(false);
+              setAiSettings(getAISettings());
             }}
           />
         </Suspense>

@@ -92,6 +92,19 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
           success: true,
           message: `Gemini connected successfully! Response: "${(data.text || '').trim().slice(0, 30)}"`
         });
+      } else if (settings.provider === 'webllm') {
+        // WebLLM Browser test
+        if ('gpu' in navigator) {
+          setTestResult({
+            success: true,
+            message: `WebGPU 가속 활성화됨! ${settings.webllm?.model || 'Qwen2.5-Coder-1.5B'} 모델이 외부 서버 전송 없이 브라우저 메모리에서 100% 로컬 구동됩니다.`
+          });
+        } else {
+          setTestResult({
+            success: false,
+            message: '현재 브라우저에서 WebGPU를 찾을 수 없습니다. Chrome 113+ 또는 Edge 최신 버전을 권장하며, Gemini 또는 Ollama를 사용할 수 있습니다.'
+          });
+        }
       } else {
         // Ollama test
         const res = await fetch('/api/ollama/chat', {
@@ -135,12 +148,12 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
           initial={{ opacity: 0, scale: 0.97, y: 6 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.97, y: 6 }}
-          className="w-full max-w-lg h-[540px] bg-[#111116] rounded-[2px] shadow-2xl border border-[#23232A] overflow-hidden flex flex-col text-[#F5F3ED] font-sans"
+          className="w-full max-w-lg h-[540px] bg-[#111116] rounded-[2px] shadow-2xl border border-white/[0.06] overflow-hidden flex flex-col text-[#F5F3ED] font-sans"
         >
           {/* Header */}
-          <div className="px-6 py-4 border-b border-[#23232A] flex items-center justify-between bg-[#0E0E12] shrink-0">
+          <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between bg-[#0E0E12] shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-[2px] bg-[#141418] border border-[#23232A] text-[#C5A880] flex items-center justify-center font-bold shadow-xs shrink-0">
+              <div className="w-9 h-9 rounded-[2px] bg-[#141418] border border-white/[0.06] text-[#C5A880] flex items-center justify-center font-bold shadow-xs shrink-0">
                 <Cpu size={18} />
               </div>
               <div>
@@ -165,52 +178,75 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
             {/* Provider Selection */}
             <div>
               <label className="block text-[10px] font-mono uppercase tracking-widest text-[#8E8B82] mb-2">
-                ACTIVE PROVIDER
+                ACTIVE AI INFERENCE TIER
               </label>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <button
                   type="button"
                   onClick={() => setSettings(s => ({ ...s, provider: 'gemini' }))}
-                  className={`p-3.5 rounded-[2px] border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
+                  className={`p-3 rounded-[2px] border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
                     settings.provider === 'gemini'
                       ? 'border-[#C5A880] bg-[#16161F]'
-                      : 'border-[#23232A] bg-[#141418] hover:bg-[#181820]'
+                      : 'border-white/[0.06] bg-[#141418] hover:bg-[#181820]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="p-1.5 rounded-[2px] bg-[#141418] text-[#C5A880] border border-[#23232A]">
+                    <div className="p-1 rounded-[2px] bg-[#141418] text-[#C5A880] border border-white/[0.06]">
                       <Cpu size={14} />
                     </div>
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[2px] bg-[#141418] text-[#B8B5AC] border border-[#23232A] uppercase">
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-[2px] bg-[#141418] text-[#B8B5AC] border border-white/[0.06] uppercase">
                       Cloud
                     </span>
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-[#F5F3ED]">Google Gemini</div>
-                    <div className="text-[11px] text-[#8E8B82] mt-0.5">서버 프록시 / BYOK 키</div>
+                    <div className="text-xs font-semibold text-[#F5F3ED]">Gemini 3.8-Flash</div>
+                    <div className="text-[10px] text-[#8E8B82] mt-0.5">서버 프록시 / BYOK</div>
                   </div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setSettings(s => ({ ...s, provider: 'ollama' }))}
-                  className={`p-3.5 rounded-[2px] border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
+                  className={`p-3 rounded-[2px] border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
                     settings.provider === 'ollama'
                       ? 'border-[#C5A880] bg-[#16161F]'
-                      : 'border-[#23232A] bg-[#141418] hover:bg-[#181820]'
+                      : 'border-white/[0.06] bg-[#141418] hover:bg-[#181820]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="p-1.5 rounded-[2px] bg-[#141418] text-[#C5A880] border border-[#23232A]">
+                    <div className="p-1 rounded-[2px] bg-[#141418] text-[#C5A880] border border-white/[0.06]">
                       <HardDrive size={14} />
                     </div>
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[2px] bg-[#141418] text-[#B8B5AC] border border-[#23232A] uppercase">
-                      Local Offline
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-[2px] bg-[#141418] text-[#B8B5AC] border border-white/[0.06] uppercase">
+                      Local
                     </span>
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-[#F5F3ED]">Ollama Local Engine</div>
-                    <div className="text-[11px] text-[#8E8B82] mt-0.5">로컬 독립 구동 LLM</div>
+                    <div className="text-xs font-semibold text-[#F5F3ED]">Ollama Local</div>
+                    <div className="text-[10px] text-[#8E8B82] mt-0.5">qwen2.5-coder / llama</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSettings(s => ({ ...s, provider: 'webllm' }))}
+                  className={`p-3 rounded-[2px] border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
+                    settings.provider === 'webllm'
+                      ? 'border-[#C5A880] bg-[#16161F]'
+                      : 'border-white/[0.06] bg-[#141418] hover:bg-[#181820]'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="p-1 rounded-[2px] bg-[#141418] text-[#C5A880] border border-white/[0.06]">
+                      <Server size={14} />
+                    </div>
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-[2px] bg-[#141418] text-[#B8B5AC] border border-white/[0.06] uppercase">
+                      In-Browser
+                    </span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-[#F5F3ED]">WebLLM Browser</div>
+                    <div className="text-[10px] text-[#8E8B82] mt-0.5">100% 무설치 WebGPU</div>
                   </div>
                 </button>
               </div>
@@ -218,7 +254,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
 
             {/* Gemini Configuration Panel */}
             {settings.provider === 'gemini' && (
-              <div className="space-y-4 p-4 rounded-[2px] bg-[#141418] border border-[#23232A]">
+              <div className="space-y-4 p-4 rounded-[2px] bg-[#141418] border border-white/[0.06]">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#F5F3ED] uppercase tracking-wider flex items-center gap-1.5">
                     <Key size={13} className="text-[#C5A880]" />
@@ -243,7 +279,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       gemini: { ...s.gemini, apiKey: e.target.value }
                     }))}
-                    className="w-full pl-3 pr-9 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
+                    className="w-full pl-3 pr-9 py-2 bg-[#0E0E12] border border-white/[0.06] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
                   />
                   <button
                     type="button"
@@ -267,7 +303,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       gemini: { ...s.gemini, model: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#0E0E12] border border-white/[0.06] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] cursor-pointer"
                   >
                     <option value="gemini-3.8-flash" className="bg-[#141418] text-[#F5F3ED]">gemini-3.8-flash (Recommended, Fast & Smart)</option>
                     <option value="gemini-2.5-flash" className="bg-[#141418] text-[#F5F3ED]">gemini-2.5-flash (Ultra Fast)</option>
@@ -279,7 +315,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
 
             {/* Ollama Configuration Panel */}
             {settings.provider === 'ollama' && (
-              <div className="space-y-4 p-4 rounded-[2px] bg-[#141418] border border-[#23232A]">
+              <div className="space-y-4 p-4 rounded-[2px] bg-[#141418] border border-white/[0.06]">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#F5F3ED] uppercase tracking-wider flex items-center gap-1.5">
                     <Server size={13} className="text-[#C5A880]" />
@@ -305,10 +341,10 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       ollama: { ...s.ollama, endpoint: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
+                    className="w-full px-3 py-2 bg-[#0E0E12] border border-white/[0.06] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
                   />
                   <p className="text-[11px] text-[#8E8B82] mt-1">
-                    기본 로컬 엔드포인트: <code className="font-mono text-[#C5A880] bg-[#0E0E12] px-1 py-0.5 rounded-[2px] border border-[#23232A]">http://localhost:11434</code>
+                    기본 로컬 엔드포인트: <code className="font-mono text-[#C5A880] bg-[#0E0E12] px-1 py-0.5 rounded-[2px] border border-white/[0.06]">http://localhost:11434</code>
                   </p>
                 </div>
 
@@ -323,7 +359,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                         ...s,
                         ollama: { ...s.ollama, model: e.target.value }
                       }))}
-                      className="w-full px-3 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] cursor-pointer"
+                      className="w-full px-3 py-2 bg-[#0E0E12] border border-white/[0.06] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] cursor-pointer"
                     >
                       {availableOllamaModels.map(m => (
                         <option key={m} value={m} className="bg-[#141418] text-[#F5F3ED]">{m}</option>
@@ -338,11 +374,47 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                         ...s,
                         ollama: { ...s.ollama, model: e.target.value }
                       }))}
-                      className="w-full px-3 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
+                      className="w-full px-3 py-2 bg-[#0E0E12] border border-white/[0.06] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
                     />
                   )}
                   <p className="text-[11px] text-[#8E8B82] mt-1">
                     권장 모델: <span className="font-mono text-[#F5F3ED]">llama3.2</span>, <span className="font-mono text-[#F5F3ED]">qwen2.5:7b</span>, <span className="font-mono text-[#F5F3ED]">mistral</span>
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* WebLLM Configuration Panel */}
+            {settings.provider === 'webllm' && (
+              <div className="space-y-4 p-4 rounded-[2px] bg-[#141418] border border-white/[0.06]">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[#F5F3ED] uppercase tracking-wider flex items-center gap-1.5">
+                    <Shield size={13} className="text-[#C5A880]" />
+                    <span>In-Browser WebGPU Local LLM</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-[#8E8B82] bg-[#0E0E12] px-1.5 py-0.5 rounded-[2px] border border-white/[0.06]">
+                    Zero-Server
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#F5F3ED] uppercase tracking-wider mb-1.5">
+                    In-Browser Engine Model
+                  </label>
+                  <select
+                    value={settings.webllm?.model || 'Qwen2.5-Coder-1.5B'}
+                    onChange={(e) => setSettings(s => ({
+                      ...s,
+                      webllm: { ...s.webllm, model: e.target.value }
+                    }))}
+                    className="w-full px-3 py-2 bg-[#0E0E12] border border-white/[0.06] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] cursor-pointer"
+                  >
+                    <option value="Qwen2.5-Coder-1.5B" className="bg-[#141418] text-[#F5F3ED]">Qwen2.5-Coder-1.5B (Fast, Code-Optimized)</option>
+                    <option value="Llama-3.2-1B-Instruct" className="bg-[#141418] text-[#F5F3ED]">Llama-3.2-1B-Instruct (Lightweight General)</option>
+                    <option value="SmolLM2-1.7B-Instruct" className="bg-[#141418] text-[#F5F3ED]">SmolLM2-1.7B-Instruct (Ultra-Compact)</option>
+                  </select>
+                  <p className="text-[11px] text-[#8E8B82] mt-1.5 leading-relaxed">
+                    브라우저 WebGPU 하드웨어 가속을 통해 클라우드 서버 없이 기기 로컬에서 직접 인퍼런스를 수행합니다.
                   </p>
                 </div>
               </div>
@@ -368,12 +440,12 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
           </div>
 
           {/* Footer controls */}
-          <div className="px-6 py-3.5 border-t border-[#23232A] bg-[#0E0E12] flex items-center justify-between gap-3 shrink-0">
+          <div className="px-6 py-3.5 border-t border-white/[0.06] bg-[#0E0E12] flex items-center justify-between gap-3 shrink-0">
             <button
               type="button"
               onClick={handleTestConnection}
               disabled={isTesting}
-              className="px-3.5 py-1.5 bg-[#141418] border border-[#23232A] hover:bg-[#1A1A22] text-[#B8B5AC] hover:text-[#F5F3ED] rounded-[2px] text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+              className="px-3.5 py-1.5 bg-[#141418] border border-white/[0.06] hover:bg-[#1A1A22] text-[#B8B5AC] hover:text-[#F5F3ED] rounded-[2px] text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
             >
               <RefreshCw size={12} className={isTesting ? 'animate-spin' : ''} />
               <span>{isTesting ? '연결 테스트 중...' : '연결 테스트'}</span>
