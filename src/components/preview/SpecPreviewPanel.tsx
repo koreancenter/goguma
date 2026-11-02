@@ -181,39 +181,39 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   if (isCollapsed) {
     return (
       <aside 
-        className="w-[58px] h-full flex flex-col items-center bg-[#FAF8F5] border-l border-[#E5E0D8] shrink-0 select-none py-3 justify-between"
+        className="w-[58px] h-full flex flex-col items-center bg-[#0D0D11] border-l border-white/[0.06] shrink-0 select-none py-3 justify-between"
         aria-label="미리보기 패널 펼치기"
       >
         <div className="flex flex-col items-center gap-3 w-full px-1.5">
           <button
             onClick={onToggleCollapse}
-            className="p-2 min-h-[38px] min-w-[38px] rounded-[2px] bg-[#FCFBF9] border border-[#E5E0D8] hover:bg-[#F3EFEA] text-[#191816] flex items-center justify-center transition-colors cursor-pointer"
+            className="p-2 min-h-[38px] min-w-[38px] rounded-[2px] bg-[#14141A] border border-white/[0.06] hover:bg-[#1E1E26] text-[#F5F3ED] flex items-center justify-center transition-colors cursor-pointer"
             title="미리보기 패널 펼치기"
             aria-label="미리보기 패널 펼치기"
           >
             <ChevronLeft size={18} />
           </button>
 
-          <div className="w-6 h-px bg-[#E5E0D8]" />
+          <div className="w-6 h-px bg-white/[0.06]" />
 
           {/* Quick tab shortcuts that open panel directly to that tab */}
           <button
             onClick={() => { setActiveTab('prototype'); onToggleCollapse?.(); }}
-            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#5C5852] hover:text-[#191816] hover:bg-[#F3EFEA] transition-all cursor-pointer"
+            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#1E1E26] transition-all cursor-pointer"
             title="프로토타입 보기 (펼치기)"
           >
             <Play size={14} className="fill-current" />
           </button>
           <button
             onClick={() => { setActiveTab('docs'); onToggleCollapse?.(); }}
-            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#5C5852] hover:text-[#191816] hover:bg-[#F3EFEA] transition-all cursor-pointer"
+            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#1E1E26] transition-all cursor-pointer"
             title="11종 사양서 보기 (펼치기)"
           >
             <FileCode size={16} />
           </button>
           <button
             onClick={() => { setActiveTab('sitemap'); onToggleCollapse?.(); }}
-            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#5C5852] hover:text-[#191816] hover:bg-[#F3EFEA] transition-all cursor-pointer"
+            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#1E1E26] transition-all cursor-pointer"
             title="사이트맵 보기 (펼치기)"
           >
             <Network size={16} />
@@ -221,12 +221,12 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <div className="[writing-mode:vertical-lr] text-[10px] font-mono uppercase tracking-widest text-[#8A857D] py-4 select-none">
+          <div className="[writing-mode:vertical-lr] text-[10px] font-mono uppercase tracking-widest text-[#78756E] py-4 select-none">
             SPEC & PROTOTYPE
           </div>
           <button
             onClick={onToggleCollapse}
-            className="p-2 min-h-[36px] rounded-[2px] hover:bg-[#F3EFEA] text-[#5C5852] hover:text-[#191816] text-xs font-mono font-medium cursor-pointer"
+            className="p-2 min-h-[36px] rounded-[2px] hover:bg-[#1E1E26] text-[#78756E] hover:text-[#F5F3ED] text-xs font-mono font-medium cursor-pointer"
             title="패널 펼치기"
           >
             열기
@@ -239,23 +239,23 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   return (
     <aside 
       style={width ? { width: `${width}px` } : undefined}
-      className={`${width ? '' : 'w-[460px] lg:w-[480px] xl:w-[520px] 2xl:w-[560px]'} h-full flex flex-col bg-[#0D0D11] border-l border-[#23232A] shrink-0 select-none shadow-xs text-[#F5F3ED] font-sans`}
+      className={`${width ? '' : 'w-[460px] lg:w-[480px] xl:w-[520px] 2xl:w-[560px]'} h-full flex flex-col bg-[#0D0D11] border-l border-white/[0.06] shrink-0 select-none shadow-xs text-[#F5F3ED] font-sans`}
       aria-label="실시간 프로토타입 및 11종 사양서 프리뷰"
     >
       {/* Studio Header (Single Minimalist 48px Header) */}
-      <div className="h-12 px-3.5 border-b border-[#23232A] bg-[#0E0E12] flex items-center justify-between shrink-0 select-none gap-2">
+      <div className="h-12 px-3.5 border-b border-white/[0.06] bg-[#0E0E12] flex items-center justify-between shrink-0 select-none gap-2">
         {/* Left: Quiet, Typographic Tab Navigation (Zero-Pill, Underline indicator) */}
-        <div className="flex items-center gap-4 text-xs font-medium">
+        <div className="flex items-center gap-3 sm:gap-4 text-xs font-medium shrink-0 min-w-0">
           <button
             onClick={() => setActiveTab('prototype')}
-            className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === 'prototype'
                 ? 'text-[#F5F3ED] font-semibold'
                 : 'text-[#78756E] hover:text-[#B8B5AC]'
             }`}
           >
-            <span>프로토타입</span>
-            {isSyncing && <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-ping" />}
+            <span className="whitespace-nowrap">프로토타입</span>
+            {isSyncing && <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-ping shrink-0" />}
             {activeTab === 'prototype' && (
               <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#C5A880]" />
             )}
@@ -263,14 +263,14 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('docs')}
-            className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            className={`relative py-3.5 transition-colors cursor-pointer flex items-center whitespace-nowrap shrink-0 ${
               activeTab === 'docs'
                 ? 'text-[#F5F3ED] font-semibold'
                 : 'text-[#78756E] hover:text-[#B8B5AC]'
             }`}
           >
-            <span>사양서</span>
-            <span className="font-mono text-[10px] px-1 py-0.2 bg-[#1E1E28] rounded text-[#B8B5AC] tabular-nums">
+            <span className="whitespace-nowrap">사양서</span>
+            <span className="font-mono text-[10px] text-[#C5A880] bg-white/10 px-1.5 py-0.2 rounded-[2px] ml-1 tabular-nums inline-flex items-center justify-center shrink-0 leading-none">
               11
             </span>
             {activeTab === 'docs' && (
@@ -280,13 +280,13 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('sitemap')}
-            className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === 'sitemap'
                 ? 'text-[#F5F3ED] font-semibold'
                 : 'text-[#78756E] hover:text-[#B8B5AC]'
             }`}
           >
-            <span>사이트 구조도</span>
+            <span className="whitespace-nowrap">사이트맵</span>
             {activeTab === 'sitemap' && (
               <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#C5A880]" />
             )}
@@ -294,11 +294,11 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
         </div>
 
         {/* Right: Consolidated Controls (Device Viewport + Golden Prompt + Clean Ghost Tools) */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0 ml-auto">
           {activeTab === 'prototype' && (
             <>
               {/* Segmented Device Viewport Toggle */}
-              <div className="flex items-center bg-[#121216] rounded-[2px] p-0.5 border border-[#23232A]">
+              <div className="hidden sm:flex items-center bg-[#121216] rounded-[2px] p-0.5 border border-white/[0.06]">
                 <button
                   onClick={() => setViewportMode('desktop')}
                   className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
@@ -338,7 +338,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
               <button
                 onClick={handleCopyAgentPrompt}
                 title="Cursor / Claude Code에 전달할 '이 화면 그대로 구현' 골든 프롬프트 복사"
-                className={`px-2.5 py-1 min-h-[28px] rounded-[2px] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-2.5 py-1 min-h-[28px] rounded-[2px] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                   copiedPrompt
                     ? 'bg-[#1D3A2F] text-[#F5F3ED]'
                     : 'bg-[#C5A880] text-[#0A0A0C] hover:bg-[#D4B896]'
@@ -361,7 +361,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
               <button
                 onClick={() => setIsPromptModalOpen(true)}
                 title="골든 프롬프트 전문 확인"
-                className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer"
+                className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
               >
                 <Bot size={13} />
               </button>
@@ -372,7 +372,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
           <button
             onClick={() => setReloadKey(k => k + 1)}
             title="새로고침"
-            className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer"
+            className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
           >
             <RefreshCw size={13} />
           </button>
@@ -381,7 +381,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
           <button
             onClick={handleOpenStandalone}
             title="새 창에서 전체 화면으로 실행"
-            className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer"
+            className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
           >
             <ExternalLink size={13} />
           </button>
@@ -407,10 +407,10 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                   className="w-full h-full border-0 bg-[#0A0A0C]"
                 />
               ) : viewportMode === 'tablet' ? (
-                <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-[10px] border border-[#262632] shadow-2xl overflow-hidden bg-[#0A0A0C] flex flex-col">
-                  <div className="h-5 bg-[#111116] border-b border-[#23232A] px-3 flex items-center justify-between text-[10px] font-mono text-[#78756E] select-none">
+                <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-[10px] border border-white/[0.06] shadow-2xl overflow-hidden bg-[#0A0A0C] flex flex-col">
+                  <div className="h-5 bg-[#111116] border-b border-white/[0.06] px-3 flex items-center justify-between text-[10px] font-mono text-[#78756E] select-none">
                     <span>iPad Pro 11″</span>
-                    <span className="w-8 h-1 rounded-full bg-[#23232A]"></span>
+                    <span className="w-8 h-1 rounded-full bg-white/10"></span>
                     <span>768 × 1024</span>
                   </div>
                   <iframe
@@ -423,7 +423,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                   />
                 </div>
               ) : (
-                <div className="w-[390px] max-w-full h-[780px] max-h-full rounded-[36px] border-[5px] border-[#23232A] shadow-2xl overflow-hidden bg-[#0A0A0C] flex flex-col">
+                <div className="w-[390px] max-w-full h-[780px] max-h-full rounded-[36px] border-[5px] border-white/10 shadow-2xl overflow-hidden bg-[#0A0A0C] flex flex-col">
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
@@ -442,7 +442,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
         {activeTab === 'docs' && (
           <div className="w-full h-full flex flex-col bg-[#0A0A0C]">
             {/* Document Selector & Search Bar */}
-            <div className="bg-[#111116] px-3.5 py-2 border-b border-[#23232A] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 shrink-0">
+            <div className="bg-[#111116] px-3.5 py-2 border-b border-white/[0.06] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 shrink-0">
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 {/* Search / Filter Input */}
                 <div className="relative min-w-[130px] sm:w-44">
@@ -452,7 +452,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                     value={docFilterQuery}
                     onChange={(e) => setDocFilterQuery(e.target.value)}
                     placeholder="사양서 검색..."
-                    className="w-full pl-7 pr-2 py-1 text-xs font-mono bg-[#16161C] border border-[#23232A] rounded-[2px] text-[#F5F3ED] placeholder-[#78756E] focus:outline-none focus:border-[#C5A880]"
+                    className="w-full pl-7 pr-2 py-1 text-xs font-mono bg-[#16161C] border border-white/[0.06] rounded-[2px] text-[#F5F3ED] placeholder-[#78756E] focus:outline-none focus:border-[#C5A880]"
                   />
                 </div>
 
@@ -460,7 +460,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
-                  className="flex-1 min-h-[32px] text-xs font-mono bg-[#16161C] border border-[#23232A] rounded-[2px] px-2.5 py-1 text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] truncate cursor-pointer"
+                  className="flex-1 min-h-[32px] text-xs font-mono bg-[#16161C] border border-white/[0.06] rounded-[2px] px-2.5 py-1 text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] truncate cursor-pointer"
                 >
                   {filteredDocs.map((doc) => (
                     <option key={doc.id} value={doc.id} className="bg-[#16161C] text-[#F5F3ED]">
@@ -476,7 +476,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                   onClick={handlePrevDoc}
                   disabled={activeDocIndex <= 0}
                   title="이전 문서"
-                  className="p-1.5 min-h-[30px] min-w-[30px] flex items-center justify-center rounded-[2px] text-[#B8B5AC] bg-[#16161C] border border-[#23232A] hover:bg-[#1E1E26] disabled:opacity-30 transition-colors cursor-pointer"
+                  className="p-1.5 min-h-[30px] min-w-[30px] flex items-center justify-center rounded-[2px] text-[#B8B5AC] bg-[#16161C] border border-white/[0.06] hover:bg-[#1E1E26] disabled:opacity-30 transition-colors cursor-pointer"
                 >
                   <ChevronLeft size={13} />
                 </button>
@@ -487,7 +487,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                   onClick={handleNextDoc}
                   disabled={activeDocIndex >= docsList.length - 1}
                   title="다음 문서"
-                  className="p-1.5 min-h-[30px] min-w-[30px] flex items-center justify-center rounded-[2px] text-[#B8B5AC] bg-[#16161C] border border-[#23232A] hover:bg-[#1E1E26] disabled:opacity-30 transition-colors cursor-pointer"
+                  className="p-1.5 min-h-[30px] min-w-[30px] flex items-center justify-center rounded-[2px] text-[#B8B5AC] bg-[#16161C] border border-white/[0.06] hover:bg-[#1E1E26] disabled:opacity-30 transition-colors cursor-pointer"
                 >
                   <ChevronRight size={13} />
                 </button>
@@ -495,7 +495,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
             </div>
 
             {/* Document Path & Actions Bar */}
-            <div className="bg-[#0E0E14] px-3.5 py-1.5 border-b border-[#23232A] flex items-center justify-between text-xs text-[#B8B5AC] shrink-0">
+            <div className="bg-[#0E0E14] px-3.5 py-1.5 border-b border-white/[0.06] flex items-center justify-between text-xs text-[#B8B5AC] shrink-0">
               <div className="flex items-center gap-2 truncate">
                 <span className="font-mono text-[#F5F3ED] font-semibold text-xs">{activeDoc.relativePath}</span>
                 <span className="text-[#78756E]/40">|</span>
@@ -506,7 +506,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                 <button
                   onClick={handleDownloadCurrentDoc}
                   title="이 사양서 파일만 다운로드 (.md)"
-                  className="flex items-center gap-1 min-h-[28px] px-2 py-1 rounded-[2px] bg-[#16161C] border border-[#23232A] text-[11px] text-[#F5F3ED] hover:bg-[#1E1E26] transition-colors cursor-pointer shadow-2xs"
+                  className="flex items-center gap-1 min-h-[28px] px-2 py-1 rounded-[2px] bg-[#16161C] border border-white/[0.06] text-[11px] text-[#F5F3ED] hover:bg-[#1E1E26] transition-colors cursor-pointer shadow-2xs"
                 >
                   <FileDown size={12} className="text-[#C5A880]" />
                   <span className="hidden sm:inline">.md 저장</span>
@@ -514,7 +514,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
 
                 <button
                   onClick={handleCopyCurrentDoc}
-                  className="flex items-center gap-1 min-h-[28px] px-2.5 py-1 rounded-[2px] bg-[#16161C] border border-[#23232A] text-[11px] text-[#F5F3ED] hover:bg-[#1E1E26] font-medium transition-colors cursor-pointer shadow-2xs"
+                  className="flex items-center gap-1 min-h-[28px] px-2.5 py-1 rounded-[2px] bg-[#16161C] border border-white/[0.06] text-[11px] text-[#F5F3ED] hover:bg-[#1E1E26] font-medium transition-colors cursor-pointer shadow-2xs"
                 >
                   {copiedDoc ? (
                     <>
@@ -533,7 +533,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
 
             {/* Markdown Viewer in Editorial Booklet Style */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A0A0C]">
-              <div className="max-w-3xl mx-auto bg-[#121216] border border-[#23232A] rounded-[2px] p-6 sm:p-8 shadow-xs">
+              <div className="max-w-3xl mx-auto bg-[#121216] border border-white/[0.06] rounded-[2px] p-6 sm:p-8 shadow-xs">
                 <pre className="whitespace-pre-wrap leading-relaxed text-[#F5F3ED] font-mono text-xs select-text">
                   {activeDoc.content}
                 </pre>
@@ -545,8 +545,8 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
         {/* Golden Prompt Modal */}
         {isPromptModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs select-none">
-            <div className="w-full max-w-2xl bg-[#111116] rounded-[2px] border border-[#282834] shadow-2xl flex flex-col overflow-hidden text-[#F5F3ED]">
-              <div className="px-5 py-3.5 bg-[#14141A] border-b border-[#23232A] flex items-center justify-between">
+            <div className="w-full max-w-2xl bg-[#111116] rounded-[2px] border border-white/[0.06] shadow-2xl flex flex-col overflow-hidden text-[#F5F3ED]">
+              <div className="px-5 py-3.5 bg-[#14141A] border-b border-white/[0.06] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Bot size={16} className="text-[#C5A880]" />
                   <h3 className="font-sans font-bold text-sm text-[#F5F3ED]">
@@ -555,7 +555,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                 </div>
                 <button
                   onClick={() => setIsPromptModalOpen(false)}
-                  className="p-1 rounded-[2px] text-[#78756E] hover:text-[#F5F3ED]"
+                  className="p-1 rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] cursor-pointer"
                 >
                   <X size={15} />
                 </button>
@@ -567,7 +567,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
                 </pre>
               </div>
 
-              <div className="px-5 py-3 border-t border-[#23232A] bg-[#14141A] flex items-center justify-between">
+              <div className="px-5 py-3 border-t border-white/[0.06] bg-[#14141A] flex items-center justify-between">
                 <span className="text-[11px] text-[#B8B5AC] font-mono">
                   Cursor 또는 Claude Code 창에 붙여넣으면 프로토타입 기반으로 개발을 시작합니다.
                 </span>

@@ -5,4 +5,5 @@ export * from './WritingCanvas';
 export { default as PromptExtractionHub } from './PromptExtractionHub';
 export * from './LocalBackupModal';
 export * from './WorkspaceDropZoneOverlay';
+export * from './VisualSchemaBridgeWidget';
 export { default as LandingPage } from './LandingPage';

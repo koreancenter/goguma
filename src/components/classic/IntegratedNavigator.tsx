@@ -78,16 +78,16 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
 
   return (
     <aside 
-      className={`h-full flex flex-col bg-[#0D0D11] border-r border-[#23232A] transition-all duration-300 ease-in-out select-none shrink-0 ${
+      className={`h-full flex flex-col bg-[#0D0D11] border-r border-white/[0.06] transition-all duration-300 ease-in-out select-none shrink-0 ${
         isCollapsed ? 'w-[56px]' : 'w-[260px] xl:w-[280px]'
       }`}
       aria-label="통합 기획서 목차 내비게이션"
     >
       {/* Navigator Header */}
-      <div className="h-14 px-3.5 flex items-center justify-between border-b border-[#23232A] bg-[#111116]">
+      <div className="h-14 px-3.5 flex items-center justify-between border-b border-white/[0.06] bg-[#111116]">
         {!isCollapsed && (
           <div className="flex items-center gap-2 overflow-hidden min-w-0">
-            <span className="p-1 rounded-[2px] bg-[#181820] text-[#C5A880] border border-[#282834] shrink-0">
+            <span className="p-1 rounded-[2px] bg-[#181820] text-[#C5A880] border border-white/[0.06] shrink-0">
               <Compass size={14} />
             </span>
             <div className="min-w-0">
@@ -132,7 +132,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                 onClick={() => handleChapterClick(chap.id)}
                 className={`w-full h-10 rounded-[2px] flex items-center justify-center relative transition-colors cursor-pointer group ${
                   isCurrentChapter
-                    ? 'bg-[#181822] text-[#C5A880] border border-[#383848] shadow-2xs font-bold'
+                    ? 'bg-[#181822] text-[#C5A880] border border-white/20 shadow-2xs font-bold'
                     : 'text-[#B8B5AC] hover:bg-[#14141A] hover:text-[#F5F3ED]'
                 }`}
                 title={`제 ${chap.id}장. ${chap.title}`}
@@ -151,8 +151,8 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
               key={chap.id}
               className={`rounded-[2px] border transition-colors ${
                 isCurrentChapter 
-                  ? 'border-[#282834] bg-[#14141A] shadow-2xs' 
-                  : 'border-transparent hover:border-[#23232A] bg-transparent'
+                  ? 'border-white/10 bg-[#14141A] shadow-2xs' 
+                  : 'border-transparent hover:border-white/[0.06] bg-transparent'
               }`}
             >
               {/* Chapter Header Button */}
@@ -189,7 +189,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   <button
                     type="button"
                     onClick={(e) => toggleChapterExpand(chap.id, e)}
-                    className="p-1 rounded-[2px] hover:bg-[#1E1E28] text-[#78756E] hover:text-[#F5F3ED] transition-transform"
+                    className="p-1 rounded-[2px] hover:bg-[#1E1E28] text-[#78756E] hover:text-[#F5F3ED] transition-transform cursor-pointer"
                     aria-label="섹션 펼치기/접기"
                   >
                     {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
@@ -199,7 +199,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
 
               {/* Sections Accordion Body */}
               {isExpanded && (
-                <div className="pl-6 pr-2 pb-2 space-y-0.5 border-t border-[#23232A]/50 pt-1.5 mt-0.5">
+                <div className="pl-6 pr-2 pb-2 space-y-0.5 border-t border-white/[0.06] pt-1.5 mt-0.5">
                   {chap.sections.map((section: SectionDef, sIdx: number) => {
                     const isCurrentSection = isCurrentChapter && section.key === currentSection;
                     const val = formInputs[`${chap.id}_${section.key}`]?.userRawInput?.trim();
@@ -245,13 +245,13 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
 
       {/* Navigator Footer - Quick Artifacts Shortcut */}
       {!isCollapsed && (
-        <div className="p-2.5 border-t border-[#23232A] bg-[#0E0E14] text-xs">
+        <div className="p-2.5 border-t border-white/[0.06] bg-[#0E0E14] text-xs">
           <button
             onClick={() => {
               onSelectChapter(8);
               onSelectSection('export_bundle');
             }}
-            className="w-full py-1.5 px-2 rounded-[2px] bg-[#14141A] hover:bg-[#1A1A22] border border-[#262632] text-[#F5F3ED] font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="w-full py-1.5 px-2 rounded-[2px] bg-[#14141A] hover:bg-[#1A1A22] border border-white/[0.06] text-[#F5F3ED] font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
           >
             <Archive size={13} className="text-[#C5A880]" />
             <span>11종 사양서 배포 허브 바로가기</span>

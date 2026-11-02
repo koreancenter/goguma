@@ -204,55 +204,57 @@ export default function WorkspaceView({
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0A0A0C] text-[#F5F3ED] font-sans selection:bg-[#2F2922] selection:text-[#F5F3ED]">
       {/* Studio Top Bar - Top Bar Contract: 3 Zones, Quiet Luxury Sumi Black & Hanji White */}
-      <header className="h-14 px-5 bg-[#0E0E12] border-b border-[#23232A] flex items-center justify-between shrink-0 select-none z-10">
+      <header className="h-14 px-4 sm:px-5 bg-[#0E0E12] border-b border-white/[0.06] flex items-center justify-between shrink-0 select-none z-10 gap-3">
         {/* Zone 1: Brand Wordmark (Single Text Element) & Project Context */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             onClick={() => navigate('/')}
-            className="font-sans font-bold text-lg tracking-tight text-[#F5F3ED] hover:text-[#C5A880] transition-colors cursor-pointer whitespace-nowrap uppercase"
+            className="font-sans font-bold text-base sm:text-lg tracking-tight text-[#F5F3ED] hover:text-[#C5A880] transition-colors cursor-pointer whitespace-nowrap uppercase shrink-0 leading-none"
           >
             GOGUMA
           </button>
 
-          <span className="text-[#78756E]/60 select-none">/</span>
+          <span className="text-[#78756E]/60 select-none leading-none shrink-0" aria-hidden="true">/</span>
 
-          {/* Inline Editable Project Name */}
-          <input
-            type="text"
-            value={project.name}
-            onChange={(e) => {
-              const newName = e.target.value;
-              setProject(prev => ({ ...prev, name: newName }));
-              setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
-              schedulePersistence();
-            }}
-            className="bg-transparent border-0 border-b border-[#23232A] hover:border-[#3A3A46] focus:border-[#C5A880] focus:ring-0 px-1 py-0.5 text-xs sm:text-sm font-medium text-[#F5F3ED] max-w-[200px] sm:max-w-[280px] truncate outline-none transition-colors"
-            title="프로젝트 이름 수정"
-            aria-label="프로젝트 이름"
-          />
+          {/* Inline Editable Project Name Container - Capped to max-w-[280px] sm:max-w-[360px] with truncate */}
+          <div className="min-w-0 max-w-[280px] sm:max-w-[360px] flex items-center">
+            <input
+              type="text"
+              value={project.name}
+              onChange={(e) => {
+                const newName = e.target.value;
+                setProject(prev => ({ ...prev, name: newName }));
+                setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
+                schedulePersistence();
+              }}
+              className="w-full bg-transparent border-0 border-b border-white/[0.06] hover:border-white/20 focus:border-[#C5A880] focus:ring-0 px-1 py-0.5 text-xs sm:text-sm font-medium text-[#F5F3ED] truncate outline-none transition-colors leading-normal"
+              title="프로젝트 이름 수정"
+              aria-label="프로젝트 이름"
+            />
+          </div>
 
           {/* Standard PRD Template Link */}
           <button
             onClick={() => setIsTemplateModalOpen(true)}
-            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#B8B5AC] hover:text-[#F5F3ED] transition-colors cursor-pointer whitespace-nowrap rounded-[2px] hover:bg-[#16161C]"
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#B8B5AC] hover:text-[#F5F3ED] transition-colors cursor-pointer whitespace-nowrap rounded-[2px] hover:bg-[#16161C] shrink-0"
             title="실무 표준 개발계획서(PRD) 템플릿 열기"
           >
             <LayoutTemplate size={13} className="text-[#C5A880]" />
             <span>표준 기획서</span>
           </button>
 
-          {/* Unboxed Metadata: Save Status (Zero-Pill with typographic separator) */}
-          <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#78756E]">
-            <span aria-hidden="true">·</span>
-            <span className={`w-1.5 h-1.5 rounded-full ${saveStatus === 'saving' ? 'bg-[#C5A880] animate-pulse' : 'bg-[#1D3A2F]'}`} />
-            <span className="font-mono text-[11px] text-[#B8B5AC]">
+          {/* Unboxed Metadata: Save Status (Zero-Pill with typographic separator, vertically aligned) */}
+          <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#78756E] shrink-0">
+            <span aria-hidden="true" className="leading-none select-none">·</span>
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${saveStatus === 'saving' ? 'bg-[#C5A880] animate-pulse' : 'bg-[#1D3A2F]'}`} />
+            <span className="font-mono text-[11px] text-[#B8B5AC] leading-none whitespace-nowrap">
               {saveStatus === 'saving' ? '보존 중' : '자동 보존됨'}
             </span>
           </div>
         </div>
 
         {/* Zone 3: Functional Navigation & Primary Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {/* Secondary Utilities Group */}
           <div className="flex items-center gap-1.5">
             {/* Large Text Mode Toggle */}
@@ -260,8 +262,8 @@ export default function WorkspaceView({
               onClick={toggleLargeTextMode}
               className={`px-2.5 py-1.5 min-h-[34px] rounded-[2px] border text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                 largeTextMode
-                  ? 'bg-[#1E1E26] text-[#F5F3ED] border-[#383844] font-semibold'
-                  : 'bg-transparent border-[#23232A] text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#16161C]'
+                  ? 'bg-[#1E1E26] text-[#F5F3ED] border-white/20 font-semibold'
+                  : 'bg-transparent border-white/[0.06] text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#16161C]'
               }`}
               title="큰 글씨 모드 토글"
               aria-label="큰 글씨 모드"
@@ -274,8 +276,8 @@ export default function WorkspaceView({
               onClick={togglePreviewCollapsed}
               className={`p-1.5 min-h-[34px] min-w-[34px] flex items-center justify-center rounded-[2px] border text-xs font-medium transition-colors cursor-pointer ${
                 isPreviewCollapsed
-                  ? 'bg-[#181820] border-[#383844] text-[#F5F3ED]'
-                  : 'bg-transparent border-[#23232A] text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#16161C]'
+                  ? 'bg-[#181820] border-white/20 text-[#F5F3ED]'
+                  : 'bg-transparent border-white/[0.06] text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#16161C]'
               }`}
               title={isPreviewCollapsed ? '미리보기 패널 열기' : '미리보기 패널 접기'}
               aria-label="미리보기 패널 토글"
@@ -284,7 +286,7 @@ export default function WorkspaceView({
             </button>
 
             {/* Project & Backup Storage Controls */}
-            <div className="flex items-center rounded-[2px] border border-[#23232A] bg-[#121216] p-0.5">
+            <div className="flex items-center rounded-[2px] border border-white/[0.06] bg-[#121216] p-0.5">
               <button
                 onClick={() => { setBackupModalTab('export'); setIsBackupModalOpen(true); }}
                 className="px-2.5 py-1 text-xs font-medium text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#1A1A22] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap"
@@ -293,7 +295,7 @@ export default function WorkspaceView({
                 <FolderOpen size={13} className="text-[#C5A880]" />
                 <span className="hidden md:inline">프로젝트</span>
               </button>
-              <div className="w-px h-3 bg-[#23232A]" />
+              <div className="w-px h-3 bg-white/[0.06]" />
               <button
                 onClick={() => { setBackupModalTab('storage'); setIsBackupModalOpen(true); }}
                 className="px-2.5 py-1 text-xs font-medium text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#1A1A22] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap"
@@ -306,7 +308,7 @@ export default function WorkspaceView({
           </div>
 
           {/* Visual Divider between Utilities and Primary Export CTA */}
-          <div className="w-px h-4 bg-[#23232A] mx-1 hidden sm:block" />
+          <div className="w-px h-4 bg-white/[0.06] mx-1 hidden sm:block" />
 
           {/* Primary Action: 11종 ZIP 내보내기 (Luxury Champagne Gold on Sumi Black) */}
           <button
@@ -320,10 +322,10 @@ export default function WorkspaceView({
           </button>
 
           {/* User Profile & Sign Out */}
-          <div className="flex items-center gap-1 pl-2 border-l border-[#23232A]">
+          <div className="flex items-center gap-1 pl-2 border-l border-white/[0.06]">
             <button
               onClick={() => navigate('/profile')}
-              className="w-7 h-7 rounded-[2px] bg-[#16161C] text-[#F5F3ED] text-xs font-bold flex items-center justify-center border border-[#262630] hover:border-[#C5A880]/50 transition-colors cursor-pointer"
+              className="w-7 h-7 rounded-[2px] bg-[#16161C] text-[#F5F3ED] text-xs font-bold flex items-center justify-center border border-white/[0.06] hover:border-[#C5A880]/50 transition-colors cursor-pointer"
               title={`${currentUser?.displayName || '사용자'} 프로필`}
               aria-label="프로필"
             >
@@ -369,6 +371,7 @@ export default function WorkspaceView({
           lastSavedTime={lastSavedTime}
           largeTextMode={largeTextMode}
           isPreviewCollapsed={isPreviewCollapsed}
+          onTogglePreviewCollapse={togglePreviewCollapsed}
         />
 
         {/* Column Split Resizer Handle (Ergonomic drag for desktop viewports) */}
@@ -384,18 +387,18 @@ export default function WorkspaceView({
             onKeyDown={handleResizerKeyDown}
             onMouseDown={handleMouseDownResizer}
             className={`w-2.5 -ml-1.5 z-20 cursor-col-resize flex items-center justify-center transition-all group select-none shrink-0 relative outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880] ${
-              isResizing ? 'bg-[#23232A]' : 'bg-transparent hover:bg-[#23232A]/50'
+              isResizing ? 'bg-white/10' : 'bg-transparent hover:bg-white/5'
             }`}
             title="드래그하여 너비 조절 (더블클릭 시 기본값 480px, 좌우 방향키로 미세 조절)"
             onDoubleClick={() => handleApplyPresetWidth(480)}
           >
             <div className={`w-0.5 h-8 rounded-full transition-colors ${
-              isResizing ? 'bg-[#C5A880]' : 'bg-[#23232A] group-hover:bg-[#C5A880]'
+              isResizing ? 'bg-[#C5A880]' : 'bg-white/10 group-hover:bg-[#C5A880]'
             }`} />
 
             {/* Real-time Floating Width HUD during Drag */}
             {isResizing && (
-              <div className="absolute top-6 right-3 pointer-events-none bg-[#121216] border border-[#262630] text-[#F5F3ED] px-3 py-1.5 rounded-[2px] shadow-xl text-xs font-mono flex items-center gap-2 whitespace-nowrap z-50">
+              <div className="absolute top-6 right-3 pointer-events-none bg-[#121216] border border-white/[0.06] text-[#F5F3ED] px-3 py-1.5 rounded-[2px] shadow-xl text-xs font-mono flex items-center gap-2 whitespace-nowrap z-50">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-ping" />
                 <span className="font-bold text-[#F5F3ED]">{previewWidth}px</span>
                 <span className="text-[#B8B5AC] text-[11px]">
