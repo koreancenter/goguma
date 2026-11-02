@@ -400,9 +400,31 @@ export function exportAllLocalData(): GogumaBackupPackage {
   };
 }
 
+/**
+ * Deep sanitization to prevent Prototype Pollution attacks (__proto__, constructor, prototype)
+ */
+function sanitizeCollectionData(data: any): any {
+  if (!data || typeof data !== 'object') return data;
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizeCollectionData(item));
+  }
+  const clean: Record<string, any> = Object.create(null);
+  for (const [k, v] of Object.entries(data)) {
+    if (k === '__proto__' || k === 'constructor' || k === 'prototype') continue;
+    clean[k] = sanitizeCollectionData(v);
+  }
+  return clean;
+}
+
 export function importLocalData(backup: any, mode: 'merge' | 'replace' = 'merge'): { success: boolean; projectCount: number; message: string } {
   if (!backup || typeof backup !== 'object' || !backup.collections) {
     throw new Error('Invalid backup file format. Expected a valid GOGUMA backup JSON.');
+  }
+
+  // Guard against JSON bombs / memory exhaustion (max 15MB stringified representation)
+  const approxSize = JSON.stringify(backup).length;
+  if (approxSize > 15 * 1024 * 1024) {
+    throw new Error('Security Error: Backup file size exceeds maximum 15MB limit.');
   }
 
   let addedProjects = 0;
@@ -418,26 +440,33 @@ export function importLocalData(backup: any, mode: 'merge' | 'replace' = 'merge'
     }
     keysToRemove.forEach(k => localStorage.removeItem(k));
 
-    for (const [colName, colData] of Object.entries(importedCollections)) {
-      writeCollection(colName, (colData as any) || {});
+    for (const [colName, rawColData] of Object.entries(importedCollections)) {
+      // Validate collection name to prevent path traversal / system key overwrite
+      if (!/^[a-zA-Z0-9_]{1,32}$/.test(colName) || colName === '__proto__' || colName === 'constructor') continue;
+
+      const safeData = sanitizeCollectionData(rawColData) || {};
+      writeCollection(colName, safeData);
       if (colName === 'projects') {
-        addedProjects += Object.keys(colData || {}).length;
+        addedProjects += Object.keys(safeData).length;
       }
     }
   } else {
-    for (const [colName, colData] of Object.entries(importedCollections)) {
+    for (const [colName, rawColData] of Object.entries(importedCollections)) {
+      if (!/^[a-zA-Z0-9_]{1,32}$/.test(colName) || colName === '__proto__' || colName === 'constructor') continue;
+
       const current = readCollection(colName);
-      const incoming = (colData as Record<string, any>) || {};
-      const merged = { ...current, ...incoming };
+      const safeIncoming = sanitizeCollectionData(rawColData) || {};
+      const merged = { ...current, ...safeIncoming };
       writeCollection(colName, merged);
       if (colName === 'projects') {
-        addedProjects += Object.keys(incoming).length;
+        addedProjects += Object.keys(safeIncoming).length;
       }
     }
   }
 
   if (backup.aiSettings && (!localStorage.getItem('goguma_ai_settings') || mode === 'replace')) {
-    localStorage.setItem('goguma_ai_settings', JSON.stringify(backup.aiSettings));
+    const safeAi = sanitizeCollectionData(backup.aiSettings);
+    localStorage.setItem('goguma_ai_settings', JSON.stringify(safeAi));
   }
 
   window.dispatchEvent(new Event('storage'));

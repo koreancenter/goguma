@@ -9,13 +9,11 @@ import { LocalUser } from '../../lib/localAuth';
 
 import { ChapterNavBar } from '../classic/ChapterNavBar';
 import { SectionListBar } from '../classic/SectionListBar';
+import { IntegratedNavigator } from '../classic/IntegratedNavigator';
 import { WritingCanvas } from '../classic/WritingCanvas';
 import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
 
 // Lazy-load heavyweight modals that are only opened on user interaction
-const ProjectImportExportModal = lazy(() =>
-  import('../classic/ProjectImportExportModal').then(m => ({ default: m.ProjectImportExportModal }))
-);
 const LocalBackupModal = lazy(() =>
   import('../classic/LocalBackupModal').then(m => ({ default: m.LocalBackupModal }))
 );
@@ -78,8 +76,8 @@ export default function WorkspaceView({
   onOpenLogoutModal,
 }: WorkspaceViewProps) {
   const navigate = useNavigate();
-  const [isImportExportOpen, setIsImportExportOpen] = useState(false);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
+  const [backupModalTab, setBackupModalTab] = useState<'export' | 'import' | 'storage'>('export');
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -204,19 +202,19 @@ export default function WorkspaceView({
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0B0C10] text-[#F0F3F6] font-sans">
-      {/* Studio Top Bar - Top Bar Contract: 3 Zones, Zero-Pill, Single Element Brand */}
-      <header className="h-14 px-5 bg-[#0E1217] border-b border-white/7 flex items-center justify-between shrink-0 select-none z-10">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0A0A0C] text-[#F5F3ED] font-sans selection:bg-[#2F2922] selection:text-[#F5F3ED]">
+      {/* Studio Top Bar - Top Bar Contract: 3 Zones, Quiet Luxury Sumi Black & Hanji White */}
+      <header className="h-14 px-5 bg-[#0E0E12] border-b border-[#23232A] flex items-center justify-between shrink-0 select-none z-10">
         {/* Zone 1: Brand Wordmark (Single Text Element) & Project Context */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="font-bold text-base tracking-tight text-[#F0F3F6] hover:text-[#C5A880] transition-colors cursor-pointer whitespace-nowrap"
+            className="font-sans font-bold text-lg tracking-tight text-[#F5F3ED] hover:text-[#C5A880] transition-colors cursor-pointer whitespace-nowrap uppercase"
           >
             GOGUMA
           </button>
 
-          <span className="text-white/20 select-none">/</span>
+          <span className="text-[#78756E]/60 select-none">/</span>
 
           {/* Inline Editable Project Name */}
           <input
@@ -228,7 +226,7 @@ export default function WorkspaceView({
               setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
               schedulePersistence();
             }}
-            className="bg-transparent border-0 border-b border-white/10 hover:border-white/25 focus:border-[#C5A880] focus:ring-0 px-1 py-0.5 text-xs sm:text-sm font-medium text-[#F0F3F6] max-w-[200px] sm:max-w-[280px] truncate outline-none transition-colors"
+            className="bg-transparent border-0 border-b border-[#23232A] hover:border-[#3A3A46] focus:border-[#C5A880] focus:ring-0 px-1 py-0.5 text-xs sm:text-sm font-medium text-[#F5F3ED] max-w-[200px] sm:max-w-[280px] truncate outline-none transition-colors"
             title="프로젝트 이름 수정"
             aria-label="프로젝트 이름"
           />
@@ -236,18 +234,18 @@ export default function WorkspaceView({
           {/* Standard PRD Template Link */}
           <button
             onClick={() => setIsTemplateModalOpen(true)}
-            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#9AA5B5] hover:text-[#F0F3F6] transition-colors cursor-pointer whitespace-nowrap"
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-xs text-[#B8B5AC] hover:text-[#F5F3ED] transition-colors cursor-pointer whitespace-nowrap rounded-[2px] hover:bg-[#16161C]"
             title="실무 표준 개발계획서(PRD) 템플릿 열기"
           >
-            <LayoutTemplate size={13} />
+            <LayoutTemplate size={13} className="text-[#C5A880]" />
             <span>표준 기획서</span>
           </button>
 
           {/* Unboxed Metadata: Save Status (Zero-Pill with typographic separator) */}
-          <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#5C6675]">
+          <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#78756E]">
             <span aria-hidden="true">·</span>
-            <span className={`w-1.5 h-1.5 rounded-full ${saveStatus === 'saving' ? 'bg-amber-400 animate-pulse' : 'bg-emerald-500'}`} />
-            <span className="font-mono text-[11px] text-[#9AA5B5]">
+            <span className={`w-1.5 h-1.5 rounded-full ${saveStatus === 'saving' ? 'bg-[#C5A880] animate-pulse' : 'bg-[#1D3A2F]'}`} />
+            <span className="font-mono text-[11px] text-[#B8B5AC]">
               {saveStatus === 'saving' ? '보존 중' : '자동 보존됨'}
             </span>
           </div>
@@ -257,13 +255,13 @@ export default function WorkspaceView({
         <div className="flex items-center gap-2">
           {/* Secondary Utilities Group */}
           <div className="flex items-center gap-1.5">
-            {/* Large Text Mode Toggle (Clean Icon + Label, No Emoji) */}
+            {/* Large Text Mode Toggle */}
             <button
               onClick={toggleLargeTextMode}
-              className={`px-2.5 py-1.5 min-h-[34px] rounded-[3px] border text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              className={`px-2.5 py-1.5 min-h-[34px] rounded-[2px] border text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                 largeTextMode
-                  ? 'bg-[#C5A880] text-[#0B0C10] border-[#C5A880] font-semibold'
-                  : 'bg-transparent border-white/10 text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/5'
+                  ? 'bg-[#1E1E26] text-[#F5F3ED] border-[#383844] font-semibold'
+                  : 'bg-transparent border-[#23232A] text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#16161C]'
               }`}
               title="큰 글씨 모드 토글"
               aria-label="큰 글씨 모드"
@@ -274,10 +272,10 @@ export default function WorkspaceView({
             {/* Preview Panel Toggle */}
             <button
               onClick={togglePreviewCollapsed}
-              className={`p-1.5 min-h-[34px] min-w-[34px] flex items-center justify-center rounded-[3px] border text-xs font-medium transition-colors cursor-pointer ${
+              className={`p-1.5 min-h-[34px] min-w-[34px] flex items-center justify-center rounded-[2px] border text-xs font-medium transition-colors cursor-pointer ${
                 isPreviewCollapsed
-                  ? 'bg-[#18202A] border-[#C5A880] text-[#C5A880]'
-                  : 'bg-transparent border-white/10 text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/5'
+                  ? 'bg-[#181820] border-[#383844] text-[#F5F3ED]'
+                  : 'bg-transparent border-[#23232A] text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#16161C]'
               }`}
               title={isPreviewCollapsed ? '미리보기 패널 열기' : '미리보기 패널 접기'}
               aria-label="미리보기 패널 토글"
@@ -286,35 +284,35 @@ export default function WorkspaceView({
             </button>
 
             {/* Project & Backup Storage Controls */}
-            <div className="flex items-center rounded-[3px] border border-white/10 bg-[#13181F] p-0.5">
+            <div className="flex items-center rounded-[2px] border border-[#23232A] bg-[#121216] p-0.5">
               <button
-                onClick={() => setIsImportExportOpen(true)}
-                className="px-2.5 py-1 text-xs font-medium text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/5 transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap"
+                onClick={() => { setBackupModalTab('export'); setIsBackupModalOpen(true); }}
+                className="px-2.5 py-1 text-xs font-medium text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#1A1A22] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap"
                 title="프로젝트 열기 / 내보내기"
               >
-                <FolderOpen size={13} />
+                <FolderOpen size={13} className="text-[#C5A880]" />
                 <span className="hidden md:inline">프로젝트</span>
               </button>
-              <div className="w-px h-3 bg-white/10" />
+              <div className="w-px h-3 bg-[#23232A]" />
               <button
-                onClick={() => setIsBackupModalOpen(true)}
-                className="px-2.5 py-1 text-xs font-medium text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/5 transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap"
+                onClick={() => { setBackupModalTab('storage'); setIsBackupModalOpen(true); }}
+                className="px-2.5 py-1 text-xs font-medium text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#1A1A22] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap"
                 title="로컬 백업 보관함"
               >
-                <HardDriveDownload size={13} />
+                <HardDriveDownload size={13} className="text-[#C5A880]" />
                 <span className="hidden md:inline">백업함</span>
               </button>
             </div>
           </div>
 
           {/* Visual Divider between Utilities and Primary Export CTA */}
-          <div className="w-px h-4 bg-white/15 mx-1 hidden sm:block" />
+          <div className="w-px h-4 bg-[#23232A] mx-1 hidden sm:block" />
 
-          {/* Primary Action: 11종 ZIP 내보내기 (Curated Accent & Focused Depth) */}
+          {/* Primary Action: 11종 ZIP 내보내기 (Luxury Champagne Gold on Sumi Black) */}
           <button
             onClick={handleExportZip}
             disabled={isExporting}
-            className="flex items-center gap-2 px-3.5 py-1.5 min-h-[34px] rounded-[3px] bg-[#C5A880] hover:bg-[#D4AF37] active:bg-[#B8986E] disabled:opacity-50 text-[#0B0C10] text-xs font-semibold shadow-[0_1px_6px_rgba(197,168,128,0.2)] hover:shadow-[0_2px_10px_rgba(197,168,128,0.35)] transition-all cursor-pointer whitespace-nowrap"
+            className="flex items-center gap-2 px-3.5 py-1.5 min-h-[34px] rounded-[2px] bg-[#C5A880] hover:bg-[#D4B896] active:bg-[#B59870] disabled:opacity-50 text-[#0A0A0C] text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shadow-xs"
             title="11종 사양서 및 프로토타입 ZIP 다운로드"
           >
             <Download size={14} className={isExporting ? 'animate-bounce' : ''} />
@@ -322,10 +320,10 @@ export default function WorkspaceView({
           </button>
 
           {/* User Profile & Sign Out */}
-          <div className="flex items-center gap-1 pl-2 border-l border-white/10">
+          <div className="flex items-center gap-1 pl-2 border-l border-[#23232A]">
             <button
               onClick={() => navigate('/profile')}
-              className="w-7 h-7 rounded-[3px] bg-[#18202A] text-[#C5A880] text-xs font-bold flex items-center justify-center border border-white/10 hover:border-[#C5A880] transition-colors cursor-pointer"
+              className="w-7 h-7 rounded-[2px] bg-[#16161C] text-[#F5F3ED] text-xs font-bold flex items-center justify-center border border-[#262630] hover:border-[#C5A880]/50 transition-colors cursor-pointer"
               title={`${currentUser?.displayName || '사용자'} 프로필`}
               aria-label="프로필"
             >
@@ -334,7 +332,7 @@ export default function WorkspaceView({
 
             <button
               onClick={onOpenLogoutModal}
-              className="p-1.5 rounded-[3px] text-[#5C6675] hover:text-red-400 hover:bg-white/5 transition-colors cursor-pointer"
+              className="p-1.5 rounded-[2px] text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#16161C] transition-colors cursor-pointer"
               title="로그아웃"
               aria-label="로그아웃"
             >
@@ -344,28 +342,21 @@ export default function WorkspaceView({
         </div>
       </header>
 
-      {/* 4-Column Wide Workspace Mount */}
+      {/* 2-Track Modern Workspace Mount */}
       <div className={`flex-1 flex overflow-hidden ${largeTextMode ? 'goguma-large-mode' : ''}`}>
-        {/* Column 1: Chapter Navigation Bar (200px -> 52px collapsible) */}
-        <ChapterNavBar
+        {/* Track 1 - Left Navigator: Integrated Chapter & Section Accordion (Collapsible 260px -> 56px) */}
+        <IntegratedNavigator
           currentChapter={project.currentChapter}
+          currentSection={project.currentSection}
           onSelectChapter={handleSelectChapter}
+          onSelectSection={handleSelectSection}
+          formInputs={formInputs}
           isCollapsed={isCol1Collapsed}
           onToggleCollapse={() => setIsCol1Collapsed(prev => !prev)}
           completedChapters={completedChapters}
         />
 
-        {/* Column 2: Section Selection List (240px -> 52px collapsible) */}
-        <SectionListBar
-          currentChapter={project.currentChapter}
-          currentSection={project.currentSection}
-          onSelectSection={handleSelectSection}
-          formInputs={formInputs}
-          isCollapsed={isCol2Collapsed}
-          onToggleCollapse={() => setIsCol2Collapsed(prev => !prev)}
-        />
-
-        {/* Column 3: Classic Warm Paper Writing Canvas (Fluid min-w 640px) */}
+        {/* Track 1 - Center: Unified Editorial Thinking Canvas (Fluid min-w 640px) */}
         <WritingCanvas
           currentChapter={project.currentChapter}
           currentSection={project.currentSection}
@@ -393,21 +384,21 @@ export default function WorkspaceView({
             onKeyDown={handleResizerKeyDown}
             onMouseDown={handleMouseDownResizer}
             className={`w-2.5 -ml-1.5 z-20 cursor-col-resize flex items-center justify-center transition-all group select-none shrink-0 relative outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880] ${
-              isResizing ? 'bg-[#C5A880]/60' : 'bg-transparent hover:bg-[#C5A880]/25'
+              isResizing ? 'bg-[#23232A]' : 'bg-transparent hover:bg-[#23232A]/50'
             }`}
             title="드래그하여 너비 조절 (더블클릭 시 기본값 480px, 좌우 방향키로 미세 조절)"
             onDoubleClick={() => handleApplyPresetWidth(480)}
           >
             <div className={`w-0.5 h-8 rounded-full transition-colors ${
-              isResizing ? 'bg-[#0B0C10]' : 'bg-white/20 group-hover:bg-[#C5A880]'
+              isResizing ? 'bg-[#C5A880]' : 'bg-[#23232A] group-hover:bg-[#C5A880]'
             }`} />
 
             {/* Real-time Floating Width HUD during Drag */}
             {isResizing && (
-              <div className="absolute top-6 right-3 pointer-events-none bg-[#0E1217] border border-[#C5A880]/60 text-[#F0F3F6] px-3 py-1.5 rounded-[3px] shadow-2xl text-xs font-mono flex items-center gap-2 whitespace-nowrap z-50">
+              <div className="absolute top-6 right-3 pointer-events-none bg-[#121216] border border-[#262630] text-[#F5F3ED] px-3 py-1.5 rounded-[2px] shadow-xl text-xs font-mono flex items-center gap-2 whitespace-nowrap z-50">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-ping" />
-                <span className="font-bold text-[#C5A880]">{previewWidth}px</span>
-                <span className="text-[#9AA5B5] text-[11px]">
+                <span className="font-bold text-[#F5F3ED]">{previewWidth}px</span>
+                <span className="text-[#B8B5AC] text-[11px]">
                   {previewWidth <= 430 ? '스마트폰 뷰 (420px)' : previewWidth >= 600 ? '와이드 뷰 (620px)' : '데스크톱 뷰 (480px)'}
                 </span>
               </div>
@@ -417,7 +408,7 @@ export default function WorkspaceView({
 
         {/* Global Transparent Mouse-Capture Overlay during Resizing to prevent iframe mouse trapping */}
         {isResizing && (
-          <div className="fixed inset-0 z-40 cursor-col-resize select-none bg-black/5" />
+          <div className="fixed inset-0 z-40 cursor-col-resize select-none bg-black/40" />
         )}
 
         {/* Column 4: Real-time Spec & Prototype Preview Panel (Dynamically Resizable) */}
@@ -429,6 +420,8 @@ export default function WorkspaceView({
           onToggleCollapse={togglePreviewCollapsed}
           largeTextMode={largeTextMode}
           width={previewWidth}
+          onSelectChapter={handleSelectChapter}
+          onSelectSection={handleSelectSection}
         />
       </div>
 
@@ -442,25 +435,17 @@ export default function WorkspaceView({
         </Suspense>
       )}
 
-      {/* Defer-mounted Modals: Only loaded when explicitly open */}
-      {isImportExportOpen && (
-        <Suspense fallback={null}>
-          <ProjectImportExportModal
-            isOpen={isImportExportOpen}
-            formInputs={formInputs}
-            onClose={() => setIsImportExportOpen(false)}
-            onProjectLoaded={() => {
-              schedulePersistence();
-            }}
-          />
-        </Suspense>
-      )}
-
+      {/* Unified Storage & Backup Studio Modal (Single Source of Truth) */}
       {isBackupModalOpen && (
         <Suspense fallback={null}>
           <LocalBackupModal
             isOpen={isBackupModalOpen}
-            onClose={() => setIsBackupModalOpen(false)}
+            initialTab={backupModalTab}
+            formInputs={formInputs}
+            onClose={() => {
+              setIsBackupModalOpen(false);
+              schedulePersistence();
+            }}
           />
         </Suspense>
       )}

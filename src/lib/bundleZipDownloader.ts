@@ -26,12 +26,14 @@ export async function buildBlueprintZip(
   const slug = generateLocalSlug(projectName) || 'app';
   const filename = `goguma-blueprint-${slug}.zip`;
 
-  // 1. Add root prototype.html
+  // 1. Add root prototype.html and project README
   zip.file('prototype.html', bundle.prototypeHtml);
+  zip.file('README.md', bundle.readmeMd);
 
   // 2. Add AI agent configuration files
   zip.file('.cursorrules', bundle.cursorrules);
   zip.file('.clinerules', bundle.clinerules);
+  zip.file('CLAUDE.md', bundle.claudeMd);
 
   // 3. Create docs/ folder and add all 11 markdown files
   const docsFolder = zip.folder('docs');
@@ -51,7 +53,7 @@ export async function buildBlueprintZip(
   return {
     zipBlob,
     filename,
-    fileCount: docsList.length + 3, // 11 docs + prototype.html + .cursorrules + .clinerules = 14 files
+    fileCount: docsList.length + 5, // 11 docs + prototype.html + README.md + .cursorrules + .clinerules + CLAUDE.md = 16 files
   };
 }
 

@@ -19,7 +19,7 @@ function escapeHtml(str: string): string {
 export function generatePrototypePrompt(plan: SitePlan): string {
   const projectName = plan.metadata?.projectName || '애플리케이션';
   const platform = plan.metadata?.platform === 'APP' ? '모바일 웹/앱 (Mobile-First)' : '웹 대시보드 (Web-First)';
-  const themeColor = plan.design?.themeColor || '#6B1D42';
+  const themeColor = plan.design?.themeColor || '#C5A880';
   const purpose = plan.metadata?.projectOverview?.purpose || '업무 자동화 및 프로세스 최적화';
   const pages = plan.navigation?.pageStructure || [
     { name: '대시보드', route: '/dashboard', purpose: '실시간 현황 모니터링' },
@@ -34,7 +34,8 @@ export function generatePrototypePrompt(plan: SitePlan): string {
 ### 📌 프로덕션 구현 요구사항 (Prototype-as-Spec):
 1. **타깃 플랫폼 & 디자인 규약**:
    - 대상 플랫폼: ${platform}
-   - 브랜드 색상: ${themeColor} 및 Warm Paper (#F8F4EB, #FAF7F2, #E5DFD3, 먹색 #111827)
+   - 브랜드 색상 & 톤앤매너: 럭셔리 미니멀리즘 (Sumi Black 바탕 #0A0A0C, 카드/표면 #121216 / #16161C, 헤어라인 보더 #23232A, Hanji White 텍스트 #F5F3ED / #8E8B82, 샴페인 골드 포인트 #C5A880)
+   - 타이포그래피: Pretendard 계열 산스 세리프 폰트 전면 적용 (세리프 배제, 가독성과 절제미 극대화)
    - 모바일 뷰포트 지원 (상단 뒤로가기 및 하단 탭 내비게이션 바 포함)
 
 2. **반드시 1:1 분할 구현할 화면 컴포넌트 (${pages.length}종)**:
@@ -56,17 +57,10 @@ ${pages.map((p, i) => `   - Screen ${i + 1} [${p.name}] (${p.route || '/'}): ${p
 /**
  * Advanced Dynamic Screen Synthesis & Rich Virtual Navigation Prototype Compiler.
  * Produces a fully self-contained HTML5 + Vanilla JS + Tailwind Play CDN web app.
- * 
- * Major Features in Version 2.2:
- * 1. Deep In-App Routing & Navigation History (Back button, contextual jumps between screens)
- * 2. Interactive Item Detail Drawer / Sheet (View, edit status, update memo in real time)
- * 3. Mobile Native Bottom Navigation Bar (Thumb-friendly tab bar for mobile view)
- * 4. Animated Toast Notification System (Immediate visual feedback on actions)
- * 5. Slot-to-Booking auto fill (Clicking a timeline slot opens modal pre-filled with time)
- * 6. Shared LocalStorage persistence with sample reset
+ * Styled in high-end Luxury Black & White minimalism.
  */
 export function compileStandalonePrototypeHtml(plan: SitePlan): string {
-  const projectName = escapeHtml(plan.metadata?.projectName || '고구마 애플리케이션');
+  const projectName = escapeHtml(plan.metadata?.projectName || '애플리케이션');
   const platform = plan.metadata?.platform === 'APP' ? 'APP' : 'WEB';
   const pages = plan.navigation?.pageStructure && plan.navigation.pageStructure.length > 0
     ? plan.navigation.pageStructure
@@ -76,7 +70,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
         { name: '진행 칸반', route: '/kanban', purpose: '단계별 업무 요청 및 승인 파이프라인' },
         { name: '통계 리포트', route: '/analytics', purpose: '월별 처리 현황 및 목표 달성률' },
       ];
-  const themeColor = plan.design?.themeColor || '#6B1D42';
+  const themeColor = plan.design?.themeColor || '#FFFFFF';
   const purpose = escapeHtml(plan.metadata?.projectOverview?.purpose || '사용자 친화적 업무 프로세스 자동화 및 생산성 향상');
   const target = escapeHtml(plan.metadata?.projectOverview?.target || '현장 실무자 및 의사결정권자');
   const kpi = escapeHtml(plan.metadata?.projectOverview?.kpi || '업무 처리 시간 50% 단축');
@@ -119,7 +113,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${projectName} - 실시간 인터랙티브 프로토타입</title>
+  <title>${projectName} - 실시간 발현 프로토타입</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -127,83 +121,59 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
         extend: {
           colors: {
             brand: '${themeColor}',
-            paper: '#F8F4EB',
-            ink: '#231F20'
+            canvas: '#FAF8F5',
+            surface: '#F3EFEA',
+            card: '#FFFFFF',
+            subtle: '#EAE4D9',
+            ink: '#191816',
+            inkMuted: '#5C5852',
+            hairline: '#E5E0D8',
+            deepGreen: '#23392D',
+            terracotta: '#9E6B4B'
           }
         }
       }
     }
   </script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif; }
-    .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Pretendard Variable", "Pretendard", "Segoe UI", Roboto, sans-serif; }
+    .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
     .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #D5CCBC; border-radius: 9999px; }
-    .modal-backdrop { background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(2px); }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(25, 24, 22, 0.15); border-radius: 2px; }
+    .modal-backdrop { background: rgba(25, 24, 22, 0.4); backdrop-filter: blur(6px); }
     @keyframes slideInRight {
       from { transform: translateX(100%); }
       to { transform: translateX(0); }
     }
     .animate-slide-in-right {
-      animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: slideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes pulseSync {
-      0% { box-shadow: 0 0 0 0 rgba(197, 168, 128, 0.85); }
-      45% { box-shadow: 0 0 0 7px rgba(197, 168, 128, 0.4); }
-      100% { box-shadow: 0 0 0 0 rgba(197, 168, 128, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(35, 57, 45, 0.4); }
+      45% { box-shadow: 0 0 0 6px rgba(35, 57, 45, 0.1); }
+      100% { box-shadow: 0 0 0 0 rgba(35, 57, 45, 0); }
     }
-    .goguma-pulse-glow {
+    .pulse-glow {
       animation: pulseSync 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-      border-color: #C5A880 !important;
+      border-color: #23392D !important;
     }
   </style>
 </head>
-<body class="bg-[#0B0C10] text-[#F0F3F6] min-h-screen p-2 sm:p-4 flex flex-col items-center justify-start relative">
+<body class="bg-[#FFFFFF] text-[#191816] min-h-screen flex flex-col relative font-sans antialiased m-0 p-0 selection:bg-[#EAE4D9]">
 
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Top Prototype Control Bar (Ink Black Slim Inspector) -->
-  <div class="w-full max-w-5xl mb-2 flex items-center justify-between bg-[#0E1217] px-3.5 py-1.5 rounded-[2px] border border-white/7 shadow-2xs">
-    <div class="flex items-center gap-2">
-      <span class="w-1.5 h-1.5 rounded-full bg-[#34D399] animate-pulse"></span>
-      <span class="text-xs font-mono font-semibold text-[#C5A880]">GOGUMA LIVE PROTOTYPE</span>
-      <span class="hidden sm:inline text-[11px] text-[#5C6675]">• 인터랙티브 로컬 런타임</span>
-    </div>
-    
-    <div class="flex items-center gap-1.5">
-      <!-- Device View Toggle -->
-      <button 
-        id="toggleDeviceBtn" 
-        onclick="toggleDeviceView()" 
-        class="text-xs font-medium px-2.5 py-1 rounded-[2px] border border-white/10 bg-[#13181F] hover:bg-[#18202A] text-[#9AA5B5] hover:text-[#F0F3F6] transition-colors flex items-center gap-1 cursor-pointer"
-        title="스마트폰 화면과 데스크톱 화면 전환"
-      >
-        <span id="deviceIcon">📱</span>
-        <span id="deviceLabel">${platform === 'APP' ? '데스크톱 뷰' : '스마트폰 뷰'}</span>
-      </button>
-
-      <!-- Reset Data -->
-      <button 
-        onclick="resetSampleData()" 
-        class="text-xs font-medium px-2 py-1 rounded-[2px] border border-white/10 bg-[#13181F] hover:bg-red-950/40 text-[#5C6675] hover:text-red-400 transition-colors cursor-pointer"
-        title="샘플 데이터 초기화"
-      >
-        초기화
-      </button>
-    </div>
-  </div>
-
   <!-- Main Prototype Shell Container -->
   <div 
     id="prototypeContainer" 
-    class="w-full ${platform === 'APP' ? 'max-w-[420px] rounded-[38px] border-2 border-white/10 shadow-2xl overflow-hidden' : 'max-w-5xl rounded-[3px] border border-white/10 shadow-xl'} bg-[#0B0C10] flex flex-col transition-all duration-300 min-h-[680px] relative"
+    class="w-full flex-1 bg-[#FFFFFF] flex flex-col relative min-h-screen"
   >
     
     <!-- Mobile Status Bar (Visible only in phone frame) -->
-    <div id="mobileStatusBar" class="${platform === 'APP' ? 'flex' : 'hidden'} items-center justify-between px-6 pt-3 pb-1 bg-[#0E1217] text-xs font-mono font-semibold text-[#9AA5B5] select-none">
+    <div id="mobileStatusBar" class="${platform === 'APP' ? 'flex' : 'hidden'} items-center justify-between px-6 pt-3 pb-1 bg-[#FAF8F5] text-xs font-mono font-semibold text-[#8A857D] select-none border-b border-[#E5E0D8]">
       <span>09:41</span>
-      <div class="w-16 h-4 bg-[#050608] border border-white/10 rounded-full mx-auto -mt-1"></div>
+      <div class="w-16 h-4 bg-[#191816] rounded-full mx-auto -mt-1"></div>
       <div class="flex items-center gap-1">
         <span>5G</span>
         <span>100%</span>
@@ -211,31 +181,31 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     </div>
 
     <!-- App / Web Header with Navigation Controls -->
-    <header class="px-4 py-3 bg-[#0E1217] border-b border-white/7 flex items-center justify-between sticky top-0 z-20">
+    <header class="px-4 py-3 bg-[#FAF8F5] border-b border-[#E5E0D8] flex items-center justify-between sticky top-0 z-20">
       <div class="flex items-center gap-2.5">
         <!-- Back Navigation Button -->
         <button 
           id="navBackBtn" 
           onclick="navigateBack()" 
-          class="hidden p-1 rounded-[2px] border border-white/10 bg-[#13181F] hover:bg-[#18202A] text-[#9AA5B5] hover:text-[#F0F3F6] text-xs transition-all cursor-pointer"
+          class="hidden p-1 rounded-[2px] border border-[#E5E0D8] bg-[#FCFBF9] hover:bg-[#F3EFEA] text-[#191816] text-xs transition-all cursor-pointer"
           title="이전 화면으로 돌아가기"
         >
           ← 뒤로
         </button>
 
-        <div class="w-7 h-7 rounded-[2px] flex items-center justify-center text-[#0B0C10] font-bold text-sm bg-[#C5A880] shrink-0">
+        <div class="w-7 h-7 rounded-[2px] flex items-center justify-center text-[#FAF8F5] font-bold text-sm bg-[#191816] shrink-0 font-serif">
           ${projectName.charAt(0)}
         </div>
         <div class="min-w-0">
-          <h1 class="text-sm sm:text-base font-bold tracking-tight text-[#F0F3F6] leading-tight truncate">${projectName}</h1>
-          <p class="text-[10px] text-[#5C6675] truncate max-w-[180px] sm:max-w-xs">${purpose}</p>
+          <h1 class="text-sm sm:text-base font-serif font-bold tracking-tight text-[#191816] leading-tight truncate">${projectName}</h1>
+          <p class="text-[10px] text-[#5C5852] truncate max-w-[180px] sm:max-w-xs">${purpose}</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
         <button 
           onclick="openAddModal()" 
-          class="px-3 py-1 rounded-[2px] text-xs font-semibold text-[#0B0C10] bg-[#C5A880] hover:bg-[#D4AF37] transition-all flex items-center gap-1 cursor-pointer"
+          class="px-3 py-1.5 rounded-[2px] text-xs font-semibold text-[#FAF8F5] bg-[#23392D] hover:bg-[#1B2D23] shadow-xs transition-all flex items-center gap-1 cursor-pointer"
         >
           <span>+</span>
           <span>신규 등록</span>
@@ -244,15 +214,15 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     </header>
 
     <!-- Desktop / Top Navigation Tab Bar -->
-    <nav id="topNavTabs" class="bg-[#0E1217] px-4 border-b border-white/7 flex items-center gap-1.5 overflow-x-auto custom-scroll py-2">
+    <nav id="topNavTabs" class="bg-[#F3EFEA] px-4 border-b border-[#E5E0D8] flex items-center gap-1.5 overflow-x-auto custom-scroll py-2">
       ${pages.map((p, idx) => `
         <button 
           onclick="switchPage(${idx})" 
           id="navTab-${idx}" 
           class="px-3 py-1.5 rounded-[2px] text-xs font-medium whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
             idx === 0 
-              ? 'bg-[#18202A] text-[#C5A880] font-semibold border-b-2 border-[#C5A880]' 
-              : 'text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-[#13181F]'
+              ? 'bg-[#191816] text-[#FAF8F5] font-semibold' 
+              : 'text-[#5C5852] hover:text-[#191816] hover:bg-[#FAF8F5]'
           }"
         >
           <span>${escapeHtml(p.name)}</span>
@@ -260,22 +230,22 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       `).join('')}
     </nav>
 
-    <!-- Dynamic Content Area (Target of Screen Synthesis) -->
-    <main class="flex-1 p-3 sm:p-4 overflow-y-auto custom-scroll space-y-3 pb-16 sm:pb-4 bg-[#0B0C10]">
+    <!-- Dynamic Content Area -->
+    <main class="flex-1 p-3 sm:p-4 overflow-y-auto custom-scroll space-y-3 pb-16 sm:pb-4 bg-[#FAF8F5]">
       
       <!-- Screen Context Header Card -->
-      <div id="screenHeaderCard" class="bg-[#13181F] p-3 rounded-[3px] border border-white/7 flex items-center justify-between">
+      <div id="screenHeaderCard" class="bg-[#FFFFFF] p-3.5 rounded-[2px] border border-[#E5E0D8] flex items-center justify-between shadow-xs">
         <div>
           <div class="flex items-center gap-2">
-            <span id="screenRouteBadge" class="text-[10px] font-mono font-semibold px-1.5 py-0.2 rounded-[2px] bg-[#18202A] text-[#60A5FA] border border-white/5">ROUTE: ${escapeHtml(pages[0].route || '/')}</span>
-            <span id="screenTypeBadge" class="text-[10px] font-mono font-semibold px-1.5 py-0.2 rounded-[2px] bg-[#C5A880]/15 text-[#C5A880]">화면</span>
+            <span id="screenRouteBadge" class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-[2px] bg-[#F3EFEA] text-[#191816] border border-[#E5E0D8]">ROUTE: ${escapeHtml(pages[0].route || '/')}</span>
+            <span id="screenTypeBadge" class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-[2px] bg-[#FAF8F5] text-[#5C5852]">화면</span>
           </div>
-          <h2 id="screenTitle" class="text-xs sm:text-sm font-bold text-[#F0F3F6] mt-1">${escapeHtml(pages[0].name)}</h2>
-          <p id="screenDesc" class="text-[11px] text-[#9AA5B5] mt-0.5">${escapeHtml(pages[0].purpose || '')}</p>
+          <h2 id="screenTitle" class="text-xs sm:text-sm font-serif font-bold text-[#191816] mt-1.5">${escapeHtml(pages[0].name)}</h2>
+          <p id="screenDesc" class="text-[11px] text-[#5C5852] mt-0.5">${escapeHtml(pages[0].purpose || '')}</p>
         </div>
         <div class="text-right hidden sm:block">
-          <span class="text-[10px] text-[#5C6675]">목표 KPI</span>
-          <p class="text-xs font-mono font-semibold text-[#C5A880]">${kpi}</p>
+          <span class="text-[10px] font-mono text-[#8A857D]">목표 KPI</span>
+          <p class="text-xs font-mono font-semibold text-[#23392D] mt-0.5">${kpi}</p>
         </div>
       </div>
 
@@ -287,13 +257,13 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     </main>
 
     <!-- Mobile Native Bottom Navigation Bar (Active in phone frame) -->
-    <div id="mobileBottomNav" class="${platform === 'APP' ? 'flex' : 'hidden'} items-center justify-around bg-[#0B0C10]/95 backdrop-blur-md border-t border-white/7 py-2 px-1 absolute bottom-0 left-0 right-0 z-20">
+    <div id="mobileBottomNav" class="${platform === 'APP' ? 'flex' : 'hidden'} items-center justify-around bg-[#FAF8F5]/95 backdrop-blur-md border-t border-[#E5E0D8] py-2 px-1 absolute bottom-0 left-0 right-0 z-20">
       ${pages.slice(0, 4).map((p, idx) => `
         <button 
           onclick="switchPage(${idx})" 
           id="bottomTab-${idx}" 
           class="flex flex-col items-center justify-center flex-1 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${
-            idx === 0 ? 'text-[#C5A880] font-semibold' : 'text-[#5C6675]'
+            idx === 0 ? 'text-[#191816] font-semibold' : 'text-[#8A857D]'
           }"
         >
           <span class="text-sm leading-none mb-0.5">${p.name.includes('대시') ? '📊' : p.name.includes('칸반') ? '📑' : p.name.includes('예약') ? '📅' : p.name.includes('견적') ? '💡' : p.name.includes('통계') ? '📈' : '📋'}</span>
@@ -303,64 +273,64 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     </div>
 
     <!-- Bottom Footer (Desktop) -->
-    <footer class="hidden sm:flex p-2.5 bg-[#0E1217] border-t border-white/7 text-center text-[10px] text-[#5C6675] items-center justify-between">
-      <span>${projectName} • Goguma Live Navigation Engine</span>
+    <footer class="hidden sm:flex p-2.5 bg-[#F3EFEA] border-t border-[#E5E0D8] text-center text-[10px] font-mono text-[#5C5852] items-center justify-between">
+      <span>${projectName} • Live Architecture Runtime</span>
       <span>타깃: ${target}</span>
     </footer>
   </div>
 
   <!-- Item Detail Drawer / Sheet (Slide-in) -->
   <div id="detailDrawerBackdrop" onclick="closeDetailDrawer()" class="fixed inset-0 modal-backdrop hidden z-40 transition-opacity"></div>
-  <div id="detailDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#0E1217] border-l border-white/10 shadow-2xl z-50 p-5 flex flex-col justify-between hidden animate-slide-in-right overflow-y-auto custom-scroll text-[#F0F3F6]">
+  <div id="detailDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#FCFBF9] border-l border-[#E5E0D8] shadow-2xl z-50 p-5 flex flex-col justify-between hidden animate-slide-in-right overflow-y-auto custom-scroll text-[#191816]">
     <div class="space-y-4">
-      <div class="flex items-center justify-between border-b border-white/7 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E5E0D8] pb-3">
         <div class="flex items-center gap-2">
-          <span id="drawerStatusBadge" class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-semibold bg-[#18202A] text-[#C5A880] border border-white/10">대기</span>
-          <span class="text-xs font-mono text-[#9AA5B5]">상세 정보</span>
+          <span id="drawerStatusBadge" class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-medium bg-[#F3EFEA] text-[#191816] border border-[#E5E0D8]">대기</span>
+          <span class="text-xs font-mono text-[#5C5852]">엔지니어링 스펙 상세</span>
         </div>
-        <button onclick="closeDetailDrawer()" class="text-[#9AA5B5] hover:text-[#F0F3F6] text-lg font-bold cursor-pointer">✕</button>
+        <button onclick="closeDetailDrawer()" class="text-[#8A857D] hover:text-[#191816] text-lg font-bold cursor-pointer">✕</button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-medium text-[#9AA5B5] mb-1">제목 / 품목</label>
-          <input id="drawerTitle" type="text" class="w-full p-2.5 rounded-[2px] border border-white/10 bg-[#13181F] text-[#F0F3F6] text-xs focus:outline-none focus:border-[#C5A880]">
+          <label class="block font-medium text-[#5C5852] mb-1">기능 명세 / 엔드포인트 명</label>
+          <input id="drawerTitle" type="text" class="w-full p-2.5 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816]">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-[#44403C] mb-1">진행 상태 변경</label>
-            <select id="drawerStatusSelect" onchange="updateDrawerStatus()" class="w-full p-2 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] font-bold text-xs focus:outline-none">
-              <option value="대기">대기</option>
-              <option value="진행중">진행중</option>
-              <option value="완료">완료</option>
+            <label class="block font-medium text-[#5C5852] mb-1">진행 파이프라인</label>
+            <select id="drawerStatusSelect" onchange="updateDrawerStatus()" class="w-full p-2 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] font-medium text-xs focus:outline-none focus:border-[#191816] cursor-pointer">
+              <option value="대기" class="bg-[#FCFBF9] text-[#191816]">대기</option>
+              <option value="진행중" class="bg-[#FCFBF9] text-[#191816]">진행중</option>
+              <option value="완료" class="bg-[#FCFBF9] text-[#191816]">완료</option>
             </select>
           </div>
           <div>
-            <label class="block font-bold text-[#44403C] mb-1">일시 / 금액</label>
-            <input id="drawerAmount" type="text" class="w-full p-2 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none font-mono">
+            <label class="block font-medium text-[#5C5852] mb-1">버전 / 성능 지표</label>
+            <input id="drawerAmount" type="text" class="w-full p-2 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816] font-mono">
           </div>
         </div>
 
         <div>
-          <label class="block font-bold text-[#44403C] mb-1">연락처 / 기안자</label>
-          <input id="drawerContact" type="text" class="w-full p-2 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none">
+          <label class="block font-medium text-[#5C5852] mb-1">담당 엔지니어 / 서브시스템</label>
+          <input id="drawerContact" type="text" class="w-full p-2 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816]">
         </div>
 
         <div>
-          <label class="block font-bold text-[#44403C] mb-1">상세 특이사항 메모</label>
-          <textarea id="drawerMemo" rows="4" class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none leading-relaxed"></textarea>
+          <label class="block font-medium text-[#5C5852] mb-1">상세 구현 규격 & 메모</label>
+          <textarea id="drawerMemo" rows="4" class="w-full p-2.5 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816] leading-relaxed"></textarea>
         </div>
       </div>
     </div>
 
-    <div class="pt-4 border-t border-[#E5DFD3] flex items-center justify-between">
-      <button onclick="deleteDrawerItem()" class="px-3 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-colors cursor-pointer">
+    <div class="pt-4 border-t border-[#E5E0D8] flex items-center justify-between">
+      <button onclick="deleteDrawerItem()" class="px-3 py-2 rounded-[2px] text-xs font-semibold text-[#9E6B4B] hover:bg-[#F3EFEA] transition-colors cursor-pointer">
         삭제하기
       </button>
       <div class="flex items-center gap-2">
-        <button onclick="closeDetailDrawer()" class="px-4 py-2 rounded-xl text-xs font-bold text-[#78716C] hover:bg-[#FAF7F2] cursor-pointer">닫기</button>
-        <button onclick="saveDrawerChanges()" class="px-4 py-2 rounded-xl text-xs font-bold text-white shadow-xs hover:opacity-90 cursor-pointer" style="background-color: ${themeColor}">
+        <button onclick="closeDetailDrawer()" class="px-4 py-2 rounded-[2px] text-xs font-medium text-[#5C5852] hover:text-[#191816] cursor-pointer">닫기</button>
+        <button onclick="saveDrawerChanges()" class="px-4 py-2 rounded-[2px] text-xs font-medium text-[#FAF8F5] bg-[#191816] hover:bg-[#2C2A26] shadow-xs cursor-pointer">
           저장하기
         </button>
       </div>
@@ -369,53 +339,53 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 
   <!-- Add Item Modal Dialog -->
   <div id="addModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-[#D5CCBC] shadow-2xl w-full max-w-md p-5 space-y-4 animate-in fade-in zoom-in-95">
-      <div class="flex items-center justify-between border-b border-[#E5DFD3] pb-3">
-        <h3 class="text-base font-bold text-[#1C1917]">신규 항목 등록</h3>
-        <button onclick="closeAddModal()" class="text-[#78716C] hover:text-[#1C1917] text-lg font-bold cursor-pointer">✕</button>
+    <div class="bg-[#FCFBF9] rounded-[2px] border border-[#E5E0D8] shadow-2xl w-full max-w-md p-5 space-y-4 animate-in fade-in zoom-in-95 text-[#191816]">
+      <div class="flex items-center justify-between border-b border-[#E5E0D8] pb-3">
+        <h3 class="text-sm font-serif font-bold text-[#191816] tracking-wider">신규 기능 스펙 & API 엔드포인트 등록</h3>
+        <button onclick="closeAddModal()" class="text-[#8A857D] hover:text-[#191816] text-lg font-bold cursor-pointer">✕</button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-[#44403C] mb-1">항목 이름 / 제목 <span class="text-red-500">*</span></label>
-          <input id="modalTitle" type="text" placeholder="예: 초코 정기검진 / 마케팅 품의서 / 원두 발주" class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none focus:ring-1 focus:ring-brand">
+          <label class="block font-medium text-[#5C5852] mb-1">기능명 / 엔드포인트 <span class="text-[#9E6B4B]">*</span></label>
+          <input id="modalTitle" type="text" placeholder="예: [FEAT] 사용자 온보딩 퍼널 및 토큰 인증 플로우" class="w-full p-2.5 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816]">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-[#44403C] mb-1">연락처 / 기안자</label>
-            <input id="modalContact" type="text" placeholder="010-0000-0000" class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none focus:ring-1 focus:ring-brand">
+            <label class="block font-medium text-[#5C5852] mb-1">담당 엔지니어</label>
+            <input id="modalContact" type="text" placeholder="dev-lead@service.io" class="w-full p-2.5 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816]">
           </div>
           <div>
-            <label class="block font-bold text-[#44403C] mb-1">상태</label>
-            <select id="modalStatus" class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none">
-              <option value="대기">대기</option>
-              <option value="진행중" selected>진행중</option>
-              <option value="완료">완료</option>
+            <label class="block font-medium text-[#5C5852] mb-1">상태</label>
+            <select id="modalStatus" class="w-full p-2.5 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816] cursor-pointer">
+              <option value="대기" class="bg-[#FCFBF9] text-[#191816]">대기</option>
+              <option value="진행중" selected class="bg-[#FCFBF9] text-[#191816]">진행중</option>
+              <option value="완료" class="bg-[#FCFBF9] text-[#191816]">완료</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="block font-bold text-[#44403C] mb-1">금액 / 수량 / 일시 (선택)</label>
-          <input id="modalAmount" type="text" placeholder="예: 오늘 14:00 또는 50,000원" class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none focus:ring-1 focus:ring-brand">
+          <label class="block font-medium text-[#5C5852] mb-1">버전 / 스프린트 / 레이턴시 지표</label>
+          <input id="modalAmount" type="text" placeholder="예: Sprint 03 • v1.1.0 (P99 < 30ms)" class="w-full p-2.5 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816]">
         </div>
 
         <div>
-          <label class="block font-bold text-[#44403C] mb-1">메모 / 특이사항</label>
-          <textarea id="modalMemo" rows="3" placeholder="상세 요청사항이나 주의할 점을 적어주세요." class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none focus:ring-1 focus:ring-brand"></textarea>
+          <label class="block font-medium text-[#5C5852] mb-1">상세 사양 / 의존성 메모</label>
+          <textarea id="modalMemo" rows="3" placeholder="기능 상세 요구사항, 의존성 모듈, API 스키마 변경 사항을 작성하세요." class="w-full p-2.5 rounded-[2px] border border-[#E5E0D8] bg-[#FFFFFF] text-[#191816] text-xs focus:outline-none focus:border-[#191816] leading-relaxed"></textarea>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#E5DFD3]">
-        <button onclick="closeAddModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-[#57534E] hover:bg-[#FAF7F2] cursor-pointer">취소</button>
-        <button onclick="submitNewItem()" class="px-4 py-2 rounded-xl text-xs font-bold text-white shadow-xs hover:opacity-90 cursor-pointer" style="background-color: ${themeColor}">등록하기</button>
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#E5E0D8]">
+        <button onclick="closeAddModal()" class="px-4 py-2 rounded-[2px] text-xs font-medium text-[#5C5852] hover:text-[#191816] cursor-pointer">취소</button>
+        <button onclick="submitNewItem()" class="px-4 py-2 rounded-[2px] text-xs font-medium text-[#FAF8F5] bg-[#23392D] hover:bg-[#1B2D23] shadow-xs cursor-pointer">스펙 등록하기</button>
       </div>
     </div>
   </div>
 
   <script>
-    const STORAGE_KEY = 'goguma_live_data_' + '${encodeURIComponent(projectName)}';
+    const STORAGE_KEY = 'proto_live_data_' + '${encodeURIComponent(projectName)}';
     const PAGES = ${safePagesJson};
     let activePageIndex = 0;
     let navHistory = [];
@@ -423,21 +393,20 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     let isPhoneView = ${platform === 'APP' ? 'true' : 'false'};
     let currentDrawerItemId = null;
 
-    // Initial domain mock records
+    // Initial domain mock records (Web Product & SaaS Engineering)
     const DEFAULT_DATA = [
-      { id: 'item-1', title: '초코 (골든리트리버) 정기 예방접종', contact: '010-8765-4321', status: '진행중', amount: '오늘 14:00', memo: '알러지 피부염 주의, 발톱 정리 요청', createdAt: new Date().toISOString() },
-      { id: 'item-2', title: '나비 (코숏) 중성화 상담 및 검진', contact: '010-1234-5678', status: '대기', amount: '오늘 15:30', memo: '금식 8시간 유지 확인 완료', createdAt: new Date().toISOString() },
-      { id: 'item-3', title: '몽이 (말티즈) 귀 염증 드레싱', contact: '010-9988-7766', status: '완료', amount: '오전 11:00', memo: '항생제 3일분 처방 완료', createdAt: new Date().toISOString() },
-      { id: 'item-4', title: '보리 (포메라니안) 심장사상충 검사', contact: '010-3322-1100', status: '대기', amount: '오늘 17:00', memo: '첫 방문, 문진표 작성 필요', createdAt: new Date().toISOString() }
+      { id: 'item-1', title: '[FEAT] OAuth 2.0 및 JWT 세션 자동 갱신 모듈', contact: 'auth-lead@service.io', status: '진행중', amount: 'Sprint 02 • v1.2.0', memo: 'Refresh token silent rotation 및 CSRF 방어 헤더 적용 완료', createdAt: new Date().toISOString() },
+      { id: 'item-2', title: '[API] 실시간 대시보드 스트리밍 SSE 엔드포인트', contact: 'backend@service.io', status: '대기', amount: 'P99 < 35ms', memo: 'Redis Pub/Sub 브로드캐스트 및 백프레셔 버퍼 튜닝 검증', createdAt: new Date().toISOString() },
+      { id: 'item-3', title: '[BILLING] Stripe 웹훅 수신 및 구독 상태 라이프사이클', contact: 'billing@service.io', status: '완료', amount: 'Webhook v2.4', memo: '결제 성공 시 플랜 권한 테이블 즉각 트랜잭션 동기화', createdAt: new Date().toISOString() },
+      { id: 'item-4', title: '[SECURITY] RBAC 엔터프라이즈 권한 가드 & 감시 로그', contact: 'security@service.io', status: '대기', amount: 'OWASP ASVS L3', memo: '세밀한 역할 기반 라우트 가드 및 변조 방지 감사 로그 스트림', createdAt: new Date().toISOString() }
     ];
 
     function showToast(message, type = 'success') {
       const container = document.getElementById('toastContainer');
       if (!container) return;
       const toast = document.createElement('div');
-      toast.className = 'px-4 py-2.5 rounded-xl shadow-xl text-xs font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto ' + 
-        (type === 'success' ? 'bg-[#1C1917] text-white' : type === 'delete' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white');
-      toast.innerHTML = (type === 'success' ? '✅ ' : type === 'delete' ? '🗑️ ' : 'ℹ️ ') + message;
+      toast.className = 'px-4 py-2.5 rounded-[2px] border border-[#E5E0D8] shadow-xl text-xs font-medium flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto bg-[#191816] text-[#FAF8F5]';
+      toast.innerHTML = (type === 'success' ? '✓ ' : type === 'delete' ? '✕ ' : 'ℹ ') + message;
       container.appendChild(toast);
       setTimeout(() => {
         toast.style.opacity = '0';
@@ -446,24 +415,33 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       }, 2500);
     }
 
+    let inMemoryStore = null;
+
     function getStore() {
+      if (inMemoryStore) return inMemoryStore;
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA));
-          return DEFAULT_DATA;
+          inMemoryStore = JSON.parse(JSON.stringify(DEFAULT_DATA));
+          return inMemoryStore;
         }
-        return JSON.parse(raw);
+        inMemoryStore = JSON.parse(raw);
+        return inMemoryStore;
       } catch (e) {
-        return DEFAULT_DATA;
+        if (!inMemoryStore) {
+          inMemoryStore = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        }
+        return inMemoryStore;
       }
     }
 
     function saveStore(data) {
+      inMemoryStore = data;
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       } catch (e) {
-        console.warn('LocalStorage save failed:', e);
+        // Sandboxed isolation mode active: inMemoryStore maintains state cleanly
       }
       renderActiveScreen();
     }
@@ -478,25 +456,25 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     function toggleDeviceView() {
       isPhoneView = !isPhoneView;
       const container = document.getElementById('prototypeContainer');
-      const statusBar = document.getElementById('mobileStatusBar');
-      const bottomNav = document.getElementById('mobileBottomNav');
+      const mobileStatus = document.getElementById('mobileStatusBar');
+      const mobileBottom = document.getElementById('mobileBottomNav');
       const label = document.getElementById('deviceLabel');
       const icon = document.getElementById('deviceIcon');
 
       if (isPhoneView) {
-        container.className = 'w-full max-w-[420px] rounded-[36px] border-[6px] border-[#292524] shadow-2xl overflow-hidden bg-[#FAF7F2] flex flex-col transition-all duration-300 min-h-[680px] relative';
-        statusBar.classList.remove('hidden');
-        statusBar.classList.add('flex');
-        bottomNav.classList.remove('hidden');
-        bottomNav.classList.add('flex');
+        container.className = 'w-full max-w-[420px] rounded-[36px] border-2 border-white/15 shadow-2xl overflow-hidden bg-[#080808] flex flex-col transition-all duration-300 min-h-[680px] relative';
+        mobileStatus.classList.remove('hidden');
+        mobileStatus.classList.add('flex');
+        mobileBottom.classList.remove('hidden');
+        mobileBottom.classList.add('flex');
         label.innerText = '데스크톱 뷰로 전환';
-        icon.innerText = '🖥️';
+        icon.innerText = '💻';
       } else {
-        container.className = 'w-full max-w-5xl rounded-2xl border-2 border-[#D5CCBC] shadow-lg bg-[#FAF7F2] flex flex-col transition-all duration-300 min-h-[680px] relative';
-        statusBar.classList.remove('flex');
-        statusBar.classList.add('hidden');
-        bottomNav.classList.remove('flex');
-        bottomNav.classList.add('hidden');
+        container.className = 'w-full max-w-5xl rounded-[2px] border border-white/10 shadow-xl bg-[#080808] flex flex-col transition-all duration-300 min-h-[680px] relative';
+        mobileStatus.classList.add('hidden');
+        mobileStatus.classList.remove('flex');
+        mobileBottom.classList.add('hidden');
+        mobileBottom.classList.remove('flex');
         label.innerText = '스마트폰 뷰로 전환';
         icon.innerText = '📱';
       }
@@ -527,13 +505,9 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
         const tab = document.getElementById('navTab-' + i);
         if (tab) {
           if (i === idx) {
-            tab.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap bg-white shadow-2xs transition-all cursor-pointer flex items-center gap-1.5';
-            tab.style.color = '${themeColor}';
-            tab.style.border = '1px solid ${themeColor}30';
+            tab.className = 'px-3 py-1.5 rounded-[2px] text-xs font-semibold whitespace-nowrap bg-[#191816] text-[#FAF8F5] shadow-xs transition-all cursor-pointer flex items-center gap-1.5';
           } else {
-            tab.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap text-[#57534E] hover:text-[#1C1917] hover:bg-white/60 transition-all cursor-pointer flex items-center gap-1.5';
-            tab.style.color = '';
-            tab.style.border = '';
+            tab.className = 'px-3 py-1.5 rounded-[2px] text-xs font-medium whitespace-nowrap text-[#5C5852] hover:text-[#191816] hover:bg-[#FAF8F5] transition-all cursor-pointer flex items-center gap-1.5';
           }
         }
 
@@ -541,9 +515,9 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
         const bTab = document.getElementById('bottomTab-' + i);
         if (bTab) {
           if (i === idx) {
-            bTab.className = 'flex flex-col items-center justify-center flex-1 py-1 rounded-xl text-[10px] font-bold text-[#6B1D42]';
+            bTab.className = 'flex flex-col items-center justify-center flex-1 py-1 rounded-[2px] text-[10px] font-semibold text-[#191816]';
           } else {
-            bTab.className = 'flex flex-col items-center justify-center flex-1 py-1 rounded-xl text-[10px] font-bold text-[#78716C]';
+            bTab.className = 'flex flex-col items-center justify-center flex-1 py-1 rounded-[2px] text-[10px] text-[#8A857D]';
           }
         }
       });
@@ -605,9 +579,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       const badge = document.getElementById('drawerStatusBadge');
       if (badge) {
         badge.innerText = item.status;
-        badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold ' + 
-          (item.status === '완료' ? 'bg-emerald-100 text-emerald-800' :
-           item.status === '진행중' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800');
+        badge.className = 'px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-semibold bg-white/10 text-white border border-white/15';
       }
 
       document.getElementById('detailDrawerBackdrop').classList.remove('hidden');
@@ -625,9 +597,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       const badge = document.getElementById('drawerStatusBadge');
       if (badge) {
         badge.innerText = newStatus;
-        badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold ' + 
-          (newStatus === '완료' ? 'bg-emerald-100 text-emerald-800' :
-           newStatus === '진행중' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800');
+        badge.className = 'px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-semibold bg-white/10 text-white border border-white/15';
       }
     }
 
@@ -645,7 +615,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 
       saveStore(data);
       closeDetailDrawer();
-      showToast('[' + item.title + '] 항목이 성공적으로 업데이트되었습니다.');
+      showToast('[' + item.title + '] 항목이 업데이트되었습니다.');
     }
 
     function deleteDrawerItem() {
@@ -687,7 +657,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     }
 
     // =========================================================================
-    // DYNAMIC SCREEN SYNTHESIS RENDERERS
+    // DYNAMIC SCREEN SYNTHESIS RENDERERS (Luxury Black & White)
     // =========================================================================
 
     function renderActiveScreen() {
@@ -713,7 +683,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
           renderAnalyticsView(container, data);
           break;
         case 'FORM':
-          renderFormView(container, data);
+          renderFormView(container);
           break;
         case 'TABLE':
         default:
@@ -722,7 +692,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       }
     }
 
-    // 1. DASHBOARD VIEW SYNTHESIS (With Contextual Routing Jumps)
+    // 1. DASHBOARD VIEW SYNTHESIS
     function renderDashboardView(container, data) {
       const total = data.length;
       const pending = data.filter(d => d.status === '대기').length;
@@ -731,83 +701,80 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       const doneRate = total > 0 ? Math.round((done / total) * 100) : 0;
 
       container.innerHTML = \`
-        <!-- Interactive KPI Cards (Click to Navigate) -->
+        <!-- Interactive KPI Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          <div onclick="navigateToFilter('TABLE', 'ALL')" class="bg-white p-3.5 rounded-xl border border-[#E5DFD3] hover:border-brand/50 shadow-2xs cursor-pointer transition-all hover:scale-[1.02]">
+          <div onclick="navigateToFilter('TABLE', 'ALL')" class="bg-[#171820] p-3.5 rounded-[4px] border border-white/[0.08] hover:border-white/20 cursor-pointer transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-semibold text-[#78716C]">전체 관리 건수</span>
-              <span class="text-[10px] text-[#A8A29E]">목록 ➔</span>
+              <span class="text-[11px] font-mono text-neutral-400">총 기능 스펙 & API</span>
+              <span class="text-[10px] text-neutral-500 font-mono">전체 ➔</span>
             </div>
-            <div class="text-2xl font-extrabold text-[#1C1917] mt-1">\${total} <span class="text-xs font-normal text-[#A8A29E]">건</span></div>
+            <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">\${total} <span class="text-xs font-normal text-neutral-500">개</span></div>
           </div>
 
-          <div onclick="navigateToFilter('TABLE', '대기')" class="bg-white p-3.5 rounded-xl border border-[#E5DFD3] hover:border-amber-400 shadow-2xs cursor-pointer transition-all hover:scale-[1.02]">
+          <div onclick="navigateToFilter('TABLE', '대기')" class="bg-[#171820] p-3.5 rounded-[4px] border border-white/[0.08] hover:border-white/20 cursor-pointer transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-semibold text-amber-700">대기 / 미처리</span>
-              <span class="text-[10px] text-amber-600">필터 ➔</span>
+              <span class="text-[11px] font-mono text-neutral-400">백로그 / 대기</span>
+              <span class="text-[10px] text-neutral-500 font-mono">필터 ➔</span>
             </div>
-            <div class="text-2xl font-extrabold text-amber-600 mt-1">\${pending} <span class="text-xs font-normal text-[#A8A29E]">건</span></div>
+            <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">\${pending} <span class="text-xs font-normal text-neutral-500">개</span></div>
           </div>
 
-          <div onclick="navigateToFilter('KANBAN', '진행중')" class="bg-white p-3.5 rounded-xl border border-[#E5DFD3] hover:border-blue-400 shadow-2xs cursor-pointer transition-all hover:scale-[1.02]">
+          <div onclick="navigateToFilter('KANBAN', '진행중')" class="bg-[#171820] p-3.5 rounded-[4px] border border-white/[0.08] hover:border-white/20 cursor-pointer transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-semibold text-blue-700">진행중</span>
-              <span class="text-[10px] text-blue-600">칸반 ➔</span>
+              <span class="text-[11px] font-mono text-neutral-400">스프린트 진행</span>
+              <span class="text-[10px] text-neutral-500 font-mono">칸반 ➔</span>
             </div>
-            <div class="text-2xl font-extrabold text-blue-600 mt-1">\${progress} <span class="text-xs font-normal text-[#A8A29E]">건</span></div>
+            <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">\${progress} <span class="text-xs font-normal text-neutral-500">개</span></div>
           </div>
 
-          <div onclick="navigateToFilter('ANALYTICS', '완료')" class="bg-white p-3.5 rounded-xl border border-[#E5DFD3] hover:border-emerald-400 shadow-2xs cursor-pointer transition-all hover:scale-[1.02]">
+          <div onclick="navigateToFilter('ANALYTICS', '완료')" class="bg-[#171820] p-3.5 rounded-[4px] border border-white/[0.08] hover:border-white/20 cursor-pointer transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-semibold text-emerald-700">처리 완료율</span>
-              <span class="text-[10px] text-emerald-600">통계 ➔</span>
+              <span class="text-[11px] font-mono text-neutral-400">스펙 배포 완료율</span>
+              <span class="text-[10px] text-neutral-500 font-mono">통계 ➔</span>
             </div>
-            <div class="text-2xl font-extrabold text-emerald-600 mt-1">\${doneRate}%</div>
+            <div class="text-2xl font-bold font-mono text-[#E4DFD7] mt-1">\${doneRate}%</div>
           </div>
         </div>
 
         <!-- Progress Distribution Bar -->
-        <div class="bg-white p-4 rounded-xl border border-[#E5DFD3] space-y-2">
-          <div class="flex items-center justify-between text-xs font-bold text-[#44403C]">
-            <span>진행 상태 파이프라인 분포</span>
-            <span class="text-[11px] text-[#78716C]">완료 \${done}건 / 전체 \${total}건</span>
+        <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-2">
+          <div class="flex items-center justify-between text-xs font-medium text-[#F1F1F4]">
+            <span>스프린트 파이프라인 진척도</span>
+            <span class="text-[11px] font-mono text-neutral-400">배포 완료 \${done}건 / 전체 \${total}건</span>
           </div>
-          <div class="w-full h-3 bg-[#FAF7F2] rounded-full overflow-hidden flex border border-[#E5DFD3]">
-            <div style="width: \${total > 0 ? (pending/total)*100 : 0}%; background-color: #F59E0B;" title="대기: \${pending}건"></div>
-            <div style="width: \${total > 0 ? (progress/total)*100 : 0}%; background-color: #3B82F6;" title="진행중: \${progress}건"></div>
-            <div style="width: \${total > 0 ? (done/total)*100 : 0}%; background-color: #10B981;" title="완료: \${done}건"></div>
+          <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden flex border border-white/[0.06]">
+            <div style="width: \${total > 0 ? (pending/total)*100 : 0}%; background-color: #525462;" title="대기: \${pending}건"></div>
+            <div style="width: \${total > 0 ? (progress/total)*100 : 0}%; background-color: #9B9DA8;" title="진행: \${progress}건"></div>
+            <div style="width: \${total > 0 ? (done/total)*100 : 0}%; background-color: #E4DFD7;" title="완료: \${done}건"></div>
           </div>
-          <div class="flex items-center gap-4 text-[11px] text-[#78716C] pt-1">
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 대기 (\${pending})</span>
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> 진행중 (\${progress})</span>
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 완료 (\${done})</span>
+          <div class="flex items-center gap-4 text-[11px] font-mono text-neutral-400 pt-1">
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#525462]"></span> 백로그 (\${pending})</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#9B9DA8]"></span> 구현 중 (\${progress})</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#E4DFD7]"></span> 배포 완료 (\${done})</span>
           </div>
         </div>
 
         <!-- Recent Priority Feed with Item Drawer Integration -->
-        <div class="bg-white p-4 rounded-xl border border-[#E5DFD3] space-y-3">
+        <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-3">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-xs sm:text-sm font-bold text-[#1C1917]">긴급 / 최근 요청 피드</h3>
-              <p class="text-[11px] text-[#78716C]">카드를 클릭하면 상세 내역 수정 드로어가 열립니다.</p>
+              <h3 class="text-xs sm:text-sm font-bold text-[#F1F1F4]">핵심 엔지니어링 스펙 & 백로그 피드</h3>
+              <p class="text-[11px] text-neutral-400">항목을 클릭하면 실시간 상세 수정 드로어가 열립니다.</p>
             </div>
-            <button onclick="openAddModal()" class="text-xs font-bold text-[#6B1D42] hover:underline cursor-pointer">+ 신규 추가</button>
+            <button onclick="openAddModal()" class="text-xs font-medium text-[#E4DFD7] hover:underline cursor-pointer">+ 스펙 추가</button>
           </div>
           <div class="space-y-2">
             \${data.slice(0, 4).map(item => \`
-              <div onclick="openItemDetail('\${item.id}')" class="p-3 bg-[#FAF7F2] hover:bg-white rounded-xl border border-[#E5DFD3] hover:border-[#6B1D42] transition-all flex items-center justify-between cursor-pointer shadow-2xs">
+              <div onclick="openItemDetail('\${item.id}')" class="p-3 bg-[#13141B] hover:bg-[#1A1B24] rounded-[4px] border border-white/[0.06] hover:border-white/15 transition-all flex items-center justify-between cursor-pointer">
                 <div>
                   <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold \${
-                      item.status === '완료' ? 'bg-emerald-100 text-emerald-800' :
-                      item.status === '진행중' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
-                    }">\${item.status}</span>
-                    <span class="text-xs font-bold text-[#1C1917]">\${escapeHtml(item.title)}</span>
-                    \${item.amount ? \`<span class="text-[11px] font-mono text-[#78716C]">(\${escapeHtml(item.amount)})</span>\` : ''}
+                    <span class="px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-medium bg-white/[0.06] text-[#E4DFD7] border border-white/[0.08]">\${item.status}</span>
+                    <span class="text-xs font-semibold text-[#F1F1F4]">\${escapeHtml(item.title)}</span>
+                    \${item.amount ? \`<span class="text-[11px] font-mono text-neutral-400">(\${escapeHtml(item.amount)})</span>\` : ''}
                   </div>
-                  <p class="text-[11px] text-[#78716C] mt-0.5 line-clamp-1">\${escapeHtml(item.memo)}</p>
+                  <p class="text-[11px] text-neutral-400 mt-1 line-clamp-1">\${escapeHtml(item.memo)}</p>
                 </div>
-                <button onclick="toggleItemStatus('\${item.id}', event)" class="text-xs px-2.5 py-1 rounded-lg border border-[#D5CCBC] bg-white text-[#44403C] hover:bg-[#EFE9DC] font-bold cursor-pointer shrink-0">
+                <button onclick="toggleItemStatus('\${item.id}', event)" class="text-xs px-2.5 py-1 rounded-[3px] border border-white/[0.08] bg-[#171820] text-neutral-300 hover:text-white hover:bg-[#20222D] font-medium cursor-pointer shrink-0">
                   상태전환
                 </button>
               </div>
@@ -817,12 +784,12 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       \`;
     }
 
-    // 2. KANBAN VIEW SYNTHESIS (Card Click opens Drawer)
+    // 2. KANBAN VIEW SYNTHESIS
     function renderKanbanView(container, data) {
       const columns = [
-        { id: '대기', title: '접수 / 대기', color: 'border-amber-400 bg-amber-50/50', badge: 'bg-amber-100 text-amber-800' },
-        { id: '진행중', title: '진행 / 처리중', color: 'border-blue-400 bg-blue-50/50', badge: 'bg-blue-100 text-blue-800' },
-        { id: '완료', title: '승인 / 완료', color: 'border-emerald-400 bg-emerald-50/50', badge: 'bg-emerald-100 text-emerald-800' }
+        { id: '대기', title: '백로그 / 요구사항' },
+        { id: '진행중', title: '스프린트 구현 중' },
+        { id: '완료', title: '배포 및 테스트 완료' }
       ];
 
       container.innerHTML = \`
@@ -830,32 +797,32 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
           \${columns.map(col => {
             const colItems = data.filter(d => d.status === col.id);
             return \`
-              <div class="bg-white rounded-2xl border-2 \${col.color} p-3 flex flex-col min-h-[420px] shadow-2xs">
-                <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#E5DFD3]">
-                  <span class="text-xs font-bold text-[#1C1917]">\${col.title}</span>
-                  <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full \${col.badge}">\${colItems.length}</span>
+              <div class="bg-[#171820] rounded-[4px] border border-white/[0.08] p-3 flex flex-col min-h-[420px]">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.08]">
+                  <span class="text-xs font-semibold text-[#F1F1F4] uppercase tracking-wide">\${col.title}</span>
+                  <span class="text-[11px] font-mono font-medium px-2 py-0.5 rounded-[3px] bg-white/[0.06] text-[#E4DFD7] border border-white/[0.08]">\${colItems.length}</span>
                 </div>
-                <div class="flex-1 space-y-2.5 overflow-y-auto custom-scroll pr-1">
+                <div class="flex-1 space-y-2 overflow-y-auto custom-scroll pr-1">
                   \${colItems.length === 0 ? \`
-                    <div class="py-8 text-center text-xs text-[#A8A29E] border border-dashed border-[#E5DFD3] rounded-xl">카드가 없습니다</div>
+                    <div class="py-8 text-center text-xs text-neutral-500 border border-dashed border-white/[0.08] rounded-[4px]">등록된 스펙이 없습니다</div>
                   \` : colItems.map(item => \`
-                    <div onclick="openItemDetail('\${item.id}')" class="p-3 bg-white rounded-xl border border-[#D5CCBC] shadow-xs hover:border-[#6B1D42] transition-all space-y-2 cursor-pointer">
+                    <div onclick="openItemDetail('\${item.id}')" class="p-3 bg-[#13141B] rounded-[4px] border border-white/[0.06] hover:border-white/20 transition-all space-y-2 cursor-pointer">
                       <div class="flex items-start justify-between gap-1">
-                        <h4 class="text-xs font-bold text-[#1C1917] leading-snug">\${escapeHtml(item.title)}</h4>
-                        <button onclick="deleteItem('\${item.id}', event)" class="text-[#A8A29E] hover:text-red-500 text-xs">✕</button>
+                        <h4 class="text-xs font-semibold text-[#F1F1F4] leading-snug">\${escapeHtml(item.title)}</h4>
+                        <button onclick="deleteItem('\${item.id}', event)" class="text-neutral-500 hover:text-white text-xs">✕</button>
                       </div>
-                      <p class="text-[11px] text-[#57534E] leading-relaxed line-clamp-2">\${escapeHtml(item.memo)}</p>
-                      <div class="flex items-center justify-between pt-1 border-t border-[#F1ECE1] text-[10px] text-[#78716C]">
+                      <p class="text-[11px] text-neutral-400 leading-relaxed line-clamp-2">\${escapeHtml(item.memo)}</p>
+                      <div class="flex items-center justify-between pt-1 border-t border-white/[0.06] text-[10px] font-mono text-neutral-400">
                         <span>\${escapeHtml(item.amount || item.contact || '상세보기')}</span>
-                        <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-0.5 rounded bg-[#FAF7F2] hover:bg-[#EFE9DC] text-[#44403C] font-bold border border-[#D5CCBC] cursor-pointer">
+                        <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-0.5 rounded-[3px] bg-[#171820] hover:bg-[#222430] text-neutral-300 hover:text-[#E4DFD7] border border-white/[0.08] cursor-pointer">
                           다음 ➔
                         </button>
                       </div>
                     </div>
                   \`).join('')}
                 </div>
-                <button onclick="openAddModal()" class="w-full mt-2 py-1.5 rounded-xl border border-dashed border-[#D5CCBC] hover:border-[#6B1D42] text-xs font-bold text-[#78716C] hover:text-[#6B1D42] transition-colors cursor-pointer">
-                  + 카드 추가
+                <button onclick="openAddModal()" class="w-full mt-2 py-1.5 rounded-[4px] border border-dashed border-white/10 hover:border-white/30 text-xs font-medium text-neutral-400 hover:text-white transition-colors cursor-pointer">
+                  + 스펙 카드 추가
                 </button>
               </div>
             \`;
@@ -864,7 +831,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       \`;
     }
 
-    // 3. TABLE / LIST VIEW SYNTHESIS (Row click opens Drawer)
+    // 3. TABLE / LIST VIEW SYNTHESIS
     function renderTableView(container, data) {
       let list = data;
       if (currentFilter !== 'ALL') {
@@ -881,61 +848,58 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 
       container.innerHTML = \`
         <!-- Search & Status Filter Bar -->
-        <div class="flex flex-col sm:flex-row gap-2 items-center justify-between bg-white p-2.5 rounded-xl border border-[#E5DFD3]">
+        <div class="flex flex-col sm:flex-row gap-2 items-center justify-between bg-[#171820] p-2.5 rounded-[4px] border border-white/[0.08]">
           <div class="relative w-full sm:w-64">
             <input 
               id="searchInput" 
               type="text" 
               value="\${q}"
-              placeholder="이름, 연락처, 메모 검색..." 
+              placeholder="스펙명, 엔지니어, 메모 검색..." 
               oninput="renderActiveScreen()"
-              class="w-full pl-8 pr-3 py-1.5 text-xs bg-[#FAF7F2] rounded-lg border border-[#E5DFD3] focus:outline-none focus:border-brand"
+              class="w-full pl-7 pr-3 py-1.5 text-xs bg-[#0E0F14] rounded-[4px] border border-white/[0.08] text-[#F1F1F4] focus:outline-none focus:border-[#E4DFD7]/40"
             />
-            <span class="absolute left-2.5 top-1.5 text-xs text-[#A8A29E]">🔍</span>
+            <span class="absolute left-2.5 top-1.5 text-xs text-neutral-500">🔍</span>
           </div>
 
           <div class="flex items-center gap-1 w-full sm:w-auto overflow-x-auto">
-            <button onclick="setFilter('ALL')" class="px-2.5 py-1 text-xs font-bold rounded-lg \${currentFilter === 'ALL' ? 'bg-[#292524] text-white' : 'text-[#57534E] hover:bg-[#FAF7F2]'}">전체 (\${data.length})</button>
-            <button onclick="setFilter('대기')" class="px-2.5 py-1 text-xs font-bold rounded-lg \${currentFilter === '대기' ? 'bg-[#292524] text-white' : 'text-[#57534E] hover:bg-[#FAF7F2]'}">대기</button>
-            <button onclick="setFilter('진행중')" class="px-2.5 py-1 text-xs font-bold rounded-lg \${currentFilter === '진행중' ? 'bg-[#292524] text-white' : 'text-[#57534E] hover:bg-[#FAF7F2]'}">진행중</button>
-            <button onclick="setFilter('완료')" class="px-2.5 py-1 text-xs font-bold rounded-lg \${currentFilter === '완료' ? 'bg-[#292524] text-white' : 'text-[#57534E] hover:bg-[#FAF7F2]'}">완료</button>
+            <button onclick="setFilter('ALL')" class="px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] \${currentFilter === 'ALL' ? 'bg-[#E4DFD7] text-[#090A0D] font-semibold' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}">전체 (\${data.length})</button>
+            <button onclick="setFilter('대기')" class="px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] \${currentFilter === '대기' ? 'bg-[#E4DFD7] text-[#090A0D] font-semibold' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}">대기</button>
+            <button onclick="setFilter('진행중')" class="px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] \${currentFilter === '진행중' ? 'bg-[#E4DFD7] text-[#090A0D] font-semibold' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}">진행중</button>
+            <button onclick="setFilter('완료')" class="px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] \${currentFilter === '완료' ? 'bg-[#E4DFD7] text-[#090A0D] font-semibold' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}">완료</button>
           </div>
         </div>
 
         <!-- Table Grid -->
-        <div class="bg-white rounded-xl border border-[#E5DFD3] overflow-hidden shadow-2xs">
+        <div class="bg-[#171820] rounded-[4px] border border-white/[0.08] overflow-hidden">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-[#FAF7F2] border-b border-[#E5DFD3] text-[#57534E] font-bold">
-                  <th class="p-3">항목명 / 제목</th>
+                <tr class="bg-[#13141B] border-b border-white/[0.08] text-neutral-400 font-mono uppercase text-[11px]">
+                  <th class="p-3">기능 명세 / 엔드포인트</th>
                   <th class="p-3">상태</th>
-                  <th class="p-3">연락처 / 기안자</th>
-                  <th class="p-3">일시 / 수량</th>
-                  <th class="p-3">특이사항 메모</th>
+                  <th class="p-3">담당 엔지니어</th>
+                  <th class="p-3">버전 / 지표</th>
+                  <th class="p-3">구현 메모</th>
                   <th class="p-3 text-right">관리</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-[#E5DFD3]">
+              <tbody class="divide-y divide-white/[0.05]">
                 \${list.length === 0 ? \`
                   <tr>
-                    <td colspan="6" class="p-8 text-center text-xs text-[#A8A29E]">조건에 일치하는 데이터가 없습니다.</td>
+                    <td colspan="6" class="p-8 text-center text-xs text-neutral-500 font-mono">일치하는 기능 명세 데이터가 없습니다.</td>
                   </tr>
                 \` : list.map(item => \`
-                  <tr onclick="openItemDetail('\${item.id}')" class="hover:bg-[#FAF7F2]/80 transition-colors cursor-pointer">
-                    <td class="p-3 font-bold text-[#1C1917]">\${escapeHtml(item.title)}</td>
+                  <tr onclick="openItemDetail('\${item.id}')" class="hover:bg-white/[0.03] transition-colors cursor-pointer">
+                    <td class="p-3 font-medium text-[#F1F1F4]">\${escapeHtml(item.title)}</td>
                     <td class="p-3">
-                      <span class="px-2 py-0.5 rounded text-[10px] font-bold \${
-                        item.status === '완료' ? 'bg-emerald-100 text-emerald-800' :
-                        item.status === '진행중' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
-                      }">\${item.status}</span>
+                      <span class="px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-medium bg-white/[0.06] text-[#E4DFD7] border border-white/[0.08]">\${item.status}</span>
                     </td>
-                    <td class="p-3 text-[#57534E]">\${escapeHtml(item.contact || '-')}</td>
-                    <td class="p-3 font-mono text-[#78716C]">\${escapeHtml(item.amount || '-')}</td>
-                    <td class="p-3 text-[#57534E] max-w-xs truncate">\${escapeHtml(item.memo)}</td>
+                    <td class="p-3 text-neutral-300 font-mono text-[11px]">\${escapeHtml(item.contact || '-')}</td>
+                    <td class="p-3 font-mono text-neutral-400 text-[11px]">\${escapeHtml(item.amount || '-')}</td>
+                    <td class="p-3 text-neutral-400 max-w-xs truncate text-[11px]">\${escapeHtml(item.memo)}</td>
                     <td class="p-3 text-right space-x-1 whitespace-nowrap" onclick="event.stopPropagation()">
-                      <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-1 rounded bg-[#FAF7F2] hover:bg-[#EFE9DC] text-[#44403C] font-bold border border-[#D5CCBC] cursor-pointer">상태전환</button>
-                      <button onclick="deleteItem('\${item.id}', event)" class="px-2 py-1 rounded text-red-500 hover:bg-red-50 font-bold cursor-pointer">삭제</button>
+                      <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-1 rounded-[3px] bg-[#171820] hover:bg-[#20222D] text-neutral-300 hover:text-white font-medium border border-white/[0.08] cursor-pointer">상태전환</button>
+                      <button onclick="deleteItem('\${item.id}', event)" class="px-2 py-1 rounded-[3px] text-neutral-500 hover:text-rose-400 font-medium cursor-pointer">삭제</button>
                     </td>
                   </tr>
                 \`).join('')}
@@ -946,40 +910,43 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       \`;
     }
 
-    // 4. TIMELINE / RESERVATION VIEW SYNTHESIS (Click slot to book)
+    // 4. TIMELINE / MILESTONES VIEW SYNTHESIS
     function renderTimelineView(container, data) {
-      const timeslots = ['09:00', '10:30', '11:45', '13:00', '14:30', '16:00', '17:30'];
+      const milestones = [
+        { time: '09:00', label: 'Sprint-01', desc: '핵심 도메인 스키마 및 DB 마이그레이션' },
+        { time: '10:30', label: 'Sprint-02', desc: 'OAuth 2.0 세션 및 JWT 인증 게이트웨이' },
+        { time: '13:00', label: 'Sprint-03', desc: '반응형 인터랙티브 캔버스 & 상태 동기화' },
+        { time: '15:00', label: 'Sprint-04', desc: 'Stripe 결제 웹훅 연동 및 구독 플랜 로직' },
+        { time: '17:00', label: 'Sprint-05', desc: 'E2E 통합 테스트 및 클라우드 배포 파이프라인' }
+      ];
 
       container.innerHTML = \`
-        <div class="bg-white p-4 rounded-xl border border-[#E5DFD3] space-y-4">
-          <div class="flex items-center justify-between border-b border-[#E5DFD3] pb-3">
+        <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-4">
+          <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
             <div class="flex items-center gap-2">
-              <span class="text-base font-bold text-[#1C1917]">📅 당일 시간대별 예약 타임라인</span>
-              <span class="text-xs px-2 py-0.5 rounded-full bg-[#6B1D42]/10 text-[#6B1D42] font-mono font-bold">2026-09-25 (금)</span>
+              <span class="text-sm font-bold text-[#F1F1F4] uppercase tracking-wider">🚀 스프린트 릴리스 & 엔지니어링 마일스톤</span>
+              <span class="text-xs px-2 py-0.5 rounded-[3px] bg-white/[0.06] text-[#E4DFD7] font-mono border border-white/[0.08]">Active Pipeline</span>
             </div>
-            <button onclick="openAddModal()" class="px-3 py-1.5 rounded-xl bg-[#6B1D42] text-white text-xs font-bold cursor-pointer">
-              + 예약 슬롯 추가
+            <button onclick="openAddModal()" class="px-3 py-1.5 rounded-[4px] bg-[#E4DFD7] text-[#090A0D] text-xs font-medium cursor-pointer hover:bg-[#F2ECE3] shadow-xs">
+              + 마일스톤 추가
             </button>
           </div>
 
-          <div class="space-y-3">
-            \${timeslots.map((slot, idx) => {
+          <div class="space-y-2.5">
+            \${milestones.map((ms, idx) => {
               const matchedItem = data[idx % data.length];
               return \`
-                <div onclick="openItemDetail('\${matchedItem.id}')" class="flex items-start gap-3 p-3 rounded-xl border cursor-pointer hover:border-brand transition-all \${idx % 2 === 0 ? 'bg-[#FAF7F2] border-[#E5DFD3]' : 'bg-white border-[#D5CCBC]'}">
-                  <div class="w-16 font-mono text-xs font-bold text-[#6B1D42] pt-1 shrink-0">\${slot}</div>
+                <div onclick="openItemDetail('\${matchedItem.id}')" class="flex items-start gap-3 p-3 rounded-[4px] border border-white/[0.06] bg-[#13141B] hover:border-white/20 cursor-pointer transition-all">
+                  <div class="w-20 font-mono text-xs font-semibold text-[#E4DFD7] pt-1 shrink-0">\${ms.time}</div>
                   <div class="flex-1 space-y-1">
                     <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded text-[10px] font-bold \${
-                        matchedItem.status === '완료' ? 'bg-emerald-100 text-emerald-800' :
-                        matchedItem.status === '진행중' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
-                      }">\${matchedItem.status}</span>
-                      <h4 class="text-xs font-bold text-[#1C1917]">\${escapeHtml(matchedItem.title)}</h4>
-                      <span class="text-[11px] text-[#78716C]">(\${escapeHtml(matchedItem.contact || '보호자 예약')})</span>
+                      <span class="px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-medium bg-white/[0.06] text-neutral-300 border border-white/[0.08]">\${ms.label}</span>
+                      <h4 class="text-xs font-semibold text-[#F1F1F4]">\${escapeHtml(matchedItem.title)}</h4>
+                      <span class="text-[11px] text-neutral-400 font-mono">(\${escapeHtml(matchedItem.contact || '엔지니어')})</span>
                     </div>
-                    <p class="text-xs text-[#57534E]">\${escapeHtml(matchedItem.memo)}</p>
+                    <p class="text-xs text-neutral-400">\${escapeHtml(ms.desc)} · \${escapeHtml(matchedItem.memo)}</p>
                   </div>
-                  <button onclick="toggleItemStatus('\${matchedItem.id}', event)" class="text-xs px-2.5 py-1 rounded-lg border border-[#D5CCBC] bg-white hover:bg-[#EFE9DC] text-[#44403C] font-bold cursor-pointer shrink-0">
+                  <button onclick="toggleItemStatus('\${matchedItem.id}', event)" class="text-xs px-2.5 py-1 rounded-[3px] border border-white/[0.08] bg-[#171820] hover:bg-[#20222D] text-neutral-300 hover:text-white font-medium cursor-pointer shrink-0">
                     상태변경
                   </button>
                 </div>
@@ -990,58 +957,58 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       \`;
     }
 
-    // 5. CALCULATOR / QUOTE ESTIMATE VIEW SYNTHESIS
+    // 5. CALCULATOR / ARCHITECTURE ESTIMATE VIEW SYNTHESIS
     function renderCalculatorView(container, data) {
       container.innerHTML = \`
-        <div class="bg-white p-5 rounded-2xl border-2 border-[#E5DFD3] space-y-5">
-          <div class="border-b border-[#E5DFD3] pb-3">
-            <h3 class="text-base font-bold text-[#1C1917]">💡 실시간 견적 옵션 시뮬레이터</h3>
-            <p class="text-xs text-[#78716C] mt-0.5">선택한 서비스 항목에 따라 실시간 총액이 자동 합산 계산됩니다.</p>
+        <div class="bg-[#171820] p-5 rounded-[4px] border border-white/[0.08] space-y-5">
+          <div class="border-b border-white/[0.08] pb-3">
+            <h3 class="text-sm font-bold text-[#F1F1F4] uppercase tracking-wider">💡 기술 스택 & 기능 명세 견적 시뮬레이터</h3>
+            <p class="text-xs text-neutral-400 mt-0.5">선택한 기능 모듈에 따라 개발 일정과 예상 리소스가 실시간 산출됩니다.</p>
           </div>
 
-          <div class="space-y-3 text-xs">
-            <label class="flex items-center justify-between p-3 rounded-xl border border-[#E5DFD3] bg-[#FAF7F2] cursor-pointer hover:border-brand">
+          <div class="space-y-2.5 text-xs">
+            <label class="flex items-center justify-between p-3.5 rounded-[4px] border border-white/[0.06] bg-[#13141B] cursor-pointer hover:border-white/20">
               <div class="flex items-center gap-2.5">
-                <input type="checkbox" id="calcOpt1" checked onchange="recalculateQuote()" class="w-4 h-4 accent-[#6B1D42]">
+                <input type="checkbox" id="calcOpt1" checked onchange="recalculateQuote()" class="w-4 h-4 accent-[#E4DFD7]">
                 <div>
-                  <div class="font-bold text-[#1C1917]">기본 패키지 / 핵심 도메인 구축</div>
-                  <div class="text-[11px] text-[#78716C]">기본 UI 컴포넌트 및 로컬 스토리지 연동</div>
+                  <div class="font-semibold text-[#F1F1F4]">코어 풀스택 아키텍처 (Next.js / Vite SPA + Edge Runtime)</div>
+                  <div class="text-[11px] text-neutral-400">TypeScript 타입 안정성, 레이아웃 반응형 및 로컬 캐시 엔진</div>
                 </div>
               </div>
-              <span class="font-mono font-bold text-[#6B1D42]">1,200,000원</span>
+              <span class="font-mono font-medium text-[#E4DFD7]">2,500,000원 (2주)</span>
             </label>
 
-            <label class="flex items-center justify-between p-3 rounded-xl border border-[#E5DFD3] bg-[#FAF7F2] cursor-pointer hover:border-brand">
+            <label class="flex items-center justify-between p-3.5 rounded-[4px] border border-white/[0.06] bg-[#13141B] cursor-pointer hover:border-white/20">
               <div class="flex items-center gap-2.5">
-                <input type="checkbox" id="calcOpt2" checked onchange="recalculateQuote()" class="w-4 h-4 accent-[#6B1D42]">
+                <input type="checkbox" id="calcOpt2" checked onchange="recalculateQuote()" class="w-4 h-4 accent-[#E4DFD7]">
                 <div>
-                  <div class="font-bold text-[#1C1917]">실시간 알림 및 상태 변경 파이프라인</div>
-                  <div class="text-[11px] text-[#78716C]">대기 ➔ 진행중 ➔ 완료 원클릭 상태 전환</div>
+                  <div class="font-semibold text-[#F1F1F4]">실시간 WebSocket / SSE 데이터 스트리밍 & 상태 동기화</div>
+                  <div class="text-[11px] text-neutral-400">P99 < 35ms 저지연 양방향 메시징 및 재연결 백프레셔 제어</div>
                 </div>
               </div>
-              <span class="font-mono font-bold text-[#6B1D42]">500,000원</span>
+              <span class="font-mono font-medium text-[#E4DFD7]">1,200,000원 (1주)</span>
             </label>
 
-            <label class="flex items-center justify-between p-3 rounded-xl border border-[#E5DFD3] bg-[#FAF7F2] cursor-pointer hover:border-brand">
+            <label class="flex items-center justify-between p-3.5 rounded-[4px] border border-white/[0.06] bg-[#13141B] cursor-pointer hover:border-white/20">
               <div class="flex items-center gap-2.5">
-                <input type="checkbox" id="calcOpt3" onchange="recalculateQuote()" class="w-4 h-4 accent-[#6B1D42]">
+                <input type="checkbox" id="calcOpt3" onchange="recalculateQuote()" class="w-4 h-4 accent-[#E4DFD7]">
                 <div>
-                  <div class="font-bold text-[#1C1917]">데이터 엑셀/CSV 내보내기 & 통계 차트</div>
-                  <div class="text-[11px] text-[#78716C]">월별 집계 보고서 및 백업 아카이빙</div>
+                  <div class="font-semibold text-[#F1F1F4]">엔터프라이즈 RBAC 보안 인증 및 규정 준수 감사 로깅</div>
+                  <div class="text-[11px] text-neutral-400">JWT 세션 무중단 로테이션, 변조 불가 감사 로그 스트림</div>
                 </div>
               </div>
-              <span class="font-mono font-bold text-[#6B1D42]">350,000원</span>
+              <span class="font-mono font-medium text-[#E4DFD7]">800,000원 (3일)</span>
             </label>
           </div>
 
           <!-- Total Calculation Bar -->
-          <div class="p-4 rounded-xl bg-[#F7EFF3] border-2 border-[#6B1D42]/30 flex items-center justify-between">
+          <div class="p-4 rounded-[4px] bg-[#13141B] border border-white/[0.08] flex items-center justify-between">
             <div>
-              <span class="text-xs text-[#6B1D42] font-bold">예상 총 견적액 (VAT 포함)</span>
-              <div id="quoteTotalDisplay" class="text-2xl font-extrabold text-[#6B1D42] font-mono mt-0.5">1,700,000원</div>
+              <span class="text-xs text-neutral-400 font-mono">예상 개발 예산 산출 (VAT 별도)</span>
+              <div id="quoteTotalDisplay" class="text-2xl font-bold text-[#E4DFD7] font-mono mt-0.5">3,700,000원</div>
             </div>
-            <button onclick="submitQuoteOrder()" class="px-5 py-2.5 rounded-xl bg-[#6B1D42] text-white text-xs font-bold hover:opacity-95 cursor-pointer shadow-md">
-              이 견적으로 상담 접수하기 ➔
+            <button onclick="submitQuoteOrder()" class="px-5 py-2.5 rounded-[4px] bg-[#E4DFD7] text-[#090A0D] text-xs font-medium hover:bg-[#F2ECE3] cursor-pointer shadow-xs">
+              기능 개발 명세 확정 ➔
             </button>
           </div>
         </div>
@@ -1055,42 +1022,42 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       container.innerHTML = \`
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="bg-white p-4 rounded-xl border border-[#E5DFD3]">
-              <span class="text-xs text-[#78716C]">월간 총 처리 건수</span>
-              <div class="text-2xl font-extrabold text-[#1C1917] mt-1">\${total * 12} 건</div>
-              <span class="text-[11px] text-emerald-600 font-bold">↑ 전월 대비 18% 증가</span>
+            <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08]">
+              <span class="text-xs font-mono text-neutral-400">월간 API 처리량</span>
+              <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">\${(total * 460).toLocaleString()} k req</div>
+              <span class="text-[11px] font-mono text-[#E4DFD7]">↑ 전월 대비 24% 증가</span>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-[#E5DFD3]">
-              <span class="text-xs text-[#78716C]">평균 리드타임</span>
-              <div class="text-2xl font-extrabold text-blue-600 mt-1">4.2 시간</div>
-              <span class="text-[11px] text-blue-600 font-bold">↓ 3일에서 대폭 단축</span>
+            <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08]">
+              <span class="text-xs font-mono text-neutral-400">P99 응답 레이턴시</span>
+              <div class="text-2xl font-bold font-mono text-[#E4DFD7] mt-1">38 ms</div>
+              <span class="text-[11px] font-mono text-neutral-400">↓ 캐시 최적화로 65% 개선</span>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-[#E5DFD3]">
-              <span class="text-xs text-[#78716C]">목표 달성 지수</span>
-              <div class="text-2xl font-extrabold text-emerald-600 mt-1">94.8%</div>
-              <span class="text-[11px] text-emerald-600 font-bold">★ 최우수 달성</span>
+            <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08]">
+              <span class="text-xs font-mono text-neutral-400">서비스 가용성 (SLA)</span>
+              <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">99.98%</div>
+              <span class="text-[11px] font-mono text-neutral-400">★ 엔터프라이즈 SLA 충족</span>
             </div>
           </div>
 
           <!-- Bar Chart Simulation -->
-          <div class="bg-white p-4 rounded-xl border border-[#E5DFD3] space-y-3">
-            <h4 class="text-xs font-bold text-[#1C1917]">주간별 완료 성과 지표</h4>
-            <div class="space-y-2 text-xs">
+          <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-3">
+            <h4 class="text-xs font-bold text-[#F1F1F4] uppercase tracking-wider">주간별 배포 파이프라인 통과율 & 테스트 커버리지</h4>
+            <div class="space-y-2.5 text-xs">
               <div>
-                <div class="flex justify-between text-[11px] text-[#57534E] mb-1"><span>1주차</span><span>12건</span></div>
-                <div class="w-full h-2.5 bg-[#FAF7F2] rounded-full overflow-hidden border border-[#E5DFD3]"><div class="h-full bg-[#6B1D42]" style="width: 45%"></div></div>
+                <div class="flex justify-between text-[11px] font-mono text-neutral-400 mb-1"><span>Sprint-01 (Core Schema)</span><span>94%</span></div>
+                <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden border border-white/[0.06]"><div class="h-full bg-[#E4DFD7]" style="width: 94%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-[11px] text-[#57534E] mb-1"><span>2주차</span><span>24건</span></div>
-                <div class="w-full h-2.5 bg-[#FAF7F2] rounded-full overflow-hidden border border-[#E5DFD3]"><div class="h-full bg-[#6B1D42]" style="width: 75%"></div></div>
+                <div class="flex justify-between text-[11px] font-mono text-neutral-400 mb-1"><span>Sprint-02 (API Gateway)</span><span>98%</span></div>
+                <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden border border-white/[0.06]"><div class="h-full bg-[#E4DFD7]" style="width: 98%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-[11px] text-[#57534E] mb-1"><span>3주차</span><span>31건</span></div>
-                <div class="w-full h-2.5 bg-[#FAF7F2] rounded-full overflow-hidden border border-[#E5DFD3]"><div class="h-full bg-[#6B1D42]" style="width: 90%"></div></div>
+                <div class="flex justify-between text-[11px] font-mono text-neutral-400 mb-1"><span>Sprint-03 (SSE Stream)</span><span>91%</span></div>
+                <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden border border-white/[0.06]"><div class="h-full bg-[#E4DFD7]" style="width: 91%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-[11px] text-[#57534E] mb-1"><span>4주차 (진행중)</span><span>18건</span></div>
-                <div class="w-full h-2.5 bg-[#FAF7F2] rounded-full overflow-hidden border border-[#E5DFD3]"><div class="h-full bg-emerald-500" style="width: 60%"></div></div>
+                <div class="flex justify-between text-[11px] font-mono text-neutral-400 mb-1"><span>Sprint-04 (Stripe Billing)</span><span>88%</span></div>
+                <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden border border-white/[0.06]"><div class="h-full bg-neutral-400" style="width: 88%"></div></div>
               </div>
             </div>
           </div>
@@ -1101,32 +1068,32 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     // 7. FORM VIEW SYNTHESIS
     function renderFormView(container) {
       container.innerHTML = \`
-        <div class="bg-white p-5 rounded-2xl border border-[#E5DFD3] space-y-4 max-w-xl mx-auto">
-          <div class="border-b border-[#E5DFD3] pb-3">
-            <h3 class="text-base font-bold text-[#1C1917]">📝 신규 접수 등록 신청서</h3>
-            <p class="text-xs text-[#78716C] mt-0.5">상세 항목을 작성하고 등록하면 즉시 대시보드와 목록에 반영됩니다.</p>
+        <div class="bg-[#171820] p-5 rounded-[4px] border border-white/[0.08] space-y-4 max-w-xl mx-auto">
+          <div class="border-b border-white/[0.08] pb-3">
+            <h3 class="text-sm font-bold text-[#F1F1F4] uppercase tracking-wider">📝 신규 기능 스펙 & 엔드포인트 명세 등록</h3>
+            <p class="text-xs text-neutral-400 mt-0.5">작성된 엔지니어링 항목은 실시간 대시보드와 칸반 파이프라인에 즉시 반영됩니다.</p>
           </div>
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block font-bold text-[#44403C] mb-1">제목 / 품목 / 신청인 <span class="text-red-500">*</span></label>
-              <input id="inlineFormTitle" type="text" placeholder="예: 신규 정기 예약 접수" class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none focus:ring-1 focus:ring-brand">
+              <label class="block font-medium text-neutral-300 mb-1">기능명 / 엔드포인트 <span class="text-neutral-500">*</span></label>
+              <input id="inlineFormTitle" type="text" placeholder="예: [FEAT] 엔터프라이즈 SSO SAML 2.0 연동" class="w-full p-2.5 rounded-[4px] border border-white/[0.08] bg-[#0E0F14] text-[#F1F1F4] text-xs focus:outline-none focus:border-[#E4DFD7]/40">
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block font-bold text-[#44403C] mb-1">연락처 / 기안자</label>
-                <input id="inlineFormContact" type="text" placeholder="010-0000-0000" class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none focus:ring-1 focus:ring-brand">
+                <label class="block font-medium text-neutral-300 mb-1">담당 엔지니어</label>
+                <input id="inlineFormContact" type="text" placeholder="auth-lead@service.io" class="w-full p-2.5 rounded-[4px] border border-white/[0.08] bg-[#0E0F14] text-[#F1F1F4] text-xs focus:outline-none focus:border-[#E4DFD7]/40">
               </div>
               <div>
-                <label class="block font-bold text-[#44403C] mb-1">희망일시 / 금액</label>
-                <input id="inlineFormAmount" type="text" placeholder="오후 15:00" class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none focus:ring-1 focus:ring-brand">
+                <label class="block font-medium text-neutral-300 mb-1">버전 / 스프린트</label>
+                <input id="inlineFormAmount" type="text" placeholder="v1.3.0 / Sprint-04" class="w-full p-2.5 rounded-[4px] border border-white/[0.08] bg-[#0E0F14] text-[#F1F1F4] text-xs focus:outline-none focus:border-[#E4DFD7]/40 font-mono">
               </div>
             </div>
             <div>
-              <label class="block font-bold text-[#44403C] mb-1">상세 요청 메모</label>
-              <textarea id="inlineFormMemo" rows="4" placeholder="주의사항이나 특이사항을 적어주세요." class="w-full p-2.5 rounded-lg border border-[#D5CCBC] bg-[#FAF7F2] text-xs focus:outline-none focus:ring-1 focus:ring-brand"></textarea>
+              <label class="block font-medium text-neutral-300 mb-1">상세 구현 요구사항 및 메모</label>
+              <textarea id="inlineFormMemo" rows="4" placeholder="의존성 패키지, 보안 고려사항, API 입력/출력 인터페이스 규격을 적어주세요." class="w-full p-2.5 rounded-[4px] border border-white/[0.08] bg-[#0E0F14] text-[#F1F1F4] text-xs focus:outline-none focus:border-[#E4DFD7]/40 leading-relaxed"></textarea>
             </div>
-            <button onclick="submitInlineForm()" class="w-full py-2.5 rounded-xl bg-[#6B1D42] text-white text-xs font-bold hover:opacity-95 cursor-pointer shadow-md">
-              신규 등록 완료하기 ➔
+            <button onclick="submitInlineForm()" class="w-full py-2.5 rounded-[4px] bg-[#E4DFD7] text-[#090A0D] text-xs font-medium hover:bg-[#F2ECE3] cursor-pointer shadow-xs">
+              스펙 등록 완료하기 ➔
             </button>
           </div>
         </div>
@@ -1140,28 +1107,28 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 
     function recalculateQuote() {
       let sum = 0;
-      if (document.getElementById('calcOpt1')?.checked) sum += 1200000;
-      if (document.getElementById('calcOpt2')?.checked) sum += 500000;
-      if (document.getElementById('calcOpt3')?.checked) sum += 350000;
+      if (document.getElementById('calcOpt1')?.checked) sum += 2500000;
+      if (document.getElementById('calcOpt2')?.checked) sum += 1200000;
+      if (document.getElementById('calcOpt3')?.checked) sum += 800000;
       const disp = document.getElementById('quoteTotalDisplay');
       if (disp) disp.innerText = sum.toLocaleString() + '원';
     }
 
     function submitQuoteOrder() {
-      const sumText = document.getElementById('quoteTotalDisplay')?.innerText || '1,700,000원';
+      const sumText = document.getElementById('quoteTotalDisplay')?.innerText || '3,700,000원';
       const newItem = {
         id: 'item-' + Date.now(),
-        title: '견적 상담 신청 접수 (' + sumText + ')',
-        contact: '온라인 견적 고객',
-        status: '대기',
+        title: '[ESTIMATE] 웹 풀스택 아키텍처 스펙 확정 (' + sumText + ')',
+        contact: 'arch-lead@service.io',
+        status: '진행중',
         amount: sumText,
-        memo: '시뮬레이터 옵션 선택을 통한 실시간 견적 접수 건',
+        memo: '기술 스택 시뮬레이터를 통해 산출된 개발 일정 및 모듈 패키지 견적',
         createdAt: new Date().toISOString()
       };
       const data = getStore();
       data.unshift(newItem);
       saveStore(data);
-      showToast('견적 상담이 접수되었습니다! 대시보드로 이동합니다.');
+      showToast('기능 개발 명세가 대시보드에 등록되었습니다!');
       switchPage(0);
     }
 
@@ -1236,28 +1203,6 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       showToast('[' + title + '] 등록이 완료되었습니다.');
     }
 
-    function copyAgentPrompt() {
-      const promptText = \`당신은 [${projectName}]의 수석 프론트엔드 소프트웨어 엔지니어입니다.
-
-루트 디렉터리에 이미 브라우저에서 동작 검증을 마친 [prototype.html] 파일이 있습니다.
-자신의 자의적인 상상이나 환각으로 화면을 꾸미지 말고, [prototype.html]의 컴포넌트 구조, 화면 전환(Navigation Flow), 상세 정보 드로어(Detail Drawer), 상태 변경 파이프라인, 모달 입력 폼, 그리고 로컬 데이터 스키마를 React 19 + TypeScript + Tailwind CSS 프로덕션 코드로 1:1 완벽하게 변환해 주십시오.
-
-### 📌 프로덕션 구현 요구사항 (Prototype-as-Spec):
-1. 대상 플랫폼: ${platform}
-2. 브랜드 색상: ${themeColor} 및 Warm Paper (#F8F4EB, #FAF7F2, #E5DFD3, 먹색 #111827)
-3. 1:1 분할 구현할 화면: \${PAGES.map((p, i) => \`Screen \${i + 1} [\${p.name}] (\${p.route}): \${p.purpose}\`).join(' / ')}
-4. 필수 인터랙션: 카드/행 클릭 시 상세 정보 드로어(Detail Drawer) 열기, 상태(대기➔진행중➔완료) 토글 및 상단 토스트(Toast), 신규 등록 모달, 로컬 저장소 영속성
-5. 패키지 설치 통제: 무거운 라이브러리(Redux, Axios) 없이 순수 React 19 + Tailwind CSS로 구현
-
-지금 prototype.html과 docs/를 정독하고 첫 번째 컴포넌트를 코딩해 주십시오.\`;
-
-      navigator.clipboard.writeText(promptText).then(() => {
-        showToast('🤖 에이전트 주입용 골든 프롬프트가 복사되었습니다! Cursor나 Claude에 붙여넣으세요.');
-      }).catch(() => {
-        alert('프롬프트 복사에 실패했습니다. 브라우저 권한을 확인해주세요.');
-      });
-    }
-
     // Keyboard navigation (ESC closes drawers/modals)
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -1266,15 +1211,15 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       }
     });
 
-    // Real-time synchronization pulse listener from GOGUMA Studio
+    // Real-time synchronization pulse listener
     window.addEventListener('message', (e) => {
       if (e.data && e.data.type === 'GOGUMA_TRIGGER_PULSE') {
         const target = (e.data.targetId ? document.getElementById(e.data.targetId) : null) || document.getElementById('prototypeContainer');
         if (target) {
-          target.classList.remove('goguma-pulse-glow');
+          target.classList.remove('pulse-glow');
           void target.offsetWidth;
-          target.classList.add('goguma-pulse-glow');
-          setTimeout(() => target.classList.remove('goguma-pulse-glow'), 1300);
+          target.classList.add('pulse-glow');
+          setTimeout(() => target.classList.remove('pulse-glow'), 1300);
         }
       }
     });

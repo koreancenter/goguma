@@ -31,6 +31,33 @@ type AuthListener = (user: LocalUser | null) => void;
 const SESSION_KEY = 'goguma_session_user';
 const SAVED_PROFILES_KEY = 'goguma_saved_profiles';
 
+export async function hashSecretPin(pin: string): Promise<string> {
+  if (!pin) return '';
+  try {
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(`goguma_auth_salt_${pin.trim()}`);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (e) {
+    console.warn('Subtle crypto hash failed, using fallback:', e);
+  }
+  let hash = 0;
+  for (let i = 0; i < pin.length; i++) {
+    hash = (hash << 5) - hash + pin.charCodeAt(i);
+    hash |= 0;
+  }
+  return `h_${Math.abs(hash).toString(16)}`;
+}
+
+export async function verifySecretPin(inputPin: string, storedHash?: string): Promise<boolean> {
+  if (!storedHash) return true;
+  const computed = await hashSecretPin(inputPin);
+  return computed === storedHash || btoa(inputPin) === storedHash;
+}
+
 class LocalAuthManager {
   private user: LocalUser | null = null;
   private listeners: Set<AuthListener> = new Set();
@@ -156,14 +183,18 @@ class LocalAuthManager {
     role?: 'ADMIN' | 'USER';
   }): Promise<LocalUser> {
     const email = params.email?.trim() || `${params.displayName.toLowerCase().replace(/\s+/g, '')}@goguma.local`;
-    const uid = 'dir_' + Math.random().toString(36).substring(2, 10);
+    const uid = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? `dir_${crypto.randomUUID().slice(0, 8)}`
+      : 'dir_' + Math.random().toString(36).substring(2, 10);
+
+    const pinHash = params.pin ? await hashSecretPin(params.pin) : undefined;
 
     const newUser: LocalUser = {
       uid,
       email,
       displayName: params.displayName.trim(),
       companyName: params.companyName?.trim() || '독립 기획 스튜디오',
-      pinHash: params.pin ? btoa(params.pin) : undefined,
+      pinHash,
       emailVerified: true,
       isAnonymous: false,
       role: params.role || 'ADMIN',

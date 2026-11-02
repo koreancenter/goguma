@@ -33,11 +33,11 @@ const OnboardingTutorial = lazy(() =>
   import('./components/guide/OnboardingTutorial').then(m => ({ default: m.OnboardingTutorial }))
 );
 
-// Fallback loader
+// Fallback loader in Sumi Black & Hanji White
 const PageLoader = () => (
-  <div className="min-h-screen bg-[#0B0C10] flex flex-col items-center justify-center gap-3">
-    <div className="w-8 h-8 border-2 border-white/10 border-t-[#C5A880] rounded-full animate-spin" />
-    <span className="text-xs font-mono text-[#9AA5B5]">GOGUMA</span>
+  <div className="min-h-screen bg-[#0A0A0C] flex flex-col items-center justify-center gap-3">
+    <div className="w-6 h-6 border-2 border-[#23232A] border-t-[#F5F3ED] rounded-full animate-spin" />
+    <span className="text-[11px] font-mono tracking-widest text-[#78756E] uppercase">GOGUMA ARCHITECT</span>
   </div>
 );
 
@@ -46,8 +46,8 @@ const createInitialProject = (): ProjectEntity => {
   const now = new Date().toISOString();
   return {
     id: 'proj_default_local',
-    name: '우리동네 동물병원 예약장부',
-    slug: 'vet-appointment-book',
+    name: '모던 웹 서비스 기획서',
+    slug: 'modern-web-service-spec',
     createdAt: now,
     updatedAt: now,
     currentChapter: 1,
@@ -389,16 +389,16 @@ export default function App() {
             path="/profile" 
             element={
               <ProtectedRoute user={currentUser}>
-                <div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] flex flex-col font-sans">
-                  <header className="h-14 px-6 bg-[#0E1217] border-b border-white/7 flex items-center justify-between">
+                <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans">
+                  <header className="h-14 px-6 bg-[#0E0E12] border-b border-[#23232A] flex items-center justify-between">
                     <button
                       onClick={() => navigate('/workspace')}
-                      className="flex items-center gap-2 text-xs font-medium text-[#9AA5B5] hover:text-[#F0F3F6] transition-colors cursor-pointer"
+                      className="flex items-center gap-2 text-xs font-medium text-[#B8B5AC] hover:text-[#F5F3ED] transition-colors cursor-pointer"
                     >
                       <ChevronLeft size={16} />
                       <span>작업실로 복귀</span>
                     </button>
-                    <span className="font-semibold text-xs text-[#F0F3F6]">사용자 설정 및 통계</span>
+                    <span className="font-semibold text-xs text-[#F5F3ED]">사용자 설정 및 통계</span>
                   </header>
                   <main className="flex-1 p-8 max-w-4xl mx-auto w-full">
                     <MyAccount />
@@ -410,13 +410,13 @@ export default function App() {
           />
 
           {/* Legal & Informational Pages */}
-          <Route path="/terms" element={<div className="min-h-screen bg-[#F8F4EB] flex flex-col"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
+          <Route path="/terms" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
           <Route path="/license" element={<Navigate to="/terms" replace />} />
-          <Route path="/privacy" element={<div className="min-h-screen bg-[#F8F4EB] flex flex-col"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
-          <Route path="/about" element={<div className="min-h-screen bg-[#F8F4EB] flex flex-col"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
-          <Route path="/contact" element={<div className="min-h-screen bg-[#F8F4EB] flex flex-col"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
-          <Route path="/support" element={<div className="min-h-screen bg-[#F8F4EB] flex flex-col"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
-          <Route path="/community" element={<div className="min-h-screen bg-[#F8F4EB] flex flex-col"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
+          <Route path="/privacy" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
+          <Route path="/about" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
+          <Route path="/contact" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
+          <Route path="/support" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
+          <Route path="/community" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
           <Route path="/welcome" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
 

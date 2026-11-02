@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Github, Sparkles, Code2, Heart, Shield, FileText, ExternalLink } from 'lucide-react';
+import { Github, Code2, Shield, FileText, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import RegionSelector from './RegionSelector';
@@ -18,24 +18,24 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-white border-t border-slate-200/80 pt-12 pb-8">
+    <footer className="w-full bg-[#0A0A0C] border-t border-[#23232A] pt-12 pb-8 text-[#8E8B82] font-sans">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Brand & Local-First Identity (Col 1-5) */}
           <div className="lg:col-span-5 space-y-4">
             <Link to="/" className="inline-flex items-center gap-2.5">
-              <div className="w-9 h-9 bg-goguma rounded-xl flex items-center justify-center text-white shadow-md shadow-goguma/20">
-                <Sparkles size={18} />
+              <div className="w-8 h-8 bg-[#C5A880] text-[#0A0A0C] rounded-[2px] flex items-center justify-center font-bold text-sm">
+                G
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-black uppercase tracking-tight text-slate-900">GOGUMA</span>
-                <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-md border border-emerald-200">
-                  Open Source
+                <span className="text-lg font-bold uppercase tracking-tight text-[#F5F3ED]">GOGUMA</span>
+                <span className="px-2 py-0.5 bg-[#141418] text-[#C5A880] text-[10px] font-mono rounded-[2px] border border-[#23232A]">
+                  OPEN SOURCE
                 </span>
               </div>
             </Link>
 
-            <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-sm">
+            <p className="text-xs text-[#8E8B82] font-normal leading-relaxed max-w-sm">
               {language === 'ko' 
                 ? '고구마(GOGUMA)는 누구나 자유롭게 활용할 수 있는 프라이버시 우선 무료 오픈 아키텍처 소프트웨어입니다. 모든 작업 데이터는 로컬 브라우저에 저장되며 종속 없이 독립적으로 구동됩니다.'
                 : 'GOGUMA is free, privacy-first open architecture software licensed under MIT. All project data is stored locally in your browser with zero vendor lock-in.'}
@@ -43,9 +43,10 @@ export default function Footer() {
 
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <RegionSelector />
-              <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50/80 border border-emerald-200/70">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700">Local-First Ready</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-[2px] bg-[#141418] border border-[#23232A] text-[11px] font-mono text-[#8E8B82]">
+                <span className="text-[#706E66]">STATUS</span>
+                <span className="text-[#23232A]">/</span>
+                <span className="text-[#C5A880]">LOCAL-FIRST ACTIVE</span>
               </div>
             </div>
           </div>
@@ -54,14 +55,14 @@ export default function Footer() {
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8 lg:pl-12">
             {/* Column 1: 안내 & 소스코드 */}
             <div className="space-y-4">
-              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+              <h4 className="text-[11px] font-mono font-medium text-neutral-500 uppercase tracking-widest">
                 {language === 'ko' ? '안내 및 서비스' : 'About & Service'}
               </h4>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 <li>
                   <Link 
                     to="/about"
-                    className="text-xs font-bold text-slate-600 hover:text-goguma transition-colors inline-flex items-center gap-2"
+                    className="text-xs font-medium text-neutral-300 hover:text-white transition-colors inline-flex items-center gap-2"
                   >
                     <span>{t('about_us')}</span>
                   </Link>
@@ -69,7 +70,7 @@ export default function Footer() {
                 <li>
                   <Link 
                     to="/support"
-                    className="text-xs font-bold text-slate-600 hover:text-goguma transition-colors inline-flex items-center gap-2"
+                    className="text-xs font-medium text-neutral-300 hover:text-white transition-colors inline-flex items-center gap-2"
                   >
                     <span>{language === 'ko' ? '도움말 & AI 가이드' : 'Help & AI Guide'}</span>
                   </Link>
@@ -79,11 +80,11 @@ export default function Footer() {
                     href="https://github.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs font-bold text-slate-600 hover:text-goguma transition-colors inline-flex items-center gap-2"
+                    className="text-xs font-medium text-neutral-300 hover:text-white transition-colors inline-flex items-center gap-2"
                   >
-                    <Github size={14} />
+                    <Github size={13} />
                     <span>GitHub</span>
-                    <ExternalLink size={10} className="text-slate-400" />
+                    <ExternalLink size={10} className="text-neutral-500" />
                   </a>
                 </li>
               </ul>
@@ -91,37 +92,37 @@ export default function Footer() {
 
             {/* Column 2: 라이선스 및 정책 */}
             <div className="space-y-4">
-              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+              <h4 className="text-[11px] font-mono font-medium text-neutral-500 uppercase tracking-widest">
                 {language === 'ko' ? '라이선스 및 정책' : 'License & Policies'}
               </h4>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 <li>
                   <button
                     onClick={() => {
                       setLicenseTab('license');
                       setIsLicenseOpen(true);
                     }}
-                    className="text-xs font-bold text-slate-600 hover:text-goguma transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
+                    className="text-xs font-medium text-neutral-300 hover:text-white transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
                   >
-                    <Code2 size={13} className="text-goguma" />
+                    <Code2 size={13} className="text-neutral-400" />
                     <span>{language === 'ko' ? '오픈소스 라이선스 (MIT)' : 'Open Source License (MIT)'}</span>
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => setIsAIPolicyOpen(true)}
-                    className="text-xs font-bold text-slate-600 hover:text-goguma transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
+                    className="text-xs font-medium text-neutral-300 hover:text-white transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
                   >
-                    <Sparkles size={13} className="text-amber-500" />
+                    <Shield size={13} className="text-neutral-400" />
                     <span>{t('ai_policy')}</span>
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => setIsPolicyOpen(true)}
-                    className="text-xs font-bold text-slate-600 hover:text-goguma transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
+                    className="text-xs font-medium text-neutral-300 hover:text-white transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
                   >
-                    <Shield size={13} className="text-emerald-600" />
+                    <Shield size={13} className="text-neutral-400" />
                     <span>{t('privacy_policy')}</span>
                   </button>
                 </li>
@@ -131,18 +132,18 @@ export default function Footer() {
                       setLicenseTab('community');
                       setIsLicenseOpen(true);
                     }}
-                    className="text-xs font-bold text-slate-600 hover:text-goguma transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
+                    className="text-xs font-medium text-neutral-300 hover:text-white transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
                   >
-                    <Heart size={13} className="text-rose-500" />
+                    <FileText size={13} className="text-neutral-400" />
                     <span>{t('community_terms')}</span>
                   </button>
                 </li>
                 <li>
                   <button
                     onClick={() => setIsCookieOpen(true)}
-                    className="text-xs font-bold text-slate-600 hover:text-goguma transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
+                    className="text-xs font-medium text-neutral-300 hover:text-white transition-colors inline-flex items-center gap-1.5 cursor-pointer text-left"
                   >
-                    <FileText size={13} className="text-slate-400" />
+                    <FileText size={13} className="text-neutral-400" />
                     <span>{t('cookie_policy')}</span>
                   </button>
                 </li>
@@ -152,12 +153,12 @@ export default function Footer() {
         </div>
 
         {/* Integrated Bottom Copyright Bar */}
-        <div className="mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-slate-400 font-medium">
+        <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-neutral-500 font-normal">
           <div>
-            © {year} GOGUMA • {language === 'ko' ? '무료 & 오픈소스 소프트웨어 (MIT 라이선스)' : 'Free & Open Source Software (MIT Licensed)'}
+            © {year} GOGUMA · {language === 'ko' ? '무료 & 오픈소스 소프트웨어 (MIT 라이선스)' : 'Free & Open Source Software (MIT Licensed)'}
           </div>
-          <div className="font-mono text-[10px] text-slate-400">
-            Zero Server Dependency • 100% Client-Side
+          <div className="font-mono text-[10px] text-neutral-500">
+            ZERO SERVER DEPENDENCY · 100% CLIENT-SIDE
           </div>
         </div>
       </div>

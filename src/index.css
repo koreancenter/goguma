@@ -1,21 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Noto Sans KR", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
+  --font-serif: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
-  --color-ink-base: #0B0C10;
-  --color-ink-panel: #0E1217;
-  --color-ink-card: #13181F;
-  --color-ink-subtle: #18202A;
+  /* Sumi Black (墨黒) Canvas & Surface Palette */
+  --color-sumi-canvas: #0A0A0C;
+  --color-sumi-surface: #111114;
+  --color-sumi-card: #16161A;
+  --color-sumi-elevated: #1C1C22;
+  --color-sumi-highlight: #24242C;
+  
+  /* Hanji White (韓紙 White) Typographic Palette */
+  --color-hanji-primary: #F5F3ED;
+  --color-hanji-secondary: #B8B5AC;
+  --color-hanji-muted: #78756E;
+  --color-hanji-subtle: #45433E;
+  
+  /* Hairline Borders */
+  --color-hairline: #23232A;
+  --color-hairline-bright: #32323C;
 
-  --color-brass: #C5A880;
-  --color-brass-hover: #D4AF37;
-  --color-brass-light: #E2CEB4;
-
-  --color-text-primary: #F0F3F6;
-  --color-text-secondary: #9AA5B5;
-  --color-text-muted: #5C6675;
+  /* Luxury Subtle Accents */
+  --color-accent-gold: #C5A880;
+  --color-accent-gold-hover: #D4B896;
+  --color-accent-gold-dark: #8C7355;
+  --color-accent-pine: #1D3A2F;
 }
 
 @layer utilities {
@@ -26,64 +37,84 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  
+  /* Custom Luxury Dark Hairline Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0A0C;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #23232A;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #383842;
+  }
 }
 
 @layer base {
+  html {
+    background-color: #0A0A0C;
+    color: #F5F3ED;
+    color-scheme: dark;
+  }
+
   body {
-    background-color: #0B0C10;
-    color: #F0F3F6;
+    background-color: #0A0A0C;
+    color: #F5F3ED;
     font-family: var(--font-sans);
     letter-spacing: -0.015em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  ::selection {
+    background-color: #2F2922;
+    color: #F5F3ED;
+  }
   
   h1, h2, h3, h4, h5, h6 {
-    color: #F0F3F6;
-    font-weight: 700;
+    color: #F5F3ED;
+    font-family: var(--font-sans);
     letter-spacing: -0.02em;
+    font-weight: 600;
   }
   
   p {
-    color: #9AA5B5;
-    line-height: 1.65;
+    color: #B8B5AC;
+    line-height: 1.7;
   }
 }
 
-/* Pretendard Variable for modern Korean & global legibility */
-html.lang-ko,
-html.lang-ko body {
-  font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+/* Pretendard Variable Sans-Serif Enforcement Across Global & Korean Interfaces */
+html,
+body,
+h1, h2, h3, h4, h5, h6,
+button,
+input,
+textarea,
+select,
+label,
+span,
+p,
+a,
+td,
+th,
+li,
+div:not(.font-mono) {
+  font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif !important;
 }
 
-html.lang-ko h1,
-html.lang-ko h2,
-html.lang-ko h3,
-html.lang-ko h4,
-html.lang-ko h5,
-html.lang-ko h6,
-html.lang-ko button,
-html.lang-ko input,
-html.lang-ko textarea,
-html.lang-ko select,
-html.lang-ko label,
-html.lang-ko span,
-html.lang-ko p,
-html.lang-ko a,
-html.lang-ko td,
-html.lang-ko th,
-html.lang-ko li,
-html.lang-ko div:not(.font-mono) {
-  font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-}
-
-/* Explicitly protect monospaced/code typography so they don't break key alignments */
-html.lang-ko .font-mono,
-html.lang-ko .font-mono *,
-html.lang-ko code,
-html.lang-ko pre,
-html.lang-ko kbd,
-html.lang-ko samp {
+/* Explicitly preserve monospaced tabular numerals and code blocks */
+.font-mono,
+.font-mono *,
+code,
+pre,
+kbd,
+samp {
   font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-variant-numeric: tabular-nums;
 }
-

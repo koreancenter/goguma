@@ -21,54 +21,54 @@ export default function LogoutConfirmModal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs select-none"
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-md bg-[#FAF7F2] border-2 border-[#E5DFD3] rounded-3xl p-6 sm:p-7 shadow-xl space-y-5 text-[#231F20] relative animate-in zoom-in-95 duration-150"
+        className="w-full max-w-md bg-[#111116] border border-[#262632] rounded-[2px] p-6 shadow-2xl space-y-4 text-[#F5F3ED] font-sans relative"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-xl text-[#8E8377] hover:text-[#231F20] hover:bg-[#EFE9DC] transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-[2px] text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#1A1A22] transition-colors cursor-pointer"
           title="닫기"
         >
-          <X size={18} />
+          <X size={16} />
         </button>
 
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-[#FEE2E2] text-[#DC2626] border border-[#FCA5A5]/40 flex items-center justify-center flex-shrink-0">
-            <LogOut size={22} />
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-[2px] bg-[#C5A880] text-[#0A0A0C] flex items-center justify-center shrink-0 font-bold">
+            <LogOut size={16} />
           </div>
           <div>
-            <h3 className="font-serif font-black text-lg text-[#111827]">
-              {language === 'ko' ? '작업실 세션 잠금 및 로그아웃' : 'Lock Workspace & Sign Out'}
+            <h3 className="font-bold text-sm sm:text-base text-[#F5F3ED] uppercase tracking-wider">
+              {language === 'ko' ? '세션 잠금 및 로그아웃' : 'Lock Session & Sign Out'}
             </h3>
-            <p className="text-xs text-[#8E8377] font-medium">
-              {userName ? `${userName} 계정 세션` : '현재 작업자 세션'}
+            <p className="text-xs text-[#8E8B82] font-mono mt-0.5">
+              {userName ? `${userName} 계정` : '현재 작업자'}
             </p>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[#EFE9DC]/70 border border-[#E5DFD3] space-y-1.5 text-xs text-[#6B625B]">
-          <div className="flex items-center gap-1.5 font-bold text-[#4B433C]">
-            <ShieldCheck size={15} className="text-[#6B1D42]" />
-            <span>{language === 'ko' ? '작업 데이터 자동 보존 안내' : 'Data Persistence Guarantee'}</span>
+        <div className="p-3.5 rounded-[2px] bg-[#141418] border border-[#23232A] space-y-1 text-xs text-[#8E8B82]">
+          <div className="flex items-center gap-1.5 font-semibold text-[#F5F3ED]">
+            <ShieldCheck size={14} className="text-[#C5A880]" />
+            <span>{language === 'ko' ? '로컬 데이터 보존 안내' : 'Data Persistence Guarantee'}</span>
           </div>
-          <p className="leading-relaxed">
+          <p className="leading-relaxed font-sans">
             {language === 'ko'
-              ? '로그아웃하더라도 브라우저 IndexedDB에 저장된 기획안과 캔버스 문서는 삭제되지 않고 안전하게 보관됩니다. 언제든지 로그인 게이트웨이에서 다시 입장할 수 있습니다.'
-              : 'Your workspace documents and canvas data are safely preserved in local IndexedDB. You can return anytime through the Login Gateway.'}
+              ? '로그아웃하더라도 로컬에 저장된 기획안과 사양서 문서는 안전하게 유지됩니다. 언제든지 로그인 게이트웨이에서 다시 작업실로 입장할 수 있습니다.'
+              : 'Your workspace documents and data are safely preserved in local storage. You can return anytime through the Login Gateway.'}
           </p>
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 pt-2">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#23232A]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl border border-[#D5CCBC] bg-white text-[#4B433C] hover:bg-[#EFE9DC] text-xs font-bold transition-colors cursor-pointer"
+            className="px-3.5 py-1.5 rounded-[2px] border border-[#23232A] bg-[#141418] text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#1A1A22] text-xs font-medium transition-colors cursor-pointer"
           >
-            {language === 'ko' ? '계속 작업하기' : 'Cancel'}
+            {language === 'ko' ? '취소' : 'Cancel'}
           </button>
           <button
             type="button"
@@ -76,10 +76,10 @@ export default function LogoutConfirmModal({
               await onConfirm();
               onClose();
             }}
-            className="px-5 py-2.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
+            className="px-4 py-1.5 rounded-[2px] bg-[#C5A880] hover:bg-[#D4B992] text-[#0A0A0C] text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
-            <LogOut size={14} />
-            <span>{language === 'ko' ? '로그아웃 및 잠금' : 'Sign Out & Lock'}</span>
+            <LogOut size={13} />
+            <span>{language === 'ko' ? '로그아웃' : 'Sign Out'}</span>
           </button>
         </div>
       </div>

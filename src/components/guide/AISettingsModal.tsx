@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Sparkles, Key, HardDrive, CheckCircle2, AlertCircle, 
-  RefreshCw, X, Eye, EyeOff, Server, Shield
+  Key, HardDrive, CheckCircle2, AlertCircle, 
+  RefreshCw, X, Eye, EyeOff, Server, Shield, Cpu
 } from 'lucide-react';
 import { AISettings, getAISettings, saveAISettings } from '../../lib/aiConfig';
 
@@ -119,7 +119,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
     } catch (err: any) {
       setTestResult({
         success: false,
-        message: err.message || 'Connection test failed. Check settings and try again.'
+        message: err.message || 'Connection test failed. Check settings and retry.'
       });
     } finally {
       setIsTesting(false);
@@ -130,87 +130,87 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs select-none">
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.96 }}
-          className="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]"
+          initial={{ opacity: 0, scale: 0.97, y: 6 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.97, y: 6 }}
+          className="w-full max-w-lg h-[540px] bg-[#111116] rounded-[2px] shadow-2xl border border-[#23232A] overflow-hidden flex flex-col text-[#F5F3ED] font-sans"
         >
           {/* Header */}
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-fuchsia-50 text-goguma flex items-center justify-center border border-fuchsia-100">
-                <Sparkles size={18} />
+          <div className="px-6 py-4 border-b border-[#23232A] flex items-center justify-between bg-[#0E0E12] shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-[2px] bg-[#141418] border border-[#23232A] text-[#C5A880] flex items-center justify-center font-bold shadow-xs shrink-0">
+                <Cpu size={18} />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900">AI Engine & Provider Settings</h3>
-                <p className="text-xs text-slate-500">Configure Cloud Gemini API or Local Ollama</p>
+                <h3 className="text-sm sm:text-base font-semibold text-[#F5F3ED] uppercase tracking-wide">
+                  AI 인퍼런스 엔진 설정
+                </h3>
+                <p className="text-[11px] text-[#8E8B82] font-mono mt-0.5">
+                  클라우드 Gemini 또는 로컬 오프라인 Ollama
+                </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors"
+              className="p-1.5 rounded-[2px] text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#141418] transition-colors cursor-pointer"
             >
               <X size={16} />
             </button>
           </div>
 
           {/* Body */}
-          <div className="p-6 overflow-y-auto space-y-6 flex-1">
+          <div className="flex-1 p-6 space-y-5 bg-[#111116] overflow-y-auto custom-scroll">
             {/* Provider Selection */}
             <div>
-              <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
-                Select AI Engine Provider
+              <label className="block text-[10px] font-mono uppercase tracking-widest text-[#8E8B82] mb-2">
+                ACTIVE PROVIDER
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* 1. Gemini BYOK */}
+              <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
                   onClick={() => setSettings(s => ({ ...s, provider: 'gemini' }))}
-                  className={`p-3.5 rounded-xl border text-left flex flex-col justify-between gap-2 transition-all ${
+                  className={`p-3.5 rounded-[2px] border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
                     settings.provider === 'gemini'
-                      ? 'border-goguma bg-fuchsia-50/40 ring-1 ring-goguma shadow-xs'
-                      : 'border-slate-200 hover:border-slate-300 bg-white'
+                      ? 'border-[#C5A880] bg-[#16161F]'
+                      : 'border-[#23232A] bg-[#141418] hover:bg-[#181820]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className={`p-2 rounded-lg ${settings.provider === 'gemini' ? 'bg-goguma text-white' : 'bg-slate-100 text-slate-600'}`}>
-                      <Sparkles size={16} />
+                    <div className="p-1.5 rounded-[2px] bg-[#141418] text-[#C5A880] border border-[#23232A]">
+                      <Cpu size={14} />
                     </div>
-                    {settings.gemini.apiKey && (
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-fuchsia-100 text-goguma uppercase">
-                        Key Set
-                      </span>
-                    )}
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[2px] bg-[#141418] text-[#B8B5AC] border border-[#23232A] uppercase">
+                      Cloud
+                    </span>
                   </div>
                   <div>
-                    <div className="text-xs font-black text-slate-900">Google Gemini</div>
-                    <div className="text-[11px] text-slate-500 mt-0.5">Cloud API (Default / BYOK)</div>
+                    <div className="text-xs font-semibold text-[#F5F3ED]">Google Gemini</div>
+                    <div className="text-[11px] text-[#8E8B82] mt-0.5">서버 프록시 / BYOK 키</div>
                   </div>
                 </button>
 
-                {/* 2. Ollama Local */}
                 <button
                   type="button"
                   onClick={() => setSettings(s => ({ ...s, provider: 'ollama' }))}
-                  className={`p-3.5 rounded-xl border text-left flex flex-col justify-between gap-2 transition-all ${
+                  className={`p-3.5 rounded-[2px] border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
                     settings.provider === 'ollama'
-                      ? 'border-goguma bg-fuchsia-50/40 ring-1 ring-goguma shadow-xs'
-                      : 'border-slate-200 hover:border-slate-300 bg-white'
+                      ? 'border-[#C5A880] bg-[#16161F]'
+                      : 'border-[#23232A] bg-[#141418] hover:bg-[#181820]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className={`p-2 rounded-lg ${settings.provider === 'ollama' ? 'bg-goguma text-white' : 'bg-slate-100 text-slate-600'}`}>
-                      <HardDrive size={16} />
+                    <div className="p-1.5 rounded-[2px] bg-[#141418] text-[#C5A880] border border-[#23232A]">
+                      <HardDrive size={14} />
                     </div>
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 uppercase">
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[2px] bg-[#141418] text-[#B8B5AC] border border-[#23232A] uppercase">
                       Local Offline
                     </span>
                   </div>
                   <div>
-                    <div className="text-xs font-black text-slate-900">Ollama Local Engine</div>
-                    <div className="text-[11px] text-slate-500 mt-0.5">Desktop Self-Hosted LLM</div>
+                    <div className="text-xs font-semibold text-[#F5F3ED]">Ollama Local Engine</div>
+                    <div className="text-[11px] text-[#8E8B82] mt-0.5">로컬 독립 구동 LLM</div>
                   </div>
                 </button>
               </div>
@@ -218,47 +218,47 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
 
             {/* Gemini Configuration Panel */}
             {settings.provider === 'gemini' && (
-              <div className="space-y-4 p-4 rounded-xl bg-slate-50/60 border border-slate-200/80">
+              <div className="space-y-4 p-4 rounded-[2px] bg-[#141418] border border-[#23232A]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                    <Key size={14} className="text-goguma" />
-                    Personal Gemini API Key (Optional BYOK)
+                  <span className="text-xs font-semibold text-[#F5F3ED] uppercase tracking-wider flex items-center gap-1.5">
+                    <Key size={13} className="text-[#C5A880]" />
+                    <span>개인 Gemini API Key (선택 BYOK)</span>
                   </span>
                   <a
                     href="https://aistudio.google.com/app/apikey"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] text-goguma hover:underline font-semibold"
+                    className="text-[11px] text-[#C5A880] hover:underline font-mono"
                   >
-                    Get Free Key
+                    Get Free Key ↗
                   </a>
                 </div>
 
                 <div className="relative">
                   <input
                     type={showKey ? 'text' : 'password'}
-                    placeholder="Leave empty to use server default, or enter AIzaSy..."
+                    placeholder="비워둘 시 서버 기본 키 사용, 또는 AIzaSy..."
                     value={settings.gemini.apiKey}
                     onChange={(e) => setSettings(s => ({
                       ...s,
                       gemini: { ...s.gemini, apiKey: e.target.value }
                     }))}
-                    className="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-goguma/20 focus:border-goguma"
+                    className="w-full pl-3 pr-9 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowKey(!showKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8E8B82] hover:text-[#F5F3ED] cursor-pointer"
                   >
-                    {showKey ? <EyeOff size={15} /> : <Eye size={15} />}
+                    {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 </div>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Your personal key is stored safely in your browser storage only.
+                <p className="text-[11px] text-[#8E8B82] leading-relaxed font-sans">
+                  개인 API 키는 브라우저 로컬 스토리지에만 보관됩니다.
                 </p>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-[#F5F3ED] uppercase tracking-wider mb-1.5">
                     Gemini Model
                   </label>
                   <select
@@ -267,11 +267,11 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       gemini: { ...s.gemini, model: e.target.value }
                     }))}
-                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-goguma/20 focus:border-goguma"
+                    className="w-full px-3 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] cursor-pointer"
                   >
-                    <option value="gemini-3.8-flash">gemini-3.8-flash (Recommended, Fast & Smart)</option>
-                    <option value="gemini-2.5-flash">gemini-2.5-flash (Ultra Fast)</option>
-                    <option value="gemini-2.5-pro">gemini-2.5-pro (Deep Reasoning)</option>
+                    <option value="gemini-3.8-flash" className="bg-[#141418] text-[#F5F3ED]">gemini-3.8-flash (Recommended, Fast & Smart)</option>
+                    <option value="gemini-2.5-flash" className="bg-[#141418] text-[#F5F3ED]">gemini-2.5-flash (Ultra Fast)</option>
+                    <option value="gemini-2.5-pro" className="bg-[#141418] text-[#F5F3ED]">gemini-2.5-pro (Deep Reasoning)</option>
                   </select>
                 </div>
               </div>
@@ -279,20 +279,20 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
 
             {/* Ollama Configuration Panel */}
             {settings.provider === 'ollama' && (
-              <div className="space-y-4 p-4 rounded-xl bg-slate-50/60 border border-slate-200/80">
+              <div className="space-y-4 p-4 rounded-[2px] bg-[#141418] border border-[#23232A]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                    <Server size={14} className="text-goguma" />
-                    Ollama Local Server Endpoint
+                  <span className="text-xs font-semibold text-[#F5F3ED] uppercase tracking-wider flex items-center gap-1.5">
+                    <Server size={13} className="text-[#C5A880]" />
+                    <span>Ollama Local Server Endpoint</span>
                   </span>
                   <button
                     type="button"
                     onClick={handleFetchOllamaModels}
                     disabled={fetchingOllama}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-goguma hover:underline disabled:opacity-50"
+                    className="inline-flex items-center gap-1 text-[11px] font-mono text-[#C5A880] hover:text-[#D4B992] cursor-pointer disabled:opacity-50"
                   >
                     <RefreshCw size={11} className={fetchingOllama ? 'animate-spin' : ''} />
-                    Scan Installed Models
+                    <span>Scan Models</span>
                   </button>
                 </div>
 
@@ -305,15 +305,15 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       ollama: { ...s.ollama, endpoint: e.target.value }
                     }))}
-                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-goguma/20 focus:border-goguma"
+                    className="w-full px-3 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
                   />
-                  <p className="text-[11px] text-slate-500 mt-1">
-                    Standard local endpoint is <code className="font-mono text-slate-700 bg-slate-100 px-1 py-0.5 rounded">http://localhost:11434</code>.
+                  <p className="text-[11px] text-[#8E8B82] mt-1">
+                    기본 로컬 엔드포인트: <code className="font-mono text-[#C5A880] bg-[#0E0E12] px-1 py-0.5 rounded-[2px] border border-[#23232A]">http://localhost:11434</code>
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-semibold text-[#F5F3ED] uppercase tracking-wider mb-1.5">
                     Ollama Model Name
                   </label>
                   {availableOllamaModels.length > 0 ? (
@@ -323,10 +323,10 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                         ...s,
                         ollama: { ...s.ollama, model: e.target.value }
                       }))}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-goguma/20 focus:border-goguma"
+                      className="w-full px-3 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880] cursor-pointer"
                     >
                       {availableOllamaModels.map(m => (
-                        <option key={m} value={m}>{m}</option>
+                        <option key={m} value={m} className="bg-[#141418] text-[#F5F3ED]">{m}</option>
                       ))}
                     </select>
                   ) : (
@@ -338,11 +338,11 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                         ...s,
                         ollama: { ...s.ollama, model: e.target.value }
                       }))}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-goguma/20 focus:border-goguma"
+                      className="w-full px-3 py-2 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#F5F3ED] focus:outline-none focus:border-[#C5A880]"
                     />
                   )}
-                  <p className="text-[11px] text-slate-500 mt-1">
-                    Recommended models include <span className="font-semibold text-slate-700">llama3.2</span>, <span className="font-semibold text-slate-700">qwen2.5:7b</span>, or <span className="font-semibold text-slate-700">mistral</span>.
+                  <p className="text-[11px] text-[#8E8B82] mt-1">
+                    권장 모델: <span className="font-mono text-[#F5F3ED]">llama3.2</span>, <span className="font-mono text-[#F5F3ED]">qwen2.5:7b</span>, <span className="font-mono text-[#F5F3ED]">mistral</span>
                   </p>
                 </div>
               </div>
@@ -351,48 +351,48 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
             {/* Test result banner */}
             {testResult && (
               <div
-                className={`p-3 rounded-xl text-xs flex items-start gap-2.5 ${
+                className={`p-3 rounded-[2px] text-xs flex items-start gap-2.5 border ${
                   testResult.success
-                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/80'
-                    : 'bg-rose-50 text-rose-800 border border-rose-200/80'
+                    ? 'bg-[#16221A] text-[#93D7AC] border-[#2D4A38]'
+                    : 'bg-red-950/40 text-red-300 border-red-500/30'
                 }`}
               >
                 {testResult.success ? (
-                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 size={15} className="text-[#93D7AC] shrink-0 mt-0.5" />
                 ) : (
-                  <AlertCircle size={16} className="text-rose-600 shrink-0 mt-0.5" />
+                  <AlertCircle size={15} className="text-red-400 shrink-0 mt-0.5" />
                 )}
-                <span className="leading-relaxed break-words flex-1">{testResult.message}</span>
+                <span className="leading-relaxed break-words flex-1 font-mono">{testResult.message}</span>
               </div>
             )}
           </div>
 
           {/* Footer controls */}
-          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between gap-3">
+          <div className="px-6 py-3.5 border-t border-[#23232A] bg-[#0E0E12] flex items-center justify-between gap-3 shrink-0">
             <button
               type="button"
               onClick={handleTestConnection}
               disabled={isTesting}
-              className="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-50"
+              className="px-3.5 py-1.5 bg-[#141418] border border-[#23232A] hover:bg-[#1A1A22] text-[#B8B5AC] hover:text-[#F5F3ED] rounded-[2px] text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
             >
-              <RefreshCw size={13} className={isTesting ? 'animate-spin' : ''} />
-              {isTesting ? 'Testing...' : 'Test Connection'}
+              <RefreshCw size={12} className={isTesting ? 'animate-spin' : ''} />
+              <span>{isTesting ? '연결 테스트 중...' : '연결 테스트'}</span>
             </button>
 
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-slate-500 hover:text-slate-800 text-xs font-semibold rounded-xl hover:bg-slate-100 transition-colors"
+                className="px-3.5 py-1.5 text-[#8E8B82] hover:text-[#F5F3ED] text-xs font-medium rounded-[2px] hover:bg-[#141418] transition-colors cursor-pointer"
               >
-                Cancel
+                취소
               </button>
               <button
                 type="button"
                 onClick={handleSave}
-                className="px-5 py-2 bg-goguma text-white text-xs font-semibold rounded-xl hover:bg-fuchsia-950 transition-colors shadow-xs"
+                className="px-4 py-1.5 bg-[#C5A880] hover:bg-[#D4B992] text-[#0A0A0C] text-xs font-semibold rounded-[2px] shadow-xs transition-colors cursor-pointer"
               >
-                Save Settings
+                저장하기
               </button>
             </div>
           </div>

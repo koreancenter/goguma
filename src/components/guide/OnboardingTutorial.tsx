@@ -114,77 +114,77 @@ export const OnboardingTutorial: React.FC = () => {
             exit={{ opacity: 0, scale: 0.8 }}
             style={{
               position: 'fixed',
-              top: targetRect.top - 8,
-              left: targetRect.left - 8,
-              width: targetRect.width + 16,
-              height: targetRect.height + 16,
-              border: '4px solid #702283',
-              borderRadius: '24px',
+              top: targetRect.top - 6,
+              left: targetRect.left - 6,
+              width: targetRect.width + 12,
+              height: targetRect.height + 12,
+              border: '2px solid #C5A880',
+              borderRadius: '2px',
               zIndex: 10001,
-              boxShadow: '0 0 0 10000px rgba(15, 23, 42, 0.6), 0 0 40px rgba(112,34,131,0.5)',
+              boxShadow: '0 0 0 10000px rgba(10, 10, 12, 0.82)',
             }}
-            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 120 }}
           />
         )}
 
         {isActive && (
           <motion.div
             key={`tutorial-tooltip-${currentStepIndex}`}
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            exit={{ opacity: 0, scale: 0.96, y: 12 }}
             className="fixed z-[10001] pointer-events-auto"
             style={getTooltipStyle()}
           >
-            <div className="bg-white rounded-[32px] p-8 shadow-[0_32px_64px_-16px_rgba(112,34,131,0.25)] border-2 border-goguma/10 max-w-[400px] w-full">
-              <div className="flex items-center justify-between mb-4">
+            <div className="bg-[#111116] rounded-[2px] p-6 shadow-2xl border border-[#23232A] max-w-[380px] w-full text-[#F5F3ED] font-sans">
+              <div className="flex items-center justify-between mb-3 border-b border-[#23232A] pb-2.5">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-goguma-light flex items-center justify-center rounded-xl text-goguma">
-                    <Sparkles size={18} />
+                  <div className="w-6 h-6 bg-[#141418] border border-[#23232A] text-[#C5A880] flex items-center justify-center rounded-[2px] font-bold text-xs">
+                    ✦
                   </div>
-                  <span className="text-[10px] font-black text-goguma uppercase tracking-widest">Master Architect</span>
+                  <span className="text-[10px] font-mono text-[#8E8B82] uppercase tracking-widest">ONBOARDING GUIDE</span>
                 </div>
                 <button 
                   onClick={stopTutorial}
-                  className="text-slate-300 hover:text-slate-900 transition-colors"
+                  className="text-[#8E8B82] hover:text-[#F5F3ED] transition-colors cursor-pointer"
                 >
-                  <X size={20} />
+                  <X size={16} />
                 </button>
               </div>
 
-              <h3 className="text-xl font-black text-slate-900 tracking-tight mb-2">
+              <h3 className="text-base font-semibold text-[#F5F3ED] tracking-tight mb-1.5">
                 {t(currentStep.titleKey)}
               </h3>
-              <p className="text-sm text-slate-500 font-medium leading-relaxed mb-8">
+              <p className="text-xs text-[#B8B5AC] font-sans leading-relaxed mb-6">
                 {t(currentStep.descriptionKey)}
               </p>
 
-              <div className="flex items-center justify-between pt-6 border-t border-slate-100">
-                <div className="flex items-center gap-1">
+              <div className="flex items-center justify-between pt-4 border-t border-[#23232A]">
+                <div className="flex items-center gap-1.5">
                   {steps.map((_, idx) => (
                     <div 
                       key={`dot-${idx}`}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${
-                        idx === currentStepIndex ? 'w-6 bg-goguma' : 'w-1.5 bg-slate-200'
+                      className={`h-1 rounded-[1px] transition-all duration-300 ${
+                        idx === currentStepIndex ? 'w-4 bg-[#C5A880]' : 'w-1.5 bg-[#23232A]'
                       }`}
                     />
                   ))}
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   {currentStepIndex > 0 && (
                     <button
                       onClick={prevStep}
-                      className="p-3 text-slate-400 hover:text-slate-900 transition-colors"
+                      className="p-1.5 text-[#8E8B82] hover:text-[#F5F3ED] transition-colors cursor-pointer"
                     >
-                      <ChevronLeft size={20} />
+                      <ChevronLeft size={16} />
                     </button>
                   )}
                   <button
                     onClick={nextStep}
-                    className="flex items-center gap-2 bg-goguma px-6 py-3 rounded-2xl text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-goguma/20 hover:scale-105 active:scale-95 transition-all"
+                    className="flex items-center gap-1.5 bg-[#C5A880] hover:bg-[#D4B992] px-4 py-1.5 rounded-[2px] text-[#0A0A0C] text-xs font-semibold shadow-xs transition-colors cursor-pointer"
                   >
-                    {currentStepIndex === steps.length - 1 ? t('start_exploring') : t('next_step')}
-                    <ChevronRight size={16} />
+                    <span>{currentStepIndex === steps.length - 1 ? t('start_exploring') : t('next_step')}</span>
+                    <ChevronRight size={14} />
                   </button>
                 </div>
               </div>

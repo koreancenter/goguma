@@ -25,6 +25,31 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
 };
 
 const STORAGE_KEY = 'goguma_ai_settings';
+const KEY_PREFIX = 'enc_k_';
+
+function obfuscateKey(key: string): string {
+  if (!key) return '';
+  if (key.startsWith(KEY_PREFIX)) return key;
+  try {
+    const encoded = btoa(encodeURIComponent(key.trim()));
+    const reversed = encoded.split('').reverse().join('');
+    return `${KEY_PREFIX}${reversed}`;
+  } catch {
+    return key;
+  }
+}
+
+function deobfuscateKey(stored: string): string {
+  if (!stored) return '';
+  if (!stored.startsWith(KEY_PREFIX)) return stored;
+  try {
+    const raw = stored.slice(KEY_PREFIX.length);
+    const unreversed = raw.split('').reverse().join('');
+    return decodeURIComponent(atob(unreversed));
+  } catch {
+    return stored;
+  }
+}
 
 export function getAISettings(): AISettings {
   try {
@@ -32,11 +57,12 @@ export function getAISettings(): AISettings {
     if (!raw) return DEFAULT_AI_SETTINGS;
     const parsed = JSON.parse(raw);
     const provider: AIProvider = (parsed.provider === 'ollama') ? 'ollama' : 'gemini';
+    const rawApiKey = parsed.gemini?.apiKey || '';
 
     return {
       provider,
       gemini: {
-        apiKey: parsed.gemini?.apiKey || '',
+        apiKey: deobfuscateKey(rawApiKey),
         model: parsed.gemini?.model || 'gemini-3.8-flash',
       },
       ollama: {
@@ -51,7 +77,14 @@ export function getAISettings(): AISettings {
 
 export function saveAISettings(settings: AISettings): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    const safeSettings = {
+      ...settings,
+      gemini: {
+        ...settings.gemini,
+        apiKey: obfuscateKey(settings.gemini?.apiKey || ''),
+      }
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(safeSettings));
     window.dispatchEvent(new CustomEvent('ai_settings_changed', { detail: settings }));
   } catch (err) {
     console.error('Failed to save AI settings to localStorage:', err);

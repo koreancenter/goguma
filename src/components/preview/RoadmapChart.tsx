@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import { Calendar } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -24,7 +23,7 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
         const name = match[2].trim();
         const startStr = match[3].trim().toLowerCase();
         const endStr = match[4].trim().toLowerCase();
-        const owner = match[5]?.trim() || 'Add name here';
+        const owner = match[5]?.trim() || 'Assignee';
         
         let startMonth = monthsMap[startStr];
         if (startMonth === undefined) {
@@ -55,109 +54,71 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
   const categories = parseRoadmap(schedule);
   const categoryNames = Object.keys(categories);
 
-  const getCategoryColor = (cat: string) => {
-    const name = cat.toLowerCase();
-    if (name.includes('discovery') || name.includes('research')) return 'bg-indigo-500';
-    if (name.includes('planning')) return 'bg-blue-500';
-    if (name.includes('design')) return 'bg-amber-500';
-    if (name.includes('development')) return 'bg-sky-500';
-    if (name.includes('testing')) return 'bg-emerald-500';
-    if (name.includes('launch')) return 'bg-orange-500';
-    if (name.includes('post')) return 'bg-indigo-500';
-    return 'bg-blue-500';
-  };
-
-  const getBarColor = (cat: string) => {
-    const name = cat.toLowerCase();
-    if (name.includes('discovery') || name.includes('research')) return 'bg-indigo-400';
-    if (name.includes('planning')) return 'bg-blue-400';
-    if (name.includes('design')) return 'bg-amber-400';
-    if (name.includes('development')) return 'bg-sky-400';
-    if (name.includes('testing')) return 'bg-emerald-400';
-    if (name.includes('launch')) return 'bg-orange-400';
-    if (name.includes('post')) return 'bg-indigo-400';
-    return 'bg-blue-400';
-  };
-
   return (
-    <div className="w-full mt-12 bg-white rounded-[32px] border-2 border-slate-100 shadow-2xl shadow-slate-200 overflow-hidden">
-      <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-        <h4 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-          <Calendar className="text-blue-600" />
-          Website Development Monthly Project Plan
+    <div className="w-full mt-8 bg-[#121216] rounded-[2px] border border-[#23232A] overflow-hidden text-[#F5F3ED] font-sans">
+      <div className="p-5 border-b border-[#23232A] flex items-center justify-between bg-[#0E0E12]">
+        <h4 className="text-sm font-sans font-bold text-[#F5F3ED] tracking-tight flex items-center gap-2.5">
+          <Calendar size={16} className="text-[#C5A880]" />
+          <span>월별 개발 마일스톤 및 로드맵 타임라인</span>
         </h4>
-        <div className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest">
-          {new Date().getFullYear()} Timeline
+        <div className="px-2.5 py-1 bg-[#141418] border border-[#23232A] text-[#8E8B82] rounded-[2px] text-xs font-mono uppercase tracking-wider">
+          {new Date().getFullYear()} TIMELINE
         </div>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="bg-slate-50">
-              <th className="px-6 py-4 border-b border-r border-slate-100 min-w-[200px]"></th>
+            <tr className="bg-[#0E0E12]">
+              <th className="px-4 py-3 border-b border-r border-[#23232A] min-w-[180px] text-xs font-mono uppercase tracking-wider text-[#8E8B82]">
+                CATEGORY & TASK
+              </th>
               {months.map((m, i) => (
-                <th key={i} className="px-3 py-4 border-b border-r border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white group hover:bg-slate-100 transition-colors text-center">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 mb-1 mx-auto group-hover:bg-blue-500 group-hover:text-white transition-all text-[10px]">
-                    {m}
-                  </div>
+                <th key={i} className="px-2 py-3 border-b border-r border-[#23232A] text-[10px] font-mono uppercase tracking-widest text-[#8E8B82] text-center">
+                  {m.trim()}
                 </th>
               ))}
-              <th className="px-6 py-4 border-b border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500 min-w-[150px] text-center">
-                {t('responsible_person')}
-              </th>
             </tr>
           </thead>
           <tbody>
             {categoryNames.length === 0 ? (
               <tr>
-                <td colSpan={14} className="py-20 text-center">
-                  <div className="flex flex-col items-center gap-3 text-slate-300">
-                    <Calendar size={48} strokeWidth={1} />
-                    <p className="text-sm font-bold uppercase tracking-widest">{t('roadmap_desc')}</p>
-                  </div>
+                <td colSpan={months.length + 1} className="p-8 text-center text-xs text-[#8E8B82] font-mono">
+                  기획서에 등록된 월별 일정 데이터가 없습니다.
                 </td>
               </tr>
             ) : (
-              categoryNames.map((cat, catIdx) => (
-                <React.Fragment key={catIdx}>
-                  <tr className="bg-slate-50/30">
-                    <td className={`px-6 py-2 ${getCategoryColor(cat)} text-white font-black text-[10px] uppercase tracking-widest`}>
-                      {cat}
+              categoryNames.map((cat, catIdx) => {
+                const tasks = categories[cat];
+                return tasks.map((task, taskIdx) => (
+                  <tr key={`${catIdx}-${taskIdx}`} className="border-b border-[#23232A] hover:bg-[#16161D] transition-colors">
+                    <td className="px-4 py-2.5 border-r border-[#23232A]">
+                      <div className="font-sans font-semibold text-xs text-[#F5F3ED] truncate max-w-[180px]">{task.name}</div>
+                      <div className="text-[10px] font-mono text-[#8E8B82] mt-0.5 truncate">{cat} · {task.owner}</div>
                     </td>
-                    {months.map((_, i) => (
-                      <td key={i} className="border-r border-slate-100 bg-slate-50/10"></td>
-                    ))}
-                    <td className="bg-slate-50/10"></td>
+                    {months.map((_, mIdx) => {
+                      const isActive = mIdx >= task.startMonth && mIdx <= task.endMonth;
+                      const isStart = mIdx === task.startMonth;
+                      const isEnd = mIdx === task.endMonth;
+                      return (
+                        <td key={mIdx} className="p-1 border-r border-[#23232A]/50 text-center relative">
+                          {isActive && (
+                            <div 
+                              className={`h-5 flex items-center justify-center text-[10px] font-mono font-medium transition-all ${
+                                isStart ? 'rounded-l-[2px]' : ''
+                              } ${isEnd ? 'rounded-r-[2px]' : ''} ${
+                                catIdx % 2 === 0 ? 'bg-[#C5A880] text-[#0A0A0C] font-semibold' : 'bg-[#1E3A2F] text-[#A3E635] border border-[#2D4D3D]'
+                              }`}
+                            >
+                              {isStart && <span className="truncate px-1 text-[9px]">{task.name}</span>}
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
                   </tr>
-                  {categories[cat].map((task, taskIdx) => (
-                    <tr key={taskIdx} className="group hover:bg-slate-50/50 transition-colors border-b border-slate-50">
-                      <td className="px-6 py-3 border-r border-slate-100 text-[11px] font-bold text-slate-600 pl-10">
-                        {task.name}
-                      </td>
-                      <td colSpan={12} className="relative p-0 border-r border-slate-100">
-                        <div className="absolute inset-0 flex">
-                          {months.map((_, i) => (
-                            <div key={i} className="flex-1 border-r border-slate-100/50 last:border-0" />
-                          ))}
-                        </div>
-                        <motion.div
-                          initial={{ width: 0, opacity: 0 }}
-                          animate={{ 
-                            width: `${((task.endMonth - task.startMonth + 1) / 12) * 100}%`,
-                            left: `${(task.startMonth / 12) * 100}%`,
-                            opacity: 1
-                          }}
-                          className={`absolute top-1/2 -translate-y-1/2 h-4 ${getBarColor(cat)} rounded-full shadow-sm z-10 mx-1`}
-                        />
-                      </td>
-                      <td className="px-6 py-3 text-[10px] font-bold text-slate-400 text-center">
-                        {task.owner}
-                      </td>
-                    </tr>
-                  ))}
-                </React.Fragment>
-              ))
+                ));
+              })
             )}
           </tbody>
         </table>

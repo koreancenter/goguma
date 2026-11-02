@@ -108,8 +108,8 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
     if (!isJsonFile) {
       toast.error(
         language === 'ko' 
-          ? 'JSON 파일(.goguma.json 또는 .json)만 드롭할 수 있습니다.' 
-          : 'Only JSON files (.goguma.json or .json) are supported.'
+          ? 'JSON 파일(.json)만 드롭할 수 있습니다.' 
+          : 'Only JSON files (.json) are supported.'
       );
       return;
     }
@@ -218,8 +218,8 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
   const plan = stagedProject?.validation.normalizedPlan;
   const summary = stagedProject?.validation.summary;
   const pageStructure = plan?.navigation?.pageStructure || [];
-  const themeColor = plan?.design?.themeColor || '#6366f1';
-  const accentColor = plan?.design?.accentColor || '#f97316';
+  const themeColor = plan?.design?.themeColor || '#FFFFFF';
+  const accentColor = plan?.design?.accentColor || '#E4E4E7';
 
   return (
     <>
@@ -244,37 +244,34 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                 processDroppedFile(e.dataTransfer.files[0]);
               }
             }}
-            className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-6 select-none cursor-copy"
+            className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-6 select-none cursor-copy"
           >
             <motion.div
-              initial={{ scale: 0.9, y: 15 }}
+              initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.92, y: 10 }}
+              exit={{ scale: 0.95, y: 10 }}
               transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-              className="relative max-w-xl w-full bg-slate-900/95 border-2 border-dashed border-goguma rounded-3xl p-10 sm:p-12 text-center shadow-2xl shadow-goguma/40 overflow-hidden pointer-events-none"
+              className="relative max-w-xl w-full bg-[#111116] border-2 border-dashed border-[#C5A880]/40 rounded-[2px] p-10 sm:p-12 text-center shadow-2xl overflow-hidden pointer-events-none"
             >
-              {/* Radial glow */}
-              <div className="absolute inset-0 bg-radial from-goguma/25 via-transparent to-transparent pointer-events-none" />
-
               <div className="relative z-10 flex flex-col items-center">
                 <motion.div 
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                  className="w-20 h-20 rounded-2xl bg-goguma text-white flex items-center justify-center shadow-xl shadow-goguma/40 mb-6"
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-16 h-16 rounded-[2px] bg-[#C5A880] text-[#0A0A0C] flex items-center justify-center shadow-2xl mb-6 font-bold"
                 >
-                  <Upload size={36} strokeWidth={2.5} />
+                  <Upload size={30} strokeWidth={2.5} />
                 </motion.div>
 
-                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
+                <h2 className="text-xl sm:text-2xl font-sans font-bold text-[#F5F3ED] tracking-tight mb-2 uppercase">
                   {t('dropzone_title')}
                 </h2>
 
-                <p className="text-sm sm:text-base text-slate-300 max-w-md font-medium leading-relaxed mb-6">
+                <p className="text-xs sm:text-sm text-[#8E8B82] max-w-md leading-relaxed mb-6 font-sans">
                   {t('dropzone_subtitle')}
                 </p>
 
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/80 border border-slate-700/80 rounded-full text-xs font-bold text-goguma-light">
-                  <FileJson size={14} />
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#141418] border border-[#23232A] rounded-[2px] text-xs font-mono text-[#8E8B82]">
+                  <FileJson size={14} className="text-[#C5A880]" />
                   <span>{t('dropzone_formats')}</span>
                 </div>
               </div>
@@ -287,7 +284,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
       <AnimatePresence>
         {stagedProject && summary && plan && (
           <div 
-            className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto"
+            className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs overflow-y-auto"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setStagedProject(null);
@@ -295,23 +292,23 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
             }}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: 18 }}
+              initial={{ opacity: 0, scale: 0.95, y: 14 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-              className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-100 my-8 max-h-[90vh]"
+              className="bg-[#111116] w-full max-w-2xl h-[580px] rounded-[2px] shadow-2xl overflow-hidden flex flex-col border border-[#262632] text-[#F5F3ED] font-sans"
             >
               {/* Modal Top Banner & Header */}
-              <div className="p-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 bg-goguma/10 text-goguma rounded-2xl flex items-center justify-center shrink-0 shadow-2xs">
-                    <FileJson size={26} />
+              <div className="px-6 py-4 bg-[#0E0E12] border-b border-[#23232A] flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-[#C5A880] text-[#0A0A0C] rounded-[2px] flex items-center justify-center shrink-0 font-bold shadow-xs">
+                    <FileJson size={18} />
                   </div>
                   <div>
-                    <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+                    <h3 className="text-sm sm:text-base font-sans font-bold text-[#F5F3ED] tracking-tight uppercase">
                       {t('drop_confirm_title')}
                     </h3>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p className="text-[11px] text-[#8E8B82] font-mono mt-0.5">
                       {t('drop_confirm_subtitle')}
                     </p>
                   </div>
@@ -319,56 +316,52 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                 <button
                   type="button"
                   onClick={() => setStagedProject(null)}
-                  className="p-2.5 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-200/60 transition-colors"
+                  className="p-1.5 text-[#8E8B82] hover:text-[#F5F3ED] rounded-[2px] hover:bg-[#1A1A22] transition-colors cursor-pointer"
                   aria-label="Close"
                 >
-                  <X size={20} />
+                  <X size={16} />
                 </button>
               </div>
 
               {/* Modal Body: Project Data Summary */}
-              <div className="p-6 space-y-5 overflow-y-auto">
+              <div className="flex-1 p-6 space-y-5 overflow-y-auto custom-scroll bg-[#111116]">
                 {/* File Information Chip */}
-                <div className="flex items-center justify-between px-4 py-3 bg-slate-100/70 rounded-2xl border border-slate-200/60 text-xs">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <FileText size={15} className="text-goguma shrink-0" />
-                    <span className="font-bold text-slate-700 truncate">{stagedProject.fileName}</span>
-                    <span className="px-2 py-0.5 bg-white rounded-md text-[10px] font-bold text-slate-500 border border-slate-200">
+                <div className="flex items-center justify-between px-3.5 py-2.5 bg-[#141418] rounded-[2px] border border-[#23232A] text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText size={14} className="text-[#C5A880] shrink-0" />
+                    <span className="font-semibold text-[#F5F3ED] truncate">{stagedProject.fileName}</span>
+                    <span className="px-1.5 py-0.5 bg-[#181822] rounded-[2px] text-[10px] font-mono text-[#C5A880] border border-[#23232A]">
                       {summary.version === '2.0' ? 'v2.0 Spec' : 'SitePlan Spec'}
                     </span>
                   </div>
-                  <span className="text-slate-400 font-medium shrink-0 ml-3">
+                  <span className="text-[#8E8B82] font-mono text-xs shrink-0 ml-3">
                     {formatFileSize(stagedProject.fileSize)}
                   </span>
                 </div>
 
                 {/* Primary Project Card */}
-                <div className="p-5 bg-gradient-to-br from-amber-50/40 via-white to-orange-50/20 rounded-2xl border border-amber-200/70 shadow-2xs space-y-4">
+                <div className="p-5 bg-[#141418] rounded-[2px] border border-[#23232A] space-y-4">
                   {/* Title & Platform Row */}
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-black uppercase tracking-wider text-goguma">
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-[#8E8B82]">
                         {language === 'ko' ? '프로젝트 명칭' : 'Project Name'}
                       </span>
-                      <h4 className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5 tracking-tight truncate">
+                      <h4 className="text-lg sm:text-xl font-sans font-bold text-[#F5F3ED] mt-0.5 tracking-tight truncate">
                         {summary.projectName || 'Untitled Project'}
                       </h4>
                     </div>
 
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 ${
-                      summary.platform === 'APP' 
-                        ? 'bg-purple-100 text-purple-700 border border-purple-200' 
-                        : 'bg-blue-100 text-blue-700 border border-blue-200'
-                    }`}>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-xs font-mono bg-[#181822] text-[#C5A880] border border-[#23232A] shrink-0">
                       {summary.platform === 'APP' ? (
                         <>
-                          <Smartphone size={14} />
-                          <span>App Architecture</span>
+                          <Smartphone size={13} />
+                          <span>APP SPEC</span>
                         </>
                       ) : (
                         <>
-                          <Globe size={14} />
-                          <span>Web Architecture</span>
+                          <Globe size={13} />
+                          <span>WEB SPEC</span>
                         </>
                       )}
                     </span>
@@ -377,53 +370,53 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                   {/* Summary Metrics Grid */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
                     {/* Metric 1: Number of Pages */}
-                    <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-2xs">
-                      <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                        <Layers size={13} />
-                        <span className="text-[11px] font-bold uppercase">{t('number_of_pages')}</span>
+                    <div className="p-3 bg-[#0E0E12] rounded-[2px] border border-[#23232A]">
+                      <div className="flex items-center gap-1.5 text-[#8E8B82] mb-1">
+                        <Layers size={13} className="text-[#C5A880]" />
+                        <span className="text-[10px] font-mono uppercase tracking-wider">{t('number_of_pages')}</span>
                       </div>
-                      <p className="text-lg font-black text-slate-800">
+                      <p className="text-base font-sans font-bold text-[#F5F3ED]">
                         {summary.pageCount}
-                        <span className="text-xs font-medium text-slate-400 ml-1">
+                        <span className="text-xs font-normal text-[#8E8B82] ml-1">
                           {language === 'ko' ? '개 화면' : 'pages'}
                         </span>
                       </p>
                     </div>
 
                     {/* Metric 2: Theme / Design Palette */}
-                    <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-2xs">
-                      <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                        <Palette size={13} />
-                        <span className="text-[11px] font-bold uppercase">
+                    <div className="p-3 bg-[#0E0E12] rounded-[2px] border border-[#23232A]">
+                      <div className="flex items-center gap-1.5 text-[#8E8B82] mb-1">
+                        <Palette size={13} className="text-[#C5A880]" />
+                        <span className="text-[10px] font-mono uppercase tracking-wider">
                           {language === 'ko' ? '테마 색상' : 'Theme Color'}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <span 
-                          className="w-5 h-5 rounded-full border border-black/10 shadow-2xs" 
+                          className="w-4 h-4 rounded-[2px] border border-[#23232A]" 
                           style={{ backgroundColor: themeColor }}
                           title={`Primary: ${themeColor}`}
                         />
                         <span 
-                          className="w-5 h-5 rounded-full border border-black/10 shadow-2xs" 
+                          className="w-4 h-4 rounded-[2px] border border-[#23232A]" 
                           style={{ backgroundColor: accentColor }}
                           title={`Accent: ${accentColor}`}
                         />
-                        <span className="text-xs font-mono text-slate-600 font-bold uppercase">
+                        <span className="text-xs font-mono text-[#8E8B82] uppercase">
                           {themeColor}
                         </span>
                       </div>
                     </div>
 
                     {/* Metric 3: Target Platform */}
-                    <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-2xs col-span-2 sm:col-span-1">
-                      <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                        <Target size={13} />
-                        <span className="text-[11px] font-bold uppercase">
+                    <div className="p-3 bg-[#0E0E12] rounded-[2px] border border-[#23232A] col-span-2 sm:col-span-1">
+                      <div className="flex items-center gap-1.5 text-[#8E8B82] mb-1">
+                        <Target size={13} className="text-[#C5A880]" />
+                        <span className="text-[10px] font-mono uppercase tracking-wider">
                           {language === 'ko' ? '타겟 대상' : 'Target'}
                         </span>
                       </div>
-                      <p className="text-xs font-bold text-slate-700 truncate mt-1">
+                      <p className="text-xs text-[#F5F3ED] font-medium truncate mt-1">
                         {summary.target || (language === 'ko' ? '일반 사용자' : 'General Users')}
                       </p>
                     </div>
@@ -432,10 +425,10 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                   {/* Project Overview / Purpose */}
                   {summary.purpose && (
                     <div className="pt-1">
-                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                      <span className="text-[10px] font-mono text-[#8E8B82] uppercase tracking-widest block mb-1">
                         {language === 'ko' ? '기획 의도 및 목적' : 'Project Purpose & Intent'}
                       </span>
-                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed bg-white p-3 rounded-xl border border-slate-100">
+                      <p className="text-xs text-[#F5F3ED] leading-relaxed bg-[#0E0E12] p-3 rounded-[2px] border border-[#23232A] font-sans">
                         {summary.purpose}
                       </p>
                     </div>
@@ -444,15 +437,15 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                   {/* Included Page Architecture List */}
                   <div className="pt-1">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                        <Layers size={14} className="text-goguma" />
+                      <span className="text-xs font-semibold text-[#F5F3ED] flex items-center gap-1.5">
+                        <Layers size={13} className="text-[#C5A880]" />
                         <span>{language === 'ko' ? '포함된 페이지 구조 상세' : 'Page Structure Details'}</span>
                       </span>
                       {summary.pages.length > 6 && (
                         <button
                           type="button"
                           onClick={() => setShowAllPages(!showAllPages)}
-                          className="text-xs font-bold text-goguma hover:underline"
+                          className="text-xs font-mono text-[#C5A880] hover:text-[#D4B992] cursor-pointer"
                         >
                           {showAllPages 
                             ? (language === 'ko' ? '간략히 보기' : 'Show less') 
@@ -461,21 +454,21 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                       )}
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 bg-white rounded-xl border border-slate-100">
+                    <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1.5 bg-[#0E0E12] rounded-[2px] border border-[#23232A]">
                       {(showAllPages ? pageStructure : pageStructure.slice(0, 6)).map((page, idx) => (
                         <div 
                           key={idx}
-                          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 border border-slate-200/80 rounded-lg text-xs font-medium text-slate-700 shadow-2xs"
+                          className="flex items-center gap-1.5 px-2.5 py-1 bg-[#141418] border border-[#23232A] rounded-[2px] text-xs text-[#F5F3ED]"
                         >
-                          <span className="w-1.5 h-1.5 rounded-full bg-goguma" />
-                          <span className="font-bold">{page.name || 'Untitled'}</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
+                          <span className="font-medium">{page.name || 'Untitled'}</span>
                           {page.slug && (
-                            <span className="text-[10px] text-slate-400 font-mono">({page.slug})</span>
+                            <span className="text-[10px] text-[#8E8B82] font-mono">({page.slug})</span>
                           )}
                         </div>
                       ))}
                       {!showAllPages && pageStructure.length > 6 && (
-                        <span className="px-2.5 py-1.5 bg-slate-100 rounded-lg text-xs font-bold text-slate-500">
+                        <span className="px-2 py-1 bg-[#141418] rounded-[2px] text-xs font-mono text-[#8E8B82] border border-[#23232A]">
                           +{pageStructure.length - 6} {language === 'ko' ? '더보기' : 'more'}
                         </span>
                       )}
@@ -484,13 +477,13 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                 </div>
 
                 {/* Information Notice */}
-                <div className="flex items-start gap-3 p-3.5 bg-blue-50/70 border border-blue-100 rounded-2xl text-xs text-blue-900">
-                  <Sparkles size={16} className="text-blue-600 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2.5 p-3.5 bg-[#141418] border border-[#23232A] rounded-[2px] text-xs text-[#8E8B82]">
+                  <Sparkles size={15} className="text-[#C5A880] shrink-0 mt-0.5" />
                   <div className="leading-relaxed">
-                    <p className="font-bold text-blue-950 mb-0.5">
+                    <p className="font-semibold text-[#F5F3ED] mb-0.5">
                       {language === 'ko' ? '불러오기 확인' : 'Import Confirmation'}
                     </p>
-                    <p className="text-blue-800/90">
+                    <p className="text-[#8E8B82]">
                       {language === 'ko'
                         ? '확인 버튼을 누르면 현재 편집 화면이 이 프로젝트 데이터로 전환됩니다. 기존 작업물을 보존하려면 먼저 "보관함에만 저장"을 선택할 수 있습니다.'
                         : 'Confirming will switch your active workspace canvas to this project. You may also choose "Save to Library Only" to preserve your current workspace.'}
@@ -500,11 +493,11 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
               </div>
 
               {/* Modal Footer Actions */}
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-end gap-3">
+              <div className="px-6 py-3.5 bg-[#0E0E12] border-t border-[#23232A] flex flex-col sm:flex-row items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setStagedProject(null)}
-                  className="w-full sm:w-auto px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl transition-colors order-3 sm:order-1"
+                  className="w-full sm:w-auto px-4 py-2 text-xs font-medium text-[#8E8B82] hover:text-[#F5F3ED] rounded-[2px] hover:bg-[#1A1A22] transition-colors cursor-pointer order-3 sm:order-1"
                 >
                   {t('cancel')}
                 </button>
@@ -513,18 +506,18 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                   type="button"
                   onClick={handleSaveToLibraryOnly}
                   disabled={isSavingToLibrary}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all shadow-2xs hover:shadow-xs disabled:opacity-50 order-2"
+                  className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 bg-[#141418] hover:bg-[#1A1A22] border border-[#23232A] text-[#F5F3ED] text-xs font-medium rounded-[2px] transition-colors cursor-pointer disabled:opacity-40 order-2"
                 >
-                  <FolderPlus size={15} className="text-slate-500" />
+                  <FolderPlus size={14} className="text-[#C5A880]" />
                   <span>{t('save_to_library_only')}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleConfirmImport}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-goguma hover:bg-goguma/90 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-goguma/20 hover:shadow-lg hover:shadow-goguma/30 order-1 sm:order-3"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 bg-[#C5A880] hover:bg-[#D4B992] text-[#0A0A0C] text-xs font-semibold rounded-[2px] shadow-xs transition-colors cursor-pointer order-1 sm:order-3"
                 >
-                  <Check size={16} strokeWidth={2.5} />
+                  <Check size={15} strokeWidth={2.5} />
                   <span>{t('confirm_import_button')}</span>
                 </button>
               </div>

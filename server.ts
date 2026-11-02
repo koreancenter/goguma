@@ -9,7 +9,27 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(cors());
+  // Controlled CORS: permit same-origin, local preview, and trusted domains only
+  app.use(cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      try {
+        const url = new URL(origin);
+        const host = url.hostname.toLowerCase();
+        if (
+          host === 'localhost' ||
+          host === '127.0.0.1' ||
+          host.endsWith('.run.app') ||
+          host.endsWith('.goguma.app') ||
+          host.endsWith('.indonesiacenter.net')
+        ) {
+          return callback(null, true);
+        }
+      } catch {}
+      return callback(null, false);
+    },
+    credentials: true,
+  }));
   app.use(express.json({ limit: '10mb' }));
 
   // Helper to create Gemini client (BYOK supported)
@@ -26,8 +46,34 @@ async function startServer() {
     });
   };
 
+  // Rate limiter to protect against automated quota exhaustion & DoS (45 requests / min per IP)
+  const ipRateBuckets = new Map<string, { count: number; resetAt: number }>();
+  const RATE_WINDOW_MS = 60 * 1000;
+  const MAX_REQ_PER_WINDOW = 45;
+
+  const aiRateLimiter = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const ip = req.ip || req.socket.remoteAddress || '127.0.0.1';
+    const now = Date.now();
+    const bucket = ipRateBuckets.get(ip);
+
+    if (!bucket || now > bucket.resetAt) {
+      ipRateBuckets.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+      return next();
+    }
+
+    if (bucket.count >= MAX_REQ_PER_WINDOW) {
+      return res.status(429).json({
+        error: "요청 한도 초과: 단시간 내 너무 많은 AI 요청이 발생했습니다. 1분 후 다시 시도해 주세요.",
+        retryAfterMs: bucket.resetAt - now
+      });
+    }
+
+    bucket.count += 1;
+    next();
+  };
+
   // API Route for Gemini (supports BYOK apiKey)
-  app.post("/api/gemini", async (req, res) => {
+  app.post("/api/gemini", aiRateLimiter, async (req, res) => {
     try {
       const { model, contents, config, apiKey } = req.body;
       const ai = getGeminiClient(apiKey);
@@ -69,7 +115,7 @@ async function startServer() {
   });
 
   // Streaming SSE Route for Gemini with Thinking & Live token emission (supports BYOK apiKey)
-  app.post("/api/gemini/stream", async (req, res) => {
+  app.post("/api/gemini/stream", aiRateLimiter, async (req, res) => {
     try {
       const { model, contents, config, apiKey } = req.body;
       const ai = getGeminiClient(apiKey);
@@ -110,17 +156,28 @@ async function startServer() {
     }
   });
 
-  // Helper to validate loopback / local AI endpoints (Article 2 of 07_SECURITY.md)
+  // Helper to validate loopback / local AI endpoints with blocked port protection (Article 2 of 07_SECURITY.md)
+  const BLOCKED_INTERNAL_PORTS = new Set([
+    20, 21, 22, 23, 25, 53, 80, 443, 110, 143, 389, 445, 636, 1433, 1521, 2049, 3306, 5432, 6379, 8080, 9200, 11211, 27017, 28017
+  ]);
+
   const isAllowedLoopbackEndpoint = (urlStr: string): boolean => {
     try {
       const parsed = new URL(urlStr);
       const host = parsed.hostname.toLowerCase();
-      return (
+      const isLoopback = (
         host === 'localhost' ||
         host === '127.0.0.1' ||
         host === '::1' ||
         host.endsWith('.localhost')
       );
+      if (!isLoopback) return false;
+
+      const port = parsed.port ? parseInt(parsed.port, 10) : (parsed.protocol === 'https:' ? 443 : 80);
+      if (isNaN(port) || port < 1 || port > 65535) return false;
+      if (BLOCKED_INTERNAL_PORTS.has(port)) return false;
+
+      return true;
     } catch {
       return false;
     }
@@ -160,7 +217,7 @@ async function startServer() {
   });
 
   // Ollama Chat/Generate Proxy
-  app.post("/api/ollama/chat", async (req, res) => {
+  app.post("/api/ollama/chat", aiRateLimiter, async (req, res) => {
     try {
       const { endpoint = "http://localhost:11434", model = "llama3.2", messages, stream = false, format } = req.body;
       const cleanEndpoint = endpoint.replace(/\/$/, "");
@@ -287,9 +344,30 @@ Sitemap: https://goguma.app/sitemap.xml
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
+
+  process.on('uncaughtException', (err) => {
+    console.error('[Dev Server] Uncaught exception:', err);
+  });
+
+  process.on('unhandledRejection', (reason) => {
+    console.error('[Dev Server] Unhandled rejection:', reason);
+  });
+
+  const gracefulShutdown = () => {
+    console.log('[Dev Server] Shutting down gracefully...');
+    server.close(() => {
+      process.exit(0);
+    });
+  };
+
+  process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
 }
 
-startServer();
+startServer().catch((err) => {
+  console.error('[Dev Server] Startup failure:', err);
+  process.exit(1);
+});

@@ -16,42 +16,32 @@ export default function AIPolicyModal({ isOpen, onClose }: AIPolicyModalProps) {
       id: 'intro',
       title: t('ai_policy_intro_title'),
       desc: t('ai_policy_intro_desc'),
-      icon: Globe,
-      color: 'text-blue-500',
-      bgColor: 'bg-blue-50'
+      icon: Globe
     },
     {
       id: 'training',
       title: t('ai_policy_training_title'),
       desc: t('ai_policy_training_desc'),
       icon: Brain,
-      color: 'text-emerald-500',
-      bgColor: 'bg-emerald-50',
       highlight: true
     },
     {
       id: 'security',
       title: t('ai_policy_security_title'),
       desc: t('ai_policy_security_desc'),
-      icon: Lock,
-      color: 'text-indigo-500',
-      bgColor: 'bg-indigo-50'
+      icon: Lock
     },
     {
       id: 'transfer',
       title: t('ai_policy_transfer_title'),
       desc: t('ai_policy_transfer_desc'),
-      icon: Cpu,
-      color: 'text-amber-500',
-      bgColor: 'bg-amber-50'
+      icon: Cpu
     },
     {
       id: 'liability',
       title: t('ai_policy_liability_title'),
       desc: t('ai_policy_liability_desc'),
-      icon: AlertCircle,
-      color: 'text-rose-500',
-      bgColor: 'bg-rose-50'
+      icon: AlertCircle
     }
   ];
 
@@ -64,70 +54,64 @@ export default function AIPolicyModal({ isOpen, onClose }: AIPolicyModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9998]"
+            className="fixed inset-0 bg-black/80 backdrop-blur-xs z-[9998]"
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.97, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-0 m-auto w-full max-w-2xl h-fit max-h-[85vh] bg-white rounded-3xl shadow-2xl z-[9999] overflow-hidden flex flex-col"
+            exit={{ opacity: 0, scale: 0.97, y: 10 }}
+            className="fixed inset-0 m-auto w-full max-w-2xl h-[580px] bg-[#111116] rounded-[2px] shadow-2xl z-[9999] overflow-hidden flex flex-col border border-[#23232A] text-[#F5F3ED] font-sans"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0">
+            <div className="px-6 py-4 border-b border-[#23232A] flex items-center justify-between bg-[#0E0E12] shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white">
-                  <Shield size={20} />
+                <div className="w-9 h-9 bg-[#141418] border border-[#23232A] text-[#C5A880] rounded-[2px] flex items-center justify-center font-bold shadow-xs shrink-0">
+                  <Shield size={18} />
                 </div>
                 <div>
-                  <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t('ai_policy')}</h2>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Ethical Intelligence Protocol</p>
+                  <h2 className="text-sm sm:text-base font-semibold text-[#F5F3ED] uppercase tracking-wide">{t('ai_policy')}</h2>
+                  <p className="text-[11px] text-[#8E8B82] font-mono mt-0.5">Ethical Intelligence & Privacy Protocol</p>
                 </div>
               </div>
               <button 
                 onClick={onClose}
-                className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-slate-900"
+                className="p-1.5 rounded-[2px] text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#141418] transition-colors cursor-pointer"
               >
-                <X size={20} />
+                <X size={16} />
               </button>
             </div>
 
             {/* Content */}
-            <div className="p-8 overflow-y-auto space-y-8 custom-scrollbar">
+            <div className="p-6 overflow-y-auto custom-scroll space-y-4 flex-1 bg-[#111116]">
               {sections.map((section) => (
-                <section key={section.id} className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 ${section.bgColor} rounded-lg flex items-center justify-center ${section.color} flex-shrink-0`}>
-                      <section.icon size={18} />
+                <section key={section.id} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-[2px] bg-[#141418] border border-[#23232A] flex items-center justify-center text-[#C5A880] shrink-0">
+                      <section.icon size={13} />
                     </div>
-                    <h3 className="text-xs font-black uppercase tracking-widest text-slate-900">{section.title}</h3>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#F5F3ED]">{section.title}</h3>
                     {section.highlight && (
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase tracking-widest rounded">Crucial</span>
+                      <span className="px-1.5 py-0.5 bg-[#16161F] text-[#C5A880] border border-[#C5A880]/30 text-[9px] font-mono uppercase tracking-wider rounded-[2px]">Verified</span>
                     )}
                   </div>
                   
-                  <div className={`p-6 rounded-2xl border transition-all duration-300 ${
-                    section.highlight 
-                      ? 'bg-slate-900 border-slate-800 shadow-xl shadow-slate-900/10' 
-                      : 'bg-white border-slate-100'
-                  }`}>
-                    <p className={`text-xs leading-relaxed font-medium ${
-                      section.highlight ? 'text-slate-200' : 'text-slate-600'
-                    }`}>
+                  <div className="p-4 rounded-[2px] border border-[#23232A] bg-[#141418] space-y-2">
+                    <p className="text-xs leading-relaxed font-sans text-[#B8B5AC]">
                       {section.desc}
                     </p>
                     
                     {section.id === 'security' && (
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <div className="px-3 py-1 bg-indigo-50 border border-indigo-100 rounded-lg text-[9px] font-bold text-indigo-600 uppercase tracking-wider">TLS 1.3 Encryption</div>
-                        <div className="px-3 py-1 bg-indigo-50 border border-indigo-100 rounded-lg text-[9px] font-bold text-indigo-600 uppercase tracking-wider">AES-256 at Rest</div>
+                      <div className="mt-2 flex flex-wrap gap-2 pt-2 border-t border-[#23232A]">
+                        <span className="px-2 py-0.5 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-[10px] font-mono text-[#B8B5AC]">TLS 1.3 Encryption</span>
+                        <span className="px-2 py-0.5 bg-[#0E0E12] border border-[#23232A] rounded-[2px] text-[10px] font-mono text-[#B8B5AC]">AES-256 at Rest</span>
                       </div>
                     )}
 
                     {section.id === 'training' && (
-                      <div className="mt-4 flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                        <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Zero-Training Verified</span>
+                      <div className="mt-2 flex items-center gap-2 pt-2 border-t border-[#23232A]">
+                        <div className="w-1.5 h-1.5 bg-[#C5A880] rounded-full animate-pulse" />
+                        <span className="text-[10px] font-mono text-[#C5A880] uppercase tracking-wider">Zero-Training Verified (No Model Retraining)</span>
                       </div>
                     )}
                   </div>
@@ -136,12 +120,12 @@ export default function AIPolicyModal({ isOpen, onClose }: AIPolicyModalProps) {
             </div>
 
             {/* Footer */}
-            <div className="px-8 py-6 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+            <div className="px-6 py-3.5 border-t border-[#23232A] bg-[#0E0E12] flex justify-end shrink-0">
               <button 
                 onClick={onClose}
-                className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-colors shadow-lg shadow-slate-900/10"
+                className="px-4 py-1.5 bg-[#141418] hover:bg-[#1A1A22] border border-[#23232A] text-[#F5F3ED] rounded-[2px] text-xs font-medium transition-colors cursor-pointer"
               >
-                Close Policy
+                닫기
               </button>
             </div>
           </motion.div>

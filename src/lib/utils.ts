@@ -48,3 +48,19 @@ export const getIconForLabel = (label: string): any => {
   if (l.includes('work') || l.includes('job') || l.includes('business') || l.includes('비즈니스') || l.includes('업무')) return Briefcase;
   return Menu;
 };
+
+/**
+ * Prompt injection defense & sanitization (Article 4 Clause 2 of 07_SECURITY.md).
+ * Neutralizes system tokens, role delimiters, and jailbreak tags.
+ */
+export function sanitizePromptText(input: string): string {
+  if (!input || typeof input !== 'string') return '';
+  return input
+    .replace(/<\|im_start\|>/gi, '[escaped_token]')
+    .replace(/<\|im_end\|>/gi, '[escaped_token]')
+    .replace(/<\|system\|>/gi, '[escaped_token]')
+    .replace(/\[INST\]/gi, '[escaped_inst]')
+    .replace(/\[\/INST\]/gi, '[escaped_inst]')
+    .replace(/```system/gi, '```text')
+    .trim();
+}
