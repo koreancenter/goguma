@@ -37,27 +37,28 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
   formInputs,
   isCollapsed,
   onToggleCollapse,
-  completedChapters = new Set(),
 }) => {
-  const handleChapterClick = (chapterId: number) => {
-    onSelectChapter(chapterId);
-    // Also select the first section of that chapter if switching
-    const targetChapter = GOGUMA_CHAPTERS.find(c => c.id === chapterId);
-    if (targetChapter && targetChapter.sections.length > 0) {
-      onSelectSection(targetChapter.sections[0].key);
-    }
-  };
+  // Flatten all 16 sections into a single flat sequence
+  const FLAT_SECTIONS = GOGUMA_CHAPTERS.flatMap((chap, chapIdx) =>
+    chap.sections.map((sec, secIdx) => {
+      const globalIdx = chapIdx * 2 + secIdx + 1;
+      return {
+        globalIndex: globalIdx,
+        numStr: globalIdx < 10 ? `0${globalIdx}` : `${globalIdx}`,
+        chapterId: chap.id,
+        sectionKey: sec.key,
+        title: sec.title,
+        chapterTitle: chap.title,
+        Icon: CHAPTER_ICONS[chap.id - 1] || FileText,
+      };
+    })
+  );
 
-  // Calculate total completed sections
-  let totalSections = 0;
-  let completedSectionsCount = 0;
-  GOGUMA_CHAPTERS.forEach(c => {
-    c.sections.forEach(s => {
-      totalSections++;
-      const val = formInputs[`${c.id}_${s.key}`]?.userRawInput?.trim();
-      if (val && val.length > 0) completedSectionsCount++;
-    });
-  });
+  const completedSectionsCount = FLAT_SECTIONS.filter(item => {
+    const v = formInputs[`${item.chapterId}_${item.sectionKey}`]?.userRawInput?.trim();
+    return Boolean(v && v.length > 0);
+  }).length;
+  const totalSections = FLAT_SECTIONS.length; // 16
 
   return (
     <aside 
@@ -67,11 +68,11 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
       aria-label="통합 기획서 목차 내비게이션"
     >
       {/* Navigator Header */}
-      <div className="h-14 px-3.5 flex items-center justify-between border-b border-white/[0.06] bg-[#111116]">
+      <div className="h-12 px-3.5 flex items-center justify-between border-b border-white/[0.06] bg-[#111116] shrink-0">
         {!isCollapsed && (
           <div className="flex items-center gap-2 overflow-hidden min-w-0">
             <span className="p-1 rounded-[2px] bg-[#181820] text-[#C5A880] border border-white/[0.06] shrink-0">
-              <Compass size={14} />
+              <Compass size={13} />
             </span>
             <div className="min-w-0">
               <span className="font-sans font-semibold text-xs text-[#F5F3ED] tracking-tight truncate block">
@@ -89,145 +90,86 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
           title={isCollapsed ? '목차 펼치기' : '목차 접기'}
           aria-label={isCollapsed ? '목차 펼치기' : '목차 접기'}
         >
-          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {isCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
         </button>
       </div>
 
-      {/* Navigator Content */}
-      <nav className="flex-1 overflow-y-auto p-2 space-y-1.5 custom-scroll">
-        {GOGUMA_CHAPTERS.map((chap: ChapterDef) => {
-          const IconComponent = CHAPTER_ICONS[chap.id - 1] || FileText;
-          const isCurrentChapter = chap.id === currentChapter;
-          const isCompleted = completedChapters.has(chap.id);
-
-          // Count completed sections in this chapter
-          const completedInChap = chap.sections.filter(s => {
-            const v = formInputs[`${chap.id}_${s.key}`]?.userRawInput?.trim();
-            return v && v.length > 0;
-          }).length;
+      {/* Navigator Content: Single Flat Un-grouped List (1 to 16) */}
+      <nav className="flex-1 overflow-y-auto p-1.5 space-y-0.5 custom-scroll">
+        {FLAT_SECTIONS.map((item) => {
+          const isCurrent = currentChapter === item.chapterId && currentSection === item.sectionKey;
+          const val = formInputs[`${item.chapterId}_${item.sectionKey}`]?.userRawInput?.trim();
+          const isDone = Boolean(val && val.length > 0);
 
           if (isCollapsed) {
-            // Collapsed Mode: Clean Icon Strip with Tooltip
+            // Collapsed Mode: Clean Number/Indicator with Tooltip
             return (
-              <Tooltip key={chap.id} content={`제 ${chap.id}장. ${chap.title}`} position="right">
+              <Tooltip key={`${item.chapterId}_${item.sectionKey}`} content={`${item.numStr}. ${item.title}`} position="right">
                 <button
-                  onClick={() => handleChapterClick(chap.id)}
-                  className={`w-10 h-10 rounded-[2px] flex items-center justify-center relative transition-colors cursor-pointer group ${
-                    isCurrentChapter
-                      ? 'bg-[#181822] text-[#C5A880] border border-white/20 shadow-2xs font-bold'
-                      : 'text-[#B8B5AC] hover:bg-[#14141A] hover:text-[#F5F3ED]'
+                  onClick={() => {
+                    onSelectChapter(item.chapterId);
+                    onSelectSection(item.sectionKey);
+                  }}
+                  className={`w-10 h-7 rounded-[2px] flex items-center justify-center font-mono text-[10px] transition-colors cursor-pointer relative ${
+                    isCurrent
+                      ? 'bg-[#C5A880] text-[#0A0A0C] font-bold shadow-xs'
+                      : 'text-[#8E8B82] hover:bg-[#16161C] hover:text-[#F5F3ED]'
                   }`}
-                  aria-label={`제 ${chap.id}장. ${chap.title}`}
+                  aria-label={`${item.numStr}. ${item.title}`}
                 >
-                  <IconComponent size={16} />
-                  {isCompleted && (
-                    <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
+                  <span>{item.numStr}</span>
+                  {isDone && !isCurrent && (
+                    <span className="absolute top-1 right-1 w-1 h-1 rounded-full bg-[#C5A880]" />
                   )}
                 </button>
               </Tooltip>
             );
           }
 
-          // Single-Tier Flat Chapter List
+          // Single-Tier Flat List Item
           return (
-            <div 
-              key={chap.id}
-              className={`rounded-[2px] border transition-colors ${
-                isCurrentChapter 
-                  ? 'border-white/10 bg-[#14141A] shadow-2xs' 
-                  : 'border-transparent hover:border-white/[0.06] bg-transparent'
+            <button
+              key={`${item.chapterId}_${item.sectionKey}`}
+              onClick={() => {
+                onSelectChapter(item.chapterId);
+                onSelectSection(item.sectionKey);
+              }}
+              className={`w-full text-left px-2.5 py-1.5 rounded-[2px] text-xs transition-colors flex items-center justify-between cursor-pointer group ${
+                isCurrent
+                  ? 'bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-xs'
+                  : 'text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#15151B]'
               }`}
             >
-              {/* Single-Tier Chapter Item */}
-              <button
-                type="button"
-                onClick={() => handleChapterClick(chap.id)}
-                className="w-full px-2.5 py-2 flex items-center justify-between text-left cursor-pointer group rounded-[2px]"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className={`w-5 h-5 rounded-[2px] flex items-center justify-center text-xs shrink-0 transition-colors ${
-                    isCurrentChapter
-                      ? 'bg-[#C5A880] text-[#0A0A0C] font-bold'
-                      : 'bg-[#1A1A22] text-[#B8B5AC] group-hover:bg-[#23232E]'
-                  }`}>
-                    <IconComponent size={12} />
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-mono text-[#78756E]">
-                        0{chap.id}
-                      </span>
-                      <span className={`text-xs font-sans font-semibold truncate ${
-                        isCurrentChapter ? 'text-[#F5F3ED]' : 'text-[#B8B5AC] group-hover:text-[#F5F3ED]'
-                      }`}>
-                        {chap.title}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              <div className="flex items-center gap-2 min-w-0 truncate">
+                <span className={`font-mono text-[10px] tabular-nums shrink-0 ${
+                  isCurrent ? 'text-[#0A0A0C]/75 font-bold' : 'text-[#78756E]'
+                }`}>
+                  {item.numStr}
+                </span>
+                <span className="truncate">{item.title}</span>
+              </div>
 
-                <div className="flex items-center gap-1 shrink-0 ml-1.5">
-                  <span className="text-[10px] font-mono tabular-nums text-[#78756E]">
-                    {completedInChap}/{chap.sections.length}
-                  </span>
-                  {isCompleted && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
-                  )}
-                </div>
-              </button>
-
-              {/* Directly visible active sections without dropdown toggle */}
-              {isCurrentChapter && (
-                <div className="px-2 pb-2 pt-1 border-t border-white/[0.06] space-y-0.5">
-                  {chap.sections.map((section: SectionDef, sIdx: number) => {
-                    const isCurrentSection = section.key === currentSection;
-                    const val = formInputs[`${chap.id}_${section.key}`]?.userRawInput?.trim();
-                    const isSectionDone = Boolean(val && val.length > 0);
-
-                    return (
-                      <button
-                        key={section.key}
-                        onClick={() => onSelectSection(section.key)}
-                        className={`w-full text-left px-2 py-1.5 rounded-[2px] text-xs transition-colors flex items-center justify-between cursor-pointer group ${
-                          isCurrentSection
-                            ? 'bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-2xs'
-                            : 'text-[#B8B5AC] hover:text-[#F5F3ED] hover:bg-[#181822]'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 truncate">
-                          <span className={`font-mono text-[10px] ${
-                            isCurrentSection ? 'text-[#0A0A0C]/70' : 'text-[#78756E]'
-                          }`}>
-                            0{sIdx + 1}
-                          </span>
-                          <span className="truncate">{section.title}</span>
-                        </div>
-                        {isSectionDone && (
-                          <span className={`shrink-0 ml-1 ${
-                            isCurrentSection ? 'text-[#0A0A0C]' : 'text-[#C5A880]'
-                          }`}>
-                            <Check size={11} strokeWidth={2.5} />
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+              {isDone && (
+                <span className={`shrink-0 ml-1.5 ${
+                  isCurrent ? 'text-[#0A0A0C]' : 'text-[#C5A880]'
+                }`}>
+                  <Check size={11} strokeWidth={2.5} />
+                </span>
               )}
-            </div>
+            </button>
           );
         })}
       </nav>
 
       {/* Navigator Footer - Quick Artifacts Shortcut */}
       {!isCollapsed && (
-        <div className="p-2.5 border-t border-white/[0.06] bg-[#0E0E14] text-xs">
+        <div className="p-2 border-t border-white/[0.06] bg-[#0E0E14] text-xs shrink-0">
           <button
             onClick={() => {
               onSelectChapter(8);
               onSelectSection('export_summary');
             }}
-            className="w-full py-1.5 px-2 rounded-[2px] bg-[#14141A] hover:bg-[#1A1A22] border border-white/[0.06] text-[#F5F3ED] font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="w-full py-1.5 px-2 rounded-[2px] bg-[#14141A] hover:bg-[#1A1A22] border border-white/[0.06] text-[#F5F3ED] font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
           >
             <Archive size={13} className="text-[#C5A880]" />
             <span>11종 사양서 배포 허브</span>
