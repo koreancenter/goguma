@@ -32,7 +32,7 @@ export const STANDARD_PRD_TEMPLATES: StandardPrdTemplate[] = [
     badge: '모던 웹 SaaS',
     name: '모던 클라우드 SaaS 웹 플랫폼',
     subtitle: '실시간 협업 워크스페이스 및 프로젝트 대시보드',
-    description: '토큰 기반 인증, 실시간 메트릭 모니터링, 역할 기반 권한 제어(RBAC) 및 가상화 데이터 그리드를 갖춘 엔터프라이즈급 SaaS 웹 애플리케이션',
+    description: '토큰 기반 인증, 실시간 메트릭 모니터링, 역할 기반 권한 제어 및 가상화 데이터 그리드를 갖춘 엔터프라이즈급 SaaS 웹 애플리케이션',
     targetUser: '엔지니어링 팀, 프로덕트 매니저, 데이터 분석가',
     keyFeatures: [
       'SSO 및 JWT 기반 사용자 인증 & 권한 제어',
@@ -43,7 +43,7 @@ export const STANDARD_PRD_TEMPLATES: StandardPrdTemplate[] = [
     screens: [
       { name: '워크스페이스 대시보드', route: '/dashboard', purpose: '실시간 핵심 KPI 지표, 최근 활동 로그 및 시스템 상태 모니터링' },
       { name: '프로젝트 및 리소스 목록', route: '/projects', purpose: '대용량 데이터 그리드, 다중 정렬 및 필터링 검색 지원' },
-      { name: '팀 및 멤버 권한 관리', route: '/settings/team', purpose: '역할 기반(RBAC) 접근 권한 설정 및 초대 관리' },
+      { name: '팀 및 멤버 권한 관리', route: '/settings/team', purpose: '역할 기반 접근 권한 설정 및 초대 관리' },
       { name: 'API 키 및 웹훅 설정', route: '/settings/integrations', purpose: '외부 서비스 연동 키 발급 및 보안 웹훅 이벤트 관리' }
     ],
     themeColor: '#090A0D',
@@ -221,8 +221,8 @@ export const STANDARD_PRD_TEMPLATES: StandardPrdTemplate[] = [
     targetUser: '사내 시스템 관리자, 보안 책임자, 비즈니스 운영팀',
     keyFeatures: [
       '엔터프라이즈 SSO 및 세션 만료 제어',
-      '사용자별 세분화된 CRUD 접근 제어(ACL)',
-      '모든 관리 작업에 대한 실시간 감사 로그(Audit Trail)',
+      '사용자별 세분화된 CRUD 접근 제어',
+      '모든 관리 작업에 대한 실시간 감사 로그',
       '대용량 데이터 일괄 수정 및 CSV/Excel 내보내기'
     ],
     screens: [
@@ -350,7 +350,7 @@ export const STANDARD_PRD_TEMPLATES: StandardPrdTemplate[] = [
           benchmarkAnalysis: '군더더기 광고와 배너를 배제한 순수한 타이포그래피 중심 레이아웃',
           toneAndManner: '에디토리얼 웜 옵시디언 & 티타늄, 스위스 스타일 그리드',
           screenList: '홈 피드, 아티클 리더, 에디터 스튜디오, 토픽 탐색',
-          features: '마크다운 에디터, 실시간 목차(TOC), 다크/라이트 대비 모드',
+          features: '마크다운 에디터, 실시간 목차, 다크/라이트 대비 모드',
           wireframe: '중앙 680px 가독 칼럼, 좌측 플로팅 공유 바, 우측 아티클 목차',
           context: '모바일 및 데스크톱에서 눈의 피로 없이 장시간 독서',
           techStack: 'React, TypeScript, Tailwind CSS, Headless CMS',

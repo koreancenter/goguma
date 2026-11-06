@@ -251,7 +251,7 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
                 </h3>
                 <p className="text-[11px] text-[#8E8B82] font-mono mt-0.5">
                   {language === 'ko' 
-                    ? '모든 기획 데이터는 브라우저 내부(Local Storage)에 안전하게 저장됩니다.' 
+                    ? '모든 기획 데이터는 브라우저 내부에 안전하게 저장됩니다.' 
                     : 'All project data is stored privately in your browser local storage.'}
                 </p>
               </div>

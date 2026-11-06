@@ -13,6 +13,7 @@ import { FeatureMappingInteractiveWidget } from './FeatureMappingInteractiveWidg
 import { DesignSystemInteractiveWidget } from './DesignSystemInteractiveWidget';
 import { NavigationArchitectureInteractiveWidget } from './NavigationArchitectureInteractiveWidget';
 import { VisualSchemaBridgeWidget } from './VisualSchemaBridgeWidget';
+import { Tooltip } from '../guide/Tooltip';
 
 export interface WritingCanvasProps {
   currentChapter: number;
@@ -302,33 +303,22 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
             <span className="text-[#C5A880] font-mono font-medium shrink-0">11종 사양서 번들</span>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {onTogglePreviewCollapse && (
-              <button
-                onClick={onTogglePreviewCollapse}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] border text-xs font-medium transition-all duration-300 cursor-pointer ${
-                  isPreviewCollapsed
-                    ? 'bg-[#C5A880]/15 text-[#C5A880] border-[#C5A880]/40'
-                    : 'bg-transparent text-[#78756E] border-white/[0.06] hover:text-[#F5F3ED] hover:border-white/20'
-                }`}
-                title={isPreviewCollapsed ? '미리보기 패널 열기 (⌘P)' : '집중 집필 모드 (⌘P)'}
-              >
-                {isPreviewCollapsed ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
-                <span className="hidden md:inline font-mono text-[11px]">
-                  {isPreviewCollapsed ? '집중 모드 켬' : '집중 모드'}
-                </span>
-                <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono rounded-[2px] bg-white/10 text-[#B8B5AC]">
-                  ⌘P
-                </kbd>
-              </button>
+              <Tooltip content={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'} position="bottom">
+                <button
+                  onClick={onTogglePreviewCollapse}
+                  className={`h-7 w-7 flex items-center justify-center rounded-[2px] border transition-colors cursor-pointer ${
+                    isPreviewCollapsed
+                      ? 'bg-[#C5A880]/10 text-[#C5A880] border-[#C5A880]/30'
+                      : 'bg-transparent text-[#78756E] border-transparent hover:text-[#F5F3ED] hover:bg-white/[0.04]'
+                  }`}
+                  aria-label={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'}
+                >
+                  {isPreviewCollapsed ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+                </button>
+              </Tooltip>
             )}
-
-            <div className="flex items-center gap-1.5 text-xs text-[#78756E]">
-              <span className={`w-1.5 h-1.5 rounded-full ${saveStatus === 'saving' ? 'bg-[#C5A880] animate-pulse' : 'bg-[#1D3A2F]'}`} />
-              <span className="font-mono text-[11px] text-[#B8B5AC]">
-                {saveStatus === 'saving' ? '보존 중' : '자동 보존됨'}
-              </span>
-            </div>
           </div>
         </div>
 
@@ -353,51 +343,35 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
       className="flex-1 min-w-[640px] h-full flex flex-col bg-[#0A0A0C] overflow-y-auto selection:bg-[#2F2922] selection:text-[#F5F3ED]"
       aria-label="집필 캔버스"
     >
-      {/* Canvas Top Bar: Breadcrumb, Focus Mode & Save Status */}
-      <div className="h-14 px-6 sm:px-8 border-b border-white/[0.06] bg-[#0E0E12] flex items-center justify-between shrink-0 gap-3">
-        {/* Left: Breadcrumbs */}
-        <div className={`flex items-center gap-2 text-[#B8B5AC] truncate min-w-0 ${
+      {/* Canvas Top Bar: Elegant Typographic Breadcrumb */}
+      <div className="h-12 px-6 sm:px-8 border-b border-white/[0.06] bg-[#0E0E12] flex items-center justify-between shrink-0 gap-3">
+        {/* Left: Breadcrumbs with generous breathing room */}
+        <div className={`flex items-center gap-2.5 text-[#B8B5AC] truncate min-w-0 ${
           largeTextMode ? 'text-base' : 'text-xs sm:text-sm'
         }`}>
-          <span className="font-mono text-[#78756E] font-semibold shrink-0">CHAPTER 0{chapter.id}</span>
-          <span className="text-[#78756E]/40 shrink-0">·</span>
+          <span className="font-mono text-[#C5A880] font-semibold text-xs shrink-0 tracking-wider">CHAPTER 0{chapter.id}</span>
+          <span className="text-[#78756E]/40 shrink-0 select-none">/</span>
           <span className="text-[#F5F3ED] font-sans font-medium truncate">{chapter.title}</span>
-          <span className="text-[#78756E]/40 shrink-0">·</span>
-          <span className="text-[#B8B5AC] truncate">{section.title}</span>
+          <span className="text-[#78756E]/40 shrink-0 select-none">·</span>
+          <span className="text-[#78756E] truncate">{section.title}</span>
         </div>
 
-        {/* Right: Focus Mode Toggle + Save Status */}
-        <div className="flex items-center gap-3 shrink-0">
-          {/* Focus Mode Toggle Button */}
-          {onTogglePreviewCollapse && (
+        {/* Right: Minimal Focus Mode Trigger */}
+        {onTogglePreviewCollapse && (
+          <Tooltip content={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'} position="bottom">
             <button
               onClick={onTogglePreviewCollapse}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] border text-xs font-medium transition-all duration-300 cursor-pointer ${
+              className={`h-7 w-7 flex items-center justify-center rounded-[2px] border transition-colors cursor-pointer shrink-0 ${
                 isPreviewCollapsed
-                  ? 'bg-[#C5A880]/15 text-[#C5A880] border-[#C5A880]/40'
-                  : 'bg-transparent text-[#78756E] border-white/[0.06] hover:text-[#F5F3ED] hover:border-white/20'
+                  ? 'bg-[#C5A880]/10 text-[#C5A880] border-[#C5A880]/30'
+                  : 'bg-transparent text-[#78756E] border-transparent hover:text-[#F5F3ED] hover:bg-white/[0.04]'
               }`}
-              title={isPreviewCollapsed ? '미리보기 패널 열기 (⌘P)' : '집중 집필 모드 (⌘P)'}
-              aria-label="집중 집필 모드 토글"
+              aria-label={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'}
             >
-              {isPreviewCollapsed ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
-              <span className="hidden md:inline font-mono text-[11px]">
-                {isPreviewCollapsed ? '집중 모드 켬' : '집중 모드'}
-              </span>
-              <kbd className="hidden lg:inline-block px-1 py-0.2 text-[9px] font-mono rounded-[2px] bg-white/10 text-[#B8B5AC]">
-                ⌘P
-              </kbd>
+              {isPreviewCollapsed ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
             </button>
-          )}
-
-          {/* Unboxed Save Status */}
-          <div className="flex items-center gap-1.5 text-xs text-[#78756E]">
-            <span className={`w-1.5 h-1.5 rounded-full ${saveStatus === 'saving' ? 'bg-[#C5A880] animate-pulse' : 'bg-[#1D3A2F]'}`} />
-            <span className="font-mono text-[11px] text-[#B8B5AC]">
-              {saveStatus === 'saving' ? '보존 중' : lastSavedTime ? `${lastSavedTime} 저장` : '자동 보존됨'}
-            </span>
-          </div>
-        </div>
+          </Tooltip>
+        )}
       </div>
 
       {/* Main Unified Canvas Body - Dynamic 2-Track Expansion (max-w-5xl/6xl) */}

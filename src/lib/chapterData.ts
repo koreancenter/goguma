@@ -38,17 +38,17 @@ export const GOGUMA_CHAPTERS: ChapterDef[] = [
     id: 2,
     title: '타깃 사용자 및 환경 명세',
     engTitle: 'Target & Platform Spec',
-    description: '사용자 그룹과 지원 디바이스 환경 및 핵심 요구사항을 구체화합니다.',
+    description: '사용자 그룹과 지원 기기 환경 및 핵심 요구사항을 구체화합니다.',
     sections: [
       {
         key: 'target_persona',
         title: '주요 사용자군 및 런타임 환경',
-        question: '서비스의 주 사용자 계층과 지원 디바이스(Desktop / Mobile Web) 환경을 정의하세요.',
-        placeholder: '사용자 그룹 및 디바이스 환경 명세',
+        question: '서비스의 주 사용자 계층과 지원 기기 환경을 정의하세요.',
+        placeholder: '사용자 그룹 및 기기 환경 명세',
       },
       {
         key: 'user_problems',
-        title: '사용자 요구사항 및 Pain Points',
+        title: '사용자 요구사항 및 불편 사항',
         question: '사용자가 직면한 주요 요구사항 및 시스템이 충족해야 할 인터랙션 목표를 입력하세요.',
         placeholder: '핵심 사용자 요구사항 및 기술적 대응 방안',
       },
@@ -56,35 +56,35 @@ export const GOGUMA_CHAPTERS: ChapterDef[] = [
   },
   {
     id: 3,
-    title: '핵심 기능 명세 및 유저 플로우',
+    title: '핵심 기능 명세 및 사용자 흐름',
     engTitle: 'Functional Specs & Flow',
-    description: '웹 애플리케이션의 핵심 기능 명세와 엔드투엔드 이용 흐름을 설계합니다.',
+    description: '웹 애플리케이션의 핵심 기능 명세와 이용 흐름을 설계합니다.',
     sections: [
       {
         key: 'key_features',
         title: '필수 핵심 기능 명세',
         question: '웹 애플리케이션에 반드시 포함되어야 하는 핵심 기능 요구사항을 입력하세요.',
-        placeholder: '인증, 대시보드, 데이터 관리(CRUD), 실시간 알림 등 필수 기능 명세',
+        placeholder: '인증, 대시보드, 데이터 관리, 실시간 알림 등 필수 기능 명세',
       },
       {
         key: 'happy_path',
-        title: '엔드투엔드 유저 플로우 (Happy Path)',
-        question: '사용자가 진입하여 주요 작업을 완결하는 엔드투엔드 플로우를 정의하세요.',
+        title: '사용자 핵심 흐름',
+        question: '사용자가 진입하여 주요 작업을 완결하는 전체 흐름을 정의하세요.',
         placeholder: '랜딩 ➔ 인증 ➔ 대시보드 ➔ 데이터 조작 ➔ 결과 저장 및 통계 반영',
       },
     ],
   },
   {
     id: 4,
-    title: '데이터 모델 및 API 스키마',
+    title: '데이터 모델 및 인터페이스 스키마',
     engTitle: 'Data Model & Schema',
     description: '데이터베이스 엔터티 구조와 비즈니스 로직 및 유효성 검증 규칙을 정의합니다.',
     sections: [
       {
         key: 'data_columns',
         title: '데이터베이스 엔터티 및 필드 명세',
-        question: '데이터베이스 모델에 포함될 주요 엔터티와 필드(Columns) 목록을 정의하세요.',
-        placeholder: 'ID, Title, UserID, Status, Metadata, CreatedAt 등 필드 목록',
+        question: '데이터베이스 모델에 포함될 주요 엔터티와 항목 목록을 정의하세요.',
+        placeholder: 'ID, Title, UserID, Status, Metadata, CreatedAt 등 항목 목록',
       },
       {
         key: 'business_rules',
@@ -96,9 +96,9 @@ export const GOGUMA_CHAPTERS: ChapterDef[] = [
   },
   {
     id: 5,
-    title: '디자인 시스템 및 UI 토큰',
+    title: '디자인 시스템 및 시각 토큰',
     engTitle: 'Design System & Tokens',
-    description: '모노크롬 테마 토큰, 타이포그래피, 레이아웃 그리드 등 시각적 규격을 규정합니다.',
+    description: '모노크롬 테마 토큰, 서체, 레이아웃 그리드 등 시각적 규격을 규정합니다.',
     sections: [
       {
         key: 'brand_mood',
@@ -116,7 +116,7 @@ export const GOGUMA_CHAPTERS: ChapterDef[] = [
   },
   {
     id: 6,
-    title: '정보구조(IA) 및 화면 정의서',
+    title: '정보구조 및 화면 정의서',
     engTitle: 'Information Architecture',
     description: '웹 서비스를 구성하는 전체 사이트맵, 화면 목록 및 내비게이션 동선을 설계합니다.',
     sections: [
@@ -149,7 +149,7 @@ export const GOGUMA_CHAPTERS: ChapterDef[] = [
       {
         key: 'data_sovereignty',
         title: '보안 정책 및 성능 최적화 규약',
-        question: '데이터 암호화, 세션 보안 및 성능 최적화(Lighthouse) 정책을 정의하세요.',
+        question: '데이터 암호화, 세션 보안 및 성능 최적화 정책을 정의하세요.',
         placeholder: 'TLS 전송 암호화, 안전한 토큰 보관, 코드 스플리팅, 0ms 렌더링 최적화',
       },
     ],

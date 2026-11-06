@@ -80,7 +80,7 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
                   표준 앱/웹 개발계획서 프리셋
                 </h2>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-[#C5A880]/15 text-[#C5A880] border border-[#C5A880]/30 font-semibold">
-                  PRD STANDARD
+                  표준 서식
                 </span>
               </div>
               <p className="text-[11px] text-[#8E8B82] font-mono mt-0.5">

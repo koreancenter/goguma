@@ -10,6 +10,7 @@ import { compileStandalonePrototypeHtml, generatePrototypePrompt } from '../../l
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
 import { copyProjectJsonToClipboard } from '../../lib/projectFileIO';
 import VisualSitemap from './VisualSitemap';
+import { Tooltip } from '../guide/Tooltip';
 
 interface SpecPreviewPanelProps {
   plan: SitePlan;
@@ -293,98 +294,108 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
           </button>
         </div>
 
-        {/* Right: Consolidated Controls (Device Viewport + Golden Prompt + Clean Ghost Tools) */}
+        {/* Right: Consolidated Controls (Device Viewport + Prompt + Clean Ghost Tools) */}
         <div className="flex items-center gap-1.5 shrink-0 ml-auto">
           {activeTab === 'prototype' && (
             <>
               {/* Segmented Device Viewport Toggle */}
               <div className="hidden sm:flex items-center bg-[#121216] rounded-[2px] p-0.5 border border-white/[0.06]">
-                <button
-                  onClick={() => setViewportMode('desktop')}
-                  className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
-                    viewportMode === 'desktop'
-                      ? 'bg-[#1E1E26] text-[#F5F3ED] shadow-xs font-semibold'
-                      : 'text-[#78756E] hover:text-[#F5F3ED]'
-                  }`}
-                  title="데스크톱 뷰 (유동형 100%)"
-                >
-                  <Monitor size={13} />
-                </button>
-                <button
-                  onClick={() => setViewportMode('tablet')}
-                  className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
-                    viewportMode === 'tablet'
-                      ? 'bg-[#1E1E26] text-[#F5F3ED] shadow-xs font-semibold'
-                      : 'text-[#78756E] hover:text-[#F5F3ED]'
-                  }`}
-                  title="태블릿 뷰 (iPad 768px)"
-                >
-                  <Tablet size={13} />
-                </button>
-                <button
-                  onClick={() => setViewportMode('mobile')}
-                  className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
-                    viewportMode === 'mobile'
-                      ? 'bg-[#1E1E26] text-[#F5F3ED] shadow-xs font-semibold'
-                      : 'text-[#78756E] hover:text-[#F5F3ED]'
-                  }`}
-                  title="스마트폰 뷰 (390px)"
-                >
-                  <Smartphone size={13} />
-                </button>
+                <Tooltip content="데스크톱 뷰" position="bottom">
+                  <button
+                    onClick={() => setViewportMode('desktop')}
+                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
+                      viewportMode === 'desktop'
+                        ? 'bg-[#1E1E26] text-[#F5F3ED] shadow-xs font-semibold'
+                        : 'text-[#78756E] hover:text-[#F5F3ED]'
+                    }`}
+                    aria-label="데스크톱 뷰"
+                  >
+                    <Monitor size={13} />
+                  </button>
+                </Tooltip>
+
+                <Tooltip content="태블릿 뷰" position="bottom">
+                  <button
+                    onClick={() => setViewportMode('tablet')}
+                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
+                      viewportMode === 'tablet'
+                        ? 'bg-[#1E1E26] text-[#F5F3ED] shadow-xs font-semibold'
+                        : 'text-[#78756E] hover:text-[#F5F3ED]'
+                    }`}
+                    aria-label="태블릿 뷰"
+                  >
+                    <Tablet size={13} />
+                  </button>
+                </Tooltip>
+
+                <Tooltip content="스마트폰 뷰" position="bottom">
+                  <button
+                    onClick={() => setViewportMode('mobile')}
+                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
+                      viewportMode === 'mobile'
+                        ? 'bg-[#1E1E26] text-[#F5F3ED] shadow-xs font-semibold'
+                        : 'text-[#78756E] hover:text-[#F5F3ED]'
+                    }`}
+                    aria-label="스마트폰 뷰"
+                  >
+                    <Smartphone size={13} />
+                  </button>
+                </Tooltip>
               </div>
 
-              {/* Single Dominant Anchor: 골든 프롬프트 복사 */}
-              <button
-                onClick={handleCopyAgentPrompt}
-                title="Cursor / Claude Code에 전달할 '이 화면 그대로 구현' 골든 프롬프트 복사"
-                className={`px-2.5 py-1 min-h-[28px] rounded-[2px] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
-                  copiedPrompt
-                    ? 'bg-[#1D3A2F] text-[#F5F3ED]'
-                    : 'bg-[#C5A880] text-[#0A0A0C] hover:bg-[#D4B896]'
-                }`}
-              >
-                {copiedPrompt ? (
-                  <>
-                    <Check size={12} className="stroke-[3]" />
-                    <span>복사됨!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={12} />
-                    <span>골든 프롬프트</span>
-                  </>
-                )}
-              </button>
+              {/* Contextual Tool: 프롬프트 복사 (Icon + Tooltip) */}
+              <Tooltip content={copiedPrompt ? '복사 완료' : '개발용 프롬프트 복사'} position="bottom">
+                <button
+                  onClick={handleCopyAgentPrompt}
+                  className={`p-1.5 min-h-[28px] min-w-[28px] rounded-[2px] text-xs font-medium transition-all flex items-center justify-center cursor-pointer whitespace-nowrap shrink-0 ${
+                    copiedPrompt
+                      ? 'bg-[#1D3A2F] text-[#93D7AC] border border-[#2E6F52]'
+                      : 'bg-[#14141A] border border-[#C5A880]/30 text-[#C5A880] hover:bg-[#C5A880]/10 hover:border-[#C5A880]'
+                  }`}
+                  aria-label="개발용 프롬프트 복사"
+                >
+                  {copiedPrompt ? (
+                    <Check size={13} className="stroke-[2.5]" />
+                  ) : (
+                    <Copy size={13} />
+                  )}
+                </button>
+              </Tooltip>
 
               {/* Prompt Modal View Ghost Button */}
-              <button
-                onClick={() => setIsPromptModalOpen(true)}
-                title="골든 프롬프트 전문 확인"
-                className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
-              >
-                <Bot size={13} />
-              </button>
+              <Tooltip content="프롬프트 전문 확인" position="bottom">
+                <button
+                  onClick={() => setIsPromptModalOpen(true)}
+                  className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
+                  aria-label="프롬프트 전문 확인"
+                >
+                  <Bot size={13} />
+                </button>
+              </Tooltip>
             </>
           )}
 
           {/* Refresh Tool */}
-          <button
-            onClick={() => setReloadKey(k => k + 1)}
-            title="새로고침"
-            className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
-          >
-            <RefreshCw size={13} />
-          </button>
+          <Tooltip content="새로고침" position="bottom">
+            <button
+              onClick={() => setReloadKey(k => k + 1)}
+              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
+              aria-label="새로고침"
+            >
+              <RefreshCw size={13} />
+            </button>
+          </Tooltip>
 
           {/* Standalone New Tab Tool */}
-          <button
-            onClick={handleOpenStandalone}
-            title="새 창에서 전체 화면으로 실행"
-            className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
-          >
-            <ExternalLink size={13} />
-          </button>
+          <Tooltip content="새 창에서 실행" position="bottom">
+            <button
+              onClick={handleOpenStandalone}
+              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#181820] transition-colors cursor-pointer shrink-0"
+              aria-label="새 창에서 실행"
+            >
+              <ExternalLink size={13} />
+            </button>
+          </Tooltip>
         </div>
       </div>
 

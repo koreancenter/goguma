@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   FileText, Users, Cpu, Database, Palette, 
-  Layout, ShieldCheck, Archive, ChevronDown, ChevronRight,
-  ChevronLeft, Check, Compass
+  Layout, ShieldCheck, Archive, ChevronLeft, ChevronRight, Check, Compass
 } from 'lucide-react';
 import { GOGUMA_CHAPTERS, ChapterDef, SectionDef } from '../../lib/chapterData';
 import { FormInputEntity } from '../../types';
+import { Tooltip } from '../guide/Tooltip';
 
 interface IntegratedNavigatorProps {
   currentChapter: number;
@@ -39,25 +39,8 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
   onToggleCollapse,
   completedChapters = new Set(),
 }) => {
-  // Keep track of which chapters are expanded in the accordion
-  const [expandedChapters, setExpandedChapters] = useState<Record<number, boolean>>({
-    [currentChapter]: true,
-  });
-
-  const toggleChapterExpand = (chapterId: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpandedChapters(prev => ({
-      ...prev,
-      [chapterId]: !prev[chapterId],
-    }));
-  };
-
   const handleChapterClick = (chapterId: number) => {
     onSelectChapter(chapterId);
-    setExpandedChapters(prev => ({
-      ...prev,
-      [chapterId]: true,
-    }));
     // Also select the first section of that chapter if switching
     const targetChapter = GOGUMA_CHAPTERS.find(c => c.id === chapterId);
     if (targetChapter && targetChapter.sections.length > 0) {
@@ -115,7 +98,6 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
         {GOGUMA_CHAPTERS.map((chap: ChapterDef) => {
           const IconComponent = CHAPTER_ICONS[chap.id - 1] || FileText;
           const isCurrentChapter = chap.id === currentChapter;
-          const isExpanded = expandedChapters[chap.id] ?? isCurrentChapter;
           const isCompleted = completedChapters.has(chap.id);
 
           // Count completed sections in this chapter
@@ -127,25 +109,26 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
           if (isCollapsed) {
             // Collapsed Mode: Clean Icon Strip with Tooltip
             return (
-              <button
-                key={chap.id}
-                onClick={() => handleChapterClick(chap.id)}
-                className={`w-full h-10 rounded-[2px] flex items-center justify-center relative transition-colors cursor-pointer group ${
-                  isCurrentChapter
-                    ? 'bg-[#181822] text-[#C5A880] border border-white/20 shadow-2xs font-bold'
-                    : 'text-[#B8B5AC] hover:bg-[#14141A] hover:text-[#F5F3ED]'
-                }`}
-                title={`제 ${chap.id}장. ${chap.title}`}
-              >
-                <IconComponent size={16} />
-                {isCompleted && (
-                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
-                )}
-              </button>
+              <Tooltip key={chap.id} content={`제 ${chap.id}장. ${chap.title}`} position="right">
+                <button
+                  onClick={() => handleChapterClick(chap.id)}
+                  className={`w-10 h-10 rounded-[2px] flex items-center justify-center relative transition-colors cursor-pointer group ${
+                    isCurrentChapter
+                      ? 'bg-[#181822] text-[#C5A880] border border-white/20 shadow-2xs font-bold'
+                      : 'text-[#B8B5AC] hover:bg-[#14141A] hover:text-[#F5F3ED]'
+                  }`}
+                  aria-label={`제 ${chap.id}장. ${chap.title}`}
+                >
+                  <IconComponent size={16} />
+                  {isCompleted && (
+                    <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
+                  )}
+                </button>
+              </Tooltip>
             );
           }
 
-          // Expanded Mode: Accordion Tree
+          // Single-Tier Flat Chapter List
           return (
             <div 
               key={chap.id}
@@ -155,8 +138,9 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   : 'border-transparent hover:border-white/[0.06] bg-transparent'
               }`}
             >
-              {/* Chapter Header Button */}
-              <div
+              {/* Single-Tier Chapter Item */}
+              <button
+                type="button"
                 onClick={() => handleChapterClick(chap.id)}
                 className="w-full px-2.5 py-2 flex items-center justify-between text-left cursor-pointer group rounded-[2px]"
               >
@@ -186,32 +170,24 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   <span className="text-[10px] font-mono tabular-nums text-[#78756E]">
                     {completedInChap}/{chap.sections.length}
                   </span>
-                  <button
-                    type="button"
-                    onClick={(e) => toggleChapterExpand(chap.id, e)}
-                    className="p-1 rounded-[2px] hover:bg-[#1E1E28] text-[#78756E] hover:text-[#F5F3ED] transition-transform cursor-pointer"
-                    aria-label="섹션 펼치기/접기"
-                  >
-                    {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                  </button>
+                  {isCompleted && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
+                  )}
                 </div>
-              </div>
+              </button>
 
-              {/* Sections Accordion Body */}
-              {isExpanded && (
-                <div className="pl-6 pr-2 pb-2 space-y-0.5 border-t border-white/[0.06] pt-1.5 mt-0.5">
+              {/* Directly visible active sections without dropdown toggle */}
+              {isCurrentChapter && (
+                <div className="px-2 pb-2 pt-1 border-t border-white/[0.06] space-y-0.5">
                   {chap.sections.map((section: SectionDef, sIdx: number) => {
-                    const isCurrentSection = isCurrentChapter && section.key === currentSection;
+                    const isCurrentSection = section.key === currentSection;
                     const val = formInputs[`${chap.id}_${section.key}`]?.userRawInput?.trim();
                     const isSectionDone = Boolean(val && val.length > 0);
 
                     return (
                       <button
                         key={section.key}
-                        onClick={() => {
-                          onSelectChapter(chap.id);
-                          onSelectSection(section.key);
-                        }}
+                        onClick={() => onSelectSection(section.key)}
                         className={`w-full text-left px-2 py-1.5 rounded-[2px] text-xs transition-colors flex items-center justify-between cursor-pointer group ${
                           isCurrentSection
                             ? 'bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-2xs'
@@ -249,12 +225,12 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
           <button
             onClick={() => {
               onSelectChapter(8);
-              onSelectSection('export_bundle');
+              onSelectSection('export_summary');
             }}
             className="w-full py-1.5 px-2 rounded-[2px] bg-[#14141A] hover:bg-[#1A1A22] border border-white/[0.06] text-[#F5F3ED] font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
           >
             <Archive size={13} className="text-[#C5A880]" />
-            <span>11종 사양서 배포 허브 바로가기</span>
+            <span>11종 사양서 배포 허브</span>
           </button>
         </div>
       )}
