@@ -600,25 +600,25 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
     switch (badgeColor || type) {
       case 'sumuk':
       case 'root':
-        return { bg: '#16161C', border: '#C5A880', text: '#F5F3ED', badgeBg: '#C5A880', badgeText: '#0A0A0C' };
+        return { bg: '#FFFFFF', border: '#D97706', text: '#18181B', badgeBg: '#FEF3C7', badgeText: '#92400E' };
       case 'emerald':
       case 'page':
       case 'subpage':
-        return { bg: '#131317', border: '#2D3D32', text: '#F5F3ED', badgeBg: '#1C2E24', badgeText: '#A3E635' };
+        return { bg: '#FFFFFF', border: '#A7F3D0', text: '#18181B', badgeBg: '#ECFDF5', badgeText: '#065F46' };
       case 'terracotta':
       case 'feature':
       case 'flow_step':
-        return { bg: '#131317', border: '#4A3225', text: '#F5F3ED', badgeBg: '#382216', badgeText: '#FDBA74' };
+        return { bg: '#FFFFFF', border: '#FED7AA', text: '#18181B', badgeBg: '#FFF7ED', badgeText: '#9A3412' };
       case 'amber':
-        return { bg: '#131317', border: '#4A3B1C', text: '#F5F3ED', badgeBg: '#362810', badgeText: '#FCD34D' };
+        return { bg: '#FFFFFF', border: '#FDE68A', text: '#18181B', badgeBg: '#FEF3C7', badgeText: '#92400E' };
       case 'indigo':
       case 'data_entity':
-        return { bg: '#131317', border: '#2D3358', text: '#F5F3ED', badgeBg: '#1E2344', badgeText: '#A5B4FC' };
+        return { bg: '#FFFFFF', border: '#C7D2FE', text: '#18181B', badgeBg: '#EEF2FF', badgeText: '#3730A3' };
       case 'slate':
       case 'tech_token':
-        return { bg: '#131317', border: '#33333E', text: '#F5F3ED', badgeBg: '#202028', badgeText: '#D4D4D8' };
+        return { bg: '#FFFFFF', border: '#E4E4E7', text: '#18181B', badgeBg: '#F4F4F5', badgeText: '#3F3F46' };
       default:
-        return { bg: '#131317', border: '#262630', text: '#F5F3ED', badgeBg: '#1C1C24', badgeText: '#8E8B82' };
+        return { bg: '#FFFFFF', border: '#E4E4E7', text: '#18181B', badgeBg: '#F4F4F5', badgeText: '#71717A' };
     }
   };
 
@@ -726,7 +726,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           d.target.data.name.toLowerCase().includes(query) ||
           d.source.data.name.toLowerCase().includes(query)
         );
-        return isMatched ? '#C5A880' : '#262632';
+        return isMatched ? '#D97706' : '#E4E4E7';
       })
       .attr('stroke-width', (d) => {
         const isMatched = query && (
@@ -738,7 +738,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       .attr('stroke-dasharray', (d) => {
         return d.target.data.type === 'user_input' ? '4,4' : 'none';
       })
-      .attr('opacity', 0.85);
+      .attr('opacity', 0.9);
 
     // 2. Draw Nodes
     const nodeCardWidth = 224;
@@ -782,15 +782,15 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         .attr('rx', 3)
         .attr('ry', 3)
         .attr('fill', colors.bg)
-        .attr('stroke', isSelected ? '#C5A880' : isMatched ? '#C5A880' : colors.border)
+        .attr('stroke', isSelected ? '#D97706' : isMatched ? '#D97706' : colors.border)
         .attr('stroke-width', isSelected ? 2 : isMatched ? 1.8 : 1)
-        .style('filter', isSelected ? 'drop-shadow(0 4px 12px rgba(197,168,128,0.18))' : 'drop-shadow(0 1px 3px rgba(0,0,0,0.35))')
+        .style('filter', isSelected ? 'drop-shadow(0 4px 12px rgba(217,119,6,0.18))' : 'drop-shadow(0 1px 3px rgba(0,0,0,0.06))')
         .on('mouseenter', function() {
-          d3.select(this).attr('stroke', '#C5A880').attr('stroke-width', 1.8);
+          d3.select(this).attr('stroke', '#D97706').attr('stroke-width', 1.8);
         })
         .on('mouseleave', function() {
           if (!isSelected) {
-            d3.select(this).attr('stroke', isMatched ? '#C5A880' : colors.border).attr('stroke-width', isMatched ? 1.8 : 1);
+            d3.select(this).attr('stroke', isMatched ? '#D97706' : colors.border).attr('stroke-width', isMatched ? 1.8 : 1);
           }
         });
 
@@ -801,7 +801,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         .attr('width', 3)
         .attr('height', nodeCardHeight)
         .attr('rx', 1.5)
-        .attr('fill', isSelected ? '#C5A880' : colors.border);
+        .attr('fill', isSelected ? '#D97706' : colors.border);
 
       // Node Icon Emoji
       nodeG.append('text')
@@ -832,7 +832,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       nodeG.append('text')
         .attr('x', 22)
         .attr('y', 8)
-        .attr('fill', data.type === 'root' ? '#F5F3ED' : '#8E8B82')
+        .attr('fill', data.type === 'root' ? '#18181B' : '#71717A')
         .attr('font-size', '9.5px')
         .attr('font-family', 'JetBrains Mono, monospace')
         .attr('dominant-baseline', 'middle')
@@ -876,7 +876,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           .attr('cx', nodeCardWidth - 18)
           .attr('cy', nodeCardHeight / 2 - 12)
           .attr('r', 3)
-          .attr('fill', '#C5A880')
+          .attr('fill', '#D97706')
           .append('title')
           .text('사용자 기획 입력 실시간 연동됨');
       }
@@ -893,15 +893,15 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
 
         toggleG.append('circle')
           .attr('r', 8)
-          .attr('fill', '#16161C')
+          .attr('fill', '#FFFFFF')
           .attr('stroke', colors.border)
           .attr('stroke-width', 1.2)
-          .style('filter', 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))');
+          .style('filter', 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))');
 
         toggleG.append('text')
           .attr('text-anchor', 'middle')
           .attr('dominant-baseline', 'central')
-          .attr('fill', '#F5F3ED')
+          .attr('fill', colors.text)
           .attr('font-size', '10px')
           .attr('font-weight', 'bold')
           .text(isCollapsed ? '+' : '−');
@@ -989,18 +989,18 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#0A0A0C] relative select-none overflow-hidden text-[#F5F3ED]">
+    <div className="w-full h-full flex flex-col bg-[#FBFBFA] relative select-none overflow-hidden text-stone-900">
       {/* Top D3 Toolbar */}
-      <div className="bg-[#0E0E12] px-3.5 py-2 border-b border-[#23232A] flex flex-wrap items-center justify-between gap-2 shrink-0 z-10 shadow-2xs">
+      <div className="bg-white px-3.5 py-2 border-b border-stone-200 flex flex-wrap items-center justify-between gap-2 shrink-0 z-10 shadow-2xs">
         {/* Left: View Mode Tabs & Live Sync indicator */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 bg-[#141418] p-0.5 rounded-[2px] border border-[#23232A] text-xs">
+          <div className="flex items-center gap-1 bg-stone-100 p-0.5 rounded-[2px] border border-stone-200 text-xs">
             <button
               onClick={() => setViewMode('all')}
               className={`px-2 py-1 rounded-[2px] font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 viewMode === 'all'
-                  ? 'bg-[#22222B] text-[#F5F3ED] font-semibold shadow-2xs'
-                  : 'text-[#8E8B82] hover:text-[#F5F3ED]'
+                  ? 'bg-white text-stone-900 font-semibold shadow-2xs'
+                  : 'text-stone-500 hover:text-stone-900'
               }`}
               title="사이트 구조와 8개 챕터 기획 전체 연결망"
             >
@@ -1010,8 +1010,8 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
               onClick={() => setViewMode('pages')}
               className={`px-2 py-1 rounded-[2px] font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 viewMode === 'pages'
-                  ? 'bg-[#22222B] text-[#F5F3ED] font-semibold shadow-2xs'
-                  : 'text-[#8E8B82] hover:text-[#F5F3ED]'
+                  ? 'bg-white text-stone-900 font-semibold shadow-2xs'
+                  : 'text-stone-500 hover:text-stone-900'
               }`}
               title="화면(Site Pages) 중심 기획 및 기능 바인딩"
             >
@@ -1021,8 +1021,8 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
               onClick={() => setViewMode('traceability')}
               className={`px-2 py-1 rounded-[2px] font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 viewMode === 'traceability'
-                  ? 'bg-[#22222B] text-[#F5F3ED] font-semibold shadow-2xs'
-                  : 'text-[#8E8B82] hover:text-[#F5F3ED]'
+                  ? 'bg-white text-stone-900 font-semibold shadow-2xs'
+                  : 'text-stone-500 hover:text-stone-900'
               }`}
               title="문제 ➔ 타깃 ➔ 기능 ➔ 화면 ➔ 데이터 추적 파이프라인"
             >
@@ -1031,8 +1031,8 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           </div>
 
           {/* Real-time Sync Pulse Badge */}
-          <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 bg-[#141418] rounded-[2px] border border-[#23232A] text-[10px] font-mono text-[#8E8B82]">
-            <span className={`w-1.5 h-1.5 rounded-full ${isLivePulse ? 'bg-[#C5A880] animate-ping' : 'bg-[#C5A880]'}`} />
+          <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 bg-stone-50 rounded-[2px] border border-stone-200 text-[10px] font-mono text-stone-600">
+            <span className={`w-1.5 h-1.5 rounded-full ${isLivePulse ? 'bg-[#D97706] animate-ping' : 'bg-[#D97706]'}`} />
             <span>실시간 연동</span>
           </div>
         </div>
@@ -1041,33 +1041,33 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         <div className="flex items-center gap-1.5">
           {/* Search Input */}
           <div className="relative w-36 sm:w-44">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#706E66]" />
+            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="노드 / 라우트 검색..."
-              className="w-full pl-7 pr-2 py-1 text-xs font-mono bg-[#141418] border border-[#23232A] rounded-[2px] text-[#F5F3ED] placeholder-[#706E66] focus:outline-none focus:border-[#C5A880]"
+              className="w-full pl-7 pr-2 py-1 text-xs font-mono bg-stone-50 border border-stone-200 rounded-[2px] text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#D97706]"
             />
             {searchQuery && (
-              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-mono text-[#C5A880]">
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-mono text-[#D97706]">
                 {matchedCount}개
               </span>
             )}
           </div>
 
           {/* Expand / Collapse All */}
-          <div className="hidden md:flex items-center gap-1 border-l border-[#23232A] pl-1.5">
+          <div className="hidden md:flex items-center gap-1 border-l border-stone-200 pl-1.5">
             <button
               onClick={expandAllNodes}
-              className="px-2 py-1 rounded-[2px] bg-[#141418] border border-[#23232A] text-[11px] text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#1A1A22] transition-colors cursor-pointer"
+              className="px-2 py-1 rounded-[2px] bg-stone-50 border border-stone-200 text-[11px] text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition-colors cursor-pointer"
               title="모든 노드 펼치기"
             >
               모두 펼치기
             </button>
             <button
               onClick={collapseToCategories}
-              className="px-2 py-1 rounded-[2px] bg-[#141418] border border-[#23232A] text-[11px] text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#1A1A22] transition-colors cursor-pointer"
+              className="px-2 py-1 rounded-[2px] bg-stone-50 border border-stone-200 text-[11px] text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition-colors cursor-pointer"
               title="하위 노드 접기"
             >
               접기
@@ -1075,31 +1075,31 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           </div>
 
           {/* Zoom Buttons */}
-          <div className="flex items-center gap-0.5 border-l border-[#23232A] pl-1.5">
+          <div className="flex items-center gap-0.5 border-l border-stone-200 pl-1.5">
             <button
               onClick={handleZoomIn}
-              className="p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-[#141418] border border-[#23232A] hover:bg-[#1A1A22] text-[#8E8B82] hover:text-[#F5F3ED] transition-colors cursor-pointer"
+              className="p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-stone-50 border border-stone-200 hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
               title="확대 (+)"
             >
               <ZoomIn size={13} />
             </button>
             <button
               onClick={handleZoomOut}
-              className="p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-[#141418] border border-[#23232A] hover:bg-[#1A1A22] text-[#8E8B82] hover:text-[#F5F3ED] transition-colors cursor-pointer"
+              className="p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-stone-50 border border-stone-200 hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
               title="축소 (-)"
             >
               <ZoomOut size={13} />
             </button>
             <button
               onClick={handleFitView}
-              className="p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-[#141418] border border-[#23232A] hover:bg-[#1A1A22] text-[#8E8B82] hover:text-[#F5F3ED] transition-colors cursor-pointer"
+              className="p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-stone-50 border border-stone-200 hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
               title="화면 맞춤"
             >
               <Maximize2 size={13} />
             </button>
             <button
               onClick={handleExportSvg}
-              className="p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-[#141418] border border-[#23232A] hover:bg-[#1A1A22] text-[#8E8B82] hover:text-[#F5F3ED] transition-colors cursor-pointer"
+              className="p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-stone-50 border border-stone-200 hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
               title="SVG 다운로드"
             >
               <Download size={13} />
@@ -1111,9 +1111,9 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       {/* D3 Canvas Mount */}
       <div 
         ref={containerRef} 
-        className="flex-1 w-full h-full relative overflow-hidden bg-[#0A0A0C]"
+        className="flex-1 w-full h-full relative overflow-hidden bg-[#FBFBFA]"
         style={{
-          backgroundImage: 'radial-gradient(#1E1E26 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(#E4E4E7 1.2px, transparent 1.2px)',
           backgroundSize: '24px 24px',
         }}
       >
@@ -1123,25 +1123,25 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         />
 
         {/* Floating Mini Legend */}
-        <div className="absolute bottom-3 left-3 pointer-events-none bg-[#0E0E12]/90 backdrop-blur-xs border border-[#23232A] rounded-[2px] p-2 text-[10px] font-mono text-[#8E8B82] flex flex-wrap gap-2 shadow-xs">
+        <div className="absolute bottom-3 left-3 pointer-events-none bg-white/95 backdrop-blur-xs border border-stone-200 rounded-[2px] p-2 text-[10px] font-mono text-stone-600 flex flex-wrap gap-2 shadow-xs">
           <div className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#1C2E24] border border-[#2D3D32]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-100 border border-emerald-300" />
             <span>화면 및 사이트맵</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#382216] border border-[#4A3225]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-orange-100 border border-orange-300" />
             <span>핵심 기능 및 플로우</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#362810] border border-[#4A3B1C]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-100 border border-amber-300" />
             <span>사용자 기획 입력</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#1E2344] border border-[#2D3358]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-indigo-100 border border-indigo-300" />
             <span>데이터 모델</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
             <span>입력 연동됨</span>
           </div>
         </div>
@@ -1149,28 +1149,28 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
 
       {/* Selected Node Details Drawer / Inspection Panel */}
       {selectedNode && (
-        <div className="border-t border-[#23232A] bg-[#0E0E12] p-3.5 sm:p-4 text-xs shrink-0 flex flex-col gap-2.5 shadow-md animate-in slide-in-from-bottom duration-200">
+        <div className="border-t border-stone-200 bg-white p-3.5 sm:p-4 text-xs shrink-0 flex flex-col gap-2.5 shadow-md animate-in slide-in-from-bottom duration-200 text-stone-900">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-base">{getNodeIcon(selectedNode.type)}</span>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="font-sans font-bold text-sm text-[#F5F3ED] truncate tracking-tight">
+                  <h4 className="font-sans font-bold text-sm text-stone-900 truncate tracking-tight">
                     {selectedNode.name}
                   </h4>
                   {selectedNode.badge && (
-                    <span className="text-[10px] font-mono bg-[#141418] border border-[#23232A] px-1.5 py-0.5 rounded-[2px] text-[#C5A880] font-semibold">
+                    <span className="text-[10px] font-mono bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 rounded-[2px] text-amber-900 font-semibold">
                       {selectedNode.badge}
                     </span>
                   )}
                   {selectedNode.route && (
-                    <span className="text-[10px] font-mono text-[#C5A880] bg-[#C5A880]/15 px-1.5 py-0.5 rounded-[2px]">
+                    <span className="text-[10px] font-mono text-[#D97706] bg-amber-50 px-1.5 py-0.5 rounded-[2px] border border-amber-200/60">
                       경로: {selectedNode.route}
                     </span>
                   )}
                 </div>
                 {selectedNode.chapterTitle && (
-                  <p className="text-[11px] text-[#8E8B82] mt-0.5 font-mono">
+                  <p className="text-[11px] text-stone-500 mt-0.5 font-mono">
                     연동 출처: {selectedNode.chapterTitle}
                   </p>
                 )}
@@ -1181,7 +1181,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
               {selectedNode.chapterId && (
                 <button
                   onClick={() => handleJumpToEditor(selectedNode.chapterId, selectedNode.sectionKey)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[#C5A880] text-[#0A0A0C] text-xs font-semibold hover:bg-[#D4B992] transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[#D97706] text-white text-xs font-semibold hover:bg-[#B45309] transition-colors cursor-pointer shadow-xs"
                   title="이 기획 내용을 편집할 수 있는 워크스페이스 섹션으로 이동"
                 >
                   <FileText size={12} />
@@ -1190,7 +1190,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
               )}
               <button
                 onClick={() => setSelectedNode(null)}
-                className="p-1 rounded-[2px] text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#1A1A22] transition-colors"
+                className="p-1 rounded-[2px] text-stone-400 hover:text-stone-900 hover:bg-stone-100 transition-colors cursor-pointer"
                 title="닫기"
               >
                 ✕
@@ -1200,13 +1200,13 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
 
           {/* User Input or Source Text */}
           {selectedNode.sourceText && (
-            <div className="bg-[#141418] p-2.5 rounded-[2px] border border-[#23232A] text-[11px] font-mono text-[#F5F3ED] leading-relaxed max-h-24 overflow-y-auto select-text">
-              <span className="text-[#8E8B82] block mb-1 text-[10px]">기획 사양 내용:</span>
+            <div className="bg-stone-50 p-2.5 rounded-[2px] border border-stone-200 text-[11px] font-mono text-stone-800 leading-relaxed max-h-24 overflow-y-auto select-text">
+              <span className="text-stone-500 block mb-1 text-[10px]">기획 사양 내용:</span>
               {selectedNode.sourceText}
             </div>
           )}
 
-          <div className="flex items-center justify-between text-[10px] font-mono text-[#8E8B82]">
+          <div className="flex items-center justify-between text-[10px] font-mono text-stone-500">
             <span>
               {selectedNode.isUserInput ? '✓ 사용자가 입력한 기획과 실시간 동기화 완료' : '표준 템플릿 기본 정의'}
             </span>

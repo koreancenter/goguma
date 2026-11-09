@@ -1,32 +1,33 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
   --font-serif: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
-  /* Sumi Black (墨黒) Canvas & Surface Palette */
-  --color-sumi-canvas: #0A0A0C;
-  --color-sumi-surface: #111114;
-  --color-sumi-card: #16161A;
-  --color-sumi-elevated: #1C1C22;
-  --color-sumi-highlight: #24242C;
+  /* Bright Porcelain Canvas & Crisp Surface Palette */
+  --color-sumi-canvas: #FBFBFA;
+  --color-sumi-surface: #FFFFFF;
+  --color-sumi-card: #FFFFFF;
+  --color-sumi-elevated: #F8F8F6;
+  --color-sumi-highlight: #F4F4F1;
   
-  /* Hanji White (韓紙 White) Typographic Palette */
-  --color-hanji-primary: #F5F3ED;
-  --color-hanji-secondary: #B8B5AC;
-  --color-hanji-muted: #78756E;
-  --color-hanji-subtle: #45433E;
+  /* Luminous Typographic Palette (Deep Charcoal & Clean Slate) */
+  --color-hanji-primary: #18181B;
+  --color-hanji-secondary: #52525B;
+  --color-hanji-muted: #71717A;
+  --color-hanji-subtle: #A1A1AA;
   
-  /* Hairline Borders */
-  --color-hairline: #23232A;
-  --color-hairline-bright: #32323C;
+  /* Refined Hairline Borders */
+  --color-hairline: #E4E4E7;
+  --color-hairline-bright: #D4D4D8;
 
-  /* Luxury Subtle Accents */
-  --color-accent-gold: #C5A880;
-  --color-accent-gold-hover: #D4B896;
-  --color-accent-gold-dark: #8C7355;
-  --color-accent-pine: #1D3A2F;
+  /* Joyful & Radiant Accents (Sweet Potato Honey Brass & Fresh Mint) */
+  --color-accent-gold: #D97706;
+  --color-accent-gold-hover: #B45309;
+  --color-accent-gold-dark: #92400E;
+  --color-accent-pine: #10B981;
 }
 
 @layer utilities {
@@ -38,33 +39,48 @@
     scrollbar-width: none;
   }
   
-  /* Custom Luxury Dark Hairline Scrollbar */
+  /* Custom Clean Minimalist Light Hairline Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0A0A0C;
+    background: #F4F4F5;
   }
   ::-webkit-scrollbar-thumb {
-    background: #23232A;
-    border-radius: 2px;
+    background: #D4D4D8;
+    border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #383842;
+    background: #A1A1AA;
+  }
+  
+  .custom-scroll::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background: #E4E4E7;
+    border-radius: 3px;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: #CBD5E1;
   }
 }
 
 @layer base {
   html {
-    background-color: #0A0A0C;
-    color: #F5F3ED;
-    color-scheme: dark;
+    background-color: #FBFBFA;
+    color: #18181B;
+    color-scheme: light;
   }
 
   body {
-    background-color: #0A0A0C;
-    color: #F5F3ED;
+    background-color: #FBFBFA;
+    color: #18181B;
     font-family: var(--font-sans);
     letter-spacing: -0.015em;
     -webkit-font-smoothing: antialiased;
@@ -72,19 +88,19 @@
   }
 
   ::selection {
-    background-color: #2F2922;
-    color: #F5F3ED;
+    background-color: #FEF3C7;
+    color: #78350F;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    color: #F5F3ED;
+    color: #18181B;
     font-family: var(--font-sans);
     letter-spacing: -0.02em;
     font-weight: 600;
   }
   
   p {
-    color: #B8B5AC;
+    color: #52525B;
     line-height: 1.7;
   }
 }

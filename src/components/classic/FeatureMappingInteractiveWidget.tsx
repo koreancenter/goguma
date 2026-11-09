@@ -158,22 +158,22 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
   };
 
   return (
-    <div className="bg-[#121216] rounded-[2px] p-5 sm:p-6 border border-[#23232A] space-y-6 text-[#F5F3ED] font-sans shadow-xs">
+    <div className="bg-white rounded-[2px] p-5 sm:p-6 border border-stone-200/90 space-y-6 text-stone-900 font-sans shadow-xs">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#23232A] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-200/80 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-[2px] bg-[#181820] text-[#C5A880] border border-[#282834]">
+            <span className="p-1.5 rounded-[2px] bg-amber-50 text-[#D97706] border border-amber-200/70">
               <Workflow size={16} />
             </span>
-            <h3 className="font-sans font-bold text-[#F5F3ED] text-base sm:text-lg">
+            <h3 className="font-sans font-bold text-stone-900 text-base sm:text-lg">
               핵심 기능 ↔ 화면 매핑 및 성공 여정 (Happy Path)
             </h3>
-            <span className="px-2 py-0.5 rounded-[2px] bg-[#181820] text-[#C5A880] text-xs font-mono border border-[#282834]">
+            <span className="px-2 py-0.5 rounded-[2px] bg-stone-100 text-stone-700 text-xs font-mono border border-stone-200">
               02_roadmap.md
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#B8B5AC] mt-1 font-sans leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-600 mt-1 font-sans leading-relaxed">
             소프트웨어가 제공할 필수 기능을 정의하고, 대상 화면과 사용자의 가장 이상적인 이용 동선을 매핑합니다.
           </p>
         </div>
@@ -181,7 +181,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
         <button
           type="button"
           onClick={handleAddFeature}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[#C5A880] hover:bg-[#D4B896] text-[#0A0A0C] text-xs font-semibold transition-all cursor-pointer self-start sm:self-auto shadow-xs"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[#D97706] hover:bg-[#B45309] text-white text-xs font-semibold transition-all cursor-pointer self-start sm:self-auto shadow-xs"
         >
           <Plus size={14} />
           <span>+ 기능 추가</span>
@@ -190,12 +190,12 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
 
       {/* 1. Feature to Screen Mapping Table */}
       <div className="space-y-3">
-        <label className="text-xs font-sans font-semibold text-[#F5F3ED] flex items-center justify-between">
+        <label className="text-xs font-sans font-semibold text-stone-900 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <Layers size={14} className="text-[#C5A880]" />
+            <Layers size={14} className="text-[#D97706]" />
             <span>3대 필수 핵심 기능 ↔ 대상 화면 매핑</span>
           </div>
-          <span className="text-[11px] font-mono text-[#78756E]">
+          <span className="text-[11px] font-mono text-stone-500">
             각 기능이 어느 화면에서 동작하는지 지정
           </span>
         </label>
@@ -204,11 +204,11 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
           {features.map((f, idx) => (
             <div
               key={f.id}
-              className="p-3.5 rounded-[2px] border border-[#23232A] bg-[#16161C] hover:border-[#383848] focus-within:border-[#C5A880] space-y-2.5 transition-all shadow-xs"
+              className="p-3.5 rounded-[2px] border border-stone-200/80 bg-stone-50/70 hover:border-stone-300 focus-within:border-[#D97706] space-y-2.5 transition-all shadow-2xs"
             >
               {/* Top Row: Index Badge, Feature Title, Priority Selector, Delete Button */}
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-semibold text-[#F5F3ED] bg-[#1E1E26] px-2 py-1 rounded-[2px] border border-[#2A2A38] shrink-0">
+                <span className="font-mono text-xs font-semibold text-stone-800 bg-white px-2 py-1 rounded-[2px] border border-stone-200 shrink-0">
                   #0{idx + 1}
                 </span>
 
@@ -216,14 +216,14 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                   type="text"
                   value={f.title}
                   onChange={(e) => handleUpdateFeature(f.id, 'title', e.target.value)}
-                  className="flex-1 bg-[#121216] border border-[#23232A] hover:border-[#383848] rounded-[2px] px-3 py-1.5 text-xs font-semibold text-[#F5F3ED] outline-none focus:border-[#C5A880] transition-colors"
+                  className="flex-1 bg-white border border-stone-200 hover:border-stone-300 rounded-[2px] px-3 py-1.5 text-xs font-semibold text-stone-900 outline-none focus:border-[#D97706] transition-colors"
                   placeholder="기능 명칭 (예: 원클릭 리소스 생성 및 필터링)"
                 />
 
                 <select
                   value={f.priority}
                   onChange={(e) => handleUpdateFeature(f.id, 'priority', e.target.value as any)}
-                  className="bg-[#121216] border border-[#23232A] hover:border-[#383848] rounded-[2px] px-2.5 py-1.5 text-xs font-mono font-medium text-[#F5F3ED] outline-none focus:border-[#C5A880] cursor-pointer transition-colors shrink-0"
+                  className="bg-white border border-stone-200 hover:border-stone-300 rounded-[2px] px-2.5 py-1.5 text-xs font-mono font-medium text-stone-800 outline-none focus:border-[#D97706] cursor-pointer transition-colors shrink-0"
                 >
                   <option value="P0 필수">P0 필수</option>
                   <option value="P1 중요">P1 중요</option>
@@ -233,7 +233,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                 <button
                   type="button"
                   onClick={() => handleDeleteFeature(f.id)}
-                  className="p-1.5 text-[#78756E] hover:text-[#C5A880] hover:bg-[#1E1E26] rounded-[2px] transition-colors cursor-pointer shrink-0"
+                  className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-[2px] transition-colors cursor-pointer shrink-0"
                   title="기능 삭제"
                 >
                   <Trash2 size={14} />
@@ -247,7 +247,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                     type="text"
                     value={f.description}
                     onChange={(e) => handleUpdateFeature(f.id, 'description', e.target.value)}
-                    className="w-full bg-[#121216] border border-[#23232A] hover:border-[#383848] rounded-[2px] px-3 py-1.5 text-xs text-[#B8B5AC] outline-none focus:border-[#C5A880] transition-colors"
+                    className="w-full bg-white border border-stone-200 hover:border-stone-300 rounded-[2px] px-3 py-1.5 text-xs text-stone-700 outline-none focus:border-[#D97706] transition-colors"
                     placeholder="기능에 대한 상세 동작 설명 (예: 3초 안에 빠르게 입력)"
                   />
                 </div>
@@ -255,10 +255,10 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                   <select
                     value={f.targetScreen}
                     onChange={(e) => handleUpdateFeature(f.id, 'targetScreen', e.target.value)}
-                    className="w-full bg-[#121216] border border-[#23232A] hover:border-[#383848] rounded-[2px] px-2.5 py-1.5 text-xs text-[#B8B5AC] outline-none focus:border-[#C5A880] truncate cursor-pointer transition-colors"
+                    className="w-full bg-white border border-stone-200 hover:border-stone-300 rounded-[2px] px-2.5 py-1.5 text-xs text-stone-700 outline-none focus:border-[#D97706] truncate cursor-pointer transition-colors"
                   >
                     {availableScreens.map((s, i) => (
-                      <option key={i} value={s} className="bg-[#121216] text-[#F5F3ED]">{s}</option>
+                      <option key={i} value={s} className="bg-white text-stone-900">{s}</option>
                     ))}
                   </select>
                 </div>
@@ -269,10 +269,10 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
       </div>
 
       {/* 2. State Machine / Lifecycle Cycler */}
-      <div className="space-y-3 pt-4 border-t border-[#23232A]">
+      <div className="space-y-3 pt-4 border-t border-stone-200/80">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <label className="text-xs font-semibold text-[#F5F3ED] flex items-center gap-1.5">
-            <RefreshCw size={14} className="text-[#C5A880]" />
+          <label className="text-xs font-semibold text-stone-900 flex items-center gap-1.5">
+            <RefreshCw size={14} className="text-[#D97706]" />
             <span>리소스 상태 전이 수명주기 (State Machine)</span>
           </label>
 
@@ -284,8 +284,8 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                 onClick={() => handleSelectStatusTemplate(idx)}
                 className={`px-2.5 py-1 rounded-[2px] text-xs font-medium transition-colors cursor-pointer border ${
                   selectedStatusTpl === idx
-                    ? 'border-[#C5A880] bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-xs'
-                    : 'border-[#23232A] bg-[#16161C] text-[#B8B5AC] hover:text-[#F5F3ED]'
+                    ? 'border-[#D97706] bg-[#D97706] text-white font-semibold shadow-xs'
+                    : 'border-stone-200 bg-white text-stone-700 hover:bg-stone-50 hover:text-stone-900'
                 }`}
               >
                 {tpl.name}
@@ -294,10 +294,10 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
           </div>
         </div>
 
-        <div className="p-3.5 rounded-[2px] bg-[#16161C] border border-[#23232A] space-y-2.5">
-          <div className="flex items-center justify-between text-[11px] text-[#B8B5AC]">
+        <div className="p-3.5 rounded-[2px] bg-stone-50/80 border border-stone-200/80 space-y-2.5">
+          <div className="flex items-center justify-between text-[11px] text-stone-600">
             <span>순환 상태 파이프라인 (클릭하여 전이 시뮬레이션)</span>
-            <span className="font-mono text-[#C5A880] font-semibold">
+            <span className="font-mono text-[#D97706] font-semibold">
               현재 활성: {customStatuses[activeSimulationStatus] || customStatuses[0]}
             </span>
           </div>
@@ -315,16 +315,16 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                     }}
                     className={`px-3 py-1.5 rounded-[2px] border text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                       isSelected
-                        ? 'border-[#C5A880] bg-[#C5A880] text-[#0A0A0C] font-bold shadow-xs'
-                        : 'border-[#23232A] bg-[#121216] text-[#B8B5AC] hover:border-[#383848] hover:text-[#F5F3ED]'
+                        ? 'border-[#D97706] bg-[#D97706] text-white font-bold shadow-xs'
+                        : 'border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:text-stone-900'
                     }`}
                     title="클릭하여 상태 전이 확인"
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#0A0A0C]' : 'bg-[#C5A880]/40'}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-[#D97706]'}`} />
                     <span>{st}</span>
                   </button>
                   {i < customStatuses.length - 1 && (
-                    <span className="text-xs text-[#78756E] font-mono select-none">➔</span>
+                    <span className="text-xs text-stone-400 font-mono select-none">➔</span>
                   )}
                 </div>
               );
@@ -334,13 +334,13 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
       </div>
 
       {/* 3. Happy Path Step Builder */}
-      <div className="space-y-3 pt-4 border-t border-[#23232A]">
-        <label className="text-xs font-sans font-semibold text-[#F5F3ED] flex items-center justify-between">
+      <div className="space-y-3 pt-4 border-t border-stone-200/80">
+        <label className="text-xs font-sans font-semibold text-stone-900 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <ArrowRightCircle size={14} className="text-[#C5A880]" />
+            <ArrowRightCircle size={14} className="text-[#D97706]" />
             <span>사용자 성공 여정 (Happy Path 4단계)</span>
           </div>
-          <span className="text-xs text-[#78756E]">
+          <span className="text-xs text-stone-500">
             목적 달성까지의 최단 무장애 경로
           </span>
         </label>
@@ -349,17 +349,17 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
           {happyPathSteps.map((s) => (
             <div
               key={s.step}
-              className="p-3.5 rounded-[2px] border border-[#23232A] bg-[#16161C] space-y-2 shadow-xs"
+              className="p-3.5 rounded-[2px] border border-stone-200/80 bg-stone-50/70 space-y-2 shadow-2xs"
             >
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs text-[#C5A880] font-semibold tabular-nums shrink-0">
+                <span className="font-mono text-xs text-[#D97706] font-semibold tabular-nums shrink-0">
                   0{s.step}.
                 </span>
                 <input
                   type="text"
                   value={s.action}
                   onChange={(e) => handleUpdateHappyPath(s.step, 'action', e.target.value)}
-                  className="flex-1 text-xs sm:text-sm font-semibold text-[#F5F3ED] bg-transparent border-0 border-b border-[#23232A] focus:border-[#C5A880] outline-none pb-0.5"
+                  className="flex-1 text-xs sm:text-sm font-semibold text-stone-900 bg-transparent border-0 border-b border-stone-200 focus:border-[#D97706] outline-none pb-0.5"
                   placeholder={`Step ${s.step} 사용자 행동`}
                 />
               </div>
@@ -369,7 +369,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                   type="text"
                   value={s.result}
                   onChange={(e) => handleUpdateHappyPath(s.step, 'result', e.target.value)}
-                  className="w-full text-xs text-[#B8B5AC] bg-transparent border-0 border-b border-[#23232A] focus:border-[#C5A880] outline-none pb-0.5"
+                  className="w-full text-xs text-stone-600 bg-transparent border-0 border-b border-stone-200 focus:border-[#D97706] outline-none pb-0.5"
                   placeholder="시스템의 즉각 반응 결과"
                 />
               </div>

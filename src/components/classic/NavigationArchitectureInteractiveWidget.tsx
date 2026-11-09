@@ -187,22 +187,22 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
   };
 
   return (
-    <div className="bg-[#121216] rounded-[2px] p-5 sm:p-6 border border-[#23232A] space-y-6 text-[#F5F3ED] font-sans">
+    <div className="bg-white rounded-[2px] p-5 sm:p-6 border border-stone-200/90 space-y-6 text-stone-900 font-sans shadow-xs">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#23232A] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-200/80 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-[2px] bg-[#181820] text-[#C5A880] border border-[#282834]">
+            <span className="p-1.5 rounded-[2px] bg-amber-50 text-[#D97706] border border-amber-200/70">
               <Network size={16} />
             </span>
-            <h3 className="font-sans font-bold text-[#F5F3ED] text-base sm:text-lg tracking-tight">
+            <h3 className="font-sans font-bold text-stone-900 text-base sm:text-lg tracking-tight">
               화면 구조 및 내비게이션 아키텍처 (IA)
             </h3>
-            <span className="text-xs font-mono text-[#78756E]">
+            <span className="text-xs font-mono text-stone-500">
               {pages.length}개 화면 연동
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#B8B5AC] mt-1 font-sans leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-600 mt-1 font-sans leading-relaxed">
             서비스에 필요한 핵심 화면을 정의하고 이용 동선(Happy Path Flow)을 연결합니다.
           </p>
         </div>
@@ -210,7 +210,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
         <button
           type="button"
           onClick={() => handleAddPage()}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[#C5A880] hover:bg-[#D4B896] text-[#0A0A0C] text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto shadow-xs"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[#D97706] hover:bg-[#B45309] text-white text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto shadow-xs"
         >
           <Plus size={14} />
           <span>+ 화면 추가</span>
@@ -219,12 +219,12 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
 
       {/* 1. Interactive Page Cards List */}
       <div className="space-y-3">
-        <label className="text-xs font-medium text-[#F5F3ED] flex items-center justify-between">
+        <label className="text-xs font-medium text-stone-900 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <Layers size={14} className="text-[#C5A880]" />
+            <Layers size={14} className="text-[#D97706]" />
             <span className="font-sans font-semibold">화면 및 모달 목록 (Information Architecture)</span>
           </div>
-          <span className="text-xs text-[#78756E]">
+          <span className="text-xs text-stone-500">
             클릭하여 세부 수정 가능
           </span>
         </label>
@@ -237,8 +237,8 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                 key={p.id}
                 className={`p-3.5 rounded-[2px] border transition-colors ${
                   isEditing 
-                    ? 'border-[#C5A880] bg-[#181820] shadow-xs' 
-                    : 'border-[#23232A] bg-[#16161C] hover:bg-[#1A1A22]'
+                    ? 'border-[#D97706] bg-amber-50/50 shadow-xs' 
+                    : 'border-stone-200 bg-stone-50/70 hover:bg-stone-100/70 hover:border-stone-300'
                 }`}
               >
                 {isEditing ? (
@@ -246,46 +246,46 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                   <div className="space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                       <div className="sm:col-span-1 space-y-1">
-                        <span className="text-xs text-[#B8B5AC]">화면 명칭</span>
+                        <span className="text-xs text-stone-600">화면 명칭</span>
                         <input
                           type="text"
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
-                          className="w-full bg-[#121216] border border-[#23232A] rounded-[2px] px-2.5 py-1.5 text-xs text-[#F5F3ED] outline-none focus:border-[#C5A880]"
+                          className="w-full bg-white border border-stone-200 rounded-[2px] px-2.5 py-1.5 text-xs text-stone-900 outline-none focus:border-[#D97706]"
                           placeholder="예: 메인 관리 대시보드"
                         />
                       </div>
                       <div className="sm:col-span-1 space-y-1">
-                        <span className="text-xs text-[#B8B5AC]">경로 (URL Slug)</span>
+                        <span className="text-xs text-stone-600">경로 (URL Slug)</span>
                         <input
                           type="text"
                           value={editSlug}
                           onChange={(e) => setEditSlug(e.target.value)}
-                          className="w-full bg-[#121216] border border-[#23232A] rounded-[2px] px-2.5 py-1.5 text-xs font-mono text-[#F5F3ED] outline-none focus:border-[#C5A880]"
+                          className="w-full bg-white border border-stone-200 rounded-[2px] px-2.5 py-1.5 text-xs font-mono text-stone-900 outline-none focus:border-[#D97706]"
                           placeholder="/records"
                         />
                       </div>
                       <div className="sm:col-span-1 space-y-1">
-                        <span className="text-xs text-[#B8B5AC]">화면 유형</span>
+                        <span className="text-xs text-stone-600">화면 유형</span>
                         <select
                           value={editType}
                           onChange={(e) => setEditType(e.target.value as any)}
-                          className="w-full bg-[#121216] border border-[#23232A] rounded-[2px] px-2.5 py-1.5 text-xs text-[#F5F3ED] outline-none focus:border-[#C5A880] cursor-pointer"
+                          className="w-full bg-white border border-stone-200 rounded-[2px] px-2.5 py-1.5 text-xs text-stone-900 outline-none focus:border-[#D97706] cursor-pointer"
                         >
-                          <option value="page" className="bg-[#121216] text-[#F5F3ED]">단일 페이지 (Page)</option>
-                          <option value="modal" className="bg-[#121216] text-[#F5F3ED]">팝업 모달 (Modal)</option>
-                          <option value="drawer" className="bg-[#121216] text-[#F5F3ED]">사이드 서랍 (Drawer)</option>
+                          <option value="page" className="bg-white text-stone-900">단일 페이지 (Page)</option>
+                          <option value="modal" className="bg-white text-stone-900">팝업 모달 (Modal)</option>
+                          <option value="drawer" className="bg-white text-stone-900">사이드 서랍 (Drawer)</option>
                         </select>
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <span className="text-xs text-[#B8B5AC]">핵심 기능 및 역할 요약</span>
+                      <span className="text-xs text-stone-600">핵심 기능 및 역할 요약</span>
                       <input
                         type="text"
                         value={editScript}
                         onChange={(e) => setEditScript(e.target.value)}
-                        className="w-full bg-[#121216] border border-[#23232A] rounded-[2px] px-2.5 py-1.5 text-xs text-[#F5F3ED] outline-none focus:border-[#C5A880]"
+                        className="w-full bg-white border border-stone-200 rounded-[2px] px-2.5 py-1.5 text-xs text-stone-900 outline-none focus:border-[#D97706]"
                         placeholder="이 화면에서 수행할 작업이나 기능 요약"
                       />
                     </div>
@@ -294,14 +294,14 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                       <button
                         type="button"
                         onClick={() => setEditingId(null)}
-                        className="px-3 py-1.5 rounded-[2px] border border-[#23232A] text-xs text-[#B8B5AC] hover:text-[#F5F3ED] cursor-pointer"
+                        className="px-3 py-1.5 rounded-[2px] border border-stone-200 text-xs text-stone-600 hover:text-stone-900 cursor-pointer bg-white"
                       >
                         취소
                       </button>
                       <button
                         type="button"
                         onClick={() => handleSaveEdit(p.id)}
-                        className="px-3.5 py-1.5 rounded-[2px] bg-[#C5A880] text-[#0A0A0C] text-xs font-semibold hover:bg-[#D4B896] cursor-pointer shadow-xs"
+                        className="px-3.5 py-1.5 rounded-[2px] bg-[#D97706] text-white text-xs font-semibold hover:bg-[#B45309] cursor-pointer shadow-xs"
                       >
                         수정 저장
                       </button>
@@ -312,17 +312,17 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                   <div className="flex items-start sm:items-center justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2 text-xs">
-                        <span className="font-mono text-[#78756E]">
+                        <span className="font-mono text-stone-400">
                           0{idx + 1}.
                         </span>
-                        <span className="font-sans font-semibold text-sm text-[#F5F3ED]">{p.name}</span>
-                        <span className="font-mono text-xs text-[#C5A880]">
+                        <span className="font-sans font-semibold text-sm text-stone-900">{p.name}</span>
+                        <span className="font-mono text-xs text-[#D97706] font-semibold">
                           {p.slug}
                         </span>
-                        <span className="text-[#383844]">·</span>
+                        <span className="text-stone-300">·</span>
                         {getTypeBadge(p.type)}
                       </div>
-                      <p className="text-xs text-[#B8B5AC] font-sans leading-relaxed">
+                      <p className="text-xs text-stone-600 font-sans leading-relaxed">
                         {p.script}
                       </p>
                     </div>
@@ -331,7 +331,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                       <button
                         type="button"
                         onClick={() => handleStartEdit(p)}
-                        className="p-1.5 rounded-[2px] text-[#78756E] hover:text-[#F5F3ED] hover:bg-[#1E1E26] transition-colors cursor-pointer"
+                        className="p-1.5 rounded-[2px] text-stone-400 hover:text-stone-900 hover:bg-stone-200/60 transition-colors cursor-pointer"
                         title="화면 정보 수정"
                       >
                         <Edit3 size={14} />
@@ -339,7 +339,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                       <button
                         type="button"
                         onClick={() => handleDeletePage(p.id)}
-                        className="p-1.5 rounded-[2px] text-[#78756E] hover:text-[#C5A880] hover:bg-[#1E1E26] transition-colors cursor-pointer"
+                        className="p-1.5 rounded-[2px] text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                         title="화면 삭제"
                       >
                         <Trash2 size={14} />
@@ -353,16 +353,16 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
         </div>
 
         {/* Quick Add Suggested Pages */}
-        <div className="pt-2 flex flex-wrap items-center gap-2 text-xs text-[#78756E]">
-          <span className="text-[#78756E]">추천 화면:</span>
+        <div className="pt-2 flex flex-wrap items-center gap-2 text-xs text-stone-500">
+          <span className="text-stone-500">추천 화면:</span>
           {SUGGESTED_PAGES.map((s, i) => (
             <button
               key={i}
               type="button"
               onClick={() => handleAddPage(s)}
-              className="px-2.5 py-1 rounded-[2px] bg-[#16161C] hover:bg-[#1E1E28] text-xs text-[#B8B5AC] hover:text-[#F5F3ED] transition-colors cursor-pointer border border-[#23232A] flex items-center gap-1"
+              className="px-2.5 py-1 rounded-[2px] bg-white hover:bg-amber-50/60 text-xs text-stone-700 hover:text-amber-900 transition-colors cursor-pointer border border-stone-200 flex items-center gap-1 shadow-2xs"
             >
-              <span className="text-[#C5A880] font-mono">+</span>
+              <span className="text-[#D97706] font-mono">+</span>
               <span>{s.name}</span>
             </button>
           ))}
@@ -370,9 +370,9 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
       </div>
 
       {/* 2. Navigation Flow & Pattern Selection */}
-      <div className="space-y-3 pt-4 border-t border-[#23232A]">
-        <label className="text-xs font-semibold text-[#F5F3ED] flex items-center gap-1.5">
-          <MoveRight size={14} className="text-[#C5A880]" />
+      <div className="space-y-3 pt-4 border-t border-stone-200/80">
+        <label className="text-xs font-semibold text-stone-900 flex items-center gap-1.5">
+          <MoveRight size={14} className="text-[#D97706]" />
           <span className="font-sans">화면 간 이동 및 인터랙션 방식 (Navigation Pattern)</span>
         </label>
 
@@ -382,15 +382,15 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
             onClick={() => handlePatternChange('modal_flow')}
             className={`p-3.5 rounded-[2px] border text-left transition-colors cursor-pointer space-y-1.5 ${
               navPattern === 'modal_flow'
-                ? 'border-[#C5A880] bg-[#181820] shadow-xs'
-                : 'border-[#23232A] bg-[#16161C] hover:bg-[#1A1A22]'
+                ? 'border-[#D97706] bg-amber-50/80 shadow-xs'
+                : 'border-stone-200 bg-white hover:bg-stone-50'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="font-sans font-semibold text-xs text-[#F5F3ED]">모달 기반 팝업 워크플로우</span>
-              {navPattern === 'modal_flow' && <Check size={14} className="text-[#C5A880]" />}
+              <span className="font-sans font-semibold text-xs text-stone-900">모달 기반 팝업 워크플로우</span>
+              {navPattern === 'modal_flow' && <Check size={14} className="text-[#D97706]" />}
             </div>
-            <p className="text-xs text-[#B8B5AC] leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               화면 전환 없이 현재 뷰 위에서 모달로 빠르게 등록 및 확인
             </p>
           </button>
@@ -400,15 +400,15 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
             onClick={() => handlePatternChange('sidebar_flow')}
             className={`p-3.5 rounded-[2px] border text-left transition-colors cursor-pointer space-y-1.5 ${
               navPattern === 'sidebar_flow'
-                ? 'border-[#C5A880] bg-[#181820] shadow-xs'
-                : 'border-[#23232A] bg-[#16161C] hover:bg-[#1A1A22]'
+                ? 'border-[#D97706] bg-amber-50/80 shadow-xs'
+                : 'border-stone-200 bg-white hover:bg-stone-50'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="font-sans font-semibold text-xs text-[#F5F3ED]">사이드바 + 상세 드로어</span>
-              {navPattern === 'sidebar_flow' && <Check size={14} className="text-[#C5A880]" />}
+              <span className="font-sans font-semibold text-xs text-stone-900">사이드바 + 상세 드로어</span>
+              {navPattern === 'sidebar_flow' && <Check size={14} className="text-[#D97706]" />}
             </div>
-            <p className="text-xs text-[#B8B5AC] leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               사이드바 메뉴 ➔ 중앙 데이터 그리드 ➔ 우측 슬라이드 서랍 형태
             </p>
           </button>
@@ -418,15 +418,15 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
             onClick={() => handlePatternChange('tab_flow')}
             className={`p-3.5 rounded-[2px] border text-left transition-colors cursor-pointer space-y-1.5 ${
               navPattern === 'tab_flow'
-                ? 'border-[#C5A880] bg-[#181820] shadow-xs'
-                : 'border-[#23232A] bg-[#16161C] hover:bg-[#1A1A22]'
+                ? 'border-[#D97706] bg-amber-50/80 shadow-xs'
+                : 'border-stone-200 bg-white hover:bg-stone-50'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="font-sans font-semibold text-xs text-[#F5F3ED]">상단 탭 바 이동</span>
-              {navPattern === 'tab_flow' && <Check size={14} className="text-[#C5A880]" />}
+              <span className="font-sans font-semibold text-xs text-stone-900">상단 탭 바 이동</span>
+              {navPattern === 'tab_flow' && <Check size={14} className="text-[#D97706]" />}
             </div>
-            <p className="text-xs text-[#B8B5AC] leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               상단 탭으로 전체/오늘/완료 상태를 빠르게 넘겨보는 직관적 뷰
             </p>
           </button>
@@ -434,10 +434,10 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
       </div>
 
       {/* 3. Visual Connection Flow Diagram */}
-      <div className="p-4 bg-[#16161C] rounded-[2px] border border-[#23232A] space-y-2.5">
+      <div className="p-4 bg-stone-50/80 rounded-[2px] border border-stone-200/80 space-y-2.5">
         <div className="flex items-center justify-between text-xs">
-          <span className="font-sans font-semibold text-[#F5F3ED]">실시간 화면 동선 시각화</span>
-          <span className="font-mono text-[#78756E]">
+          <span className="font-sans font-semibold text-stone-900">실시간 화면 동선 시각화</span>
+          <span className="font-mono text-stone-500">
             04_SPEC.md 자동 동기화
           </span>
         </div>
@@ -445,15 +445,15 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
         <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
           {pages.map((p, idx) => (
             <React.Fragment key={p.id}>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] bg-[#121216] border border-[#23232A] text-xs font-sans shadow-2xs">
-                <span className="font-mono text-[#78756E]">0{idx + 1}.</span>
-                <span className="text-[#F5F3ED] font-medium">{p.name}</span>
-                <span className="font-mono text-[11px] text-[#C5A880]">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] bg-white border border-stone-200 text-xs font-sans shadow-2xs">
+                <span className="font-mono text-stone-400">0{idx + 1}.</span>
+                <span className="text-stone-900 font-medium">{p.name}</span>
+                <span className="font-mono text-[11px] text-[#D97706] font-semibold">
                   {p.slug}
                 </span>
               </div>
               {idx < pages.length - 1 && (
-                <ArrowRight size={12} className="text-[#78756E] shrink-0" />
+                <ArrowRight size={12} className="text-stone-400 shrink-0" />
               )}
             </React.Fragment>
           ))}

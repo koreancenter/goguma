@@ -17,6 +17,42 @@ export interface ThemePreset {
 
 export const THEME_PRESETS: ThemePreset[] = [
   {
+    id: 'porcelain-honey-gold',
+    name: '화사한 백자 & 허니 골드',
+    engName: 'Porcelain & Honey Gold',
+    description: '화사하고 밝은 백자 캔버스(#FBFBFA)와 정갈한 잉크 블랙(#18181B), 기분 좋은 스위트포테이토 허니 골드(#D97706)의 경쾌한 미니멀리즘',
+    paperBg: '#FBFBFA',
+    primaryColor: '#18181B',
+    accentColor: '#D97706',
+    textColor: '#27272A',
+    borderColor: '#E4E4E7',
+    tag: '시그니처 화사함',
+  },
+  {
+    id: 'sunlit-hanji-amber',
+    name: '햇살 한지 & 웜 앰버',
+    engName: 'Sunlit Hanji & Warm Amber',
+    description: '아침 햇살이 스며든 따뜻한 한지 아이보리(#FDFCF7)와 부드러운 차콜(#1F2937), 생기 넘치는 웜 앰버(#EA580C)의 감성',
+    paperBg: '#FDFCF7',
+    primaryColor: '#1F2937',
+    accentColor: '#EA580C',
+    textColor: '#374151',
+    borderColor: '#E5E7EB',
+    tag: '따뜻한 감성',
+  },
+  {
+    id: 'clean-atelier-sage',
+    name: '클린 아틀리에 & 세이지 민트',
+    engName: 'Clean Atelier & Sage Mint',
+    description: '맑고 투명한 청량감: 시원하고 깨끗한 화이트(#F8FAFC)와 상쾌한 세이지 민트(#10B981), 세련된 딥 슬레이트(#0F172A)',
+    paperBg: '#F8FAFC',
+    primaryColor: '#0F172A',
+    accentColor: '#10B981',
+    textColor: '#334155',
+    borderColor: '#E2E8F0',
+    tag: '청량한 기분전환',
+  },
+  {
     id: 'sumi-black-hanji-white',
     name: '수미 블랙 & 한지 화이트',
     engName: 'Sumi Black & Hanji White',
@@ -26,43 +62,7 @@ export const THEME_PRESETS: ThemePreset[] = [
     accentColor: '#C5A880',
     textColor: '#F5F3ED',
     borderColor: '#23232A',
-    tag: '시그니처 럭셔리',
-  },
-  {
-    id: 'deep-charcoal-platinum',
-    name: '딥 차콜 & 플래티넘 스틸',
-    engName: 'Deep Charcoal & Platinum Steel',
-    description: '하이엔드 메탈릭 건축미학: 절제된 차콜 블랙(#111116)과 정밀 가공된 티타늄 플래티넘(#EAE6DC) 하이라인',
-    paperBg: '#111116',
-    primaryColor: '#EAE6DC',
-    accentColor: '#8E9AA8',
-    textColor: '#EDEBE4',
-    borderColor: '#252530',
-    tag: '테크니컬 럭셔리',
-  },
-  {
-    id: 'ink-pine-celadon',
-    name: '먹송 & 청자 세이지',
-    engName: 'Ink Pine & Celadon Sage',
-    description: '자연의 품격을 품은 묵직한 흑송(#0D1311)과 기품 있는 비색 청자(#3E6B5C), 세이지 화이트(#EFF4F1)',
-    paperBg: '#0D1311',
-    primaryColor: '#EFF4F1',
-    accentColor: '#4E8A76',
-    textColor: '#EFF4F1',
-    borderColor: '#1D2A25',
-    tag: '자연주의 럭셔리',
-  },
-  {
-    id: 'antique-bronze-onyx',
-    name: '오닉스 & 앤틱 앰버 브론즈',
-    engName: 'Onyx & Antique Bronze',
-    description: '어두운 흑요석 슬레이트(#0E0D0C)에 깃든 따뜻한 빈티지 브론즈(#A87948)와 웜 아이보리(#F8F4EE)',
-    paperBg: '#0E0D0C',
-    primaryColor: '#F8F4EE',
-    accentColor: '#C49458',
-    textColor: '#F8F4EE',
-    borderColor: '#28231E',
-    tag: '에디토리얼',
+    tag: '클래식 다크',
   },
 ];
 
@@ -140,36 +140,36 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
   };
 
   return (
-    <div className="bg-[#121216] rounded-[2px] p-5 sm:p-6 border border-[#23232A] space-y-6 text-[#F5F3ED] font-sans shadow-xs">
+    <div className="bg-white rounded-[2px] p-5 sm:p-6 border border-stone-200/90 space-y-6 text-stone-900 font-sans shadow-xs">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#23232A] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-200/80 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-[2px] bg-[#181820] text-[#C5A880] border border-[#282834]">
+            <span className="p-1.5 rounded-[2px] bg-amber-50 text-[#D97706] border border-amber-200/70">
               <Palette size={16} />
             </span>
-            <h3 className="font-sans font-bold text-[#F5F3ED] text-base sm:text-lg">
+            <h3 className="font-sans font-bold text-stone-900 text-base sm:text-lg">
               비주얼 테마 및 디자인 규약 조율
             </h3>
-            <span className="text-xs text-[#78756E] font-mono">
+            <span className="text-xs text-stone-500 font-mono">
               05_design_system.md
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#B8B5AC] mt-1 font-sans leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-600 mt-1 font-sans leading-relaxed">
             원하는 테마 프리셋을 선택하면 11종 사양서와 프로토타입에 디자인 규약이 동기화됩니다.
           </p>
         </div>
 
-        <div className="shrink-0 flex items-center gap-2 text-xs font-mono text-[#B8B5AC]">
-          <span className="w-2.5 h-2.5 rounded-[2px] border border-[#383844]" style={{ backgroundColor: activePreset.primaryColor }} />
-          <span className="text-[#F5F3ED] font-medium">{activePreset.name}</span>
+        <div className="shrink-0 flex items-center gap-2 text-xs font-mono text-stone-600">
+          <span className="w-2.5 h-2.5 rounded-[2px] border border-stone-300" style={{ backgroundColor: activePreset.primaryColor }} />
+          <span className="text-stone-900 font-medium">{activePreset.name}</span>
         </div>
       </div>
 
       {/* 1. 4 Signature Theme Preset Cards */}
       <div className="space-y-3">
-        <label className="text-xs font-sans font-semibold text-[#F5F3ED] block">
-          4종 럭셔리 미니멀리즘 테마 프리셋
+        <label className="text-xs font-sans font-semibold text-stone-900 block">
+          4종 감성 미니멀리즘 테마 프리셋
         </label>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -182,59 +182,59 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 onClick={() => handleSelectPreset(preset)}
                 className={`p-4 rounded-[2px] border text-left transition-colors cursor-pointer flex flex-col justify-between space-y-3 ${
                   isSelected
-                    ? 'border-[#C5A880] bg-[#181820] ring-1 ring-[#C5A880]/30 shadow-xs'
-                    : 'border-[#23232A] bg-[#15151B] hover:bg-[#1A1A22] hover:border-[#383848]'
+                    ? 'border-[#D97706] bg-amber-50/70 ring-1 ring-[#D97706]/40 shadow-xs'
+                    : 'border-stone-200 bg-stone-50/60 hover:bg-stone-100/70 hover:border-stone-300'
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2 text-xs">
-                      <span className={`font-sans font-semibold text-sm ${isSelected ? 'text-[#F5F3ED]' : 'text-[#B8B5AC]'}`}>
+                      <span className={`font-sans font-semibold text-sm ${isSelected ? 'text-stone-900' : 'text-stone-700'}`}>
                         {preset.name}
                       </span>
-                      <span className="text-[#78756E]/40">·</span>
-                      <span className="text-[#C5A880] font-mono text-[11px]">
+                      <span className="text-stone-300">·</span>
+                      <span className="text-[#D97706] font-mono text-[11px] font-semibold">
                         {preset.tag}
                       </span>
                     </div>
-                    <p className="text-xs text-[#B8B5AC] mt-1 leading-relaxed font-sans">
+                    <p className="text-xs text-stone-600 mt-1 leading-relaxed font-sans">
                       {preset.description}
                     </p>
                   </div>
                   <div className="shrink-0 pt-0.5">
                     {isSelected ? (
-                      <span className="w-4 h-4 rounded-[2px] bg-[#C5A880] text-[#0A0A0C] flex items-center justify-center font-bold">
+                      <span className="w-4 h-4 rounded-[2px] bg-[#D97706] text-white flex items-center justify-center font-bold">
                         <Check size={11} strokeWidth={3} />
                       </span>
                     ) : (
-                      <span className="w-4 h-4 rounded-[2px] border border-[#2B2B38] bg-[#121217]" />
+                      <span className="w-4 h-4 rounded-[2px] border border-stone-300 bg-white" />
                     )}
                   </div>
                 </div>
 
                 {/* Color Swatch Bar */}
-                <div className="flex items-center gap-2 pt-2 border-t border-[#23232A]">
+                <div className="flex items-center gap-2 pt-2 border-t border-stone-200/80">
                   <div 
-                    className="w-4 h-4 rounded-[2px] border border-[#383844] shrink-0"
+                    className="w-4 h-4 rounded-[2px] border border-stone-300 shrink-0"
                     style={{ backgroundColor: preset.paperBg }}
                     title={`배경: ${preset.paperBg}`}
                   />
                   <div 
-                    className="w-4 h-4 rounded-[2px] border border-[#383844] shrink-0"
+                    className="w-4 h-4 rounded-[2px] border border-stone-300 shrink-0"
                     style={{ backgroundColor: preset.primaryColor }}
                     title={`주조색: ${preset.primaryColor}`}
                   />
                   <div 
-                    className="w-4 h-4 rounded-[2px] border border-[#383844] shrink-0"
+                    className="w-4 h-4 rounded-[2px] border border-stone-300 shrink-0"
                     style={{ backgroundColor: preset.accentColor }}
                     title={`악센트: ${preset.accentColor}`}
                   />
                   <div 
-                    className="w-4 h-4 rounded-[2px] border border-[#383844] shrink-0"
+                    className="w-4 h-4 rounded-[2px] border border-stone-300 shrink-0"
                     style={{ backgroundColor: preset.textColor }}
                     title={`본문색: ${preset.textColor}`}
                   />
-                  <span className="text-[10px] font-mono text-[#78756E] ml-auto">
+                  <span className="text-[10px] font-mono text-stone-500 ml-auto">
                     {preset.primaryColor}
                   </span>
                 </div>
@@ -245,11 +245,11 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
       </div>
 
       {/* 2. Typography & Input Style Customizer */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-[#23232A]">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-stone-200/80">
         {/* Pretendard Sans Weight Selector */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-[#F5F3ED] flex items-center gap-1.5">
-            <Type size={14} className="text-[#C5A880]" />
+          <label className="text-xs font-semibold text-stone-900 flex items-center gap-1.5">
+            <Type size={14} className="text-[#D97706]" />
             <span>Pretendard Sans 위계</span>
           </label>
           <div className="grid grid-cols-2 gap-2 text-xs">
@@ -258,8 +258,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleFontWeightChange('bold')}
               className={`py-2 px-2 rounded-[2px] border text-center transition-colors cursor-pointer font-medium ${
                 headingWeight === 'bold'
-                  ? 'border-[#C5A880] bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-xs'
-                  : 'border-[#23232A] bg-[#16161C] text-[#B8B5AC] hover:text-[#F5F3ED]'
+                  ? 'border-[#D97706] bg-[#D97706] text-white font-semibold shadow-xs'
+                  : 'border-stone-200 bg-stone-50 text-stone-700 hover:text-stone-900 hover:bg-stone-100'
               }`}
             >
               Bold (700)
@@ -269,8 +269,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleFontWeightChange('semibold')}
               className={`py-2 px-2 rounded-[2px] border text-center transition-colors cursor-pointer font-medium ${
                 headingWeight === 'semibold'
-                  ? 'border-[#C5A880] bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-xs'
-                  : 'border-[#23232A] bg-[#16161C] text-[#B8B5AC] hover:text-[#F5F3ED]'
+                  ? 'border-[#D97706] bg-[#D97706] text-white font-semibold shadow-xs'
+                  : 'border-stone-200 bg-stone-50 text-stone-700 hover:text-stone-900 hover:bg-stone-100'
               }`}
             >
               SemiBold (600)
@@ -280,8 +280,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
 
         {/* Input Field Style */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-[#F5F3ED] flex items-center gap-1.5">
-            <Sliders size={14} className="text-[#C5A880]" />
+          <label className="text-xs font-semibold text-stone-900 flex items-center gap-1.5">
+            <Sliders size={14} className="text-[#D97706]" />
             <span>필기 입력창 스타일</span>
           </label>
           <div className="grid grid-cols-2 gap-2 text-xs">
@@ -290,8 +290,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleInputStyleChange('underline')}
               className={`py-2 px-2 rounded-[2px] border text-center transition-colors cursor-pointer font-medium ${
                 inputStyle === 'underline'
-                  ? 'border-[#C5A880] bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-xs'
-                  : 'border-[#23232A] bg-[#16161C] text-[#B8B5AC] hover:text-[#F5F3ED]'
+                  ? 'border-[#D97706] bg-[#D97706] text-white font-semibold shadow-xs'
+                  : 'border-stone-200 bg-stone-50 text-stone-700 hover:text-stone-900 hover:bg-stone-100'
               }`}
             >
               하단 밑줄형
@@ -301,8 +301,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleInputStyleChange('box')}
               className={`py-2 px-2 rounded-[2px] border text-center transition-colors cursor-pointer font-medium ${
                 inputStyle === 'box'
-                  ? 'border-[#C5A880] bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-xs'
-                  : 'border-[#23232A] bg-[#16161C] text-[#B8B5AC] hover:text-[#F5F3ED]'
+                  ? 'border-[#D97706] bg-[#D97706] text-white font-semibold shadow-xs'
+                  : 'border-stone-200 bg-stone-50 text-stone-700 hover:text-stone-900 hover:bg-stone-100'
               }`}
             >
               미니멀 박스
@@ -312,7 +312,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
 
         {/* Layout Structure */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-[#F5F3ED] block">
+          <label className="text-xs font-semibold text-stone-900 block">
             화면 분할 구조
           </label>
           <div className="grid grid-cols-2 gap-2 text-xs">
@@ -321,8 +321,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleLayoutChange('standard')}
               className={`py-2 px-2 rounded-[2px] border text-center transition-colors cursor-pointer font-medium ${
                 currentLayout === 'standard'
-                  ? 'border-[#C5A880] bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-xs'
-                  : 'border-[#23232A] bg-[#16161C] text-[#B8B5AC] hover:text-[#F5F3ED]'
+                  ? 'border-[#D97706] bg-[#D97706] text-white font-semibold shadow-xs'
+                  : 'border-stone-200 bg-stone-50 text-stone-700 hover:text-stone-900 hover:bg-stone-100'
               }`}
             >
               2-Track 비대칭
@@ -332,8 +332,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleLayoutChange('dashboard')}
               className={`py-2 px-2 rounded-[2px] border text-center transition-colors cursor-pointer font-medium ${
                 currentLayout === 'dashboard'
-                  ? 'border-[#C5A880] bg-[#C5A880] text-[#0A0A0C] font-semibold shadow-xs'
-                  : 'border-[#23232A] bg-[#16161C] text-[#B8B5AC] hover:text-[#F5F3ED]'
+                  ? 'border-[#D97706] bg-[#D97706] text-white font-semibold shadow-xs'
+                  : 'border-stone-200 bg-stone-50 text-stone-700 hover:text-stone-900 hover:bg-stone-100'
               }`}
             >
               와이드 뷰

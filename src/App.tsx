@@ -33,11 +33,11 @@ const OnboardingTutorial = lazy(() =>
   import('./components/guide/OnboardingTutorial').then(m => ({ default: m.OnboardingTutorial }))
 );
 
-// Fallback loader in Sumi Black & Hanji White
+// Fallback loader in Bright Warm Porcelain & Honey Amber
 const PageLoader = () => (
-  <div className="min-h-screen bg-[#0A0A0C] flex flex-col items-center justify-center gap-3">
-    <div className="w-6 h-6 border-2 border-[#23232A] border-t-[#F5F3ED] rounded-full animate-spin" />
-    <span className="text-[11px] font-mono tracking-widest text-[#78756E] uppercase">GOGUMA ARCHITECT</span>
+  <div className="min-h-screen bg-[#FBFBFA] flex flex-col items-center justify-center gap-3">
+    <div className="w-7 h-7 border-2 border-amber-200 border-t-[#D97706] rounded-full animate-spin" />
+    <span className="text-[11px] font-mono tracking-widest text-[#71717A] uppercase font-semibold">GOGUMA ARCHITECT</span>
   </div>
 );
 
@@ -94,7 +94,11 @@ export default function App() {
   // --------------------------------------------------------------------------
   // 2. UI Layout & Viewport Ergonomics State
   // --------------------------------------------------------------------------
-  const [isCol1Collapsed, setIsCol1Collapsed] = useState(false);
+  const [isCol1Collapsed, setIsCol1Collapsed] = useState<boolean>(() => {
+    const saved = localStorage.getItem('goguma_nav_collapsed');
+    // Default to true (Ubuntu Icon Dock mode) to maximize editing canvas space
+    return saved !== null ? saved === 'true' : true;
+  });
   const [isCol2Collapsed, setIsCol2Collapsed] = useState(false);
   const [isPreviewCollapsed, setIsPreviewCollapsed] = useState(false);
 
@@ -392,16 +396,16 @@ export default function App() {
             path="/profile" 
             element={
               <ProtectedRoute user={currentUser}>
-                <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans">
-                  <header className="h-14 px-6 bg-[#0E0E12] border-b border-[#23232A] flex items-center justify-between">
+                <div className="min-h-screen bg-[#FBFBFA] text-[#18181B] flex flex-col font-sans">
+                  <header className="h-14 px-6 bg-white border-b border-stone-200/80 flex items-center justify-between">
                     <button
                       onClick={() => navigate('/workspace')}
-                      className="flex items-center gap-2 text-xs font-medium text-[#B8B5AC] hover:text-[#F5F3ED] transition-colors cursor-pointer"
+                      className="flex items-center gap-2 text-xs font-medium text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
                     >
                       <ChevronLeft size={16} />
                       <span>작업실로 복귀</span>
                     </button>
-                    <span className="font-semibold text-xs text-[#F5F3ED]">사용자 설정 및 통계</span>
+                    <span className="font-semibold text-xs text-stone-900">사용자 설정 및 통계</span>
                   </header>
                   <main className="flex-1 p-8 max-w-4xl mx-auto w-full">
                     <MyAccount />
@@ -413,13 +417,13 @@ export default function App() {
           />
 
           {/* Legal & Informational Pages */}
-          <Route path="/terms" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
+          <Route path="/terms" element={<div className="min-h-screen bg-[#FBFBFA] text-[#18181B] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
           <Route path="/license" element={<Navigate to="/terms" replace />} />
-          <Route path="/privacy" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
-          <Route path="/about" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
-          <Route path="/contact" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
-          <Route path="/support" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
-          <Route path="/community" element={<div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
+          <Route path="/privacy" element={<div className="min-h-screen bg-[#FBFBFA] text-[#18181B] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
+          <Route path="/about" element={<div className="min-h-screen bg-[#FBFBFA] text-[#18181B] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
+          <Route path="/contact" element={<div className="min-h-screen bg-[#FBFBFA] text-[#18181B] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
+          <Route path="/support" element={<div className="min-h-screen bg-[#FBFBFA] text-[#18181B] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
+          <Route path="/community" element={<div className="min-h-screen bg-[#FBFBFA] text-[#18181B] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
           <Route path="/welcome" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
 
