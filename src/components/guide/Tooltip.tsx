@@ -44,11 +44,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
             initial={{ opacity: 0, scale: 0.95, y: position === 'top' ? 4 : position === 'bottom' ? -4 : 0 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: position === 'top' ? 4 : position === 'bottom' ? -4 : 0 }}
-            className={`absolute z-[100] whitespace-nowrap px-2.5 py-1.5 bg-[#141418] text-[#F5F3ED] text-[10px] font-mono tracking-wider rounded-[2px] border border-[#23232A] shadow-2xl pointer-events-none ${getPositionClasses()}`}
+            className={`absolute z-[100] whitespace-nowrap px-2.5 py-1.5 bg-[#0E1217] text-[#F0F3F6] text-[10px] font-mono tracking-wider rounded-[2px] border border-white/[0.12] shadow-2xl pointer-events-none ${getPositionClasses()}`}
           >
             {content}
             {/* Tooltip Arrow */}
-            <div className={`absolute w-2 h-2 bg-[#141418] border-t border-l border-[#23232A] rotate-45 ${
+            <div className={`absolute w-2 h-2 bg-[#0E1217] border-t border-l border-white/[0.12] rotate-45 ${
               position === 'top' ? 'bottom-[-4px] left-1/2 -translate-x-1/2 border-t-0 border-l-0 border-b border-r' :
               position === 'bottom' ? 'top-[-4px] left-1/2 -translate-x-1/2' :
               position === 'left' ? 'right-[-4px] top-1/2 -translate-y-1/2 border-t border-r border-b-0 border-l-0' :
@@ -90,13 +90,13 @@ export const IconButton: React.FC<IconButtonProps> = ({
 }) => {
   const getVariantClasses = () => {
     switch (variant) {
-      case 'primary': return 'bg-[#C5A880] text-[#0A0A0C] hover:bg-[#D4B992] border border-[#C5A880] font-semibold shadow-xs';
-      case 'secondary': return 'bg-[#141418] text-[#F5F3ED] hover:bg-[#1A1A22] border border-[#23232A] shadow-xs';
-      case 'danger': return 'bg-[#1E1418] text-red-300 hover:text-red-200 border border-red-900/40 shadow-xs';
-      case 'warning': return 'bg-[#1E1B14] text-amber-300 hover:text-amber-200 border border-amber-900/40 shadow-xs';
-      case 'ai': return 'bg-[#C5A880] text-[#0A0A0C] hover:bg-[#D4B992] border border-[#C5A880] font-semibold shadow-xs';
-      case 'ghost': return 'bg-transparent text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#141418] border border-transparent shadow-none';
-      default: return 'bg-[#C5A880] text-[#0A0A0C] border border-[#C5A880]';
+      case 'primary': return 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] border border-[#2563EB] font-semibold shadow-[0_0_15px_rgba(37,99,235,0.25)]';
+      case 'secondary': return 'bg-[#13181F] text-[#F0F3F6] hover:bg-[#1A222C] border border-white/[0.08] shadow-xs';
+      case 'danger': return 'bg-[#2A1215] text-red-300 hover:text-red-200 border border-red-900/50 shadow-xs';
+      case 'warning': return 'bg-blue-950/60 text-[#38BDF8] hover:text-sky-200 border border-blue-900/50 shadow-xs';
+      case 'ai': return 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] border border-[#2563EB] font-semibold shadow-[0_0_15px_rgba(37,99,235,0.25)]';
+      case 'ghost': return 'bg-transparent text-zinc-400 hover:text-[#F0F3F6] hover:bg-[#13181F] border border-transparent shadow-none';
+      default: return 'bg-[#2563EB] text-white border border-[#2563EB]';
     }
   };
 

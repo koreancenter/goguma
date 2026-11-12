@@ -69,32 +69,32 @@ export const SectionListBar: React.FC<SectionListBarProps> = ({
               title={section.title}
               className={`w-full flex items-start gap-2.5 p-2.5 text-left transition-all cursor-pointer rounded-[2px] ${
                 isActive
-                  ? 'bg-[#16161C] text-[#F5F3ED] border-l-2 border-[#C5A880] shadow-xs'
-                  : 'text-[#B8B5AC] hover:bg-[#121217] hover:text-[#F5F3ED] border-l-2 border-transparent'
+                  ? 'bg-[#18202A] text-[#F0F3F6] border-l-2 border-[#38BDF8] shadow-xs'
+                  : 'text-[#9AA5B5] hover:bg-[#13181F] hover:text-[#F0F3F6] border-l-2 border-transparent'
               }`}
             >
               {/* Section number or check */}
               <div className="shrink-0 mt-0.5">
                 {isFilled ? (
-                  <CheckCircle2 size={14} className="text-[#C5A880]" />
+                  <CheckCircle2 size={14} className="text-[#38BDF8]" />
                 ) : (
-                  <Circle size={14} className={isActive ? 'text-[#F5F3ED]' : 'text-[#78756E]/50'} />
+                  <Circle size={14} className={isActive ? 'text-[#38BDF8]' : 'text-[#5C6675]'} />
                 )}
               </div>
 
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs tabular-nums text-[#78756E]">
+                    <span className="font-mono text-xs tabular-nums text-[#5C6675]">
                       0{index + 1}.
                     </span>
                     {isFilled && (
-                      <span className="text-[10px] font-mono text-[#C5A880] font-medium">
+                      <span className="text-[10px] font-mono text-[#38BDF8] font-medium">
                         작성됨
                       </span>
                     )}
                   </div>
-                  <p className={`mt-0.5 text-xs leading-snug line-clamp-2 ${isActive ? 'text-[#F5F3ED] font-semibold' : 'text-[#B8B5AC]'}`}>
+                  <p className={`mt-0.5 text-xs leading-snug line-clamp-2 ${isActive ? 'text-[#F0F3F6] font-semibold' : 'text-[#9AA5B5]'}`}>
                     {section.title}
                   </p>
                 </div>
@@ -106,12 +106,12 @@ export const SectionListBar: React.FC<SectionListBarProps> = ({
 
       {/* Chapter Overview Box */}
       {!isCollapsed && (
-        <div className="p-3 border-t border-[#23232A] bg-[#0E0E12]">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F5F3ED] mb-1">
-            <Bookmark size={13} className="text-[#C5A880]" />
+        <div className="p-3 border-t border-white/[0.08] bg-[#0E1217]">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F0F3F6] mb-1">
+            <Bookmark size={13} className="text-[#38BDF8]" />
             <span className="font-sans font-semibold">장 개요</span>
           </div>
-          <p className="text-[11px] leading-relaxed text-[#B8B5AC]">
+          <p className="text-[11px] leading-relaxed text-[#9AA5B5]">
             {chapter.description}
           </p>
         </div>

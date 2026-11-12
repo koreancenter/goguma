@@ -129,25 +129,25 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
   return (
     <>
       <aside 
-        className={`h-full flex flex-col bg-white border-r border-stone-200/90 transition-all duration-200 ease-out select-none shrink-0 ${
+        className={`h-full flex flex-col bg-[#0E1217] border-r border-white/[0.08] transition-all duration-200 ease-out select-none shrink-0 ${
           isCollapsed ? 'w-[58px]' : 'w-[260px] xl:w-[280px]'
         }`}
         aria-label="기획서 목차 내비게이션"
       >
-        {/* Ubuntu Dock / Sidebar Top Header */}
-        <div className={`h-12 border-b border-stone-200/80 bg-stone-50/80 flex items-center shrink-0 ${
+        {/* Dock / Sidebar Top Header */}
+        <div className={`h-12 border-b border-white/[0.08] bg-[#0E1217] flex items-center shrink-0 ${
           isCollapsed ? 'justify-center px-1.5' : 'justify-between px-3.5'
         }`}>
           {!isCollapsed ? (
             <div className="flex items-center gap-2 overflow-hidden min-w-0">
-              <span className="p-1 rounded-[2px] bg-amber-50 text-[#D97706] border border-amber-200/70 shrink-0">
+              <span className="p-1 rounded-[2px] bg-blue-950/60 text-[#38BDF8] border border-blue-500/30 shrink-0">
                 <Compass size={14} />
               </span>
               <div className="min-w-0">
-                <span className="font-sans font-semibold text-xs text-stone-900 tracking-tight truncate block">
+                <span className="font-sans font-semibold text-xs text-[#F0F3F6] tracking-tight truncate block">
                   기획서 목차
                 </span>
-                <span className="text-[10px] font-mono text-stone-500 tabular-nums block truncate">
+                <span className="text-[10px] font-mono text-[#9AA5B5] tabular-nums block truncate">
                   {completedSectionsCount}/{totalSections} 작성 완료
                 </span>
               </div>
@@ -157,7 +157,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
               className="flex flex-col items-center justify-center cursor-default"
               title={`작성 현황: ${completedSectionsCount}/${totalSections} 완료`}
             >
-              <div className="w-7 h-7 rounded-[4px] bg-amber-50 border border-amber-200/70 text-[#D97706] flex items-center justify-center font-bold text-xs shadow-2xs">
+              <div className="w-7 h-7 rounded-[4px] bg-blue-950/60 border border-blue-500/30 text-[#38BDF8] flex items-center justify-center font-bold text-xs shadow-2xs">
                 <Compass size={15} />
               </div>
             </div>
@@ -165,17 +165,17 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
 
           <button
             onClick={onToggleCollapse}
-            className={`rounded-[2px] hover:bg-stone-100 text-stone-500 hover:text-stone-900 transition-colors cursor-pointer ${
+            className={`rounded-[2px] hover:bg-white/[0.08] text-[#9AA5B5] hover:text-[#F0F3F6] transition-colors cursor-pointer ${
               isCollapsed ? 'hidden' : 'p-1.5 ml-auto'
             }`}
-            title="우분투 아이콘 독으로 접기 (캔버스 공간 극대화)"
-            aria-label="우분투 아이콘 독으로 접기"
+            title="아이콘 독으로 접기 (캔버스 공간 극대화)"
+            aria-label="아이콘 독으로 접기"
           >
             <ChevronLeft size={15} />
           </button>
         </div>
 
-        {/* Ubuntu Dock Rail Items (16 Items) */}
+        {/* Dock Rail Items (16 Items) */}
         <nav 
           className={`flex-1 overflow-y-auto custom-scroll ${
             isCollapsed 
@@ -189,7 +189,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
             const isDone = Boolean(val && val.length > 0);
             const Icon = item.Icon;
 
-            // 1. Ubuntu Dock Mode (Compact Icon Launcher)
+            // 1. Icon Launcher Dock Mode
             if (isCollapsed) {
               return (
                 <button
@@ -203,15 +203,15 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   onMouseLeave={handleMouseLeave}
                   className={`relative w-10 h-10 rounded-[4px] flex flex-col items-center justify-center transition-all duration-150 cursor-pointer group ${
                     isCurrent
-                      ? 'bg-amber-50/95 text-[#D97706] border border-amber-300 shadow-xs ring-1 ring-amber-400/20'
-                      : 'text-stone-500 hover:text-stone-900 hover:bg-stone-100/90 border border-transparent'
+                      ? 'bg-[#13181F] text-[#38BDF8] border border-blue-500/50 shadow-xs ring-1 ring-blue-500/30'
+                      : 'text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] border border-transparent'
                   }`}
                   aria-label={`${item.numStr}. ${item.title}`}
                 >
-                  {/* Ubuntu Active Pip (Signature orange/honey gold bar on the left edge) */}
+                  {/* Active Azure Pip on the left edge */}
                   {isCurrent && (
                     <span 
-                      className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-[3.5px] h-5 rounded-r-[2px] bg-[#D97706] shadow-xs" 
+                      className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-[3.5px] h-5 rounded-r-[2px] bg-[#38BDF8] shadow-xs" 
                     />
                   )}
 
@@ -219,22 +219,22 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   <Icon 
                     size={18} 
                     className={`transition-transform duration-150 ${
-                      isCurrent ? 'scale-105 text-[#D97706]' : 'text-stone-600 group-hover:text-stone-900 group-hover:scale-110'
+                      isCurrent ? 'scale-105 text-[#38BDF8]' : 'text-[#9AA5B5] group-hover:text-[#F0F3F6] group-hover:scale-110'
                     }`}
                   />
 
                   {/* Micro Index Number */}
                   <span className={`text-[8.5px] font-mono leading-none mt-0.5 tabular-nums ${
-                    isCurrent ? 'text-[#D97706] font-bold' : 'text-stone-400 group-hover:text-stone-600'
+                    isCurrent ? 'text-[#38BDF8] font-bold' : 'text-[#5C6675] group-hover:text-[#9AA5B5]'
                   }`}>
                     {item.numStr}
                   </span>
 
-                  {/* Ubuntu Running / Completed Dot Pip (Emerald glow on bottom-right) */}
+                  {/* Completed Dot Pip (Azure glow on top-right) */}
                   {isDone && (
                     <span 
-                      className={`absolute top-1 right-1 w-1.5 h-1.5 rounded-full border border-white ${
-                        isCurrent ? 'bg-[#D97706]' : 'bg-[#10B981]'
+                      className={`absolute top-1 right-1 w-1.5 h-1.5 rounded-full border border-[#0E1217] ${
+                        isCurrent ? 'bg-[#38BDF8]' : 'bg-[#60A5FA]'
                       }`}
                       title="작성 완료됨"
                     />
@@ -253,23 +253,23 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                 }}
                 className={`w-full text-left px-2.5 py-1.5 rounded-[2px] text-xs transition-colors flex items-center justify-between cursor-pointer group border ${
                   isCurrent
-                    ? 'bg-amber-50/90 border-amber-300/80 text-amber-950 font-semibold shadow-2xs'
-                    : 'border-transparent text-stone-600 hover:text-stone-950 hover:bg-stone-50'
+                    ? 'bg-[#13181F] border-blue-500/40 text-[#F0F3F6] font-semibold shadow-2xs'
+                    : 'border-transparent text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.04]'
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0 truncate">
                   <span className={`font-mono text-[10px] tabular-nums shrink-0 ${
-                    isCurrent ? 'text-[#D97706] font-bold' : 'text-stone-400'
+                    isCurrent ? 'text-[#38BDF8] font-bold' : 'text-[#5C6675]'
                   }`}>
                     {item.numStr}
                   </span>
-                  <Icon size={14} className={`shrink-0 ${isCurrent ? 'text-[#D97706]' : 'text-stone-400 group-hover:text-stone-700'}`} />
+                  <Icon size={14} className={`shrink-0 ${isCurrent ? 'text-[#38BDF8]' : 'text-[#9AA5B5] group-hover:text-[#F0F3F6]'}`} />
                   <span className="truncate">{item.title}</span>
                 </div>
 
                 {isDone && (
                   <span className={`shrink-0 ml-1.5 ${
-                    isCurrent ? 'text-[#D97706]' : 'text-emerald-600'
+                    isCurrent ? 'text-[#38BDF8]' : 'text-[#60A5FA]'
                   }`}>
                     <Check size={12} strokeWidth={2.5} />
                   </span>
@@ -279,8 +279,8 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
           })}
         </nav>
 
-        {/* Ubuntu Dock Bottom Controls */}
-        <div className={`border-t border-stone-200/80 bg-stone-50/80 shrink-0 ${
+        {/* Dock Bottom Controls */}
+        <div className={`border-t border-white/[0.08] bg-[#0E1217] shrink-0 ${
           isCollapsed ? 'p-1.5 flex flex-col items-center gap-1.5' : 'p-2'
         }`}>
           {isCollapsed ? (
@@ -291,17 +291,17 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   onSelectChapter(8);
                   onSelectSection('export_summary');
                 }}
-                className="w-10 h-10 rounded-[4px] bg-white hover:bg-amber-50/70 border border-stone-200 hover:border-amber-300 text-stone-700 hover:text-[#D97706] flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                className="w-10 h-10 rounded-[4px] bg-[#13181F] hover:bg-blue-950/60 border border-white/10 hover:border-blue-500/40 text-[#9AA5B5] hover:text-[#38BDF8] flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
                 title="11종 사양서 배포 허브 바로가기"
                 aria-label="11종 사양서 배포 허브"
               >
                 <Archive size={17} />
               </button>
 
-              {/* Ubuntu Expand Drawer Button (9-dots or Chevron) */}
+              {/* Expand Drawer Button */}
               <button
                 onClick={onToggleCollapse}
-                className="w-10 h-8 rounded-[4px] bg-transparent hover:bg-stone-200/80 text-stone-500 hover:text-stone-900 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-10 h-8 rounded-[4px] bg-transparent hover:bg-white/[0.08] text-[#9AA5B5] hover:text-[#F0F3F6] flex items-center justify-center transition-colors cursor-pointer"
                 title="목차 전체 펼치기 (텍스트 목록 보기)"
                 aria-label="목차 전체 펼치기"
               >
@@ -314,16 +314,16 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                 onSelectChapter(8);
                 onSelectSection('export_summary');
               }}
-              className="w-full py-1.5 px-2 rounded-[2px] bg-white hover:bg-amber-50/50 border border-stone-200 text-stone-800 hover:text-amber-900 font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              className="w-full py-1.5 px-2 rounded-[2px] bg-[#13181F] hover:bg-blue-950/60 border border-white/10 hover:border-blue-500/40 text-[#F0F3F6] hover:text-[#38BDF8] font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
             >
-              <Archive size={13} className="text-[#D97706]" />
+              <Archive size={13} className="text-[#38BDF8]" />
               <span>11종 사양서 배포 허브</span>
             </button>
           )}
         </div>
       </aside>
 
-      {/* Ubuntu-Style Clean Dock Label Tooltip (Rendered to body via createPortal) */}
+      {/* Dock Label Tooltip (Rendered to body via createPortal) */}
       {isCollapsed && tooltipState && typeof document !== 'undefined' && createPortal(
         <div
           style={{
@@ -335,16 +335,16 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
           className="pointer-events-none select-none animate-in fade-in zoom-in-95 duration-100"
         >
           {/* Tooltip Card: Only the Core Title clearly and boldly visible */}
-          <div className="relative flex items-center gap-2.5 px-3 py-2 bg-stone-900 text-white rounded-[4px] shadow-2xl border border-stone-800 font-sans whitespace-nowrap">
+          <div className="relative flex items-center gap-2.5 px-3 py-2 bg-[#13181F] text-[#F0F3F6] rounded-[4px] shadow-2xl border border-blue-500/30 font-sans whitespace-nowrap">
             {/* Left Triangle Arrow pointing to the dock icon */}
             <div 
-              className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-stone-900 border-l border-b border-stone-800 rotate-45 shadow-xs"
+              className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#13181F] border-l border-b border-blue-500/30 rotate-45 shadow-xs"
             />
 
-            <span className="font-mono text-xs font-bold text-[#D97706] tabular-nums shrink-0">
+            <span className="font-mono text-xs font-bold text-[#38BDF8] tabular-nums shrink-0">
               {tooltipState.item.numStr}.
             </span>
-            <span className="font-sans font-bold text-xs sm:text-[13px] text-white tracking-tight">
+            <span className="font-sans font-bold text-xs sm:text-[13px] text-[#F0F3F6] tracking-tight">
               {tooltipState.item.title}
             </span>
           </div>

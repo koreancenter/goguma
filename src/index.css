@@ -2,32 +2,35 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
-  --font-serif: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
+  --font-serif: "Plus Jakarta Sans", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Pretendard Variable", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
-  /* Bright Porcelain Canvas & Crisp Surface Palette */
-  --color-sumi-canvas: #FBFBFA;
-  --color-sumi-surface: #FFFFFF;
-  --color-sumi-card: #FFFFFF;
-  --color-sumi-elevated: #F8F8F6;
-  --color-sumi-highlight: #F4F4F1;
+  /* Sumi Black Ink Canvas & Precision Surface Palette */
+  --color-sumi-canvas: #0B0C10;
+  --color-sumi-surface: #0E1217;
+  --color-sumi-card: #13181F;
+  --color-sumi-elevated: #18202A;
+  --color-sumi-highlight: #1E2734;
   
-  /* Luminous Typographic Palette (Deep Charcoal & Clean Slate) */
-  --color-hanji-primary: #18181B;
-  --color-hanji-secondary: #52525B;
-  --color-hanji-muted: #71717A;
-  --color-hanji-subtle: #A1A1AA;
+  /* Luminous Warm White & Crisp Slate Typographic Palette */
+  --color-hanji-primary: #F0F3F6;
+  --color-hanji-secondary: #9AA5B5;
+  --color-hanji-muted: #5C6675;
+  --color-hanji-subtle: #414A58;
   
   /* Refined Hairline Borders */
-  --color-hairline: #E4E4E7;
-  --color-hairline-bright: #D4D4D8;
+  --color-hairline: rgba(255, 255, 255, 0.08);
+  --color-hairline-bright: rgba(255, 255, 255, 0.16);
 
-  /* Joyful & Radiant Accents (Sweet Potato Honey Brass & Fresh Mint) */
-  --color-accent-gold: #D97706;
-  --color-accent-gold-hover: #B45309;
-  --color-accent-gold-dark: #92400E;
-  --color-accent-pine: #10B981;
+  /* Luxury Blue & Electric Azure Accents */
+  --color-accent-blue: #38BDF8;
+  --color-accent-blue-hover: #2563EB;
+  --color-brand-sapphire: #2563EB;
+  --color-brand-sapphire-hover: #1D4ED8;
+  --color-accent-azure: #38BDF8;
+  --color-accent-slate: #60A5FA;
 }
 
 @layer utilities {
@@ -39,20 +42,20 @@
     scrollbar-width: none;
   }
   
-  /* Custom Clean Minimalist Light Hairline Scrollbar */
+  /* Custom Clean Minimalist Dark Hairline Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #F4F4F5;
+    background: #0E1217;
   }
   ::-webkit-scrollbar-thumb {
-    background: #D4D4D8;
+    background: #1E293B;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #A1A1AA;
+    background: #334155;
   }
   
   .custom-scroll::-webkit-scrollbar {
@@ -63,49 +66,51 @@
     background: transparent;
   }
   .custom-scroll::-webkit-scrollbar-thumb {
-    background: #E4E4E7;
+    background: #1E293B;
     border-radius: 3px;
   }
   .custom-scroll::-webkit-scrollbar-thumb:hover {
-    background: #CBD5E1;
+    background: #334155;
   }
 }
 
 @layer base {
   html {
-    background-color: #FBFBFA;
-    color: #18181B;
-    color-scheme: light;
+    background-color: #0B0C10;
+    color: #F0F3F6;
+    color-scheme: dark;
   }
 
   body {
-    background-color: #FBFBFA;
-    color: #18181B;
+    background-color: #0B0C10;
+    color: #F0F3F6;
     font-family: var(--font-sans);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.018em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background-color: #FEF3C7;
-    color: #78350F;
+    background-color: rgba(56, 189, 248, 0.25);
+    color: #F0F3F6;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    color: #18181B;
+    color: #F0F3F6;
     font-family: var(--font-sans);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     font-weight: 600;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   
   p {
-    color: #52525B;
+    color: #9AA5B5;
     line-height: 1.7;
   }
 }
 
-/* Pretendard Variable Sans-Serif Enforcement Across Global & Korean Interfaces */
+/* Luxury Modern Sans-Serif: Plus Jakarta Sans for Latin + Pretendard Variable for Hangul */
 html,
 body,
 h1, h2, h3, h4, h5, h6,
@@ -121,7 +126,7 @@ td,
 th,
 li,
 div:not(.font-mono) {
-  font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif !important;
+  font-family: "Plus Jakarta Sans", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif !important;
 }
 
 /* Explicitly preserve monospaced tabular numerals and code blocks */
@@ -134,3 +139,145 @@ samp {
   font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
   font-variant-numeric: tabular-nums;
 }
+
+/* Tiptap Editor Typography & ProseMirror Styling */
+.tiptap-editor-wrap .tiptap {
+  outline: none !important;
+}
+
+.tiptap-editor-wrap .tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #5C6675;
+  pointer-events: none;
+  height: 0;
+}
+
+.tiptap-editor-wrap .tiptap p {
+  color: #F0F3F6;
+  margin-bottom: 0.4em;
+  line-height: 1.7;
+}
+
+.tiptap-editor-wrap .tiptap h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #F0F3F6;
+  margin-top: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.tiptap-editor-wrap .tiptap h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #F0F3F6;
+  margin-top: 0.6rem;
+  margin-bottom: 0.3rem;
+}
+
+.tiptap-editor-wrap .tiptap h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #38BDF8;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.tiptap-editor-wrap .tiptap code {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38BDF8;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 0.15rem 0.35rem;
+  border-radius: 2px;
+  font-size: 0.85em;
+  font-family: "JetBrains Mono", monospace !important;
+}
+
+.tiptap-editor-wrap .tiptap hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 1rem 0;
+}
+
+/* Tiptap Table, Row, Column, Cell & Resizer Styling */
+.tiptap-editor-wrap .tiptap table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0.8rem 0;
+  overflow: hidden;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.tiptap-editor-wrap .tiptap table td,
+.tiptap-editor-wrap .tiptap table th {
+  min-width: 1em;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.tiptap-editor-wrap .tiptap table th {
+  font-weight: 600;
+  text-align: left;
+  background-color: #0E1217;
+  color: #38BDF8;
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.tiptap-editor-wrap .tiptap table td {
+  background-color: rgba(19, 24, 31, 0.45);
+  color: #F0F3F6;
+  font-size: 0.85rem;
+}
+
+.tiptap-editor-wrap .tiptap table .selectedCell:after {
+  z-index: 2;
+  position: absolute;
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid #38BDF8;
+  pointer-events: none;
+}
+
+.tiptap-editor-wrap .tiptap table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background-color: #38BDF8;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.tiptap-editor-wrap .tableWrapper {
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.tiptap-editor-wrap .resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+
+/* Floating Table Bubble Menu Styling */
+.tiptap-table-bubble-menu {
+  border: 1px solid rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.7) !important;
+}
+
+.tiptap-table-bubble-menu button {
+  white-space: nowrap;
+}
+
+
+

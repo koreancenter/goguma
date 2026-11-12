@@ -14,13 +14,11 @@ import { SectionListBar } from '../classic/SectionListBar';
 import { IntegratedNavigator } from '../classic/IntegratedNavigator';
 import { WritingCanvas } from '../classic/WritingCanvas';
 import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
+import { WorkspaceDropZoneOverlay } from '../classic/WorkspaceDropZoneOverlay';
 
 // Lazy-load heavyweight modals that are only opened on user interaction
 const LocalBackupModal = lazy(() =>
   import('../classic/LocalBackupModal').then(m => ({ default: m.LocalBackupModal }))
-);
-const WorkspaceDropZoneOverlay = lazy(() =>
-  import('../classic/WorkspaceDropZoneOverlay').then(m => ({ default: m.WorkspaceDropZoneOverlay }))
 );
 const StandardTemplateModal = lazy(() =>
   import('../classic/StandardTemplateModal').then(m => ({ default: m.StandardTemplateModal }))
@@ -222,20 +220,20 @@ export default function WorkspaceView({
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#FBFBFA] text-[#18181B] font-sans selection:bg-[#FEF3C7] selection:text-[#78350F]">
-      {/* Studio Top Bar - Top Bar Contract: 3 Zones, Bright Sunlit Paper & Honey Brass */}
-      <header className="h-12 px-4 sm:px-5 bg-white border-b border-stone-200/90 shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center justify-between shrink-0 select-none z-20 gap-3">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0B0C10] text-[#F0F3F6] font-sans selection:bg-sky-950 selection:text-[#38BDF8]">
+      {/* Studio Top Bar - Top Bar Contract: 3 Zones, Sumi Black & Luxury Sapphire Blue */}
+      <header className="h-12 px-4 sm:px-5 bg-[#0E1217] border-b border-white/[0.08] shadow-[0_1px_3px_rgba(0,0,0,0.5)] flex items-center justify-between shrink-0 select-none z-20 gap-3">
         {/* Zone 1: Identity & Document Context */}
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 shrink-0">
           <button
             onClick={() => navigate('/')}
-            className="font-sans font-bold text-sm sm:text-base tracking-tight text-[#18181B] hover:text-[#D97706] transition-colors cursor-pointer whitespace-nowrap uppercase shrink-0 leading-none flex items-center gap-1.5"
+            className="font-sans font-bold text-sm sm:text-base tracking-tight text-[#F0F3F6] hover:text-[#38BDF8] transition-colors cursor-pointer whitespace-nowrap uppercase shrink-0 leading-none flex items-center gap-1.5"
           >
-            <span className="w-5 h-5 rounded-[2px] bg-[#D97706] text-white flex items-center justify-center font-black text-xs shadow-xs">G</span>
+            <span className="w-5 h-5 rounded-[2px] bg-[#2563EB] text-white flex items-center justify-center font-black text-xs shadow-xs">G</span>
             <span>GOGUMA</span>
           </button>
 
-          <span className="text-stone-300 select-none leading-none shrink-0" aria-hidden="true">/</span>
+          <span className="text-white/20 select-none leading-none shrink-0" aria-hidden="true">/</span>
 
           {/* Inline Editable Project Name Container */}
           <div className="min-w-0 max-w-[200px] sm:max-w-[280px] md:max-w-[340px] flex items-center">
@@ -248,19 +246,19 @@ export default function WorkspaceView({
                 setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
                 schedulePersistence();
               }}
-              className="w-full bg-stone-50 hover:bg-stone-100/80 focus:bg-white rounded-[2px] px-2 py-1 text-xs sm:text-sm font-semibold text-[#18181B] truncate border border-stone-200/80 hover:border-stone-300 focus:border-[#D97706] outline-none transition-all leading-normal"
+              className="w-full bg-[#13181F] hover:bg-[#18202A] focus:bg-[#13181F] rounded-[2px] px-2.5 py-1 text-xs sm:text-sm font-semibold text-[#F0F3F6] truncate border border-white/[0.1] hover:border-white/[0.2] focus:border-[#38BDF8] outline-none transition-all leading-normal"
               title="프로젝트 이름 수정"
               aria-label="프로젝트 이름"
             />
           </div>
 
-          {/* Fresh Living Persistence Indicator with Tooltip */}
+          {/* Luxury Azure Living Persistence Indicator with Tooltip */}
           <Tooltip content={saveStatus === 'saving' ? '로컬 저장 중...' : '브라우저에 실시간 안전 보존됨'} position="bottom">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] bg-emerald-50 border border-emerald-200/60 cursor-default">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] bg-blue-950/60 border border-blue-500/30 cursor-default">
               <span className={`w-1.5 h-1.5 rounded-full shrink-0 transition-all ${
-                saveStatus === 'saving' ? 'bg-[#D97706] animate-pulse scale-125' : 'bg-[#10B981]'
+                saveStatus === 'saving' ? 'bg-[#38BDF8] animate-ping scale-125' : 'bg-[#38BDF8]'
               }`} />
-              <span className="text-[10px] font-mono font-medium text-emerald-700 hidden md:inline">
+              <span className="text-[10px] font-mono font-medium text-[#38BDF8] hidden md:inline">
                 {saveStatus === 'saving' ? '보존 중' : '보존됨'}
               </span>
             </div>
@@ -280,8 +278,8 @@ export default function WorkspaceView({
                 onClick={toggleLargeTextMode}
                 className={`h-7 w-7 flex items-center justify-center rounded-[2px] border transition-colors cursor-pointer ${
                   largeTextMode
-                    ? 'bg-amber-50 text-[#D97706] border-amber-300 font-bold shadow-xs'
-                    : 'bg-transparent border-transparent text-stone-500 hover:text-stone-900 hover:bg-stone-100'
+                    ? 'bg-blue-950/80 text-[#38BDF8] border-blue-500/40 font-bold shadow-xs'
+                    : 'bg-transparent border-transparent text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06]'
                 }`}
                 aria-label="글씨 크기 모드 토글"
               >
@@ -293,14 +291,11 @@ export default function WorkspaceView({
             <Tooltip content="인공지능 모델 설정" position="bottom">
               <button
                 onClick={() => setIsAISettingsModalOpen(true)}
-                className="h-7 w-7 flex items-center justify-center rounded-[2px] border border-transparent hover:border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition-colors cursor-pointer relative"
+                className="h-7 w-7 flex items-center justify-center rounded-[2px] border border-transparent hover:border-white/10 text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-colors cursor-pointer relative"
                 aria-label="인공지능 모델 설정"
               >
-                <Cpu size={14} className="text-[#D97706]" />
-                <span className={`absolute top-1.5 right-1.5 w-1 h-1 rounded-full ${
-                  aiSettings.provider === 'gemini' ? 'bg-[#D97706]' :
-                  aiSettings.provider === 'ollama' ? 'bg-[#10B981]' : 'bg-[#3B82F6]'
-                }`} />
+                <Cpu size={14} className="text-[#38BDF8]" />
+                <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-[#38BDF8]" />
               </button>
             </Tooltip>
 
@@ -310,8 +305,8 @@ export default function WorkspaceView({
                 onClick={togglePreviewCollapsed}
                 className={`h-7 w-7 flex items-center justify-center rounded-[2px] border transition-colors cursor-pointer ${
                   isPreviewCollapsed
-                    ? 'bg-stone-100 border-stone-300 text-stone-900'
-                    : 'bg-transparent border-transparent text-stone-500 hover:text-stone-900 hover:bg-stone-100'
+                    ? 'bg-blue-950/80 border-blue-500/40 text-[#38BDF8]'
+                    : 'bg-transparent border-transparent text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06]'
                 }`}
                 aria-label="미리보기 패널 토글"
               >
@@ -321,40 +316,40 @@ export default function WorkspaceView({
           </div>
 
           {/* Hairline Divider */}
-          <div className="w-px h-3.5 bg-stone-200" />
+          <div className="w-px h-3.5 bg-white/10" />
 
           {/* Group B: Document Assets (Templates & Backups) */}
-          <div className="flex items-center rounded-[2px] border border-stone-200/90 bg-stone-50 p-0.5 gap-0.5">
+          <div className="flex items-center rounded-[2px] border border-white/10 bg-[#13181F] p-0.5 gap-0.5">
             <Tooltip content="표준 기획서 템플릿" position="bottom">
               <button
                 onClick={() => setIsTemplateModalOpen(true)}
-                className="h-6 w-6 flex items-center justify-center rounded-[2px] text-stone-600 hover:text-stone-900 hover:bg-white transition-colors cursor-pointer"
+                className="h-6 w-6 flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.08] transition-colors cursor-pointer"
                 aria-label="표준 기획서 템플릿"
               >
-                <LayoutTemplate size={13} className="text-[#D97706]" />
+                <LayoutTemplate size={13} className="text-[#38BDF8]" />
               </button>
             </Tooltip>
-            <div className="w-px h-3 bg-stone-200" />
+            <div className="w-px h-3 bg-white/10" />
             <Tooltip content="프로젝트 보관함 및 백업" position="bottom">
               <button
                 onClick={() => { setBackupModalTab('storage'); setIsBackupModalOpen(true); }}
-                className="h-6 w-6 flex items-center justify-center rounded-[2px] text-stone-600 hover:text-stone-900 hover:bg-white transition-colors cursor-pointer"
+                className="h-6 w-6 flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.08] transition-colors cursor-pointer"
                 aria-label="프로젝트 보관함 및 백업"
               >
-                <FolderOpen size={13} className="text-[#D97706]" />
+                <FolderOpen size={13} className="text-[#38BDF8]" />
               </button>
             </Tooltip>
           </div>
 
           {/* Hairline Divider */}
-          <div className="w-px h-3.5 bg-stone-200" />
+          <div className="w-px h-3.5 bg-white/10" />
 
-          {/* Group C: The Dominant Primary Anchor CTA (Sweet Potato Honey Brass) */}
+          {/* Group C: The Dominant Primary Anchor CTA (Luxury Sapphire Blue) */}
           <Tooltip content="전체 사양서 번들 다운로드" position="bottom">
             <button
               onClick={handleExportZip}
               disabled={isExporting}
-              className="h-7 px-2.5 flex items-center gap-1.5 justify-center rounded-[2px] bg-[#D97706] hover:bg-[#B45309] active:bg-[#92400E] disabled:opacity-50 text-white transition-all cursor-pointer shadow-xs text-xs font-semibold whitespace-nowrap"
+              className="h-7 px-2.5 flex items-center gap-1.5 justify-center rounded-[2px] bg-[#2563EB] hover:bg-[#1D4ED8] active:bg-[#1E40AF] disabled:opacity-50 text-white transition-all cursor-pointer shadow-xs text-xs font-semibold whitespace-nowrap"
               aria-label="전체 사양서 번들 다운로드"
             >
               <Download size={13} className={isExporting ? 'animate-bounce' : ''} />
@@ -363,14 +358,14 @@ export default function WorkspaceView({
           </Tooltip>
 
           {/* Hairline Divider */}
-          <div className="w-px h-3.5 bg-stone-200" />
+          <div className="w-px h-3.5 bg-white/10" />
 
           {/* Single-Tier User Profile & Sign Out (Flat) */}
           <div className="flex items-center gap-1">
             <Tooltip content="내 계정 프로필" position="bottom">
               <button
                 onClick={() => navigate('/profile')}
-                className="h-7 w-7 rounded-[2px] bg-amber-50 border border-amber-200/80 hover:border-[#D97706] transition-colors cursor-pointer text-[#D97706] text-[11px] font-bold flex items-center justify-center shadow-2xs"
+                className="h-7 w-7 rounded-[2px] bg-blue-950/60 border border-blue-500/30 hover:border-[#38BDF8] transition-colors cursor-pointer text-[#38BDF8] text-[11px] font-bold flex items-center justify-center shadow-2xs"
                 aria-label="내 계정 프로필"
               >
                 {currentUser?.displayName ? currentUser.displayName[0] : 'U'}
@@ -380,7 +375,7 @@ export default function WorkspaceView({
             <Tooltip content="로그아웃" position="bottom">
               <button
                 onClick={onOpenLogoutModal}
-                className="h-7 w-7 rounded-[2px] bg-transparent hover:bg-red-50 text-stone-400 hover:text-red-600 flex items-center justify-center transition-colors cursor-pointer"
+                className="h-7 w-7 rounded-[2px] bg-transparent hover:bg-red-500/20 text-[#5C6675] hover:text-red-400 flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="로그아웃"
               >
                 <LogOut size={13} />
@@ -438,22 +433,22 @@ export default function WorkspaceView({
             aria-label="미리보기 패널 너비 조절"
             onKeyDown={handleResizerKeyDown}
             onMouseDown={handleMouseDownResizer}
-            className={`w-2.5 -ml-1.5 z-20 cursor-col-resize flex items-center justify-center transition-all group select-none shrink-0 relative outline-none focus-visible:ring-1 focus-visible:ring-[#D97706] ${
-              isResizing ? 'bg-amber-100/60' : 'bg-transparent hover:bg-stone-200/50'
+            className={`w-2.5 -ml-1.5 z-20 cursor-col-resize flex items-center justify-center transition-all group select-none shrink-0 relative outline-none focus-visible:ring-1 focus-visible:ring-[#38BDF8] ${
+              isResizing ? 'bg-blue-950/50' : 'bg-transparent hover:bg-white/[0.06]'
             }`}
             title="드래그하여 너비 조절 (더블클릭 시 기본값 480px, 좌우 방향키로 미세 조절)"
             onDoubleClick={() => handleApplyPresetWidth(480)}
           >
             <div className={`w-0.5 h-8 rounded-full transition-colors ${
-              isResizing ? 'bg-[#D97706]' : 'bg-stone-300 group-hover:bg-[#D97706]'
+              isResizing ? 'bg-[#38BDF8]' : 'bg-white/20 group-hover:bg-[#38BDF8]'
             }`} />
 
             {/* Real-time Floating Width HUD during Drag */}
             {isResizing && (
-              <div className="absolute top-6 right-3 pointer-events-none bg-white border border-stone-200 text-stone-800 px-3 py-1.5 rounded-[2px] shadow-xl text-xs font-mono flex items-center gap-2 whitespace-nowrap z-50">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#D97706] animate-ping" />
-                <span className="font-bold text-stone-900">{previewWidth}px</span>
-                <span className="text-stone-500 text-[11px]">
+              <div className="absolute top-6 right-3 pointer-events-none bg-[#0E1217] border border-blue-500/30 text-[#F0F3F6] px-3 py-1.5 rounded-[2px] shadow-2xl text-xs font-mono flex items-center gap-2 whitespace-nowrap z-50">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-ping" />
+                <span className="font-bold text-[#38BDF8]">{previewWidth}px</span>
+                <span className="text-[#9AA5B5] text-[11px]">
                   {previewWidth <= 430 ? '스마트폰 뷰 (420px)' : previewWidth >= 600 ? '와이드 뷰 (620px)' : '데스크톱 뷰 (480px)'}
                 </span>
               </div>
@@ -518,14 +513,12 @@ export default function WorkspaceView({
         </Suspense>
       )}
 
-      <Suspense fallback={null}>
-        <WorkspaceDropZoneOverlay
-          onProjectLoaded={(loadedPlan) => {
-            setPlan(loadedPlan);
-            schedulePersistence();
-          }}
-        />
-      </Suspense>
+      <WorkspaceDropZoneOverlay
+        onProjectLoaded={(loadedPlan) => {
+          setPlan(loadedPlan);
+          schedulePersistence();
+        }}
+      />
     </div>
   );
 }

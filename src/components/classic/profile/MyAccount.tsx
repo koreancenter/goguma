@@ -105,21 +105,21 @@ export default function MyAccount() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px] bg-[#0A0A0C]">
-        <div className="w-8 h-8 border-2 border-[#23232A] border-t-[#C5A880] rounded-full animate-spin" />
+      <div className="flex items-center justify-center min-h-[400px] bg-[#0B0C10]">
+        <div className="w-8 h-8 border-2 border-white/[0.08] border-t-[#38BDF8] rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0C] text-[#F5F3ED]">
+    <div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6]">
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="mb-10 border-b border-[#23232A] pb-6">
+        <div className="mb-10 border-b border-white/[0.08] pb-6">
           <div className="flex items-center gap-2 mb-2">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#C5A880]">SETTINGS & IDENTITY</span>
+            <span className="font-mono text-[11px] uppercase tracking-widest text-[#38BDF8]">SETTINGS & IDENTITY</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-[#F5F3ED] tracking-tight">{t('my_account')}</h1>
-          <p className="text-[#B8B5AC] font-sans text-sm mt-1">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-[#F0F3F6] tracking-tight">{t('my_account')}</h1>
+          <p className="text-[#94A3B8] font-sans text-sm mt-1">
             {language === 'ko' 
               ? '개인 프로필 정보 및 로컬 데이터베이스 스토리지를 관리합니다.' 
               : 'Manage your local profile identity and on-device storage backup.'}
@@ -132,74 +132,74 @@ export default function MyAccount() {
             <motion.div 
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-[#111116] rounded-[2px] p-6 sm:p-7 border border-[#23232A] shadow-xs"
+              className="bg-[#0E1217] rounded-[2px] p-6 sm:p-7 border border-white/[0.08] shadow-xs"
             >
-              <div className="flex items-center gap-3 mb-6 border-b border-[#23232A] pb-4">
-                <div className="p-2 bg-[#141418] text-[#C5A880] rounded-[2px] border border-[#23232A]">
+              <div className="flex items-center gap-3 mb-6 border-b border-white/[0.08] pb-4">
+                <div className="p-2 bg-[#13181F] text-[#38BDF8] rounded-[2px] border border-white/[0.08]">
                   <User size={18} />
                 </div>
-                <h2 className="text-lg font-semibold text-[#F5F3ED] uppercase tracking-wider">{t('update_profile')}</h2>
+                <h2 className="text-base font-semibold text-[#F0F3F6] uppercase tracking-wider">{t('update_profile')}</h2>
               </div>
 
               <form onSubmit={handleSave} className="space-y-5">
                 <div>
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#8E8B82] mb-1.5">
-                    {t('company_name')} <span className="text-[#8E8B82] font-normal">({t('optional')})</span>
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#64748B] mb-1.5">
+                    {t('company_name')} <span className="text-[#64748B] font-normal">({t('optional')})</span>
                   </label>
                   <div className="relative">
-                    <Shield className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8B82]" size={16} />
+                    <Shield className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B]" size={16} />
                     <input 
                       type="text"
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 bg-[#141418] border border-[#23232A] rounded-[2px] text-xs font-medium text-[#F5F3ED] focus:border-[#C5A880] transition-all outline-none"
+                      className="w-full pl-10 pr-4 py-2.5 bg-[#13181F] border border-white/[0.08] rounded-[2px] text-xs font-medium text-[#F0F3F6] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]/40 transition-all outline-none"
                       placeholder="Personal Workspace"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#8E8B82] mb-1.5">
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#64748B] mb-1.5">
                     {t('full_name')}
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8B82]" size={16} />
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B]" size={16} />
                     <input 
                       type="text"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                       required
-                      className="w-full pl-10 pr-4 py-2.5 bg-[#141418] border border-[#23232A] rounded-[2px] text-xs font-medium text-[#F5F3ED] focus:border-[#C5A880] transition-all outline-none"
+                      className="w-full pl-10 pr-4 py-2.5 bg-[#13181F] border border-white/[0.08] rounded-[2px] text-xs font-medium text-[#F0F3F6] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]/40 transition-all outline-none"
                       placeholder="Architect Name"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#8E8B82] mb-1.5">
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#64748B] mb-1.5">
                     {t('email')}
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8B82]" size={16} />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B]" size={16} />
                     <input 
                       type="email"
                       value={auth.currentUser?.email || ''}
                       disabled
-                      className="w-full pl-10 pr-4 py-2.5 bg-[#0D0D11] border border-[#23232A]/50 rounded-[2px] text-xs font-mono text-[#8E8B82] cursor-not-allowed outline-none"
+                      className="w-full pl-10 pr-4 py-2.5 bg-[#0B0C10] border border-white/[0.06] rounded-[2px] text-xs font-mono text-[#64748B] cursor-not-allowed outline-none"
                     />
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#23232A]">
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/[0.08]">
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#141418] rounded-[2px] border border-[#23232A] font-mono text-xs text-[#C5A880]">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-950/60 rounded-[2px] border border-blue-500/30 font-mono text-xs text-[#38BDF8]">
                       <Shield size={13} />
                       <span>{role === 'ADMIN' ? '디렉터 (관리자)' : '게스트/멤버'}</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setIsLogoutModalOpen(true)}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-[2px] border border-[#23232A] text-[#8E8B82] hover:text-[#F5F3ED] hover:bg-[#141418] text-xs font-medium transition-colors cursor-pointer"
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-[2px] border border-white/[0.08] text-[#94A3B8] hover:text-[#F0F3F6] hover:bg-[#13181F] text-xs font-medium transition-colors cursor-pointer"
                     >
                       <LogOut size={13} />
                       <span>로그아웃</span>
@@ -209,9 +209,9 @@ export default function MyAccount() {
                   <button 
                     type="submit"
                     disabled={saving}
-                    className="flex items-center gap-2 px-5 py-2 bg-[#C5A880] hover:bg-[#D4B992] disabled:opacity-50 text-[#0A0A0C] rounded-[2px] font-semibold text-xs transition-all cursor-pointer shadow-xs"
+                    className="flex items-center gap-2 px-5 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-white rounded-[2px] font-semibold text-xs transition-all cursor-pointer shadow-xs"
                   >
-                    {saving ? <div className="w-3.5 h-3.5 border-2 border-[#0A0A0C]/30 border-t-[#0A0A0C] rounded-full animate-spin" /> : <Save size={14} />}
+                    {saving ? <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={14} />}
                     <span>{t('save_changes')}</span>
                   </button>
                 </div>
@@ -220,7 +220,7 @@ export default function MyAccount() {
                   <motion.div 
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="mt-3 flex items-center gap-2 p-3 bg-[#16221A] border border-[#2D4A38] text-[#93D7AC] rounded-[2px] text-xs font-medium"
+                    className="mt-3 flex items-center gap-2 p-3 bg-blue-950/40 border border-blue-500/30 text-[#38BDF8] rounded-[2px] text-xs font-medium"
                   >
                     <CheckCircle size={15} />
                     <span>{t('profile_updated')}</span>
@@ -245,18 +245,18 @@ export default function MyAccount() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-[#111116] rounded-[2px] p-6 sm:p-7 border border-[#23232A] shadow-xs"
+              className="bg-[#0E1217] rounded-[2px] p-6 sm:p-7 border border-white/[0.08] shadow-xs"
             >
-              <div className="flex items-center justify-between gap-4 mb-5 border-b border-[#23232A] pb-4">
+              <div className="flex items-center justify-between gap-4 mb-5 border-b border-white/[0.08] pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#141418] text-[#C5A880] rounded-[2px] border border-[#23232A]">
+                  <div className="p-2 bg-[#13181F] text-[#38BDF8] rounded-[2px] border border-white/[0.08]">
                     <ShieldCheck size={18} />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-[#F5F3ED] uppercase tracking-wider">
+                    <h2 className="text-base font-semibold text-[#F0F3F6] uppercase tracking-wider">
                       {language === 'ko' ? '로컬 데이터 및 백업 허브' : 'Local Data & Backup Hub'}
                     </h2>
-                    <p className="text-xs text-[#B8B5AC] font-sans mt-0.5">
+                    <p className="text-xs text-[#94A3B8] font-sans mt-0.5">
                       {language === 'ko' 
                         ? '기획안과 AI 설정은 브라우저 로컬 저장소에 안전하게 보관됩니다.'
                         : 'All architecture projects and settings are stored locally on your device.'}
@@ -264,42 +264,42 @@ export default function MyAccount() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] bg-[#141418] border border-[#23232A] text-[#C5A880] text-[10px] font-mono uppercase tracking-wider shrink-0">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse" />
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] bg-blue-950/60 border border-blue-500/30 text-[#38BDF8] text-[10px] font-mono uppercase tracking-wider shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
                   <span>OFFLINE FIRST</span>
                 </div>
               </div>
 
               {/* Storage metrics */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 my-5">
-                <div className="p-3.5 rounded-[2px] bg-[#141418] border border-[#23232A]">
-                  <div className="text-[10px] font-mono uppercase text-[#8E8B82]">Storage Used</div>
-                  <div className="text-base font-mono font-bold text-[#F5F3ED] mt-1">{storageStats.formattedSize}</div>
-                  <div className="text-[10px] text-[#8E8B82] font-mono mt-0.5">Local sandbox</div>
+                <div className="p-3.5 rounded-[2px] bg-[#13181F] border border-white/[0.08]">
+                  <div className="text-[10px] font-mono uppercase text-[#64748B]">Storage Used</div>
+                  <div className="text-base font-mono font-bold text-[#F0F3F6] mt-1">{storageStats.formattedSize}</div>
+                  <div className="text-[10px] text-[#64748B] font-mono mt-0.5">Local sandbox</div>
                 </div>
 
-                <div className="p-3.5 rounded-[2px] bg-[#141418] border border-[#23232A]">
-                  <div className="text-[10px] font-mono uppercase text-[#8E8B82]">Saved Projects</div>
-                  <div className="text-base font-mono font-bold text-[#F5F3ED] mt-1">{storageStats.projectCount}</div>
-                  <div className="text-[10px] text-[#8E8B82] font-mono mt-0.5">Active records</div>
+                <div className="p-3.5 rounded-[2px] bg-[#13181F] border border-white/[0.08]">
+                  <div className="text-[10px] font-mono uppercase text-[#64748B]">Saved Projects</div>
+                  <div className="text-base font-mono font-bold text-[#F0F3F6] mt-1">{storageStats.projectCount}</div>
+                  <div className="text-[10px] text-[#64748B] font-mono mt-0.5">Active records</div>
                 </div>
 
-                <div className="p-3.5 rounded-[2px] bg-[#141418] border border-[#23232A]">
-                  <div className="text-[10px] font-mono uppercase text-[#8E8B82]">Autosave Drafts</div>
-                  <div className="text-base font-mono font-bold text-[#F5F3ED] mt-1">{storageStats.autosaveCount}</div>
-                  <div className="text-[10px] text-[#8E8B82] font-mono mt-0.5">Auto recovery</div>
+                <div className="p-3.5 rounded-[2px] bg-[#13181F] border border-white/[0.08]">
+                  <div className="text-[10px] font-mono uppercase text-[#64748B]">Autosave Drafts</div>
+                  <div className="text-base font-mono font-bold text-[#F0F3F6] mt-1">{storageStats.autosaveCount}</div>
+                  <div className="text-[10px] text-[#64748B] font-mono mt-0.5">Auto recovery</div>
                 </div>
               </div>
 
               {backupExportSuccess && (
-                <div className="p-3 mb-4 bg-[#16221A] text-[#93D7AC] rounded-[2px] text-xs flex items-center gap-2 border border-[#2D4A38]">
-                  <CheckCircle size={14} className="text-[#93D7AC]" />
+                <div className="p-3 mb-4 bg-blue-950/50 text-[#38BDF8] rounded-[2px] text-xs flex items-center gap-2 border border-blue-500/40">
+                  <CheckCircle size={14} className="text-[#38BDF8]" />
                   <span>{language === 'ko' ? '백업 파일이 안전하게 다운로드되었습니다.' : 'Backup JSON exported successfully.'}</span>
                 </div>
               )}
 
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#23232A]">
-                <div className="text-xs text-[#8E8B82] font-sans">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/[0.08]">
+                <div className="text-xs text-[#64748B] font-sans">
                   {language === 'ko' ? '전체 프로젝트 복원 및 진단' : 'Complete restore and diagnostics'}
                 </div>
 
@@ -307,16 +307,16 @@ export default function MyAccount() {
                   <button
                     type="button"
                     onClick={handleQuickExportBackup}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] border border-[#23232A] bg-[#141418] hover:bg-[#1A1A22] text-[#B8B5AC] hover:text-[#F5F3ED] font-medium text-xs transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] border border-white/[0.08] bg-[#13181F] hover:bg-[#1A222D] text-[#94A3B8] hover:text-[#F0F3F6] font-medium text-xs transition-all cursor-pointer"
                   >
-                    <Download size={13} className="text-[#C5A880]" />
+                    <Download size={13} className="text-[#38BDF8]" />
                     <span>{language === 'ko' ? '빠른 백업' : 'Export Backup'}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setIsBackupModalOpen(true)}
-                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-[2px] bg-[#C5A880] hover:bg-[#D4B992] text-[#0A0A0C] font-semibold text-xs transition-all cursor-pointer shadow-xs"
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-[2px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs transition-all cursor-pointer shadow-xs"
                   >
                     <FolderArchive size={13} />
                     <span>{language === 'ko' ? '백업 및 복원 허브' : 'Open Backup Hub'}</span>
@@ -332,10 +332,10 @@ export default function MyAccount() {
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 }}
-              className="bg-[#111116] rounded-[2px] p-6 sm:p-7 border border-[#23232A] text-[#F5F3ED]"
+              className="bg-[#0E1217] rounded-[2px] p-6 sm:p-7 border border-white/[0.08] text-[#F0F3F6]"
             >
-              <div className="flex items-center gap-3 mb-6 border-b border-[#23232A] pb-4">
-                <div className="p-2 bg-[#141418] text-[#C5A880] rounded-[2px] border border-[#23232A]">
+              <div className="flex items-center gap-3 mb-6 border-b border-white/[0.08] pb-4">
+                <div className="p-2 bg-[#13181F] text-[#38BDF8] rounded-[2px] border border-white/[0.08]">
                   <Zap size={18} />
                 </div>
                 <h2 className="text-base font-semibold uppercase tracking-wider">{t('usage_summary')}</h2>
@@ -343,19 +343,19 @@ export default function MyAccount() {
 
               <div className="space-y-6">
                 <div>
-                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#8E8B82] mb-1">{t('total_api_calls')}</div>
-                  <div className="text-3xl font-mono font-bold text-[#F5F3ED] flex items-baseline gap-2">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#64748B] mb-1">{t('total_api_calls')}</div>
+                  <div className="text-3xl font-mono font-bold text-[#F0F3F6] flex items-baseline gap-2">
                     {userStats.totalApiCalls}
-                    <span className="text-xs font-mono text-[#8E8B82]">Calls</span>
+                    <span className="text-xs font-mono text-[#64748B]">Calls</span>
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-[#23232A]">
-                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#8E8B82] mb-1">Architecture Model</div>
-                  <div className="text-xl font-mono font-bold text-[#C5A880] flex items-center gap-1.5">
+                <div className="pt-6 border-t border-white/[0.08]">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#64748B] mb-1">Architecture Model</div>
+                  <div className="text-xl font-mono font-bold text-[#38BDF8] flex items-center gap-1.5">
                     100% Free
                   </div>
-                  <div className="mt-2 text-[11px] text-[#B8B5AC] leading-relaxed font-sans">
+                  <div className="mt-2 text-[11px] text-[#94A3B8] leading-relaxed font-sans">
                     Open software for individuals. Free BYOK (Gemini), in-browser WebLLM, or offline inference (Ollama).
                   </div>
                 </div>

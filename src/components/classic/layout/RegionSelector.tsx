@@ -63,21 +63,21 @@ export default function RegionSelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-3 px-3.5 py-2 bg-[#141418] hover:bg-[#1A1A22] rounded-[2px] border border-[#23232A] transition-all group min-w-[150px] cursor-pointer"
+        className="flex items-center justify-between gap-3 px-3.5 py-2 bg-[#13181F] hover:bg-[#18202A] rounded-[2px] border border-white/[0.08] transition-all group min-w-[150px] cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <Globe size={14} className="text-[#C5A880] flex-shrink-0" />
+          <Globe size={14} className="text-[#38BDF8] flex-shrink-0" />
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#F5F3ED] truncate max-w-[80px]">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-[#F0F3F6] truncate max-w-[80px]">
               {selectedRegion.name[language as 'en' | 'ko' | 'id']}
             </span>
-            <span className="text-[10px] text-[#23232A]">|</span>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#C5A880]">
+            <span className="text-[10px] text-zinc-600">|</span>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-[#38BDF8]">
               {language.toUpperCase()}
             </span>
           </div>
         </div>
-        <ChevronDown size={14} className={`text-[#8E8B82] transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown size={14} className={`text-zinc-400 transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence>
@@ -86,11 +86,11 @@ export default function RegionSelector() {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute bottom-full left-0 mb-4 w-72 bg-[#111116] rounded-[2px] shadow-2xl border border-[#23232A] overflow-hidden z-50 p-5 space-y-5"
+            className="absolute bottom-full left-0 mb-4 w-72 bg-[#0E1217] rounded-[4px] shadow-2xl border border-white/[0.08] overflow-hidden z-50 p-5 space-y-5"
           >
             {/* Region Selection */}
             <div className="space-y-2.5">
-              <h4 className="text-[10px] font-mono text-[#8E8B82] uppercase tracking-[0.2em]">{t('select_region')}</h4>
+              <h4 className="text-[10px] font-mono text-zinc-400 uppercase tracking-[0.2em]">{t('select_region')}</h4>
               <div className="grid grid-cols-2 gap-2">
                 {regions.map((r) => (
                   <button
@@ -98,8 +98,8 @@ export default function RegionSelector() {
                     onClick={() => handleRegionChange(r)}
                     className={`text-left px-3 py-2 rounded-[2px] text-[10px] font-medium transition-all cursor-pointer ${
                       selectedRegion.id === r.id
-                        ? 'bg-[#16161F] text-[#C5A880] border border-[#C5A880]'
-                        : 'bg-[#141418] text-[#B8B5AC] border border-[#23232A] hover:bg-[#1A1A22] hover:text-[#F5F3ED]'
+                        ? 'bg-blue-950/60 text-[#38BDF8] border border-blue-800/60 font-semibold'
+                        : 'bg-[#13181F] text-zinc-300 border border-white/[0.08] hover:bg-[#18202A] hover:text-white'
                     }`}
                   >
                     {r.name[language as 'en' | 'ko' | 'id']}
@@ -110,7 +110,7 @@ export default function RegionSelector() {
 
             {/* Language Selection */}
             <div className="space-y-2.5">
-              <h4 className="text-[10px] font-mono text-[#8E8B82] uppercase tracking-[0.2em]">{t('select_language')}</h4>
+              <h4 className="text-[10px] font-mono text-zinc-400 uppercase tracking-[0.2em]">{t('select_language')}</h4>
               <div className="grid grid-cols-1 gap-2">
                 {languages.map((l) => (
                   <button
@@ -118,21 +118,21 @@ export default function RegionSelector() {
                     onClick={() => setLanguage(l.id as any)}
                     className={`flex items-center justify-between px-3 py-2 rounded-[2px] text-[10px] font-medium transition-all cursor-pointer ${
                       language === l.id
-                        ? 'bg-[#16161F] text-[#C5A880] border border-[#C5A880]'
-                        : 'bg-[#141418] text-[#B8B5AC] border border-[#23232A] hover:bg-[#1A1A22] hover:text-[#F5F3ED]'
+                        ? 'bg-blue-950/60 text-[#38BDF8] border border-blue-800/60 font-semibold'
+                        : 'bg-[#13181F] text-zinc-300 border border-white/[0.08] hover:bg-[#18202A] hover:text-white'
                     }`}
                   >
                     <span>{l.nativeName}</span>
-                    {language === l.id && <Check size={12} className="text-[#C5A880]" />}
+                    {language === l.id && <Check size={12} className="text-[#38BDF8]" />}
                   </button>
                 ))}
               </div>
             </div>
             
-            <div className="pt-3 border-t border-[#23232A]">
+            <div className="pt-3 border-t border-white/[0.08]">
               <button 
                 onClick={() => setIsOpen(false)}
-                className="w-full py-2.5 bg-[#C5A880] hover:bg-[#D4B992] text-[#0A0A0C] rounded-[2px] text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
+                className="w-full py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-[2px] text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
               >
                 {t('confirm')}
               </button>

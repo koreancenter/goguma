@@ -55,13 +55,13 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
   const categoryNames = Object.keys(categories);
 
   return (
-    <div className="w-full mt-8 bg-white rounded-[2px] border border-stone-200 overflow-hidden text-stone-900 font-sans shadow-2xs">
-      <div className="p-4 sm:p-5 border-b border-stone-200 flex items-center justify-between bg-stone-50/70">
-        <h4 className="text-sm font-sans font-bold text-stone-900 tracking-tight flex items-center gap-2.5">
-          <Calendar size={16} className="text-[#D97706]" />
+    <div className="w-full mt-8 bg-[#0E1217] rounded-[2px] border border-white/[0.08] overflow-hidden text-[#F0F3F6] font-sans shadow-2xs">
+      <div className="p-4 sm:p-5 border-b border-white/[0.08] flex items-center justify-between bg-[#13181F]">
+        <h4 className="text-sm font-sans font-bold text-[#F0F3F6] tracking-tight flex items-center gap-2.5">
+          <Calendar size={16} className="text-[#38BDF8]" />
           <span>월별 개발 마일스톤 및 로드맵 타임라인</span>
         </h4>
-        <div className="px-2.5 py-1 bg-stone-100 border border-stone-200 text-stone-600 rounded-[2px] text-xs font-mono uppercase tracking-wider">
+        <div className="px-2.5 py-1 bg-[#0E1217] border border-white/[0.08] text-[#94A3B8] rounded-[2px] text-xs font-mono uppercase tracking-wider">
           {new Date().getFullYear()} TIMELINE
         </div>
       </div>
@@ -69,12 +69,12 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="bg-stone-50">
-              <th className="px-4 py-3 border-b border-r border-stone-200 min-w-[180px] text-xs font-mono uppercase tracking-wider text-stone-500">
+            <tr className="bg-[#13181F]">
+              <th className="px-4 py-3 border-b border-r border-white/[0.08] min-w-[180px] text-xs font-mono uppercase tracking-wider text-[#7A889B]">
                 CATEGORY & TASK
               </th>
               {months.map((m, i) => (
-                <th key={i} className="px-2 py-3 border-b border-r border-stone-200 text-[10px] font-mono uppercase tracking-widest text-stone-500 text-center">
+                <th key={i} className="px-2 py-3 border-b border-r border-white/[0.08] text-[10px] font-mono uppercase tracking-widest text-[#7A889B] text-center">
                   {m.trim()}
                 </th>
               ))}
@@ -83,7 +83,7 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
           <tbody>
             {categoryNames.length === 0 ? (
               <tr>
-                <td colSpan={months.length + 1} className="p-8 text-center text-xs text-stone-400 font-mono">
+                <td colSpan={months.length + 1} className="p-8 text-center text-xs text-[#7A889B] font-mono">
                   기획서에 등록된 월별 일정 데이터가 없습니다.
                 </td>
               </tr>
@@ -91,23 +91,25 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
               categoryNames.map((cat, catIdx) => {
                 const tasks = categories[cat];
                 return tasks.map((task, taskIdx) => (
-                  <tr key={`${catIdx}-${taskIdx}`} className="border-b border-stone-200 hover:bg-stone-50/70 transition-colors">
-                    <td className="px-4 py-2.5 border-r border-stone-200">
-                      <div className="font-sans font-semibold text-xs text-stone-900 truncate max-w-[180px]">{task.name}</div>
-                      <div className="text-[10px] font-mono text-stone-500 mt-0.5 truncate">{cat} · {task.owner}</div>
+                  <tr key={`${catIdx}-${taskIdx}`} className="border-b border-white/[0.08] hover:bg-white/[0.02] transition-colors">
+                    <td className="px-4 py-2.5 border-r border-white/[0.08]">
+                      <div className="font-sans font-semibold text-xs text-[#F0F3F6] truncate max-w-[180px]">{task.name}</div>
+                      <div className="text-[10px] font-mono text-[#7A889B] mt-0.5 truncate">{cat} · {task.owner}</div>
                     </td>
                     {months.map((_, mIdx) => {
                       const isActive = mIdx >= task.startMonth && mIdx <= task.endMonth;
                       const isStart = mIdx === task.startMonth;
                       const isEnd = mIdx === task.endMonth;
                       return (
-                        <td key={mIdx} className="p-1 border-r border-stone-200/60 text-center relative">
+                        <td key={mIdx} className="p-1 border-r border-white/[0.05] text-center relative">
                           {isActive && (
                             <div 
                               className={`h-5 flex items-center justify-center text-[10px] font-mono font-medium transition-all ${
                                 isStart ? 'rounded-l-[2px]' : ''
                               } ${isEnd ? 'rounded-r-[2px]' : ''} ${
-                                catIdx % 2 === 0 ? 'bg-amber-400 text-amber-950 font-semibold shadow-2xs' : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                                catIdx % 2 === 0 
+                                  ? 'bg-[#2563EB] text-white font-semibold shadow-2xs' 
+                                  : 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
                               }`}
                             >
                               {isStart && <span className="truncate px-1 text-[9px]">{task.name}</span>}

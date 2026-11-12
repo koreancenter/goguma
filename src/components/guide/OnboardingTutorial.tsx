@@ -118,10 +118,10 @@ export const OnboardingTutorial: React.FC = () => {
               left: targetRect.left - 6,
               width: targetRect.width + 12,
               height: targetRect.height + 12,
-              border: '2px solid #D97706',
-              borderRadius: '2px',
+              border: '2px solid #38BDF8',
+              borderRadius: '3px',
               zIndex: 10001,
-              boxShadow: '0 0 0 10000px rgba(24, 24, 27, 0.45)',
+              boxShadow: '0 0 0 10000px rgba(11, 12, 16, 0.75), 0 0 20px rgba(56, 189, 248, 0.35)',
             }}
             transition={{ type: 'spring', damping: 25, stiffness: 120 }}
           />
@@ -136,36 +136,36 @@ export const OnboardingTutorial: React.FC = () => {
             className="fixed z-[10001] pointer-events-auto"
             style={getTooltipStyle()}
           >
-            <div className="bg-white rounded-[2px] p-6 shadow-2xl border border-stone-200/90 max-w-[380px] w-full text-stone-900 font-sans">
-              <div className="flex items-center justify-between mb-3 border-b border-stone-100 pb-2.5">
+            <div className="bg-[#0E1217] rounded-[4px] p-6 shadow-2xl border border-white/[0.08] max-w-[380px] w-full text-[#F0F3F6] font-sans">
+              <div className="flex items-center justify-between mb-3 border-b border-white/[0.08] pb-2.5">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-amber-50 border border-amber-200 text-[#D97706] flex items-center justify-center rounded-[2px] font-bold text-xs">
+                  <div className="w-6 h-6 bg-blue-950/60 border border-blue-800/60 text-[#38BDF8] flex items-center justify-center rounded-[2px] font-bold text-xs">
                     ✦
                   </div>
-                  <span className="text-[10px] font-mono text-stone-500 uppercase tracking-widest">ONBOARDING GUIDE</span>
+                  <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">ONBOARDING GUIDE</span>
                 </div>
                 <button 
                   onClick={stopTutorial}
-                  className="text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+                  className="text-zinc-400 hover:text-white transition-colors cursor-pointer"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              <h3 className="text-base font-semibold text-stone-900 tracking-tight mb-1.5">
+              <h3 className="text-base font-semibold text-white tracking-tight mb-1.5">
                 {t(currentStep.titleKey)}
               </h3>
-              <p className="text-xs text-stone-600 font-sans leading-relaxed mb-6">
+              <p className="text-xs text-zinc-300 font-sans leading-relaxed mb-6">
                 {t(currentStep.descriptionKey)}
               </p>
 
-              <div className="flex items-center justify-between pt-4 border-t border-stone-100">
+              <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
                 <div className="flex items-center gap-1.5">
                   {steps.map((_, idx) => (
                     <div 
                       key={`dot-${idx}`}
                       className={`h-1 rounded-[1px] transition-all duration-300 ${
-                        idx === currentStepIndex ? 'w-4 bg-[#D97706]' : 'w-1.5 bg-stone-200'
+                        idx === currentStepIndex ? 'w-4 bg-[#2563EB]' : 'w-1.5 bg-white/[0.12]'
                       }`}
                     />
                   ))}
@@ -174,14 +174,14 @@ export const OnboardingTutorial: React.FC = () => {
                   {currentStepIndex > 0 && (
                     <button
                       onClick={prevStep}
-                      className="p-1.5 text-stone-500 hover:text-stone-900 transition-colors cursor-pointer"
+                      className="p-1.5 text-zinc-400 hover:text-white transition-colors cursor-pointer"
                     >
                       <ChevronLeft size={16} />
                     </button>
                   )}
                   <button
                     onClick={nextStep}
-                    className="flex items-center gap-1.5 bg-[#D97706] hover:bg-[#B45309] px-4 py-1.5 rounded-[2px] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 bg-[#2563EB] hover:bg-[#1D4ED8] px-4 py-1.5 rounded-[2px] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
                   >
                     <span>{currentStepIndex === steps.length - 1 ? t('start_exploring') : t('next_step')}</span>
                     <ChevronRight size={14} />

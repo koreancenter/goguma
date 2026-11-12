@@ -13,6 +13,7 @@ import { FeatureMappingInteractiveWidget } from './FeatureMappingInteractiveWidg
 import { DesignSystemInteractiveWidget } from './DesignSystemInteractiveWidget';
 import { NavigationArchitectureInteractiveWidget } from './NavigationArchitectureInteractiveWidget';
 import { VisualSchemaBridgeWidget } from './VisualSchemaBridgeWidget';
+import { TiptapThinkingCanvas } from './TiptapThinkingCanvas';
 import { Tooltip } from '../guide/Tooltip';
 
 export interface WritingCanvasProps {
@@ -54,7 +55,7 @@ const CHAPTER_SAMPLE_CHIPS: Record<number, Array<{ label: string; text: string }
     { label: '회원 계정 필드 목록', text: '회원명, 이메일, 가입일자, 권한등급, 활성여부, 최근접속' },
   ],
   5: [
-    { label: '화사한 백자 & 허니 골드', text: '기본 캔버스: Pure Porcelain (#FBFBFA)\n카드 및 표면: Crisp White (#FFFFFF)\n강조 액센트: Sweet Potato Honey Gold (#D97706)\n외곽선: 1px 초슬림 헤어라인 (border-stone-200)' },
+    { label: '수미 블랙 & 럭셔리 사파이어', text: '기본 캔버스: Sumi Black Ink (#0B0C10)\n패널 및 카드: Deep Navy Slate (#0E1217 / #13181F)\n강조 액센트: Luxury Sapphire Blue & Electric Azure (#2563EB / #38BDF8)\n타이포그래피: Plus Jakarta Sans + Pretendard Variable + JetBrains Mono\n외곽선: 1px 반투명 헤어라인 (border-white/[0.08])' },
   ],
   6: [
     { label: '표준 3계층 사이트맵', text: '1. 홈 대시보드 (/)\n2. 메인 데이터 장부 목록 (/items)\n3. 상세 정보 및 수정 뷰 (/items/:id)\n4. 환경설정 및 백업 관리 (/settings)' },
@@ -78,7 +79,6 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   isPreviewCollapsed = false,
   onTogglePreviewCollapse,
 }) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chapter: ChapterDef = GOGUMA_CHAPTERS.find(c => c.id === currentChapter) || GOGUMA_CHAPTERS[0];
   const section: SectionDef = chapter.sections.find(s => s.key === currentSection) || chapter.sections[0];
   const currentKey = `${currentChapter}_${section.key}`;
@@ -89,11 +89,8 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   const [isSampleChipsOpen, setIsSampleChipsOpen] = useState(false);
   const [coPilotNotification, setCoPilotNotification] = useState<string | null>(null);
 
-  // Focus textarea when switching sections
+  // Reset refine and sample state when switching sections
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
     setPreviousValueBeforeRefine(null);
     setIsSampleChipsOpen(false);
   }, [currentChapter, currentSection]);
@@ -181,21 +178,21 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
     switch (currentChapter) {
       case 1: {
         return (
-          <div className="bg-white rounded-[2px] p-5 border border-stone-200/90 space-y-4 shadow-xs">
-            <div className="flex items-center gap-2 text-xs font-semibold text-stone-900">
-              <Compass size={15} className="text-[#D97706]" />
+          <div className="bg-[#0E1217] rounded-[2px] p-5 border border-white/[0.08] space-y-4 shadow-xs">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0F3F6]">
+              <Compass size={15} className="text-[#38BDF8]" />
               <span className="font-sans font-semibold">프로젝트 기본 정보 요약</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="bg-stone-50/80 p-3.5 rounded-[2px] border border-stone-200/70">
-                <span className="text-xs text-stone-500 block font-mono">서비스 명칭</span>
-                <span className="font-sans font-semibold text-stone-900 text-sm mt-1 block truncate">
+              <div className="bg-[#13181F] p-3.5 rounded-[2px] border border-white/[0.06]">
+                <span className="text-xs text-zinc-400 block font-mono">서비스 명칭</span>
+                <span className="font-sans font-semibold text-[#F0F3F6] text-sm mt-1 block truncate">
                   {plan.metadata?.projectName || '새 프로젝트'}
                 </span>
               </div>
-              <div className="bg-stone-50/80 p-3.5 rounded-[2px] border border-stone-200/70">
-                <span className="text-xs text-stone-500 block font-mono">플랫폼 대상</span>
-                <span className="font-sans font-medium text-stone-900 text-sm mt-1 block">
+              <div className="bg-[#13181F] p-3.5 rounded-[2px] border border-white/[0.06]">
+                <span className="text-xs text-zinc-400 block font-mono">플랫폼 대상</span>
+                <span className="font-sans font-medium text-[#F0F3F6] text-sm mt-1 block">
                   {plan.metadata?.platform === 'APP' ? '모바일 웹 (PWA App)' : '웹 애플리케이션 (Web)'}
                 </span>
               </div>
@@ -206,13 +203,13 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
       case 2: {
         return (
-          <div className="bg-white rounded-[2px] p-5 border border-stone-200/90 space-y-3 shadow-xs">
-            <div className="flex items-center gap-2 text-xs font-semibold text-stone-900">
-              <BookOpen size={15} className="text-[#D97706]" />
+          <div className="bg-[#0E1217] rounded-[2px] p-5 border border-white/[0.08] space-y-3 shadow-xs">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0F3F6]">
+              <BookOpen size={15} className="text-[#38BDF8]" />
               <span className="font-sans font-semibold">타깃 사용자 및 결핍 정의 요약</span>
             </div>
-            <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-              작성하신 페르소나와 결핍 사항은 <code className="text-stone-900 font-mono bg-stone-100 px-1.5 py-0.5 rounded-[2px] border border-stone-200">docs/01_proposal.md</code>의 <strong>문제 정의(Problem Statement)</strong>와 <strong>가치 제안(Value Proposition)</strong>에 구조화되어 자동 반영됩니다.
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              작성하신 페르소나와 결핍 사항은 <code className="text-[#38BDF8] font-mono bg-blue-950/40 px-1.5 py-0.5 rounded-[2px] border border-blue-900/40">docs/01_proposal.md</code>의 <strong>문제 정의(Problem Statement)</strong>와 <strong>가치 제안(Value Proposition)</strong>에 구조화되어 자동 반영됩니다.
             </p>
           </div>
         );
@@ -262,19 +259,19 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
       case 7: {
         return (
-          <div className="bg-white rounded-[2px] p-5 border border-stone-200/90 space-y-4 shadow-xs">
-            <div className="flex items-center gap-2 text-xs font-semibold text-stone-900">
-              <Shield size={15} className="text-[#D97706]" />
+          <div className="bg-[#13181F] rounded-[2px] p-5 border border-white/[0.08] space-y-4 shadow-xs">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0F3F6]">
+              <Shield size={15} className="text-[#38BDF8]" />
               <span className="font-sans font-semibold">로컬 퍼스트 & 아키텍처 규칙</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="bg-stone-50/80 p-3.5 rounded-[2px] border border-stone-200/70">
-                <span className="font-sans font-medium text-sm text-stone-900 block">IndexedDB 로컬 스토리지</span>
-                <span className="text-xs text-stone-500 mt-1 block">외부 클라우드 전송 없이 브라우저 내 안전 보관</span>
+              <div className="bg-[#0E1217] p-3.5 rounded-[2px] border border-white/[0.06]">
+                <span className="font-sans font-medium text-sm text-[#F0F3F6] block">IndexedDB 로컬 스토리지</span>
+                <span className="text-xs text-[#9AA5B5] mt-1 block">외부 클라우드 전송 없이 브라우저 내 안전 보관</span>
               </div>
-              <div className="bg-stone-50/80 p-3.5 rounded-[2px] border border-stone-200/70">
-                <span className="font-sans font-medium text-sm text-stone-900 block">단일 파일 완결성</span>
-                <span className="text-xs text-stone-500 mt-1 block">규약에 따른 무설치 단일 파일 보장</span>
+              <div className="bg-[#0E1217] p-3.5 rounded-[2px] border border-white/[0.06]">
+                <span className="font-sans font-medium text-sm text-[#F0F3F6] block">단일 파일 완결성</span>
+                <span className="text-xs text-[#9AA5B5] mt-1 block">규약에 따른 무설치 단일 파일 보장</span>
               </div>
             </div>
           </div>
@@ -290,17 +287,17 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   if (currentChapter === 8) {
     return (
       <section 
-        className="flex-1 min-w-[640px] h-full flex flex-col bg-[#FBFBFA] overflow-y-auto selection:bg-[#FEF3C7] selection:text-[#78350F]"
+        className="flex-1 min-w-[640px] h-full flex flex-col bg-[#0B0C10] overflow-y-auto selection:bg-sky-950 selection:text-[#38BDF8]"
         aria-label="산출물 사출 허브"
       >
         {/* Top Breadcrumb Bar */}
-        <div className="h-14 px-6 sm:px-8 border-b border-stone-200/80 bg-white flex items-center justify-between shrink-0 gap-3">
-          <div className="flex items-center gap-2 text-xs sm:text-sm text-stone-600 min-w-0 truncate">
-            <span className="font-mono text-stone-900 font-semibold shrink-0">CHAPTER 08</span>
-            <span className="text-stone-300 shrink-0">·</span>
-            <span className="text-stone-900 font-medium font-sans truncate">산출물 허브 및 배포</span>
-            <span className="text-stone-300 shrink-0">·</span>
-            <span className="text-[#D97706] font-mono font-medium shrink-0">11종 사양서 번들</span>
+        <div className="h-14 px-6 sm:px-8 border-b border-white/[0.08] bg-[#0E1217] flex items-center justify-between shrink-0 gap-3">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-[#9AA5B5] min-w-0 truncate">
+            <span className="font-mono text-[#F0F3F6] font-semibold shrink-0">CHAPTER 08</span>
+            <span className="text-white/20 shrink-0">·</span>
+            <span className="text-[#F0F3F6] font-medium font-sans truncate">산출물 허브 및 배포</span>
+            <span className="text-white/20 shrink-0">·</span>
+            <span className="text-[#38BDF8] font-mono font-medium shrink-0">11종 사양서 번들</span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -310,8 +307,8 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
                   onClick={onTogglePreviewCollapse}
                   className={`h-7 w-7 flex items-center justify-center rounded-[2px] border transition-colors cursor-pointer ${
                     isPreviewCollapsed
-                      ? 'bg-amber-50 text-[#D97706] border-amber-300'
-                      : 'bg-transparent text-stone-500 border-transparent hover:text-stone-900 hover:bg-stone-100'
+                      ? 'bg-blue-950/80 text-[#38BDF8] border-blue-500/40'
+                      : 'bg-transparent text-[#9AA5B5] border-transparent hover:text-[#F0F3F6] hover:bg-white/[0.06]'
                   }`}
                   aria-label={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'}
                 >
@@ -340,20 +337,20 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   // Chapters 1 to 7: Single Unified Canvas
   return (
     <section 
-      className="flex-1 min-w-[640px] h-full flex flex-col bg-[#FBFBFA] overflow-y-auto selection:bg-[#FEF3C7] selection:text-[#78350F]"
+      className="flex-1 min-w-[640px] h-full flex flex-col bg-[#0B0C10] overflow-y-auto selection:bg-sky-950 selection:text-[#38BDF8]"
       aria-label="집필 캔버스"
     >
       {/* Canvas Top Bar: Elegant Typographic Breadcrumb */}
-      <div className="h-12 px-6 sm:px-8 border-b border-stone-200/80 bg-white flex items-center justify-between shrink-0 gap-3">
+      <div className="h-12 px-6 sm:px-8 border-b border-white/[0.08] bg-[#0E1217] flex items-center justify-between shrink-0 gap-3">
         {/* Left: Breadcrumbs with generous breathing room */}
-        <div className={`flex items-center gap-2.5 text-stone-500 truncate min-w-0 ${
+        <div className={`flex items-center gap-2.5 text-[#9AA5B5] truncate min-w-0 ${
           largeTextMode ? 'text-base' : 'text-xs sm:text-sm'
         }`}>
-          <span className="font-mono text-[#D97706] font-semibold text-xs shrink-0 tracking-wider">CHAPTER 0{chapter.id}</span>
-          <span className="text-stone-300 shrink-0 select-none">/</span>
-          <span className="text-stone-900 font-sans font-medium truncate">{chapter.title}</span>
-          <span className="text-stone-300 shrink-0 select-none">·</span>
-          <span className="text-stone-500 truncate">{section.title}</span>
+          <span className="font-mono text-[#60A5FA] font-semibold text-xs shrink-0 tracking-wider">CHAPTER 0{chapter.id}</span>
+          <span className="text-white/20 shrink-0 select-none">/</span>
+          <span className="text-[#F0F3F6] font-sans font-medium truncate">{chapter.title}</span>
+          <span className="text-white/20 shrink-0 select-none">·</span>
+          <span className="text-[#9AA5B5] truncate">{section.title}</span>
         </div>
 
         {/* Right: Minimal Focus Mode Trigger */}
@@ -363,8 +360,8 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
               onClick={onTogglePreviewCollapse}
               className={`h-7 w-7 flex items-center justify-center rounded-[2px] border transition-colors cursor-pointer shrink-0 ${
                 isPreviewCollapsed
-                  ? 'bg-amber-50 text-[#D97706] border-amber-300'
-                  : 'bg-transparent text-stone-500 border-transparent hover:text-stone-900 hover:bg-stone-100'
+                  ? 'bg-blue-950/80 text-[#38BDF8] border-blue-500/40'
+                  : 'bg-transparent text-[#9AA5B5] border-transparent hover:text-[#F0F3F6] hover:bg-white/[0.06]'
               }`}
               aria-label={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'}
             >
@@ -379,35 +376,35 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
         isPreviewCollapsed ? 'max-w-5xl lg:max-w-6xl' : 'max-w-4xl'
       }`}>
         {/* Editorial Heading with High-Legibility Scalability */}
-        <div className="space-y-2 border-b border-stone-200/80 pb-5">
-          <div className="flex items-center gap-2 text-xs text-stone-500">
-            <span className="font-mono text-[#D97706] font-semibold">
+        <div className="space-y-2 border-b border-white/[0.08] pb-5">
+          <div className="flex items-center gap-2 text-xs text-[#9AA5B5]">
+            <span className="font-mono text-[#38BDF8] font-semibold">
               0{currentSectionIdx + 1}.
             </span>
-            <span className={`uppercase tracking-wider font-mono text-stone-600 ${largeTextMode ? 'text-xs sm:text-sm' : 'text-[11px]'}`}>
+            <span className={`uppercase tracking-wider font-mono text-[#60A5FA] ${largeTextMode ? 'text-xs sm:text-sm' : 'text-[11px]'}`}>
               {chapter.engTitle}
             </span>
           </div>
-          <h1 className={`font-sans font-bold text-stone-900 tracking-tight leading-tight ${
+          <h1 className={`font-sans font-bold text-[#F0F3F6] tracking-tight leading-tight ${
             largeTextMode ? 'text-3xl sm:text-4xl lg:text-5xl' : 'text-2xl sm:text-3xl'
           }`} style={{ textWrap: 'balance' }}>
             {section.title}
           </h1>
           <p className={`leading-relaxed font-sans ${
-            largeTextMode ? 'text-lg sm:text-xl leading-loose text-stone-700' : 'text-sm sm:text-base text-stone-600'
+            largeTextMode ? 'text-lg sm:text-xl leading-loose text-[#9AA5B5]' : 'text-sm sm:text-base text-[#9AA5B5]'
           }`}>
             {section.question}
           </p>
         </div>
 
-        {/* 1. Natural Language Writing Area: Luminous Paper Card */}
+        {/* 1. Natural Language Writing Area: Sumi Ink Card */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className={`font-sans font-semibold text-stone-900 ${largeTextMode ? 'text-sm sm:text-base' : 'text-xs'}`}>
+              <span className={`font-sans font-semibold text-[#F0F3F6] ${largeTextMode ? 'text-sm sm:text-base' : 'text-xs'}`}>
                 기획 원고 서술 (Thinking Canvas)
               </span>
-              <span className="font-mono text-xs tabular-nums text-stone-400">
+              <span className="font-mono text-xs tabular-nums text-[#5C6675]">
                 {currentValue.length}자
               </span>
             </div>
@@ -418,10 +415,10 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
               <button
                 type="button"
                 onClick={handleInlineRefine}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-[2px] bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-xs font-medium text-amber-900 transition-colors cursor-pointer shadow-2xs"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-[2px] bg-blue-950/60 hover:bg-blue-900/60 border border-blue-500/40 text-xs font-medium text-[#38BDF8] transition-colors cursor-pointer shadow-2xs"
                 title="일상 구어체 서술을 명확한 엔지니어링 개발 요구사항 문장으로 1줄 정제"
               >
-                <Sparkles size={12} className="text-[#D97706]" />
+                <Sparkles size={12} className="text-[#38BDF8]" />
                 <span>1줄 정제</span>
               </button>
 
@@ -431,12 +428,12 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
                 onClick={() => setIsSampleChipsOpen(prev => !prev)}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded-[2px] border text-xs font-medium transition-colors cursor-pointer shadow-2xs ${
                   isSampleChipsOpen
-                    ? 'bg-amber-100/80 text-amber-900 border-amber-300'
-                    : 'bg-white border-stone-200 hover:border-stone-300 hover:bg-stone-50 text-stone-700'
+                    ? 'bg-blue-900/50 text-[#38BDF8] border-blue-400'
+                    : 'bg-[#13181F] border-white/10 hover:border-white/20 hover:bg-[#18202A] text-[#9AA5B5] hover:text-[#F0F3F6]'
                 }`}
                 title="사전 제작된 실무 도메인 템플릿 항목 살펴보기"
               >
-                <Lightbulb size={12} className="text-[#D97706]" />
+                <Lightbulb size={12} className="text-[#38BDF8]" />
                 <span>샘플 항목 삽입</span>
               </button>
 
@@ -444,10 +441,10 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
               <button
                 type="button"
                 onClick={handleExtractSchema}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-[2px] bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 text-xs font-medium text-stone-700 transition-colors cursor-pointer shadow-2xs"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-[2px] bg-[#13181F] border border-white/10 hover:border-white/20 hover:bg-[#18202A] text-xs font-medium text-[#9AA5B5] hover:text-[#F0F3F6] transition-colors cursor-pointer shadow-2xs"
                 title="원고에서 데이터 속성을 분석하여 엑셀 장부 형태의 스키마 필드로 즉시 추출"
               >
-                <Layers size={12} className="text-[#D97706]" />
+                <Layers size={12} className="text-[#38BDF8]" />
                 <span>스키마 자동 추출</span>
               </button>
 
@@ -456,7 +453,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
                 <button
                   type="button"
                   onClick={handleUndoRefine}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded-[2px] text-[11px] font-mono text-stone-500 hover:text-stone-900 transition-colors cursor-pointer"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-[2px] text-[11px] font-mono text-[#9AA5B5] hover:text-[#F0F3F6] transition-colors cursor-pointer"
                   title="정제 전 원고로 복원"
                 >
                   <Undo2 size={11} />
@@ -468,16 +465,16 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
           {/* Co-pilot Feedback Notification */}
           {coPilotNotification && (
-            <div className="px-3 py-1.5 rounded-[2px] bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 shadow-2xs">
-              <Check size={12} className="text-emerald-600 stroke-[2.5]" />
+            <div className="px-3 py-1.5 rounded-[2px] bg-blue-950/60 border border-blue-500/30 text-[#38BDF8] text-xs flex items-center gap-2 shadow-2xs">
+              <Check size={12} className="text-[#38BDF8] stroke-[2.5]" />
               <span>{coPilotNotification}</span>
             </div>
           )}
 
           {/* Sample Domain Chips Tray (When Opened) */}
           {isSampleChipsOpen && (
-            <div className="p-3 bg-white border border-amber-200/80 rounded-[2px] space-y-2 shadow-xs">
-              <span className="text-[11px] font-mono text-stone-600 block">
+            <div className="p-3 bg-[#13181F] border border-blue-500/30 rounded-[2px] space-y-2 shadow-xl">
+              <span className="text-[11px] font-mono text-[#9AA5B5] block">
                 클릭 시 원고에 실무 표준 템플릿이 즉시 삽입됩니다:
               </span>
               <div className="flex flex-wrap gap-1.5">
@@ -486,9 +483,9 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
                     key={chip.label}
                     type="button"
                     onClick={() => handleSelectSampleChip(chip.text)}
-                    className="px-2.5 py-1 rounded-[2px] bg-stone-50 border border-stone-200 hover:border-amber-300 hover:bg-amber-50/60 text-xs text-stone-700 hover:text-amber-900 transition-colors cursor-pointer flex items-center gap-1"
+                    className="px-2.5 py-1 rounded-[2px] bg-[#0E1217] border border-white/[0.08] hover:border-blue-500/50 hover:bg-blue-950/40 text-xs text-[#9AA5B5] hover:text-[#38BDF8] transition-colors cursor-pointer flex items-center gap-1"
                   >
-                    <span className="text-[#D97706]">·</span>
+                    <span className="text-[#38BDF8]">·</span>
                     <span>{chip.label}</span>
                   </button>
                 ))}
@@ -496,24 +493,17 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
             </div>
           )}
 
-          {/* Clean White Stationery Card Writing Field */}
-          <div className="relative flex flex-col bg-white border-2 border-stone-200/90 focus-within:border-[#D97706] focus-within:ring-2 focus-within:ring-amber-500/10 rounded-[3px] p-3 sm:p-4 shadow-xs transition-all duration-200">
-            <textarea
-              id="goguma-raw-input"
-              ref={textareaRef}
+          {/* Sumi Ink Card Writing Field with Tiptap Engine */}
+          <div className="relative flex flex-col bg-[#13181F] border border-white/[0.12] focus-within:border-[#38BDF8] focus-within:ring-2 focus-within:ring-sky-500/10 rounded-[3px] p-3 sm:p-4 shadow-md transition-all duration-200">
+            <TiptapThinkingCanvas
               value={currentValue}
-              onChange={(e) => onInputChange(currentChapter, section.key, e.target.value)}
+              onChange={(newText) => onInputChange(currentChapter, section.key, newText)}
               placeholder={section.placeholder}
-              rows={largeTextMode ? 6 : 5}
-              className={`w-full bg-transparent px-1 py-1 text-stone-900 placeholder-stone-400 outline-none resize-none font-sans transition-all duration-200 ${
-                largeTextMode 
-                  ? 'text-lg sm:text-xl leading-loose tracking-wide min-h-[200px]' 
-                  : 'text-base sm:text-lg leading-relaxed min-h-[150px]'
-              }`}
+              largeTextMode={largeTextMode}
             />
           </div>
 
-          <p className="text-[11px] font-mono text-stone-500 pt-1">
+          <p className="text-[11px] font-mono text-[#5C6675] pt-1">
             생각나는 내용을 한 줄 또는 문장으로 서술해 주세요. 우측 화면에 실시간으로 반영됩니다.
           </p>
         </div>
@@ -524,7 +514,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
         </div>
 
         {/* Bottom Actions Bar - Strict Spatial Math & Single-Line Controls */}
-        <div className="pt-5 pb-4 border-t border-stone-200/80 flex items-center justify-between gap-3 flex-nowrap">
+        <div className="pt-5 pb-4 border-t border-white/[0.08] flex items-center justify-between gap-3 flex-nowrap">
           {/* Previous Section Button */}
           <button
             onClick={() => onNavigateSection('prev')}
@@ -534,8 +524,8 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
               largeTextMode ? 'px-5 py-2.5 min-h-[44px] text-sm sm:text-base' : 'px-4 py-2 min-h-[38px] text-xs sm:text-sm'
             } ${
               isFirstSection
-                ? 'opacity-30 cursor-not-allowed bg-transparent border-stone-200 text-stone-400'
-                : 'border-stone-200 bg-white hover:bg-stone-50 text-stone-700 hover:text-stone-900 cursor-pointer shadow-2xs'
+                ? 'opacity-30 cursor-not-allowed bg-transparent border-white/[0.06] text-[#5C6675]'
+                : 'border-white/[0.1] bg-[#13181F] hover:bg-[#18202A] text-[#9AA5B5] hover:text-[#F0F3F6] cursor-pointer shadow-2xs'
             }`}
           >
             <ArrowLeft size={14} />
@@ -543,8 +533,8 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           </button>
 
           {/* Section Step Indicator */}
-          <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono tabular-nums text-stone-500">
-            <span className="text-stone-900 font-semibold">제 {chapter.id}장</span>
+          <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono tabular-nums text-[#9AA5B5]">
+            <span className="text-[#F0F3F6] font-semibold">제 {chapter.id}장</span>
             <span>·</span>
             <span>{currentSectionIdx + 1} / {chapter.sections.length}</span>
           </div>
@@ -553,7 +543,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           <button
             onClick={() => onNavigateSection('next')}
             type="button"
-            className={`flex items-center gap-2 rounded-[2px] bg-[#D97706] hover:bg-[#B45309] active:bg-[#92400E] text-white font-semibold transition-colors cursor-pointer whitespace-nowrap shadow-xs ${
+            className={`flex items-center gap-2 rounded-[2px] bg-[#2563EB] hover:bg-[#1D4ED8] active:bg-[#1E40AF] text-white font-semibold transition-colors cursor-pointer whitespace-nowrap shadow-xs ${
               largeTextMode ? 'px-6 py-2.5 min-h-[44px] text-sm sm:text-base' : 'px-5 py-2 min-h-[38px] text-xs sm:text-sm'
             }`}
           >

@@ -44,6 +44,9 @@ export default defineConfig(({mode}) => {
               if (id.includes('jszip')) {
                 return 'vendor-jszip';
               }
+              if (id.includes('@tiptap') || id.includes('prosemirror')) {
+                return 'vendor-tiptap';
+              }
             }
           },
         },
