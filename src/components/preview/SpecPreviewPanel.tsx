@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Play, FileCode, Network, RefreshCw, ExternalLink, 
-  Download, Copy, Check, ChevronLeft, ChevronRight,
-  FolderArchive, FileText, Sparkles, Bot,
+  Copy, Check, ChevronLeft, ChevronRight,
   Monitor, Tablet, Smartphone, Search, FileDown, X,
-  Code, Terminal, Database, Layers, CheckCheck
+  Code, Terminal, Database, Layers, CheckCheck, Bot, RotateCcw
 } from 'lucide-react';
+import CodeMirror, { EditorView } from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { html as htmlLang } from '@codemirror/lang-html';
 import { SitePlan, FormInputEntity } from '../../types';
 import { compileStandalonePrototypeHtml, generatePrototypePrompt } from '../../lib/prototypeCompiler';
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
@@ -27,7 +29,46 @@ interface SpecPreviewPanelProps {
 
 type PreviewTab = 'prototype' | 'docs' | 'devhub' | 'sitemap';
 type ViewportMode = 'desktop' | 'tablet' | 'mobile';
-type DevHubSubTab = 'typescript' | 'sql' | 'api' | 'prompt';
+type DevHubSubTab = 'typescript' | 'html' | 'sql' | 'api' | 'prompt';
+
+const editorialCodeMirrorTheme = EditorView.theme({
+  '&': {
+    backgroundColor: '#FFFFFF',
+    color: '#111827',
+    fontSize: '12.5px',
+    fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+    height: '100%',
+  },
+  '.cm-scroller': {
+    fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+    lineHeight: '1.7',
+  },
+  '.cm-content': {
+    padding: '16px 0',
+    caretColor: '#1E3A8A',
+  },
+  '.cm-gutters': {
+    backgroundColor: '#F7F8FA',
+    color: '#9CA3AF',
+    borderRight: '1px solid #E5E7EB',
+    paddingRight: '4px',
+  },
+  '.cm-activeLineGutter': {
+    backgroundColor: '#EFF6FF',
+    color: '#1E3A8A',
+    fontWeight: '600',
+  },
+  '.cm-activeLine': {
+    backgroundColor: '#F7F8FA',
+  },
+  '.cm-selectionBackground, ::selection': {
+    backgroundColor: '#DBEAFE !important',
+  },
+  '.cm-cursor': {
+    borderLeftColor: '#1E3A8A',
+    borderLeftWidth: '2px',
+  },
+}, { dark: false });
 
 export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   plan,
@@ -45,6 +86,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
     plan.metadata?.platform === 'APP' ? 'mobile' : 'desktop'
   );
   const [devHubSubTab, setDevHubSubTab] = useState<DevHubSubTab>('typescript');
+  const [codeOverrides, setCodeOverrides] = useState<Partial<Record<DevHubSubTab, string>>>({});
   const [copiedDevHub, setCopiedDevHub] = useState<string | null>(null);
   const [selectedDocId, setSelectedDocId] = useState<string>('01_proposal');
   const [docFilterQuery, setDocFilterQuery] = useState<string>('');
@@ -275,9 +317,41 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
     }
   };
 
+  const activePromptText = useMemo(() => generatePrototypePrompt(plan), [plan]);
+
+  const activeCodeValue = useMemo(() => {
+    const overridden = codeOverrides[devHubSubTab];
+    if (overridden !== undefined) return overridden;
+    switch (devHubSubTab) {
+      case 'typescript':
+        return generatedTypeScript;
+      case 'html':
+        return prototypeHtml;
+      case 'sql':
+        return generatedSqlDdl;
+      case 'prompt':
+        return activePromptText;
+      default:
+        return JSON.stringify(generatedApiRoutes, null, 2);
+    }
+  }, [codeOverrides, devHubSubTab, generatedTypeScript, prototypeHtml, generatedSqlDdl, activePromptText, generatedApiRoutes]);
+
+  const codeMirrorExtensions = useMemo(() => {
+    const base = [editorialCodeMirrorTheme, EditorView.lineWrapping];
+    if (devHubSubTab === 'typescript') {
+      return [...base, javascript({ typescript: true })];
+    }
+    if (devHubSubTab === 'html') {
+      return [...base, htmlLang()];
+    }
+    return base;
+  }, [devHubSubTab]);
+
+  const effectivePrototypeHtml = codeOverrides.html !== undefined ? codeOverrides.html : prototypeHtml;
+
   // Open standalone prototype in new tab
   const handleOpenStandalone = () => {
-    const blob = new Blob([prototypeHtml], { type: 'text/html;charset=utf-8' });
+    const blob = new Blob([effectivePrototypeHtml], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
   };
@@ -351,248 +425,247 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
   return (
     <aside 
       style={width ? { width: `${width}px` } : undefined}
-      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[#F7F8FA] shrink-0 select-none text-[#111827] font-sans`}
+      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[#F7F8FA] p-4 sm:p-8 gap-5 shrink-0 select-none text-[#111827] font-sans overflow-hidden`}
       aria-label="실시간 프로토타입 및 11종 사양서 프리뷰"
     >
-      {/* Studio Header (Single Minimalist 48px Header) */}
-      <div className="h-12 px-4 border-b border-[#E5E7EB] bg-[#FFFFFF] flex items-center justify-between shrink-0 select-none gap-2">
-        {/* Left: Quiet, Typographic Tab Navigation (Underline indicator in #1E3A8A) */}
-        <div className="flex items-center gap-4 text-xs font-medium shrink-0 min-w-0">
+      {/* Single Floating Minimal Control Pill */}
+      <div className="flex justify-center shrink-0 z-20">
+        <div className="inline-flex items-center flex-wrap justify-center gap-1 bg-[#FFFFFF]/95 backdrop-blur-md rounded-full px-2 py-1.5 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.07)] border border-[#E5E7EB]/80 max-w-full">
+          {/* Primary Stage Mode Switcher */}
           <button
+            type="button"
             onClick={() => setActiveTab('prototype')}
-            className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'prototype'
-                ? 'text-[#1E3A8A] font-semibold'
-                : 'text-[#4B5563] hover:text-[#111827]'
+                ? 'bg-[#1E3A8A] text-white font-semibold shadow-2xs'
+                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] font-medium'
             }`}
           >
-            <span className="whitespace-nowrap">프로토타입</span>
-            {isSyncing && <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] animate-ping shrink-0" />}
-            {activeTab === 'prototype' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A]" />
+            <span>라이브 프리뷰</span>
+            {isSyncing && (
+              <span
+                className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                  activeTab === 'prototype' ? 'bg-white animate-ping' : 'bg-[#1E3A8A] animate-ping'
+                }`}
+              />
             )}
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('docs')}
-            className={`relative py-3.5 transition-colors cursor-pointer flex items-center whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'docs'
-                ? 'text-[#1E3A8A] font-semibold'
-                : 'text-[#4B5563] hover:text-[#111827]'
+                ? 'bg-[#1E3A8A] text-white font-semibold shadow-2xs'
+                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] font-medium'
             }`}
           >
-            <span className="whitespace-nowrap">사양서</span>
-            <span className="font-mono text-[10px] text-[#1E3A8A] bg-[#EFF6FF] px-1.5 py-0.5 rounded ml-1.5 tabular-nums inline-flex items-center justify-center shrink-0 leading-none">
+            <span>사양서 보기</span>
+            <span
+              className={`font-mono text-[10px] px-1.5 py-0.5 rounded-full tabular-nums leading-none ${
+                activeTab === 'docs'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-[#EFF6FF] text-[#1E3A8A]'
+              }`}
+            >
               11
             </span>
-            {activeTab === 'docs' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A]" />
-            )}
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('devhub')}
-            className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'devhub'
-                ? 'text-[#1E3A8A] font-semibold'
-                : 'text-[#4B5563] hover:text-[#111827]'
+                ? 'bg-[#1E3A8A] text-white font-semibold shadow-2xs'
+                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] font-medium'
             }`}
           >
-            <span className="whitespace-nowrap">개발자 허브</span>
-            <span className="font-mono text-[9px] text-[#1E3A8A] bg-[#EFF6FF] px-1.5 py-0.5 rounded ml-0.5 tabular-nums uppercase">
-              DEV
-            </span>
-            {activeTab === 'devhub' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A]" />
-            )}
+            <Code size={12} />
+            <span>코드 뷰</span>
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('sitemap')}
-            className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'sitemap'
-                ? 'text-[#1E3A8A] font-semibold'
-                : 'text-[#4B5563] hover:text-[#111827]'
+                ? 'bg-[#1E3A8A] text-white font-semibold shadow-2xs'
+                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] font-medium'
             }`}
           >
-            <span className="whitespace-nowrap">사이트맵</span>
-            {activeTab === 'sitemap' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A]" />
-            )}
+            <Network size={12} />
+            <span>사이트맵</span>
           </button>
-        </div>
 
-        {/* Right: Consolidated Controls (Device Viewport + Prompt + Clean Ghost Tools) */}
-        <div className="flex items-center gap-1.5 shrink-0 ml-auto">
-          {activeTab === 'prototype' && (
-            <>
-              {/* Segmented Device Viewport Toggle */}
-              <div className="hidden sm:flex items-center bg-[#F7F8FA] rounded-lg p-0.5 border border-[#E5E7EB]">
-                <Tooltip content="데스크톱 뷰" position="bottom">
+          <span className="w-px h-4 bg-[#E5E7EB] mx-1 hidden sm:block" aria-hidden="true" />
+
+          {/* Contextual Stage Actions */}
+          <div className="flex items-center gap-1">
+            {activeTab === 'prototype' && (
+              <>
+                <div className="hidden sm:flex items-center bg-[#F7F8FA] rounded-full p-0.5">
+                  <Tooltip content="데스크톱 뷰" position="bottom">
+                    <button
+                      type="button"
+                      onClick={() => setViewportMode('desktop')}
+                      className={`p-1.5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                        viewportMode === 'desktop'
+                          ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs'
+                          : 'text-[#6B7280] hover:text-[#111827]'
+                      }`}
+                      aria-label="데스크톱 뷰"
+                    >
+                      <Monitor size={13} />
+                    </button>
+                  </Tooltip>
+                  <Tooltip content="태블릿 뷰" position="bottom">
+                    <button
+                      type="button"
+                      onClick={() => setViewportMode('tablet')}
+                      className={`p-1.5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                        viewportMode === 'tablet'
+                          ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs'
+                          : 'text-[#6B7280] hover:text-[#111827]'
+                      }`}
+                      aria-label="태블릿 뷰"
+                    >
+                      <Tablet size={13} />
+                    </button>
+                  </Tooltip>
+                  <Tooltip content="스마트폰 뷰" position="bottom">
+                    <button
+                      type="button"
+                      onClick={() => setViewportMode('mobile')}
+                      className={`p-1.5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                        viewportMode === 'mobile'
+                          ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs'
+                          : 'text-[#6B7280] hover:text-[#111827]'
+                      }`}
+                      aria-label="스마트폰 뷰"
+                    >
+                      <Smartphone size={13} />
+                    </button>
+                  </Tooltip>
+                </div>
+
+                <Tooltip content={copiedPrompt ? '복사 완료' : '개발용 프롬프트 복사'} position="bottom">
                   <button
-                    onClick={() => setViewportMode('desktop')}
-                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-md transition-all cursor-pointer ${
-                      viewportMode === 'desktop'
-                        ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
-                        : 'text-[#4B5563] hover:text-[#111827]'
+                    type="button"
+                    onClick={handleCopyAgentPrompt}
+                    className={`p-1.5 rounded-full transition-all flex items-center justify-center cursor-pointer ${
+                      copiedPrompt
+                        ? 'bg-[#F0FDF4] text-[#15803D]'
+                        : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
                     }`}
-                    aria-label="데스크톱 뷰"
+                    aria-label="개발용 프롬프트 복사"
                   >
-                    <Monitor size={13} />
+                    {copiedPrompt ? <Check size={13} className="stroke-[2.5]" /> : <Copy size={13} />}
                   </button>
                 </Tooltip>
 
-                <Tooltip content="태블릿 뷰" position="bottom">
+                <Tooltip content="프롬프트 전문 확인" position="bottom">
                   <button
-                    onClick={() => setViewportMode('tablet')}
-                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-md transition-all cursor-pointer ${
-                      viewportMode === 'tablet'
-                        ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
-                        : 'text-[#4B5563] hover:text-[#111827]'
-                    }`}
-                    aria-label="태블릿 뷰"
+                    type="button"
+                    onClick={() => setIsPromptModalOpen(true)}
+                    className="p-1.5 rounded-full flex items-center justify-center text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer"
+                    aria-label="프롬프트 전문 확인"
                   >
-                    <Tablet size={13} />
+                    <Bot size={13} />
                   </button>
                 </Tooltip>
+              </>
+            )}
 
-                <Tooltip content="스마트폰 뷰" position="bottom">
-                  <button
-                    onClick={() => setViewportMode('mobile')}
-                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-md transition-all cursor-pointer ${
-                      viewportMode === 'mobile'
-                        ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
-                        : 'text-[#4B5563] hover:text-[#111827]'
-                    }`}
-                    aria-label="스마트폰 뷰"
-                  >
-                    <Smartphone size={13} />
-                  </button>
-                </Tooltip>
-              </div>
+            <Tooltip content="새로고침" position="bottom">
+              <button
+                type="button"
+                onClick={() => setReloadKey(k => k + 1)}
+                className="p-1.5 rounded-full flex items-center justify-center text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] transition-colors cursor-pointer"
+                aria-label="새로고침"
+              >
+                <RefreshCw size={13} />
+              </button>
+            </Tooltip>
 
-              {/* Contextual Tool: 프롬프트 복사 (Icon + Tooltip) */}
-              <Tooltip content={copiedPrompt ? '복사 완료' : '개발용 프롬프트 복사'} position="bottom">
-                <button
-                  onClick={handleCopyAgentPrompt}
-                  className={`p-1.5 min-h-[28px] min-w-[28px] rounded-lg text-xs font-medium transition-all flex items-center justify-center cursor-pointer whitespace-nowrap shrink-0 ${
-                    copiedPrompt
-                      ? 'bg-[#F0FDF4] text-[#15803D] border border-[#15803D]/20'
-                      : 'bg-[#EFF6FF] text-[#1E3A8A] hover:bg-[#DBEAFE]'
-                  }`}
-                  aria-label="개발용 프롬프트 복사"
-                >
-                  {copiedPrompt ? (
-                    <Check size={13} className="stroke-[2.5]" />
-                  ) : (
-                    <Copy size={13} />
-                  )}
-                </button>
-              </Tooltip>
-
-              {/* Prompt Modal View Ghost Button */}
-              <Tooltip content="프롬프트 전문 확인" position="bottom">
-                <button
-                  onClick={() => setIsPromptModalOpen(true)}
-                  className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
-                  aria-label="프롬프트 전문 확인"
-                >
-                  <Bot size={13} />
-                </button>
-              </Tooltip>
-            </>
-          )}
-
-          {/* Refresh Tool */}
-          <Tooltip content="새로고침" position="bottom">
-            <button
-              onClick={() => setReloadKey(k => k + 1)}
-              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
-              aria-label="새로고침"
-            >
-              <RefreshCw size={13} />
-            </button>
-          </Tooltip>
-
-          {/* Standalone New Tab Tool */}
-          <Tooltip content="새 창에서 실행" position="bottom">
-            <button
-              onClick={handleOpenStandalone}
-              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
-              aria-label="새 창에서 실행"
-            >
-              <ExternalLink size={13} />
-            </button>
-          </Tooltip>
+            <Tooltip content="새 창에서 실행" position="bottom">
+              <button
+                type="button"
+                onClick={handleOpenStandalone}
+                className="p-1.5 rounded-full flex items-center justify-center text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] transition-colors cursor-pointer"
+                aria-label="새 창에서 실행"
+              >
+                <ExternalLink size={13} />
+              </button>
+            </Tooltip>
+          </div>
         </div>
       </div>
 
-      {/* Panel Body */}
-      <div className="flex-1 overflow-hidden relative bg-[#F7F8FA] flex flex-col">
+      {/* Exhibition Piece Surface (bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)]) */}
+      <div className="flex-1 min-h-0 w-full bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)] overflow-hidden relative flex flex-col">
         {/* TAB 1: Live Interactive Prototype */}
         {activeTab === 'prototype' && (
           <div className="w-full h-full flex flex-col">
-            {/* Viewport Frame Mount */}
             <div className={`flex-1 overflow-auto flex items-center justify-center ${
-              viewportMode === 'desktop' ? 'bg-[#0B0C10] p-0' : 'bg-[#090A0E] p-4 sm:p-6'
+              viewportMode === 'desktop' ? 'bg-white' : 'bg-[#F7F8FA]/55 p-4 sm:p-6'
             }`}>
               {viewportMode === 'desktop' ? (
-                <div className="w-full h-full flex flex-col bg-[#0B0C10]">
-                  {/* Web Developer Simulated Browser Bar */}
-                  <div className="h-8 px-3 bg-[#0E1217] border-b border-white/[0.08] flex items-center justify-between text-xs text-neutral-400 select-none shrink-0 gap-3">
+                <div className="w-full h-full flex flex-col bg-white">
+                  {/* Minimal Light Browser Chrome */}
+                  <div className="h-9 px-4 bg-[#F7F8FA]/70 border-b border-[#E5E7EB]/70 flex items-center justify-between text-xs text-[#6B7280] select-none shrink-0 gap-3">
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#E5E7EB]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#E5E7EB]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#E5E7EB]" />
                     </div>
 
-                    <div className="flex-1 max-w-xs md:max-w-sm mx-auto h-5 bg-[#0B0C10] border border-white/[0.08] rounded-[2px] px-2 flex items-center gap-1.5 text-[11px] font-mono text-neutral-300 truncate">
-                      <span className="text-[#38BDF8] text-[10px]">🔒</span>
-                      <span className="text-neutral-500">https://</span>
-                      <span className="text-neutral-200">local.goguma.dev</span>
-                      <span className="text-[#38BDF8]">{plan.navigation?.pageStructure?.[0]?.route || '/dashboard'}</span>
+                    <div className="flex-1 max-w-xs md:max-w-sm mx-auto h-6 bg-white border border-[#E5E7EB]/80 rounded-md px-2.5 flex items-center gap-1.5 text-[11px] font-mono text-[#4B5563] truncate">
+                      <span className="text-[#9CA3AF]">https://</span>
+                      <span className="text-[#111827] font-medium">local.goguma.dev</span>
+                      <span className="text-[#1E3A8A]">{plan.navigation?.pageStructure?.[0]?.route || '/dashboard'}</span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-mono text-neutral-400">
+                    <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-mono text-[#6B7280]">
                       <span className="hidden sm:inline">1440 × 900</span>
-                      <span className="px-1.5 py-0.2 rounded-[2px] bg-blue-950/60 text-[#38BDF8] border border-blue-500/30">WEB</span>
+                      <span className="px-1.5 py-0.5 rounded bg-[#EFF6FF] text-[#1E3A8A] font-semibold">WEB</span>
                     </div>
                   </div>
 
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
-                    srcDoc={prototypeHtml}
+                    srcDoc={effectivePrototypeHtml}
                     title="Interactive Prototype Preview"
                     sandbox="allow-scripts allow-forms allow-modals"
-                    className="w-full flex-1 border-0 bg-[#0B0C10]"
+                    className="w-full flex-1 border-0 bg-white"
                   />
                 </div>
               ) : viewportMode === 'tablet' ? (
-                <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-[10px] border border-white/[0.12] shadow-2xl overflow-hidden bg-[#0B0C10] flex flex-col">
-                  <div className="h-6 bg-[#0E1217] border-b border-white/[0.08] px-3 flex items-center justify-between text-[10px] font-mono text-[#9AA5B5] select-none">
+                <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-2xl border border-[#E5E7EB] shadow-[0_12px_32px_-4px_rgba(15,23,42,0.08)] overflow-hidden bg-white flex flex-col">
+                  <div className="h-7 bg-[#F7F8FA] border-b border-[#E5E7EB] px-4 flex items-center justify-between text-[10px] font-mono text-[#6B7280] select-none">
                     <span>iPad Pro 11″</span>
-                    <span className="w-8 h-1 rounded-full bg-white/20"></span>
+                    <span className="w-8 h-1 rounded-full bg-[#D1D5DB]" />
                     <span>768 × 1024</span>
                   </div>
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
-                    srcDoc={prototypeHtml}
+                    srcDoc={effectivePrototypeHtml}
                     title="Tablet Prototype Preview"
                     sandbox="allow-scripts allow-forms allow-modals"
-                    className="w-full flex-1 border-0 bg-[#0B0C10]"
+                    className="w-full flex-1 border-0 bg-white"
                   />
                 </div>
               ) : (
-                <div className="w-[390px] max-w-full h-[780px] max-h-full rounded-[36px] border-[6px] border-[#18202A] shadow-2xl overflow-hidden bg-[#0B0C10] flex flex-col">
+                <div className="w-[390px] max-w-full h-[780px] max-h-full rounded-[36px] border-[6px] border-[#E5E7EB] shadow-[0_16px_40px_-8px_rgba(15,23,42,0.12)] overflow-hidden bg-white flex flex-col">
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
-                    srcDoc={prototypeHtml}
+                    srcDoc={effectivePrototypeHtml}
                     title="Mobile Prototype Preview"
                     sandbox="allow-scripts allow-forms allow-modals"
-                    className="w-full flex-1 border-0 bg-[#0B0C10]"
+                    className="w-full flex-1 border-0 bg-white"
                   />
                 </div>
               )}
@@ -600,92 +673,84 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
           </div>
         )}
 
-        {/* TAB 2: 11-Doc Markdown Blueprint Viewer */}
+        {/* TAB 2: 11-Doc Markdown Blueprint Viewer (Document Spec View) */}
         {activeTab === 'docs' && (
-          <div className="w-full h-full flex flex-col bg-[#0B0C10]">
-            {/* Document Selector & Search Bar */}
-            <div className="bg-[#0E1217] px-3.5 py-2 border-b border-white/[0.08] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 shrink-0">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                {/* Search / Filter Input */}
-                <div className="relative min-w-[130px] sm:w-44">
-                  <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#5C6675]" />
+          <div className="w-full h-full flex flex-col bg-white">
+            {/* Single Clean Spec Bar */}
+            <div className="px-5 py-3 bg-[#F7F8FA]/70 border-b border-[#E5E7EB]/80 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+              <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                <div className="relative w-36 sm:w-44">
+                  <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
                   <input
                     type="text"
                     value={docFilterQuery}
                     onChange={(e) => setDocFilterQuery(e.target.value)}
                     placeholder="사양서 검색..."
-                    className="w-full pl-7 pr-2 py-1 text-xs font-mono bg-[#13181F] border border-white/10 rounded-[2px] text-[#F0F3F6] placeholder-[#5C6675] focus:outline-none focus:border-[#38BDF8]"
+                    className="w-full pl-8 pr-2.5 py-1.5 text-xs font-mono bg-white border border-[#E5E7EB] rounded-lg text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10"
                   />
                 </div>
 
-                {/* Document Selector */}
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
-                  className="flex-1 min-h-[32px] text-xs font-mono bg-[#13181F] border border-white/10 rounded-[2px] px-2.5 py-1 text-[#F0F3F6] focus:outline-none focus:border-[#38BDF8] truncate cursor-pointer"
+                  className="flex-1 min-h-[32px] text-xs font-mono bg-white border border-[#E5E7EB] rounded-lg px-3 py-1.5 text-[#111827] focus:outline-none focus:border-[#1E3A8A] truncate cursor-pointer"
                 >
                   {filteredDocs.map((doc) => (
-                    <option key={doc.id} value={doc.id} className="bg-[#0E1217] text-[#F0F3F6]">
+                    <option key={doc.id} value={doc.id}>
                       {doc.docNumber <= 11 ? `[${String(doc.docNumber).padStart(2, '0')}]` : '[★]'} {doc.filename} - {doc.title}
                     </option>
                   ))}
                 </select>
               </div>
 
-              {/* Prev / Next Doc Stepper */}
-              <div className="flex items-center gap-1 shrink-0 self-end sm:self-auto">
-                <button
-                  onClick={handlePrevDoc}
-                  disabled={activeDocIndex <= 0}
-                  title="이전 문서"
-                  className="p-1.5 min-h-[30px] min-w-[30px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] bg-[#13181F] border border-white/10 hover:bg-[#18202A] hover:text-[#F0F3F6] disabled:opacity-30 transition-colors cursor-pointer"
-                >
-                  <ChevronLeft size={13} />
-                </button>
-                <span className="text-[11px] font-mono text-[#9AA5B5] px-1">
-                  {activeDocIndex + 1}/{docsList.length}
-                </span>
-                <button
-                  onClick={handleNextDoc}
-                  disabled={activeDocIndex >= docsList.length - 1}
-                  title="다음 문서"
-                  className="p-1.5 min-h-[30px] min-w-[30px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] bg-[#13181F] border border-white/10 hover:bg-[#18202A] hover:text-[#F0F3F6] disabled:opacity-30 transition-colors cursor-pointer"
-                >
-                  <ChevronRight size={13} />
-                </button>
-              </div>
-            </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1 mr-1">
+                  <button
+                    type="button"
+                    onClick={handlePrevDoc}
+                    disabled={activeDocIndex <= 0}
+                    title="이전 문서"
+                    className="p-1.5 rounded-lg text-[#4B5563] bg-white border border-[#E5E7EB] hover:bg-[#EFF6FF] hover:text-[#1E3A8A] disabled:opacity-35 transition-colors cursor-pointer"
+                  >
+                    <ChevronLeft size={13} />
+                  </button>
+                  <span className="text-[11px] font-mono text-[#6B7280] px-1 tabular-nums">
+                    {activeDocIndex + 1}/{docsList.length}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleNextDoc}
+                    disabled={activeDocIndex >= docsList.length - 1}
+                    title="다음 문서"
+                    className="p-1.5 rounded-lg text-[#4B5563] bg-white border border-[#E5E7EB] hover:bg-[#EFF6FF] hover:text-[#1E3A8A] disabled:opacity-35 transition-colors cursor-pointer"
+                  >
+                    <ChevronRight size={13} />
+                  </button>
+                </div>
 
-            {/* Document Path & Actions Bar */}
-            <div className="bg-[#0E1217]/80 px-3.5 py-1.5 border-b border-white/[0.08] flex items-center justify-between text-xs text-[#9AA5B5] shrink-0">
-              <div className="flex items-center gap-2 truncate">
-                <span className="font-mono text-[#38BDF8] font-semibold text-xs">{activeDoc.relativePath}</span>
-                <span className="text-white/20">|</span>
-                <span className="truncate text-[#9AA5B5] text-[11px]">{activeDoc.description}</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 shrink-0 ml-2">
                 <button
+                  type="button"
                   onClick={handleDownloadCurrentDoc}
                   title="이 사양서 파일만 다운로드 (.md)"
-                  className="flex items-center gap-1 min-h-[28px] px-2 py-1 rounded-[2px] bg-[#13181F] border border-white/10 text-[11px] text-[#F0F3F6] hover:bg-[#18202A] transition-colors cursor-pointer shadow-2xs"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-xs text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer"
                 >
-                  <FileDown size={12} className="text-[#38BDF8]" />
+                  <FileDown size={13} className="text-[#1E3A8A]" />
                   <span className="hidden sm:inline">.md 저장</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={handleCopyCurrentDoc}
-                  className="flex items-center gap-1 min-h-[28px] px-2.5 py-1 rounded-[2px] bg-[#13181F] border border-white/10 text-[11px] text-[#F0F3F6] hover:bg-[#18202A] font-medium transition-colors cursor-pointer shadow-2xs"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-xs text-white font-medium transition-colors cursor-pointer"
                 >
                   {copiedDoc ? (
                     <>
-                      <Check size={12} className="text-[#38BDF8]" />
-                      <span className="text-[#38BDF8] font-semibold">복사됨!</span>
+                      <Check size={13} />
+                      <span>복사됨</span>
                     </>
                   ) : (
                     <>
-                      <Copy size={12} />
+                      <Copy size={13} />
                       <span>복사</span>
                     </>
                   )}
@@ -693,10 +758,15 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               </div>
             </div>
 
-            {/* Markdown Viewer in Editorial Booklet Style */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0B0C10]">
-              <div className="max-w-3xl mx-auto bg-[#13181F] border border-white/[0.08] rounded-[2px] p-6 sm:p-8 shadow-xl">
-                <pre className="whitespace-pre-wrap leading-relaxed text-[#F0F3F6] font-mono text-xs select-text">
+            {/* Editorial Document Reader */}
+            <div className="flex-1 overflow-y-auto px-6 sm:px-10 py-8 bg-white custom-scroll">
+              <div className="max-w-3xl mx-auto space-y-4">
+                <div className="flex items-center gap-2 text-xs pb-3 border-b border-[#E5E7EB]">
+                  <span className="font-mono text-[#1E3A8A] font-semibold">{activeDoc.relativePath}</span>
+                  <span className="text-[#D1D5DB]">·</span>
+                  <span className="text-[#4B5563] truncate">{activeDoc.description}</span>
+                </div>
+                <pre className="whitespace-pre-wrap leading-[1.75] text-[#111827] font-mono text-xs sm:text-[13px] select-text">
                   {activeDoc.content}
                 </pre>
               </div>
@@ -706,39 +776,41 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
 
         {/* Golden Prompt Modal */}
         {isPromptModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs select-none">
-            <div className="w-full max-w-2xl bg-[#0E1217] rounded-[2px] border border-white/10 shadow-2xl flex flex-col overflow-hidden text-[#F0F3F6]">
-              <div className="px-5 py-3.5 bg-[#13181F] border-b border-white/[0.08] flex items-center justify-between">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111827]/35 backdrop-blur-xs select-none">
+            <div className="w-full max-w-2xl bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] flex flex-col overflow-hidden text-[#111827]">
+              <div className="px-5 py-4 bg-[#F7F8FA] border-b border-[#E5E7EB] flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Bot size={16} className="text-[#38BDF8]" />
-                  <h3 className="font-sans font-bold text-sm text-[#F0F3F6]">
+                  <Bot size={16} className="text-[#1E3A8A]" />
+                  <h3 className="font-sans font-semibold text-sm text-[#111827]">
                     에이전트 지시 골든 프롬프트 (Golden Prompt)
                   </h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setIsPromptModalOpen(false)}
-                  className="p-1 rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] cursor-pointer"
+                  className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#111827] hover:bg-white cursor-pointer"
                 >
                   <X size={15} />
                 </button>
               </div>
 
-              <div className="p-4 sm:p-5 max-h-[460px] overflow-y-auto font-mono text-xs leading-relaxed text-[#F0F3F6] bg-[#0B0C10]">
+              <div className="p-5 max-h-[460px] overflow-y-auto font-mono text-xs leading-relaxed text-[#111827] bg-white custom-scroll">
                 <pre className="whitespace-pre-wrap select-text">
-                  {generatePrototypePrompt(plan)}
+                  {activePromptText}
                 </pre>
               </div>
 
-              <div className="px-5 py-3 border-t border-white/[0.08] bg-[#13181F] flex items-center justify-between">
-                <span className="text-[11px] text-[#9AA5B5] font-mono">
+              <div className="px-5 py-3.5 border-t border-[#E5E7EB] bg-[#F7F8FA] flex items-center justify-between gap-3">
+                <span className="text-[11px] text-[#4B5563] font-mono">
                   Cursor 또는 Claude Code 창에 붙여넣으면 프로토타입 기반으로 개발을 시작합니다.
                 </span>
                 <button
+                  type="button"
                   onClick={async () => {
                     await handleCopyAgentPrompt();
                     setIsPromptModalOpen(false);
                   }}
-                  className="px-4 py-1.5 rounded-[2px] bg-[#2563EB] text-white text-xs font-semibold hover:bg-[#1D4ED8] transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+                  className="px-4 py-2 rounded-lg bg-[#1E3A8A] text-white text-xs font-semibold hover:bg-[#172554] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
                 >
                   <Copy size={13} />
                   <span>프롬프트 복사하기</span>
@@ -748,18 +820,19 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
           </div>
         )}
 
-        {/* TAB: Dev Hub (Architecture & Engineering Code Manifestation) */}
+        {/* TAB 3: Raw Code View (Light CodeMirror + API Contracts) */}
         {activeTab === 'devhub' && (
-          <div className="w-full h-full flex flex-col bg-[#0A0A0C] text-[#F0F3F6]">
-            {/* Dev Hub Sub-Navigation Bar */}
-            <div className="h-10 px-3 bg-[#0E1217] border-b border-white/[0.08] flex items-center justify-between shrink-0 select-none overflow-x-auto gap-2">
-              <div className="flex items-center gap-1 shrink-0">
+          <div className="w-full h-full flex flex-col bg-white text-[#111827]">
+            {/* Single Clean Code View Toolbar */}
+            <div className="px-5 py-2.5 bg-[#F7F8FA]/70 border-b border-[#E5E7EB]/80 flex flex-wrap items-center justify-between shrink-0 select-none gap-2">
+              <div className="flex items-center gap-1 overflow-x-auto">
                 <button
+                  type="button"
                   onClick={() => setDevHubSubTab('typescript')}
-                  className={`px-2.5 py-1 text-[11px] font-mono rounded-[2px] transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'typescript'
-                      ? 'bg-[#2563EB] text-white font-bold shadow-xs'
-                      : 'text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06]'
+                      ? 'bg-[#1E3A8A] text-white font-semibold'
+                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
                   }`}
                 >
                   <Code size={12} />
@@ -767,11 +840,25 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </button>
 
                 <button
+                  type="button"
+                  onClick={() => setDevHubSubTab('html')}
+                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    devHubSubTab === 'html'
+                      ? 'bg-[#1E3A8A] text-white font-semibold'
+                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
+                  }`}
+                >
+                  <FileCode size={12} />
+                  <span>HTML</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setDevHubSubTab('sql')}
-                  className={`px-2.5 py-1 text-[11px] font-mono rounded-[2px] transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'sql'
-                      ? 'bg-[#2563EB] text-white font-bold shadow-xs'
-                      : 'text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06]'
+                      ? 'bg-[#1E3A8A] text-white font-semibold'
+                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
                   }`}
                 >
                   <Database size={12} />
@@ -779,11 +866,12 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setDevHubSubTab('api')}
-                  className={`px-2.5 py-1 text-[11px] font-mono rounded-[2px] transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'api'
-                      ? 'bg-[#2563EB] text-white font-bold shadow-xs'
-                      : 'text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06]'
+                      ? 'bg-[#1E3A8A] text-white font-semibold'
+                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
                   }`}
                 >
                   <Layers size={12} />
@@ -791,11 +879,12 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setDevHubSubTab('prompt')}
-                  className={`px-2.5 py-1 text-[11px] font-mono rounded-[2px] transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'prompt'
-                      ? 'bg-[#2563EB] text-white font-bold shadow-xs'
-                      : 'text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06]'
+                      ? 'bg-[#1E3A8A] text-white font-semibold'
+                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
                   }`}
                 >
                   <Bot size={12} />
@@ -803,29 +892,39 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </button>
               </div>
 
-              {/* Quick Copy Action */}
-              <div className="flex items-center gap-1.5 shrink-0">
+              {/* Quick Copy & Reset Override */}
+              <div className="flex items-center gap-2 shrink-0">
+                {devHubSubTab !== 'api' && codeOverrides[devHubSubTab] !== undefined && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCodeOverrides(prev => {
+                        const next = { ...prev };
+                        delete next[devHubSubTab];
+                        return next;
+                      });
+                    }}
+                    className="px-2.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] hover:bg-[#FEF2F2] hover:text-[#B91C1C] text-[#4B5563] text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                    title="자동 생성 코드로 되돌리기"
+                  >
+                    <RotateCcw size={12} />
+                    <span>초기화</span>
+                  </button>
+                )}
+
                 <button
-                  onClick={() => {
-                    const code = devHubSubTab === 'typescript' 
-                      ? generatedTypeScript 
-                      : devHubSubTab === 'sql' 
-                      ? generatedSqlDdl 
-                      : devHubSubTab === 'prompt' 
-                      ? generatePrototypePrompt(plan)
-                      : JSON.stringify(generatedApiRoutes, null, 2);
-                    handleCopyDevHubCode(code, devHubSubTab);
-                  }}
-                  className="px-2.5 py-1 rounded-[2px] bg-blue-950/60 hover:bg-blue-900/60 text-[#38BDF8] border border-blue-500/30 text-xs font-mono transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap"
+                  type="button"
+                  onClick={() => handleCopyDevHubCode(activeCodeValue, devHubSubTab)}
+                  className="px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E3A8A] text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
                 >
                   {copiedDevHub === devHubSubTab ? (
                     <>
-                      <CheckCheck size={12} className="text-[#38BDF8]" />
-                      <span className="text-[#38BDF8] font-semibold">복사됨!</span>
+                      <CheckCheck size={13} />
+                      <span className="font-semibold">복사됨</span>
                     </>
                   ) : (
                     <>
-                      <Copy size={12} />
+                      <Copy size={13} />
                       <span>코드 복사</span>
                     </>
                   )}
@@ -833,83 +932,89 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               </div>
             </div>
 
-            {/* Code Body */}
-            <div className="flex-1 overflow-y-auto p-4 custom-scroll font-mono text-xs">
-              {devHubSubTab === 'typescript' && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-[#9AA5B5] text-[11px] pb-1 border-b border-white/[0.06]">
-                    <span>src/types/schema.ts</span>
-                    <span>TypeScript 5.8 • Zod 3.x</span>
+            {/* CodeMirror Light Editor / API Contracts */}
+            <div className="flex-1 min-h-0 overflow-hidden flex flex-col bg-white">
+              {devHubSubTab === 'api' ? (
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scroll">
+                  <div className="flex items-center justify-between text-[#4B5563] text-xs pb-2 border-b border-[#E5E7EB]">
+                    <span className="font-mono font-semibold text-[#111827]">API Endpoint Contracts</span>
+                    <span className="font-mono">RESTful / JSON Payload</span>
                   </div>
-                  <pre className="p-3 bg-[#0B0C10] rounded-[4px] border border-white/[0.08] text-[#F0F3F6] overflow-x-auto leading-relaxed select-text whitespace-pre">
-                    {generatedTypeScript}
-                  </pre>
-                </div>
-              )}
-
-              {devHubSubTab === 'sql' && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-[#9AA5B5] text-[11px] pb-1 border-b border-white/[0.06]">
-                    <span>migrations/0001_initial_schema.sql</span>
-                    <span>PostgreSQL / Cloudflare D1 / Supabase</span>
-                  </div>
-                  <pre className="p-3 bg-[#0B0C10] rounded-[4px] border border-white/[0.08] text-[#F0F3F6] overflow-x-auto leading-relaxed select-text whitespace-pre">
-                    {generatedSqlDdl}
-                  </pre>
-                </div>
-              )}
-
-              {devHubSubTab === 'api' && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-[#9AA5B5] text-[11px] pb-1 border-b border-white/[0.06]">
-                    <span>API Endpoint Contracts</span>
-                    <span>RESTful / JSON Payload</span>
-                  </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {generatedApiRoutes.map((api, idx) => (
-                      <div key={idx} className="p-3 bg-[#13181F] rounded-[4px] border border-white/[0.08] space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className={`px-1.5 py-0.5 rounded-[2px] text-[10px] font-bold ${
-                              api.method === 'GET' ? 'bg-blue-500/20 text-[#38BDF8] border border-blue-500/30' :
-                              api.method === 'POST' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' :
-                              api.method === 'PATCH' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
-                              'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                      <div key={idx} className="p-4 bg-[#F7F8FA] rounded-xl space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold shrink-0 ${
+                              api.method === 'GET' ? 'bg-[#EFF6FF] text-[#1E3A8A]' :
+                              api.method === 'POST' ? 'bg-[#ECFDF5] text-[#047857]' :
+                              api.method === 'PATCH' ? 'bg-[#FFFBEB] text-[#B45309]' :
+                              'bg-[#FEF2F2] text-[#B91C1C]'
                             }`}>
                               {api.method}
                             </span>
-                            <span className="font-mono text-xs font-semibold text-[#F0F3F6]">{api.path}</span>
+                            <span className="font-mono text-xs font-semibold text-[#111827] truncate">{api.path}</span>
                           </div>
-                          <span className="text-[10px] text-[#5C6675]">{api.status}</span>
+                          <span className="text-[11px] font-mono text-[#6B7280] shrink-0">{api.status}</span>
                         </div>
-                        <p className="text-[11px] text-[#9AA5B5] leading-normal">{api.summary}</p>
-                        <div className="flex items-center gap-2 text-[10px] text-[#5C6675] pt-1 border-t border-white/[0.04]">
+                        <p className="text-xs text-[#4B5563] leading-relaxed">{api.summary}</p>
+                        <div className="flex items-center gap-2 text-[11px] font-mono text-[#6B7280] pt-1">
                           <span>인증: {api.auth}</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-              )}
-
-              {devHubSubTab === 'prompt' && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-[#9AA5B5] text-[11px] pb-1 border-b border-white/[0.06]">
-                    <span>.cursorrules / CLAUDE.md Execution Prompt</span>
-                    <span>Prototype-as-Spec Reverse Engineering</span>
+              ) : (
+                <div className="flex-1 min-h-0 flex flex-col">
+                  <div className="px-5 py-2 bg-white border-b border-[#E5E7EB]/60 flex items-center justify-between text-[11px] font-mono text-[#6B7280] shrink-0">
+                    <span>
+                      {devHubSubTab === 'typescript'
+                        ? 'src/types/schema.ts'
+                        : devHubSubTab === 'html'
+                        ? 'prototype.html'
+                        : devHubSubTab === 'sql'
+                        ? 'migrations/0001_initial_schema.sql'
+                        : '.cursorrules / CLAUDE.md Execution Prompt'}
+                    </span>
+                    <span>
+                      {devHubSubTab === 'typescript'
+                        ? 'TypeScript 5.8 · Zod 3.x (Light Theme)'
+                        : devHubSubTab === 'html'
+                        ? 'Standalone Prototype HTML · Live Editable'
+                        : devHubSubTab === 'sql'
+                        ? 'PostgreSQL / Cloudflare D1 / Supabase'
+                        : 'Prototype-as-Spec Reverse Engineering'}
+                    </span>
                   </div>
-                  <pre className="p-3 bg-[#0B0C10] rounded-[4px] border border-white/[0.08] text-[#F0F3F6] overflow-x-auto leading-relaxed select-text whitespace-pre-wrap">
-                    {generatePrototypePrompt(plan)}
-                  </pre>
+                  <div className="flex-1 min-h-0 overflow-hidden">
+                    <CodeMirror
+                      value={activeCodeValue}
+                      height="100%"
+                      theme="light"
+                      extensions={codeMirrorExtensions}
+                      editable={true}
+                      onChange={(val) => {
+                        setCodeOverrides(prev => ({ ...prev, [devHubSubTab]: val }));
+                      }}
+                      basicSetup={{
+                        lineNumbers: true,
+                        highlightActiveLineGutter: true,
+                        highlightActiveLine: true,
+                        foldGutter: true,
+                      }}
+                      className="h-full"
+                    />
+                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {/* TAB 3: Visual Sitemap & Real-time D3 Tree */}
+        {/* TAB 4: Visual Sitemap & Real-time D3 Tree */}
         {activeTab === 'sitemap' && (
-          <div className="w-full h-full flex flex-col overflow-hidden bg-[#0B0C10]">
+          <div className="w-full h-full flex flex-col overflow-hidden bg-white">
             <VisualSitemap 
               plan={plan}
               formInputs={formInputs}
