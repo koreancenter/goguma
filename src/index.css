@@ -1,36 +1,58 @@
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Surfaces & Canvas (Gallery White & Warm Alabaster) */
+  --bg-canvas: #FFFFFF;
+  --bg-stage: #F7F8FA;
+  --bg-subtle: #F1F5F9;
+  --bg-elevated: #FFFFFF;
+
+  /* Typography & Ink */
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #9CA3AF;
+
+  /* Brand & Editorial Navy Accents */
+  --accent-primary: #1E3A8A;
+  --accent-hover: #172554;
+  --accent-tint: #EFF6FF;
+
+  /* Hairlines & Semantic Tokens */
+  --border-hairline: #E5E7EB;
+  --border-hairline-strong: #D1D5DB;
+  --status-success: #15803D;
+  --status-success-bg: #F0FDF4;
+  --status-warning: #B45309;
+  --status-warning-bg: #FFFBEB;
+  --status-danger: #B91C1C;
+  --status-danger-bg: #FEF2F2;
+}
 
 @theme {
-  --font-sans: "Plus Jakarta Sans", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
-  --font-serif: "Plus Jakarta Sans", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Plus Jakarta Sans", "Pretendard Variable", sans-serif;
+  --font-sans: "Pretendard Variable", "Plus Jakarta Sans", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
+  --font-serif: "Pretendard Variable", "Plus Jakarta Sans", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Pretendard Variable", "Plus Jakarta Sans", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  
-  /* Sumi Black Ink Canvas & Precision Surface Palette */
-  --color-sumi-canvas: #0B0C10;
-  --color-sumi-surface: #0E1217;
-  --color-sumi-card: #13181F;
-  --color-sumi-elevated: #18202A;
-  --color-sumi-highlight: #1E2734;
-  
-  /* Luminous Warm White & Crisp Slate Typographic Palette */
-  --color-hanji-primary: #F0F3F6;
-  --color-hanji-secondary: #9AA5B5;
-  --color-hanji-muted: #5C6675;
-  --color-hanji-subtle: #414A58;
-  
-  /* Refined Hairline Borders */
-  --color-hairline: rgba(255, 255, 255, 0.08);
-  --color-hairline-bright: rgba(255, 255, 255, 0.16);
 
-  /* Luxury Blue & Electric Azure Accents */
-  --color-accent-blue: #38BDF8;
-  --color-accent-blue-hover: #2563EB;
-  --color-brand-sapphire: #2563EB;
-  --color-brand-sapphire-hover: #1D4ED8;
-  --color-accent-azure: #38BDF8;
-  --color-accent-slate: #60A5FA;
+  /* Gallery White & Editorial Navy Surface Tokens */
+  --color-canvas: #FFFFFF;
+  --color-stage: #F7F8FA;
+  --color-subtle: #F1F5F9;
+  --color-elevated: #FFFFFF;
+
+  /* Editorial Ink Tokens */
+  --color-ink-primary: #111827;
+  --color-ink-secondary: #4B5563;
+  --color-ink-tertiary: #9CA3AF;
+
+  /* Structural Hairlines */
+  --color-hairline: #E5E7EB;
+  --color-hairline-strong: #D1D5DB;
+
+  /* Editorial Deep Navy Accents */
+  --color-accent-primary: #1E3A8A;
+  --color-accent-hover: #172554;
+  --color-accent-tint: #EFF6FF;
 }
 
 @layer utilities {
@@ -41,23 +63,23 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
-  /* Custom Clean Minimalist Dark Hairline Scrollbar */
+
+  /* Custom Clean Minimalist Editorial Light Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0E1217;
+    background: #F7F8FA;
   }
   ::-webkit-scrollbar-thumb {
-    background: #1E293B;
+    background: #D1D5DB;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: #9CA3AF;
   }
-  
+
   .custom-scroll::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -66,51 +88,53 @@
     background: transparent;
   }
   .custom-scroll::-webkit-scrollbar-thumb {
-    background: #1E293B;
+    background: #D1D5DB;
     border-radius: 3px;
   }
   .custom-scroll::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: #9CA3AF;
   }
 }
 
 @layer base {
   html {
-    background-color: #0B0C10;
-    color: #F0F3F6;
-    color-scheme: dark;
+    background-color: #FFFFFF;
+    color: #111827;
+    color-scheme: light;
+    line-height: 1.7;
   }
 
   body {
-    background-color: #0B0C10;
-    color: #F0F3F6;
+    background-color: #FFFFFF;
+    color: #111827;
     font-family: var(--font-sans);
-    letter-spacing: -0.018em;
+    line-height: 1.7;
+    letter-spacing: -0.015em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background-color: rgba(56, 189, 248, 0.25);
-    color: #F0F3F6;
+    background-color: #EFF6FF;
+    color: #1E3A8A;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
-    color: #F0F3F6;
+    color: #111827;
     font-family: var(--font-sans);
     letter-spacing: -0.025em;
     font-weight: 600;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
-  
+
   p {
-    color: #9AA5B5;
+    color: #4B5563;
     line-height: 1.7;
   }
 }
 
-/* Luxury Modern Sans-Serif: Plus Jakarta Sans for Latin + Pretendard Variable for Hangul */
+/* Primary Editorial Font Stack: Pretendard Variable + Plus Jakarta Sans */
 html,
 body,
 h1, h2, h3, h4, h5, h6,
@@ -126,7 +150,7 @@ td,
 th,
 li,
 div:not(.font-mono) {
-  font-family: "Plus Jakarta Sans", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif !important;
+  font-family: "Pretendard Variable", "Plus Jakarta Sans", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif !important;
 }
 
 /* Explicitly preserve monospaced tabular numerals and code blocks */
@@ -140,63 +164,65 @@ samp {
   font-variant-numeric: tabular-nums;
 }
 
-/* Tiptap Editor Typography & ProseMirror Styling */
+/* Tiptap Editor Typography & ProseMirror Styling (Editorial Light) */
 .tiptap-editor-wrap .tiptap {
   outline: none !important;
+  color: #111827;
+  line-height: 1.7;
 }
 
 .tiptap-editor-wrap .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: #5C6675;
+  color: #9CA3AF;
   pointer-events: none;
   height: 0;
 }
 
 .tiptap-editor-wrap .tiptap p {
-  color: #F0F3F6;
-  margin-bottom: 0.4em;
+  color: #111827;
+  margin-bottom: 0.5em;
   line-height: 1.7;
 }
 
 .tiptap-editor-wrap .tiptap h1 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #F0F3F6;
-  margin-top: 0.8rem;
-  margin-bottom: 0.4rem;
+  color: #111827;
+  margin-top: 0.9rem;
+  margin-bottom: 0.45rem;
 }
 
 .tiptap-editor-wrap .tiptap h2 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #F0F3F6;
-  margin-top: 0.6rem;
-  margin-bottom: 0.3rem;
+  color: #111827;
+  margin-top: 0.7rem;
+  margin-bottom: 0.35rem;
 }
 
 .tiptap-editor-wrap .tiptap h3 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #38BDF8;
-  margin-top: 0.5rem;
+  color: #1F2937;
+  margin-top: 0.55rem;
   margin-bottom: 0.25rem;
 }
 
 .tiptap-editor-wrap .tiptap code {
-  background: rgba(56, 189, 248, 0.12);
-  color: #38BDF8;
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: #F1F5F9;
+  color: #1E3A8A;
+  border: 1px solid #E5E7EB;
   padding: 0.15rem 0.35rem;
-  border-radius: 2px;
+  border-radius: 4px;
   font-size: 0.85em;
   font-family: "JetBrains Mono", monospace !important;
 }
 
 .tiptap-editor-wrap .tiptap hr {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 1rem 0;
+  border-top: 1px solid #E5E7EB;
+  margin: 1.25rem 0;
 }
 
 /* Tiptap Table, Row, Column, Cell & Resizer Styling */
@@ -204,16 +230,16 @@ samp {
   border-collapse: collapse;
   table-layout: fixed;
   width: 100%;
-  margin: 0.8rem 0;
+  margin: 0.9rem 0;
   overflow: hidden;
-  border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  border: 1px solid #E5E7EB;
 }
 
 .tiptap-editor-wrap .tiptap table td,
 .tiptap-editor-wrap .tiptap table th {
   min-width: 1em;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #E5E7EB;
   padding: 8px 12px;
   vertical-align: top;
   box-sizing: border-box;
@@ -223,15 +249,15 @@ samp {
 .tiptap-editor-wrap .tiptap table th {
   font-weight: 600;
   text-align: left;
-  background-color: #0E1217;
-  color: #38BDF8;
+  background-color: #F7F8FA;
+  color: #111827;
   font-size: 0.8rem;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+  border-bottom: 1px solid #D1D5DB;
 }
 
 .tiptap-editor-wrap .tiptap table td {
-  background-color: rgba(19, 24, 31, 0.45);
-  color: #F0F3F6;
+  background-color: #FFFFFF;
+  color: #111827;
   font-size: 0.85rem;
 }
 
@@ -243,8 +269,8 @@ samp {
   right: 0;
   top: 0;
   bottom: 0;
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid #38BDF8;
+  background: rgba(30, 58, 138, 0.08);
+  border: 1px solid rgba(30, 58, 138, 0.45);
   pointer-events: none;
 }
 
@@ -253,10 +279,10 @@ samp {
   right: -2px;
   top: 0;
   bottom: -2px;
-  width: 4px;
-  background-color: #38BDF8;
+  width: 3px;
+  background-color: rgba(30, 58, 138, 0.45);
   pointer-events: none;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .tiptap-editor-wrap .tableWrapper {
@@ -269,15 +295,87 @@ samp {
   cursor: col-resize;
 }
 
+/* Tiptap Table Visual Style Variants (Toggled via Floating Bubble Menu) */
+.tiptap-editor-wrap .tiptap table[data-striped="true"] tbody tr:nth-child(odd) td {
+  background-color: #FFFFFF;
+}
+
+.tiptap-editor-wrap .tiptap table[data-striped="true"] tbody tr:nth-child(even) td {
+  background-color: #F7F8FA;
+}
+
+.tiptap-editor-wrap .tiptap table[data-striped="true"] tbody tr:hover td {
+  background-color: #EFF6FF;
+}
+
+.tiptap-editor-wrap .tiptap table[data-header-highlight="true"] th {
+  background-color: #EFF6FF;
+  color: #1E3A8A;
+  border-bottom: 1.5px solid #1E3A8A;
+  letter-spacing: 0.01em;
+}
+
+.tiptap-editor-wrap .tiptap table[data-minimal-border="true"] {
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E5E7EB;
+  border-radius: 0;
+}
+
+.tiptap-editor-wrap .tiptap table[data-minimal-border="true"] td,
+.tiptap-editor-wrap .tiptap table[data-minimal-border="true"] th {
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.tiptap-editor-wrap .tiptap table[data-minimal-border="true"] tr:last-child td {
+  border-bottom: none;
+}
+
+.tiptap-editor-wrap .tiptap table[data-minimal-border="true"][data-header-highlight="true"] th {
+  border-bottom: 1.5px solid #1E3A8A;
+}
+
+.tiptap-editor-wrap .tiptap table[data-compact="true"] td,
+.tiptap-editor-wrap .tiptap table[data-compact="true"] th {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
 /* Floating Table Bubble Menu Styling */
 .tiptap-table-bubble-menu {
-  border: 1px solid rgba(56, 189, 248, 0.4) !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid #E5E7EB !important;
+  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.06) !important;
 }
 
 .tiptap-table-bubble-menu button {
   white-space: nowrap;
 }
 
+/* Tiptap Image Styling */
+.tiptap-editor-wrap .tiptap img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
+  border-radius: 6px;
+  border: 1px solid #E5E7EB;
+  background-color: #F7F8FA;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
 
+.tiptap-editor-wrap .tiptap img:hover {
+  border-color: #CBD5E1;
+}
 
+.tiptap-editor-wrap .tiptap img.ProseMirror-selectednode {
+  outline: 2px solid #1E3A8A;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.12);
+}

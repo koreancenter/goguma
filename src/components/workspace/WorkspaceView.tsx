@@ -1,16 +1,15 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Download, FolderOpen, PanelRight, LogOut, LayoutTemplate, Cpu, Type, User
+import {
+  Download, FolderOpen, PanelRight, PanelLeft, LogOut, LayoutTemplate, Cpu, Type, ChevronDown, Check
 } from 'lucide-react';
 
 import { ProjectEntity, FormInputEntity, SitePlan } from '../../types';
 import { LocalUser } from '../../lib/localAuth';
 import { getAISettings, getActiveAILabel, AISettings } from '../../lib/aiConfig';
+import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
 import { Tooltip } from '../guide/Tooltip';
 
-import { ChapterNavBar } from '../classic/ChapterNavBar';
-import { SectionListBar } from '../classic/SectionListBar';
 import { IntegratedNavigator } from '../classic/IntegratedNavigator';
 import { WritingCanvas } from '../classic/WritingCanvas';
 import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
@@ -67,8 +66,6 @@ export default function WorkspaceView({
   togglePreviewCollapsed,
   isCol1Collapsed,
   setIsCol1Collapsed,
-  isCol2Collapsed,
-  setIsCol2Collapsed,
   completedChapters,
   handleSelectChapter,
   handleSelectSection,
@@ -85,6 +82,9 @@ export default function WorkspaceView({
   const [isExporting, setIsExporting] = useState(false);
   const [isAISettingsModalOpen, setIsAISettingsModalOpen] = useState(false);
   const [aiSettings, setAiSettings] = useState<AISettings>(getAISettings);
+  const [isChapterMenuOpen, setIsChapterMenuOpen] = useState(false);
+  const chapterMenuRef = useRef<HTMLDivElement>(null);
+  const splitContainerRef = useRef<HTMLDivElement>(null);
 
   // Sync AI Settings in real time when changed or saved from modal
   useEffect(() => {
@@ -99,45 +99,64 @@ export default function WorkspaceView({
     };
   }, []);
 
-  // Ergonomic Split Pane Resizer for real-time preview (Phase 3 High-Fidelity Implementation)
-  const [previewWidth, setPreviewWidth] = useState<number>(() => {
-    const saved = localStorage.getItem('goguma_preview_width');
-    return saved ? Math.max(380, Math.min(800, Number(saved))) : 480;
+  // Close quick chapter switcher on outside click
+  useEffect(() => {
+    if (!isChapterMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (chapterMenuRef.current && !chapterMenuRef.current.contains(e.target as Node)) {
+        setIsChapterMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isChapterMenuOpen]);
+
+  // 50:50 Fluid Split Ratio (Defaults strictly to 50% / 50%)
+  const [splitPercent, setSplitPercent] = useState<number>(() => {
+    const saved = localStorage.getItem('goguma_split_percent');
+    if (saved) {
+      const parsed = Number(saved);
+      if (!Number.isNaN(parsed) && parsed >= 35 && parsed <= 65) return parsed;
+    }
+    return 50;
   });
   const [isResizing, setIsResizing] = useState(false);
 
-  // Quick width presets
-  const handleApplyPresetWidth = (width: number) => {
-    setPreviewWidth(width);
-    localStorage.setItem('goguma_preview_width', String(width));
+  const handleToggleSidebar = () => {
+    setIsCol1Collapsed(prev => {
+      const next = !prev;
+      localStorage.setItem('goguma_nav_collapsed', String(next));
+      return next;
+    });
+  };
+
+  const handleResetSplit = () => {
+    setSplitPercent(50);
+    localStorage.setItem('goguma_split_percent', '50');
   };
 
   const handleMouseDownResizer = (e: React.MouseEvent) => {
     e.preventDefault();
+    const container = splitContainerRef.current;
+    if (!container) return;
+
     setIsResizing(true);
-    const startX = e.clientX;
-    const startWidth = previewWidth;
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      // Dragging left increases preview width
-      const deltaX = startX - moveEvent.clientX;
-      let nextWidth = startWidth + deltaX;
-
-      // Magnetic snap around mobile standard (420px) and default (480px)
-      if (Math.abs(nextWidth - 420) < 8) nextWidth = 420;
-      else if (Math.abs(nextWidth - 480) < 8) nextWidth = 480;
-      else if (Math.abs(nextWidth - 620) < 8) nextWidth = 620;
-
-      const clamped = Math.max(380, Math.min(800, nextWidth));
-      setPreviewWidth(clamped);
+      const rect = container.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      let nextPercent = ((moveEvent.clientX - rect.left) / rect.width) * 100;
+      if (Math.abs(nextPercent - 50) < 1.2) nextPercent = 50;
+      const clamped = Math.max(35, Math.min(65, nextPercent));
+      setSplitPercent(clamped);
     };
 
     const handleMouseUp = () => {
       setIsResizing(false);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-      setPreviewWidth((current) => {
-        localStorage.setItem('goguma_preview_width', String(current));
+      setSplitPercent((current) => {
+        localStorage.setItem('goguma_split_percent', String(Math.round(current * 10) / 10));
         return current;
       });
     };
@@ -146,29 +165,27 @@ export default function WorkspaceView({
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  // Keyboard navigation for separator (WCAG Accessibility)
   const handleResizerKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      setPreviewWidth(prev => {
-        const next = Math.min(800, prev + 20);
-        localStorage.setItem('goguma_preview_width', String(next));
+      setSplitPercent(prev => {
+        const next = Math.max(35, prev - 2);
+        localStorage.setItem('goguma_split_percent', String(next));
         return next;
       });
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
-      setPreviewWidth(prev => {
-        const next = Math.max(380, prev - 20);
-        localStorage.setItem('goguma_preview_width', String(next));
+      setSplitPercent(prev => {
+        const next = Math.min(65, prev + 2);
+        localStorage.setItem('goguma_split_percent', String(next));
         return next;
       });
     } else if (e.key === 'Home') {
-      handleApplyPresetWidth(480);
+      handleResetSplit();
     }
   };
 
   const handleApplyPrdTemplate = (template: any) => {
-    // 1. Update Project Entity
     const newName = template.plan?.metadata?.projectName || template.name;
     setProject(prev => ({
       ...prev,
@@ -177,7 +194,6 @@ export default function WorkspaceView({
       updatedAt: new Date().toISOString()
     }));
 
-    // 2. Update SitePlan
     setPlan(prev => ({
       ...prev,
       metadata: {
@@ -196,7 +212,6 @@ export default function WorkspaceView({
       }
     }));
 
-    // 3. Update form inputs
     if (template.formInputs) {
       Object.entries(template.formInputs).forEach(([key, val]) => {
         handleInputChange(1, key, val as string);
@@ -219,24 +234,46 @@ export default function WorkspaceView({
     }
   };
 
+  const currentChapterObj = GOGUMA_CHAPTERS.find(c => c.id === project.currentChapter) || GOGUMA_CHAPTERS[0];
+  const activeTierLabel =
+    aiSettings.provider === 'webllm'
+      ? 'WebLLM'
+      : aiSettings.provider === 'ollama'
+      ? 'Ollama'
+      : 'Gemini';
+
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0B0C10] text-[#F0F3F6] font-sans selection:bg-sky-950 selection:text-[#38BDF8]">
-      {/* Studio Top Bar - Top Bar Contract: 3 Zones, Sumi Black & Luxury Sapphire Blue */}
-      <header className="h-12 px-4 sm:px-5 bg-[#0E1217] border-b border-white/[0.08] shadow-[0_1px_3px_rgba(0,0,0,0.5)] flex items-center justify-between shrink-0 select-none z-20 gap-3">
-        {/* Zone 1: Identity & Document Context */}
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 shrink-0">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#FFFFFF] text-[#111827] font-sans selection:bg-[#EFF6FF] selection:text-[#1E3A8A]">
+      {/* Top Utility Header (h-14 / 56px, #FFFFFF, 1px solid #E5E7EB hairline) */}
+      <header className="h-14 px-4 sm:px-5 bg-[#FFFFFF] border-b border-[#E5E7EB] flex items-center justify-between shrink-0 select-none z-30 gap-4">
+        {/* Left Zone: Sidebar Toggle + GOGUMA Logo + Editable Project Title */}
+        <div className="flex items-center gap-2.5 min-w-0 shrink-0">
+          <Tooltip content={isCol1Collapsed ? '목차 서랍 펼치기' : '목차 서랍 접기'} position="bottom">
+            <button
+              onClick={handleToggleSidebar}
+              className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer shrink-0 ${
+                !isCol1Collapsed
+                  ? 'bg-[#EFF6FF] text-[#1E3A8A]'
+                  : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9]'
+              }`}
+              aria-label="사이드바 토글"
+            >
+              <PanelLeft size={16} />
+            </button>
+          </Tooltip>
+
           <button
             onClick={() => navigate('/')}
-            className="font-sans font-bold text-sm sm:text-base tracking-tight text-[#F0F3F6] hover:text-[#38BDF8] transition-colors cursor-pointer whitespace-nowrap uppercase shrink-0 leading-none flex items-center gap-1.5"
+            className="font-sans font-bold text-sm sm:text-[15px] tracking-tight text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer whitespace-nowrap shrink-0 leading-none flex items-center gap-2"
           >
-            <span className="w-5 h-5 rounded-[2px] bg-[#2563EB] text-white flex items-center justify-center font-black text-xs shadow-xs">G</span>
+            <span className="w-6 h-6 rounded-md bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs">G</span>
             <span>GOGUMA</span>
           </button>
 
-          <span className="text-white/20 select-none leading-none shrink-0" aria-hidden="true">/</span>
+          <span className="text-[#D1D5DB] select-none leading-none shrink-0" aria-hidden="true">/</span>
 
-          {/* Inline Editable Project Name Container */}
-          <div className="min-w-0 max-w-[200px] sm:max-w-[280px] md:max-w-[340px] flex items-center">
+          {/* Inline Editable Project Title */}
+          <div className="min-w-0 max-w-[160px] sm:max-w-[240px] lg:max-w-[280px] flex items-center">
             <input
               type="text"
               value={project.name}
@@ -246,126 +283,172 @@ export default function WorkspaceView({
                 setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
                 schedulePersistence();
               }}
-              className="w-full bg-[#13181F] hover:bg-[#18202A] focus:bg-[#13181F] rounded-[2px] px-2.5 py-1 text-xs sm:text-sm font-semibold text-[#F0F3F6] truncate border border-white/[0.1] hover:border-white/[0.2] focus:border-[#38BDF8] outline-none transition-all leading-normal"
+              className="w-full bg-[#F7F8FA] hover:bg-[#F1F5F9] focus:bg-[#FFFFFF] rounded-lg px-2.5 py-1 text-xs sm:text-sm font-semibold text-[#111827] truncate border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/10 outline-none transition-all leading-normal"
               title="프로젝트 이름 수정"
               aria-label="프로젝트 이름"
             />
           </div>
 
-          {/* Luxury Azure Living Persistence Indicator with Tooltip */}
-          <Tooltip content={saveStatus === 'saving' ? '로컬 저장 중...' : '브라우저에 실시간 안전 보존됨'} position="bottom">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] bg-blue-950/60 border border-blue-500/30 cursor-default">
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 transition-all ${
-                saveStatus === 'saving' ? 'bg-[#38BDF8] animate-ping scale-125' : 'bg-[#38BDF8]'
+          <Tooltip content={saveStatus === 'saving' ? '로컬 저장 중...' : '브라우저 IndexedDB에 실시간 저장됨'} position="bottom">
+            <div className="hidden xl:flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#F0FDF4] text-[#15803D] cursor-default shrink-0">
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                saveStatus === 'saving' ? 'bg-[#B45309] animate-pulse' : 'bg-[#15803D]'
               }`} />
-              <span className="text-[10px] font-mono font-medium text-[#38BDF8] hidden md:inline">
-                {saveStatus === 'saving' ? '보존 중' : '보존됨'}
+              <span className="text-[11px] font-medium whitespace-nowrap">
+                {saveStatus === 'saving' ? '저장 중' : '저장됨'}
               </span>
             </div>
           </Tooltip>
         </div>
 
-        {/* Zone 2: Zen Breathing Space (Zero Noise) */}
-        <div className="flex-1" />
-
-        {/* Zone 3: Curated Functional Groups (Single Tier, Icon + Tooltip) */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Group A: Studio Utilities */}
-          <div className="flex items-center gap-0.5">
-            {/* Large Text Mode Toggle */}
-            <Tooltip content={largeTextMode ? '보통 글씨로 전환' : '큰 글씨 모드로 전환'} position="bottom">
-              <button
-                onClick={toggleLargeTextMode}
-                className={`h-7 w-7 flex items-center justify-center rounded-[2px] border transition-colors cursor-pointer ${
-                  largeTextMode
-                    ? 'bg-blue-950/80 text-[#38BDF8] border-blue-500/40 font-bold shadow-xs'
-                    : 'bg-transparent border-transparent text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06]'
-                }`}
-                aria-label="글씨 크기 모드 토글"
-              >
-                <Type size={14} />
-              </button>
-            </Tooltip>
-
-            {/* AI Engine Settings Button */}
-            <Tooltip content="인공지능 모델 설정" position="bottom">
-              <button
-                onClick={() => setIsAISettingsModalOpen(true)}
-                className="h-7 w-7 flex items-center justify-center rounded-[2px] border border-transparent hover:border-white/10 text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-colors cursor-pointer relative"
-                aria-label="인공지능 모델 설정"
-              >
-                <Cpu size={14} className="text-[#38BDF8]" />
-                <span className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-[#38BDF8]" />
-              </button>
-            </Tooltip>
-
-            {/* Preview Panel Toggle */}
-            <Tooltip content={isPreviewCollapsed ? '미리보기 패널 열기' : '미리보기 패널 접기'} position="bottom">
-              <button
-                onClick={togglePreviewCollapsed}
-                className={`h-7 w-7 flex items-center justify-center rounded-[2px] border transition-colors cursor-pointer ${
-                  isPreviewCollapsed
-                    ? 'bg-blue-950/80 border-blue-500/40 text-[#38BDF8]'
-                    : 'bg-transparent border-transparent text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06]'
-                }`}
-                aria-label="미리보기 패널 토글"
-              >
-                <PanelRight size={14} />
-              </button>
-            </Tooltip>
-          </div>
-
-          {/* Hairline Divider */}
-          <div className="w-px h-3.5 bg-white/10" />
-
-          {/* Group B: Document Assets (Templates & Backups) */}
-          <div className="flex items-center rounded-[2px] border border-white/10 bg-[#13181F] p-0.5 gap-0.5">
-            <Tooltip content="표준 기획서 템플릿" position="bottom">
-              <button
-                onClick={() => setIsTemplateModalOpen(true)}
-                className="h-6 w-6 flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.08] transition-colors cursor-pointer"
-                aria-label="표준 기획서 템플릿"
-              >
-                <LayoutTemplate size={13} className="text-[#38BDF8]" />
-              </button>
-            </Tooltip>
-            <div className="w-px h-3 bg-white/10" />
-            <Tooltip content="프로젝트 보관함 및 백업" position="bottom">
-              <button
-                onClick={() => { setBackupModalTab('storage'); setIsBackupModalOpen(true); }}
-                className="h-6 w-6 flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.08] transition-colors cursor-pointer"
-                aria-label="프로젝트 보관함 및 백업"
-              >
-                <FolderOpen size={13} className="text-[#38BDF8]" />
-              </button>
-            </Tooltip>
-          </div>
-
-          {/* Hairline Divider */}
-          <div className="w-px h-3.5 bg-white/10" />
-
-          {/* Group C: The Dominant Primary Anchor CTA (Luxury Sapphire Blue) */}
-          <Tooltip content="전체 사양서 번들 다운로드" position="bottom">
+        {/* Center Zone: Compact Active Chapter Indicator / Quick Switcher */}
+        <div className="hidden md:flex items-center justify-center flex-1 min-w-0" ref={chapterMenuRef}>
+          <div className="relative">
             <button
-              onClick={handleExportZip}
-              disabled={isExporting}
-              className="h-7 px-2.5 flex items-center gap-1.5 justify-center rounded-[2px] bg-[#2563EB] hover:bg-[#1D4ED8] active:bg-[#1E40AF] disabled:opacity-50 text-white transition-all cursor-pointer shadow-xs text-xs font-semibold whitespace-nowrap"
-              aria-label="전체 사양서 번들 다운로드"
+              type="button"
+              onClick={() => setIsChapterMenuOpen(prev => !prev)}
+              className="h-8 px-3 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-xs font-medium text-[#111827] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[280px]"
+              aria-expanded={isChapterMenuOpen}
+              aria-label="챕터 빠른 전환"
             >
-              <Download size={13} className={isExporting ? 'animate-bounce' : ''} />
-              <span className="hidden sm:inline">번들 다운로드</span>
+              <span className="font-mono text-[11px] font-semibold text-[#1E3A8A] tabular-nums shrink-0">
+                0{currentChapterObj.id}
+              </span>
+              <span className="text-[#D1D5DB] shrink-0" aria-hidden="true">·</span>
+              <span className="truncate">{currentChapterObj.title}</span>
+              <ChevronDown size={13} className={`text-[#4B5563] shrink-0 transition-transform duration-150 ${isChapterMenuOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isChapterMenuOpen && (
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.1)] p-1.5 z-50">
+                <div className="px-2.5 py-1.5 text-[11px] font-medium text-[#4B5563] border-b border-[#E5E7EB] mb-1 flex items-center justify-between">
+                  <span>챕터 빠른 이동</span>
+                  <span className="font-mono tabular-nums text-[#9CA3AF]">{project.currentChapter} / {GOGUMA_CHAPTERS.length}</span>
+                </div>
+                <div className="space-y-0.5 max-h-[340px] overflow-y-auto custom-scroll">
+                  {GOGUMA_CHAPTERS.map((ch) => {
+                    const isActive = ch.id === project.currentChapter;
+                    const isDone = completedChapters.has(ch.id);
+                    return (
+                      <button
+                        key={ch.id}
+                        type="button"
+                        onClick={() => {
+                          handleSelectChapter(ch.id);
+                          setIsChapterMenuOpen(false);
+                        }}
+                        className={`w-full px-2.5 py-2 rounded-lg text-left text-xs flex items-center justify-between gap-2 transition-colors cursor-pointer ${
+                          isActive
+                            ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+                            : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className={`font-mono text-[11px] tabular-nums shrink-0 ${
+                            isActive ? 'text-[#1E3A8A] font-bold' : 'text-[#9CA3AF]'
+                          }`}>
+                            0{ch.id}
+                          </span>
+                          <span className="truncate">{ch.title}</span>
+                        </div>
+                        {isDone && (
+                          <Check size={13} className="text-[#15803D] shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Zone: Subtle 3-Tier AI Status Badge + Utilities + Editorial Navy Primary CTA */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* 3-Tier AI Engine Status Badge */}
+          <Tooltip content={`AI 엔진 설정 (${getActiveAILabel(aiSettings)})`} position="bottom">
+            <button
+              onClick={() => setIsAISettingsModalOpen(true)}
+              className="h-8 px-2.5 flex items-center gap-1.5 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-xs font-medium text-[#111827] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              aria-label="인공지능 모델 설정"
+            >
+              <Cpu size={13} className="text-[#1E3A8A] shrink-0" />
+              <span className="font-mono text-[11px] font-medium text-[#111827]">{activeTierLabel}</span>
             </button>
           </Tooltip>
 
-          {/* Hairline Divider */}
-          <div className="w-px h-3.5 bg-white/10" />
+          {/* Subtle Studio Utilities */}
+          <div className="hidden sm:flex items-center gap-0.5">
+            <Tooltip content={largeTextMode ? '보통 글씨로 전환' : '큰 글씨 모드로 전환'} position="bottom">
+              <button
+                onClick={toggleLargeTextMode}
+                className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
+                  largeTextMode
+                    ? 'bg-[#EFF6FF] text-[#1E3A8A] font-bold'
+                    : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9]'
+                }`}
+                aria-label="글씨 크기 모드 토글"
+              >
+                <Type size={15} />
+              </button>
+            </Tooltip>
 
-          {/* Single-Tier User Profile & Sign Out (Flat) */}
-          <div className="flex items-center gap-1">
+            <Tooltip content="표준 기획서 템플릿" position="bottom">
+              <button
+                onClick={() => setIsTemplateModalOpen(true)}
+                className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+                aria-label="표준 기획서 템플릿"
+              >
+                <LayoutTemplate size={15} />
+              </button>
+            </Tooltip>
+
+            <Tooltip content="프로젝트 보관함 및 백업" position="bottom">
+              <button
+                onClick={() => { setBackupModalTab('storage'); setIsBackupModalOpen(true); }}
+                className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+                aria-label="프로젝트 보관함 및 백업"
+              >
+                <FolderOpen size={15} />
+              </button>
+            </Tooltip>
+
+            <Tooltip content={isPreviewCollapsed ? '미리보기 패널 열기' : '미리보기 패널 접기'} position="bottom">
+              <button
+                onClick={togglePreviewCollapsed}
+                className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
+                  isPreviewCollapsed
+                    ? 'bg-[#EFF6FF] text-[#1E3A8A]'
+                    : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9]'
+                }`}
+                aria-label="미리보기 패널 토글"
+              >
+                <PanelRight size={15} />
+              </button>
+            </Tooltip>
+          </div>
+
+          <div className="w-px h-4 bg-[#E5E7EB] hidden sm:block" />
+
+          {/* Primary CTA: Export 11 Specs in Editorial Navy (#1E3A8A) */}
+          <Tooltip content="11종 사양서 번들 ZIP 다운로드" position="bottom">
+            <button
+              onClick={handleExportZip}
+              disabled={isExporting}
+              className="h-8 px-3.5 flex items-center gap-1.5 justify-center rounded-lg bg-[#1E3A8A] hover:bg-[#172554] disabled:opacity-50 text-white transition-colors cursor-pointer text-xs font-medium whitespace-nowrap shrink-0 shadow-xs"
+              aria-label="Export 11 Specs"
+            >
+              <Download size={13} className={isExporting ? 'animate-bounce' : ''} />
+              <span>Export 11 Specs</span>
+            </button>
+          </Tooltip>
+
+          {/* User Account & Sign Out */}
+          <div className="flex items-center gap-1 shrink-0">
             <Tooltip content="내 계정 프로필" position="bottom">
               <button
                 onClick={() => navigate('/profile')}
-                className="h-7 w-7 rounded-[2px] bg-blue-950/60 border border-blue-500/30 hover:border-[#38BDF8] transition-colors cursor-pointer text-[#38BDF8] text-[11px] font-bold flex items-center justify-center shadow-2xs"
+                className="h-8 w-8 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-[#E5E7EB] transition-colors cursor-pointer text-[#1E3A8A] text-xs font-semibold flex items-center justify-center"
                 aria-label="내 계정 프로필"
               >
                 {currentUser?.displayName ? currentUser.displayName[0] : 'U'}
@@ -375,19 +458,19 @@ export default function WorkspaceView({
             <Tooltip content="로그아웃" position="bottom">
               <button
                 onClick={onOpenLogoutModal}
-                className="h-7 w-7 rounded-[2px] bg-transparent hover:bg-red-500/20 text-[#5C6675] hover:text-red-400 flex items-center justify-center transition-colors cursor-pointer"
+                className="h-8 w-8 rounded-lg text-[#4B5563] hover:text-[#B91C1C] hover:bg-[#FEF2F2] flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="로그아웃"
               >
-                <LogOut size={13} />
+                <LogOut size={14} />
               </button>
             </Tooltip>
           </div>
         </div>
       </header>
 
-      {/* 2-Track Modern Workspace Mount */}
-      <div className={`flex-1 flex overflow-hidden ${largeTextMode ? 'goguma-large-mode' : ''}`}>
-        {/* Track 1 - Left Navigator: Ubuntu Icon Dock (58px) with Rich Flyout Tooltips / Collapsible to Drawer */}
+      {/* Main Workspace Shell: h-[calc(100vh-56px)] (Collapsible Rail + 50:50 Fluid Split) */}
+      <div className={`h-[calc(100vh-56px)] flex overflow-hidden bg-[#FFFFFF] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
+        {/* Left Collapsible Chapter Rail / Drawer (52px collapsed / 240px expanded) */}
         <IntegratedNavigator
           currentChapter={project.currentChapter}
           currentSection={project.currentSection}
@@ -395,84 +478,79 @@ export default function WorkspaceView({
           onSelectSection={handleSelectSection}
           formInputs={formInputs}
           isCollapsed={isCol1Collapsed}
-          onToggleCollapse={() => {
-            setIsCol1Collapsed(prev => {
-              const next = !prev;
-              localStorage.setItem('goguma_nav_collapsed', String(next));
-              return next;
-            });
-          }}
+          onToggleCollapse={handleToggleSidebar}
           completedChapters={completedChapters}
         />
 
-        {/* Track 1 - Center: Unified Editorial Thinking Canvas (Fluid min-w 640px) */}
-        <WritingCanvas
-          currentChapter={project.currentChapter}
-          currentSection={project.currentSection}
-          formInputs={formInputs}
-          onInputChange={handleInputChange}
-          onNavigateSection={handleNavigateSection}
-          plan={plan}
-          setPlan={setPlan}
-          saveStatus={saveStatus}
-          lastSavedTime={lastSavedTime}
-          largeTextMode={largeTextMode}
-          isPreviewCollapsed={isPreviewCollapsed}
-          onTogglePreviewCollapse={togglePreviewCollapsed}
-        />
-
-        {/* Column Split Resizer Handle (Ergonomic drag for desktop viewports) */}
-        {!isPreviewCollapsed && (
+        {/* 50:50 Fluid Split Workspace Area */}
+        <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">
+          {/* 50% Left Editor Pane (#FFFFFF) */}
           <div
-            role="separator"
-            tabIndex={0}
-            aria-orientation="vertical"
-            aria-valuenow={previewWidth}
-            aria-valuemin={380}
-            aria-valuemax={800}
-            aria-label="미리보기 패널 너비 조절"
-            onKeyDown={handleResizerKeyDown}
-            onMouseDown={handleMouseDownResizer}
-            className={`w-2.5 -ml-1.5 z-20 cursor-col-resize flex items-center justify-center transition-all group select-none shrink-0 relative outline-none focus-visible:ring-1 focus-visible:ring-[#38BDF8] ${
-              isResizing ? 'bg-blue-950/50' : 'bg-transparent hover:bg-white/[0.06]'
-            }`}
-            title="드래그하여 너비 조절 (더블클릭 시 기본값 480px, 좌우 방향키로 미세 조절)"
-            onDoubleClick={() => handleApplyPresetWidth(480)}
+            style={!isPreviewCollapsed ? { width: `${splitPercent}%` } : undefined}
+            className={`${isPreviewCollapsed ? 'flex-1' : 'shrink-0'} min-w-0 h-full bg-[#FFFFFF] overflow-hidden flex flex-col`}
           >
-            <div className={`w-0.5 h-8 rounded-full transition-colors ${
-              isResizing ? 'bg-[#38BDF8]' : 'bg-white/20 group-hover:bg-[#38BDF8]'
-            }`} />
-
-            {/* Real-time Floating Width HUD during Drag */}
-            {isResizing && (
-              <div className="absolute top-6 right-3 pointer-events-none bg-[#0E1217] border border-blue-500/30 text-[#F0F3F6] px-3 py-1.5 rounded-[2px] shadow-2xl text-xs font-mono flex items-center gap-2 whitespace-nowrap z-50">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-ping" />
-                <span className="font-bold text-[#38BDF8]">{previewWidth}px</span>
-                <span className="text-[#9AA5B5] text-[11px]">
-                  {previewWidth <= 430 ? '스마트폰 뷰 (420px)' : previewWidth >= 600 ? '와이드 뷰 (620px)' : '데스크톱 뷰 (480px)'}
-                </span>
-              </div>
-            )}
+            <WritingCanvas
+              currentChapter={project.currentChapter}
+              currentSection={project.currentSection}
+              formInputs={formInputs}
+              onInputChange={handleInputChange}
+              onNavigateSection={handleNavigateSection}
+              plan={plan}
+              setPlan={setPlan}
+              saveStatus={saveStatus}
+              lastSavedTime={lastSavedTime}
+              largeTextMode={largeTextMode}
+              isPreviewCollapsed={isPreviewCollapsed}
+              onTogglePreviewCollapse={togglePreviewCollapsed}
+            />
           </div>
-        )}
 
-        {/* Global Transparent Mouse-Capture Overlay during Resizing to prevent iframe mouse trapping */}
-        {isResizing && (
-          <div className="fixed inset-0 z-40 cursor-col-resize select-none bg-black/40" />
-        )}
+          {/* Single 1px solid #E5E7EB Vertical Divider (with subtle drag-resize affordance) */}
+          {!isPreviewCollapsed && (
+            <div
+              role="separator"
+              tabIndex={0}
+              aria-orientation="vertical"
+              aria-valuenow={Math.round(splitPercent)}
+              aria-valuemin={35}
+              aria-valuemax={65}
+              aria-label="에디터 및 미리보기 분할 비율 조절"
+              onKeyDown={handleResizerKeyDown}
+              onMouseDown={handleMouseDownResizer}
+              onDoubleClick={handleResetSplit}
+              title="드래그하여 비율 조절 (더블클릭 시 50:50 초기화)"
+              className="w-px bg-[#E5E7EB] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[#1E3A8A] group"
+            >
+              <div
+                className={`absolute inset-y-0 -left-1 -right-1 cursor-col-resize transition-colors ${
+                  isResizing ? 'bg-[#1E3A8A]/15' : 'group-hover:bg-[#1E3A8A]/10'
+                }`}
+              />
+            </div>
+          )}
 
-        {/* Column 4: Real-time Spec & Prototype Preview Panel (Dynamically Resizable) */}
-        <SpecPreviewPanel
-          plan={plan}
-          formInputs={formInputs}
-          currentChapter={project.currentChapter}
-          isCollapsed={isPreviewCollapsed}
-          onToggleCollapse={togglePreviewCollapsed}
-          largeTextMode={largeTextMode}
-          width={previewWidth}
-          onSelectChapter={handleSelectChapter}
-          onSelectSection={handleSelectSection}
-        />
+          {/* Global Mouse-Capture Overlay during Resizing */}
+          {isResizing && (
+            <div className="fixed inset-0 z-40 cursor-col-resize select-none bg-transparent" />
+          )}
+
+          {/* 50% Right Preview Stage (#F7F8FA) or Collapsed 52px Rail */}
+          <div
+            style={!isPreviewCollapsed ? { width: `${100 - splitPercent}%` } : undefined}
+            className={`${isPreviewCollapsed ? 'shrink-0' : 'shrink-0'} min-w-0 h-full bg-[#F7F8FA] overflow-hidden flex flex-col`}
+          >
+            <SpecPreviewPanel
+              plan={plan}
+              formInputs={formInputs}
+              currentChapter={project.currentChapter}
+              isCollapsed={isPreviewCollapsed}
+              onToggleCollapse={togglePreviewCollapsed}
+              largeTextMode={largeTextMode}
+              onSelectChapter={handleSelectChapter}
+              onSelectSection={handleSelectSection}
+            />
+          </div>
+        </div>
       </div>
 
       {isTemplateModalOpen && (
@@ -485,7 +563,7 @@ export default function WorkspaceView({
         </Suspense>
       )}
 
-      {/* Unified Storage & Backup Studio Modal (Single Source of Truth) */}
+      {/* Unified Storage & Backup Studio Modal */}
       {isBackupModalOpen && (
         <Suspense fallback={null}>
           <LocalBackupModal

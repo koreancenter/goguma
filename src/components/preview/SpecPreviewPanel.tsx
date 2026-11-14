@@ -282,63 +282,63 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
     window.open(url, '_blank');
   };
 
-  // If collapsed, show a sleek ergonomic 58px rail
+  // If collapsed, show a sleek ergonomic 52px rail
   if (isCollapsed) {
     return (
       <aside 
-        className="w-[58px] h-full flex flex-col items-center bg-[#0E1217] border-l border-white/[0.08] shrink-0 select-none py-3 justify-between"
+        className="w-[52px] h-full flex flex-col items-center bg-[#F7F8FA] border-l border-[#E5E7EB] shrink-0 select-none py-3 justify-between"
         aria-label="미리보기 패널 펼치기"
       >
-        <div className="flex flex-col items-center gap-3 w-full px-1.5">
+        <div className="flex flex-col items-center gap-2.5 w-full px-1.5">
           <button
             onClick={onToggleCollapse}
-            className="p-2 min-h-[38px] min-w-[38px] rounded-[2px] bg-[#13181F] border border-white/[0.08] hover:bg-white/[0.06] text-[#9AA5B5] hover:text-[#F0F3F6] flex items-center justify-center transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-lg bg-[#FFFFFF] border border-[#E5E7EB] hover:bg-[#EFF6FF] text-[#4B5563] hover:text-[#1E3A8A] flex items-center justify-center transition-colors cursor-pointer"
             title="미리보기 패널 펼치기"
             aria-label="미리보기 패널 펼치기"
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={16} />
           </button>
 
-          <div className="w-6 h-px bg-white/10" />
+          <div className="w-6 h-px bg-[#E5E7EB]" />
 
           {/* Quick tab shortcuts that open panel directly to that tab */}
           <button
             onClick={() => { setActiveTab('prototype'); onToggleCollapse?.(); }}
-            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-all cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] transition-all cursor-pointer"
             title="프로토타입 보기 (펼치기)"
           >
-            <Play size={14} className="fill-current text-[#38BDF8]" />
+            <Play size={14} className="fill-current text-[#1E3A8A]" />
           </button>
           <button
             onClick={() => { setActiveTab('docs'); onToggleCollapse?.(); }}
-            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-all cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] transition-all cursor-pointer"
             title="11종 사양서 보기 (펼치기)"
           >
-            <FileCode size={16} />
+            <FileCode size={15} />
           </button>
           <button
             onClick={() => { setActiveTab('devhub'); onToggleCollapse?.(); }}
-            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-all cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] transition-all cursor-pointer"
             title="개발자 허브 (코드 & DDL)"
           >
             <Terminal size={15} />
           </button>
           <button
             onClick={() => { setActiveTab('sitemap'); onToggleCollapse?.(); }}
-            className="p-2.5 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-all cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] transition-all cursor-pointer"
             title="사이트맵 보기 (펼치기)"
           >
-            <Network size={16} />
+            <Network size={15} />
           </button>
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <div className="[writing-mode:vertical-lr] text-[10px] font-mono uppercase tracking-widest text-[#5C6675] py-4 select-none">
+          <div className="[writing-mode:vertical-lr] text-[10px] font-mono uppercase tracking-widest text-[#9CA3AF] py-4 select-none">
             SPEC & PROTOTYPE
           </div>
           <button
             onClick={onToggleCollapse}
-            className="p-2 min-h-[36px] rounded-[2px] hover:bg-white/[0.06] text-[#9AA5B5] hover:text-[#F0F3F6] text-xs font-mono font-medium cursor-pointer"
+            className="p-2 rounded-lg hover:bg-[#FFFFFF] text-[#4B5563] hover:text-[#1E3A8A] text-xs font-medium cursor-pointer"
             title="패널 펼치기"
           >
             열기
@@ -351,25 +351,25 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
   return (
     <aside 
       style={width ? { width: `${width}px` } : undefined}
-      className={`${width ? '' : 'w-[460px] lg:w-[480px] xl:w-[520px] 2xl:w-[560px]'} h-full flex flex-col bg-[#0E1217] border-l border-white/[0.08] shrink-0 select-none shadow-xl text-[#F0F3F6] font-sans`}
+      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[#F7F8FA] shrink-0 select-none text-[#111827] font-sans`}
       aria-label="실시간 프로토타입 및 11종 사양서 프리뷰"
     >
       {/* Studio Header (Single Minimalist 48px Header) */}
-      <div className="h-12 px-3.5 border-b border-white/[0.08] bg-[#0E1217] flex items-center justify-between shrink-0 select-none gap-2">
-        {/* Left: Quiet, Typographic Tab Navigation (Zero-Pill, Underline indicator) */}
-        <div className="flex items-center gap-3 sm:gap-4 text-xs font-medium shrink-0 min-w-0">
+      <div className="h-12 px-4 border-b border-[#E5E7EB] bg-[#FFFFFF] flex items-center justify-between shrink-0 select-none gap-2">
+        {/* Left: Quiet, Typographic Tab Navigation (Underline indicator in #1E3A8A) */}
+        <div className="flex items-center gap-4 text-xs font-medium shrink-0 min-w-0">
           <button
             onClick={() => setActiveTab('prototype')}
             className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === 'prototype'
-                ? 'text-[#F0F3F6] font-semibold'
-                : 'text-[#9AA5B5] hover:text-[#F0F3F6]'
+                ? 'text-[#1E3A8A] font-semibold'
+                : 'text-[#4B5563] hover:text-[#111827]'
             }`}
           >
             <span className="whitespace-nowrap">프로토타입</span>
-            {isSyncing && <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-ping shrink-0" />}
+            {isSyncing && <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] animate-ping shrink-0" />}
             {activeTab === 'prototype' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#38BDF8]" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A]" />
             )}
           </button>
 
@@ -377,16 +377,16 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
             onClick={() => setActiveTab('docs')}
             className={`relative py-3.5 transition-colors cursor-pointer flex items-center whitespace-nowrap shrink-0 ${
               activeTab === 'docs'
-                ? 'text-[#F0F3F6] font-semibold'
-                : 'text-[#9AA5B5] hover:text-[#F0F3F6]'
+                ? 'text-[#1E3A8A] font-semibold'
+                : 'text-[#4B5563] hover:text-[#111827]'
             }`}
           >
             <span className="whitespace-nowrap">사양서</span>
-            <span className="font-mono text-[10px] text-[#38BDF8] bg-blue-950/60 border border-blue-500/30 px-1.5 py-0.2 rounded-[2px] ml-1 tabular-nums inline-flex items-center justify-center shrink-0 leading-none">
+            <span className="font-mono text-[10px] text-[#1E3A8A] bg-[#EFF6FF] px-1.5 py-0.5 rounded ml-1.5 tabular-nums inline-flex items-center justify-center shrink-0 leading-none">
               11
             </span>
             {activeTab === 'docs' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#38BDF8]" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A]" />
             )}
           </button>
 
@@ -394,16 +394,16 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
             onClick={() => setActiveTab('devhub')}
             className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === 'devhub'
-                ? 'text-[#F0F3F6] font-semibold'
-                : 'text-[#9AA5B5] hover:text-[#F0F3F6]'
+                ? 'text-[#1E3A8A] font-semibold'
+                : 'text-[#4B5563] hover:text-[#111827]'
             }`}
           >
             <span className="whitespace-nowrap">개발자 허브</span>
-            <span className="font-mono text-[9px] text-[#38BDF8] bg-blue-950/60 border border-blue-500/30 px-1 py-0.2 rounded-[2px] ml-0.5 tabular-nums uppercase">
+            <span className="font-mono text-[9px] text-[#1E3A8A] bg-[#EFF6FF] px-1.5 py-0.5 rounded ml-0.5 tabular-nums uppercase">
               DEV
             </span>
             {activeTab === 'devhub' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#38BDF8]" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A]" />
             )}
           </button>
 
@@ -411,13 +411,13 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
             onClick={() => setActiveTab('sitemap')}
             className={`relative py-3.5 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === 'sitemap'
-                ? 'text-[#F0F3F6] font-semibold'
-                : 'text-[#9AA5B5] hover:text-[#F0F3F6]'
+                ? 'text-[#1E3A8A] font-semibold'
+                : 'text-[#4B5563] hover:text-[#111827]'
             }`}
           >
             <span className="whitespace-nowrap">사이트맵</span>
             {activeTab === 'sitemap' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#38BDF8]" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A]" />
             )}
           </button>
         </div>
@@ -427,14 +427,14 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
           {activeTab === 'prototype' && (
             <>
               {/* Segmented Device Viewport Toggle */}
-              <div className="hidden sm:flex items-center bg-[#13181F] rounded-[2px] p-0.5 border border-white/10">
+              <div className="hidden sm:flex items-center bg-[#F7F8FA] rounded-lg p-0.5 border border-[#E5E7EB]">
                 <Tooltip content="데스크톱 뷰" position="bottom">
                   <button
                     onClick={() => setViewportMode('desktop')}
-                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
+                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-md transition-all cursor-pointer ${
                       viewportMode === 'desktop'
-                        ? 'bg-blue-950/80 text-[#38BDF8] border border-blue-500/30 shadow-2xs font-semibold'
-                        : 'text-[#9AA5B5] hover:text-[#F0F3F6]'
+                        ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
+                        : 'text-[#4B5563] hover:text-[#111827]'
                     }`}
                     aria-label="데스크톱 뷰"
                   >
@@ -445,10 +445,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <Tooltip content="태블릿 뷰" position="bottom">
                   <button
                     onClick={() => setViewportMode('tablet')}
-                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
+                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-md transition-all cursor-pointer ${
                       viewportMode === 'tablet'
-                        ? 'bg-blue-950/80 text-[#38BDF8] border border-blue-500/30 shadow-2xs font-semibold'
-                        : 'text-[#9AA5B5] hover:text-[#F0F3F6]'
+                        ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
+                        : 'text-[#4B5563] hover:text-[#111827]'
                     }`}
                     aria-label="태블릿 뷰"
                   >
@@ -459,10 +459,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <Tooltip content="스마트폰 뷰" position="bottom">
                   <button
                     onClick={() => setViewportMode('mobile')}
-                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-[2px] transition-all cursor-pointer ${
+                    className={`p-1 min-h-[26px] min-w-[26px] flex items-center justify-center rounded-md transition-all cursor-pointer ${
                       viewportMode === 'mobile'
-                        ? 'bg-blue-950/80 text-[#38BDF8] border border-blue-500/30 shadow-2xs font-semibold'
-                        : 'text-[#9AA5B5] hover:text-[#F0F3F6]'
+                        ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
+                        : 'text-[#4B5563] hover:text-[#111827]'
                     }`}
                     aria-label="스마트폰 뷰"
                   >
@@ -475,10 +475,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               <Tooltip content={copiedPrompt ? '복사 완료' : '개발용 프롬프트 복사'} position="bottom">
                 <button
                   onClick={handleCopyAgentPrompt}
-                  className={`p-1.5 min-h-[28px] min-w-[28px] rounded-[2px] text-xs font-medium transition-all flex items-center justify-center cursor-pointer whitespace-nowrap shrink-0 ${
+                  className={`p-1.5 min-h-[28px] min-w-[28px] rounded-lg text-xs font-medium transition-all flex items-center justify-center cursor-pointer whitespace-nowrap shrink-0 ${
                     copiedPrompt
-                      ? 'bg-blue-950/90 text-[#38BDF8] border border-blue-400'
-                      : 'bg-blue-950/60 border border-blue-500/40 text-[#38BDF8] hover:bg-blue-900/60'
+                      ? 'bg-[#F0FDF4] text-[#15803D] border border-[#15803D]/20'
+                      : 'bg-[#EFF6FF] text-[#1E3A8A] hover:bg-[#DBEAFE]'
                   }`}
                   aria-label="개발용 프롬프트 복사"
                 >
@@ -494,7 +494,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               <Tooltip content="프롬프트 전문 확인" position="bottom">
                 <button
                   onClick={() => setIsPromptModalOpen(true)}
-                  className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-colors cursor-pointer shrink-0"
+                  className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
                   aria-label="프롬프트 전문 확인"
                 >
                   <Bot size={13} />
@@ -507,7 +507,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
           <Tooltip content="새로고침" position="bottom">
             <button
               onClick={() => setReloadKey(k => k + 1)}
-              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-colors cursor-pointer shrink-0"
+              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
               aria-label="새로고침"
             >
               <RefreshCw size={13} />
@@ -518,7 +518,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
           <Tooltip content="새 창에서 실행" position="bottom">
             <button
               onClick={handleOpenStandalone}
-              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-colors cursor-pointer shrink-0"
+              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer shrink-0"
               aria-label="새 창에서 실행"
             >
               <ExternalLink size={13} />
@@ -528,7 +528,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
       </div>
 
       {/* Panel Body */}
-      <div className="flex-1 overflow-hidden relative bg-[#0B0C10] flex flex-col">
+      <div className="flex-1 overflow-hidden relative bg-[#F7F8FA] flex flex-col">
         {/* TAB 1: Live Interactive Prototype */}
         {activeTab === 'prototype' && (
           <div className="w-full h-full flex flex-col">

@@ -7,12 +7,56 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
 import Underline from '@tiptap/extension-underline';
-import { 
-  Bold, Italic, Underline as UnderlineIcon, Strikethrough, Code, Heading1, Heading2, Heading3, 
-  List, ListOrdered, Quote, Minus, Undo, Redo,
-  Table as TableIcon, Plus, Trash2, ArrowUp, ArrowDown, ArrowLeft, ArrowRight,
-  Split, Combine, ChevronDown, Sparkles
+import ImageExtension from '@tiptap/extension-image';
+import {
+  Bold, Italic, Underline as UnderlineIcon, Strikethrough, Code,
+  Heading1, Heading2, Heading3, List, ListOrdered, Quote, Minus, Undo, Redo,
+  Table as TableIcon, Trash2, Upload, X, Image as ImageIcon,
+  ArrowUpFromLine, ArrowDownFromLine, ArrowLeftFromLine, ArrowRightFromLine,
+  ListMinus, SquareMinus, TableCellsMerge, TableCellsSplit,
+  PanelTopDashed, Rows3, PanelTop, SeparatorHorizontal, Minimize2, RotateCcw
 } from 'lucide-react';
+
+// Extended Tiptap Table supporting visual style attributes persisted in HTML
+const StyledTiptapTable = TiptapTable.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      striped: {
+        default: false,
+        parseHTML: (element) => element.getAttribute('data-striped') === 'true',
+        renderHTML: (attributes) => {
+          if (!attributes.striped) return {};
+          return { 'data-striped': 'true' };
+        },
+      },
+      headerHighlight: {
+        default: false,
+        parseHTML: (element) => element.getAttribute('data-header-highlight') === 'true',
+        renderHTML: (attributes) => {
+          if (!attributes.headerHighlight) return {};
+          return { 'data-header-highlight': 'true' };
+        },
+      },
+      minimalBorder: {
+        default: false,
+        parseHTML: (element) => element.getAttribute('data-minimal-border') === 'true',
+        renderHTML: (attributes) => {
+          if (!attributes.minimalBorder) return {};
+          return { 'data-minimal-border': 'true' };
+        },
+      },
+      compact: {
+        default: false,
+        parseHTML: (element) => element.getAttribute('data-compact') === 'true',
+        renderHTML: (attributes) => {
+          if (!attributes.compact) return {};
+          return { 'data-compact': 'true' };
+        },
+      },
+    };
+  },
+});
 
 export interface TiptapThinkingCanvasProps {
   value: string;
@@ -28,7 +72,13 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
   largeTextMode = false,
 }) => {
   const isInternalUpdateRef = useRef(false);
-  const [isTableMenuOpen, setIsTableMenuOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [imageUrlInput, setImageUrlInput] = useState('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imagePopoverRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const floatingMenuRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -38,12 +88,12 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
         codeBlock: {
           HTMLAttributes: {
-            class: 'bg-[#0B0C10] p-2.5 rounded-[2px] font-mono text-xs text-sky-300 border border-white/[0.08] my-2',
+            class: 'bg-[#0B0C10] p-2.5 rounded-[2px] font-mono text-xs text-[#D8DEE8] border border-white/[0.08] my-2',
           },
         },
         blockquote: {
           HTMLAttributes: {
-            class: 'border-l-2 border-[#38BDF8] pl-3 my-2 text-zinc-400 italic',
+            class: 'border-l-2 border-white/[0.24] pl-3 my-2 text-zinc-400 italic',
           },
         },
         bulletList: {
@@ -59,10 +109,18 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       }),
       Placeholder.configure({
         placeholder,
-        emptyEditorClass: 'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#5C6675] before:float-left before:pointer-events-none before:h-0',
+        emptyEditorClass:
+          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#5C6675] before:float-left before:pointer-events-none before:h-0',
       }),
       Underline,
-      TiptapTable.configure({
+      ImageExtension.configure({
+        inline: false,
+        allowBase64: true,
+        HTMLAttributes: {
+          class: 'tiptap-image-item',
+        },
+      }),
+      StyledTiptapTable.configure({
         resizable: true,
         HTMLAttributes: {
           class: 'tiptap-table-root w-full my-3 border-collapse',
@@ -71,12 +129,12 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       TableRow,
       TableHeader.configure({
         HTMLAttributes: {
-          class: 'tiptap-th bg-[#0E1217] text-[#38BDF8] font-semibold text-xs text-left p-2.5 border border-white/[0.12]',
+          class: 'tiptap-th bg-[#10141B] text-[#D8DEE8] font-semibold text-xs text-left p-2.5 border border-white/[0.12]',
         },
       }),
       TableCell.configure({
         HTMLAttributes: {
-          class: 'tiptap-td p-2 text-xs text-[#F0F3F6] border border-white/[0.08] bg-[#13181F]/40 align-top',
+          class: 'tiptap-td p-2 text-xs text-[#F0F3F6] border border-white/[0.08] bg-[#13181F]/35 align-top',
         },
       }),
     ],
@@ -89,13 +147,110 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             : 'text-base sm:text-lg leading-relaxed min-h-[140px]'
         }`,
       },
+      handlePaste: (view, event) => {
+        const items = Array.from(event.clipboardData?.items || []);
+        const imageItem = items.find((item) => item.type.startsWith('image/'));
+        if (imageItem) {
+          event.preventDefault();
+          const file = imageItem.getAsFile();
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (readerEvent) => {
+              const base64 = readerEvent.target?.result as string;
+              if (base64) {
+                view.dispatch(
+                  view.state.tr.replaceSelectionWith(
+                    view.state.schema.nodes.image.create({
+                      src: base64,
+                      alt: file.name || 'Pasted image',
+                      title: file.name || 'Pasted image',
+                    })
+                  )
+                );
+              }
+            };
+            reader.readAsDataURL(file);
+            return true;
+          }
+        }
+        return false;
+      },
+      handleDrop: (view, event, _slice, moved) => {
+        if (!moved && event.dataTransfer?.files?.length) {
+          const file = event.dataTransfer.files[0];
+          if (file.type.startsWith('image/')) {
+            event.preventDefault();
+            const reader = new FileReader();
+            reader.onload = (readerEvent) => {
+              const base64 = readerEvent.target?.result as string;
+              if (base64) {
+                const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+                const node = view.state.schema.nodes.image.create({
+                  src: base64,
+                  alt: file.name || 'Dropped image',
+                  title: file.name || 'Dropped image',
+                });
+                if (coordinates) {
+                  view.dispatch(view.state.tr.insert(coordinates.pos, node));
+                } else {
+                  view.dispatch(view.state.tr.replaceSelectionWith(node));
+                }
+              }
+            };
+            reader.readAsDataURL(file);
+            return true;
+          }
+        }
+        return false;
+      },
     },
     onUpdate: ({ editor }) => {
       isInternalUpdateRef.current = true;
-      const text = editor.getText();
-      onChange(text);
+      const content = editor.isEmpty ? '' : editor.getHTML();
+      onChange(content);
     },
   });
+
+  // Helper function to insert local image file
+  const handleImageFileUpload = (file: File) => {
+    if (!file.type.startsWith('image/') || !editor) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      if (base64) {
+        editor.chain().focus().setImage({ src: base64, alt: file.name || 'Uploaded diagram' }).run();
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Helper function to insert web image URL
+  const handleImageUrlSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!imageUrlInput.trim() || !editor) return;
+    editor.chain().focus().setImage({ src: imageUrlInput.trim(), alt: 'Diagram' }).run();
+    setImageUrlInput('');
+    setIsImageModalOpen(false);
+  };
+
+  // Close image popover cleanly on outside click or Escape key
+  useEffect(() => {
+    if (!isImageModalOpen) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (imagePopoverRef.current && !imagePopoverRef.current.contains(e.target as Node)) {
+        setIsImageModalOpen(false);
+      }
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsImageModalOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isImageModalOpen]);
 
   // Sync external changes (such as 1-Line Refine, Sample Chips, or Chapter switches)
   useEffect(() => {
@@ -106,70 +261,116 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       return;
     }
 
+    const currentHTML = editor.getHTML();
     const currentText = editor.getText();
-    if (value !== currentText) {
+    if (value !== currentHTML && value !== currentText) {
       editor.commands.setContent(value || '', { emitUpdate: false });
     }
   }, [value, editor]);
 
   const isTableActive = editor ? editor.isActive('table') : false;
-  const hasTextSelection = editor ? !editor.state.selection.empty : false;
-  const isMenuVisible = isTableActive || hasTextSelection;
+  const isImageActive = editor ? editor.isActive('image') : false;
+  const selection = editor?.state.selection;
+  const isCellSelection = Boolean(selection && '$anchorCell' in selection);
+  const hasTextSelection = Boolean(selection && !selection.empty && !isImageActive && !isCellSelection);
+
+  // Suppress floating bubble menu while image insertion popover is open to guarantee zero overlap
+  const isMenuVisible = !isImageModalOpen && (isTableActive || hasTextSelection || isImageActive);
+
+  // Read active table visual style attributes
+  const tableAttrs = editor && isTableActive ? editor.getAttributes('table') : {};
+  const isStriped = Boolean(tableAttrs.striped);
+  const isHeaderHighlighted = Boolean(tableAttrs.headerHighlight);
+  const isMinimalBorder = Boolean(tableAttrs.minimalBorder);
+  const isCompact = Boolean(tableAttrs.compact);
+  const hasAnyTableStyle = isStriped || isHeaderHighlighted || isMinimalBorder || isCompact;
+
+  const toggleTableStyleAttr = (attr: 'striped' | 'headerHighlight' | 'minimalBorder' | 'compact') => {
+    if (!editor) return;
+    const current = Boolean(editor.getAttributes('table')[attr]);
+    editor.chain().focus().updateAttributes('table', { [attr]: !current }).run();
+  };
+
+  const resetTableStyles = () => {
+    if (!editor) return;
+    editor
+      .chain()
+      .focus()
+      .updateAttributes('table', {
+        striped: false,
+        headerHighlight: false,
+        minimalBorder: false,
+        compact: false,
+      })
+      .run();
+  };
 
   const [floatingMenuPos, setFloatingMenuPos] = useState<{ top: number; left: number } | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Position the floating bubble menu directly above the text selection or active table
+  // Position floating bubble menu without overlapping top toolbar or active cells
   const updateFloatingMenuPosition = useCallback(() => {
-    if (!editor || !containerRef.current) {
+    if (!editor || !containerRef.current || isImageModalOpen) {
       setFloatingMenuPos(null);
       return;
     }
 
     const { view } = editor;
-    const { selection } = view.state;
+    const sel = view.state.selection;
     const isTable = editor.isActive('table');
-    const hasSelection = !selection.empty;
+    const isImage = editor.isActive('image');
+    const cellSel = '$anchorCell' in sel;
+    const hasTextSel = !sel.empty && !isImage && !cellSel;
 
-    // Hide menu if neither text is selected nor inside a table
-    if (!hasSelection && !isTable) {
+    if (!hasTextSel && !isTable && !isImage) {
       setFloatingMenuPos(null);
       return;
     }
 
     const containerRect = containerRef.current.getBoundingClientRect();
+    const menuWidth = floatingMenuRef.current?.offsetWidth || (isTable ? 430 : isImage ? 80 : 180);
+    const menuHeight = floatingMenuRef.current?.offsetHeight || 36;
 
-    if (hasSelection) {
+    if (isImage) {
       try {
-        const startCoords = view.coordsAtPos(selection.from);
-        const endCoords = view.coordsAtPos(selection.to);
+        const fromPos = view.coordsAtPos(sel.from);
+        let top = fromPos.top - containerRect.top - menuHeight - 8;
+        if (top < 44) {
+          top = fromPos.bottom - containerRect.top + 8;
+        }
+        const left = Math.max(0, Math.min(fromPos.left - containerRect.left, Math.max(0, containerRect.width - menuWidth)));
+        setFloatingMenuPos({ top, left });
+        return;
+      } catch {}
+    }
+
+    if (hasTextSel) {
+      try {
+        const startCoords = view.coordsAtPos(sel.from);
+        const endCoords = view.coordsAtPos(sel.to);
         const selTop = Math.min(startCoords.top, endCoords.top);
         const selBottom = Math.max(startCoords.bottom, endCoords.bottom);
         const selCenter = (startCoords.left + endCoords.right) / 2;
 
-        // Position bubble menu ~46px above the top of the selection
-        let top = selTop - containerRect.top - 46;
-        if (top < 0) {
-          // If clipped above top edge, position below the selection
+        let top = selTop - containerRect.top - menuHeight - 8;
+        if (top < 44) {
           top = selBottom - containerRect.top + 8;
         }
 
-        const estimatedWidth = isTable ? 500 : 260;
-        let left = selCenter - containerRect.left - (estimatedWidth / 2);
-        const maxLeft = Math.max(8, containerRect.width - estimatedWidth - 8);
-        left = Math.max(8, Math.min(left, maxLeft));
+        const clampedWidth = Math.min(menuWidth, containerRect.width);
+        let left = selCenter - containerRect.left - clampedWidth / 2;
+        left = Math.max(0, Math.min(left, Math.max(0, containerRect.width - clampedWidth)));
 
         setFloatingMenuPos({ top, left });
         return;
-      } catch {
-        // Fallback to table position if selection coords error
-      }
+      } catch {}
     }
 
     if (isTable) {
       let domNode: HTMLElement | null = null;
+      let cursorTop = 0;
       try {
-        const fromPos = view.coordsAtPos(selection.from);
+        const fromPos = view.coordsAtPos(sel.from);
+        cursorTop = fromPos.top;
         const elementAtPoint = document.elementFromPoint(fromPos.left, fromPos.top);
         domNode = elementAtPoint?.closest('table') as HTMLElement | null;
       } catch {}
@@ -184,14 +385,24 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       }
 
       const tableRect = domNode.getBoundingClientRect();
-      const top = Math.max(0, tableRect.top - containerRect.top - 46);
-      const left = Math.max(8, Math.min(tableRect.left - containerRect.left, containerRect.width - 500));
+      const spaceAboveTable = tableRect.top - containerRect.top - 44;
+      let top: number;
+
+      if (spaceAboveTable >= menuHeight + 8) {
+        top = tableRect.top - containerRect.top - menuHeight - 8;
+      } else if (tableRect.height < 320) {
+        top = tableRect.bottom - containerRect.top + 8;
+      } else {
+        top = Math.max(46, cursorTop - containerRect.top - menuHeight - 8);
+      }
+
+      const maxLeft = Math.max(0, containerRect.width - Math.min(menuWidth, containerRect.width));
+      const left = Math.max(0, Math.min(tableRect.left - containerRect.left, maxLeft));
 
       setFloatingMenuPos({ top, left });
     }
-  }, [editor]);
+  }, [editor, isImageModalOpen]);
 
-  // Track selection, transaction, resize, and scroll events to update bubble menu coordinates
   useEffect(() => {
     if (!editor) return;
 
@@ -210,6 +421,12 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     };
   }, [editor, updateFloatingMenuPosition]);
 
+  useEffect(() => {
+    if (!isMenuVisible) return;
+    const rafId = requestAnimationFrame(updateFloatingMenuPosition);
+    return () => cancelAnimationFrame(rafId);
+  }, [isMenuVisible, isTableActive, isImageActive, hasTextSelection, hasAnyTableStyle, updateFloatingMenuPosition]);
+
   if (!editor) {
     return (
       <div className="w-full min-h-[150px] bg-transparent p-2 animate-pulse text-[#5C6675] text-sm font-mono">
@@ -218,383 +435,256 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     );
   }
 
+  // Calm eye-friendly button style helpers
+  const topBtnClass = (active: boolean) =>
+    `p-1.5 rounded-[2px] border transition-colors cursor-pointer ${
+      active
+        ? 'bg-white/[0.12] text-[#F5F3ED] border-white/[0.20]'
+        : 'border-transparent text-[#7D8796] hover:bg-white/[0.06] hover:text-[#E8ECF2]'
+    }`;
+
+  const bubbleBtnClass = (active = false, destructive = false) =>
+    `p-1.5 rounded-[2px] border transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
+      destructive
+        ? 'border-transparent text-[#7D8796] hover:bg-white/[0.06] hover:text-[#D9B0B0]'
+        : active
+        ? 'bg-white/[0.12] text-[#F5F3ED] border-white/[0.20]'
+        : 'border-transparent text-[#8B95A5] hover:bg-white/[0.07] hover:text-[#F0F3F6]'
+    }`;
+
   return (
     <div ref={containerRef} className="relative flex flex-col w-full">
-      {/* Tiptap Minimalist Floating Toolbar (Sumi Black & Hairline Styling) */}
-      <div className="flex items-center gap-1 pb-2.5 mb-2 border-b border-white/[0.08] flex-wrap text-zinc-400 select-none">
-        {/* Bold */}
+      {/* Top Minimalist Icon-Only Toolbar */}
+      <div className="flex items-center gap-0.5 pb-2.5 mb-2 border-b border-white/[0.08] flex-wrap select-none">
+        {/* Text Formatting */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
-          className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('bold')
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('bold'))}
           title="굵게 (Ctrl+B)"
+          aria-label="굵게"
         >
           <Bold size={13} />
         </button>
 
-        {/* Italic */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
-          className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('italic')
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('italic'))}
           title="기울임 (Ctrl+I)"
+          aria-label="기울임"
         >
           <Italic size={13} />
         </button>
 
-        {/* Underline */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           disabled={!editor.can().chain().focus().toggleUnderline().run()}
-          className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('underline')
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('underline'))}
           title="밑줄 (Ctrl+U)"
+          aria-label="밑줄"
         >
           <UnderlineIcon size={13} />
         </button>
 
-        {/* Strike */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
-          className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('strike')
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('strike'))}
           title="취소선"
+          aria-label="취소선"
         >
           <Strikethrough size={13} />
         </button>
 
-        {/* Inline Code */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editor.can().chain().focus().toggleCode().run()}
-          className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('code')
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('code'))}
           title="인라인 코드"
+          aria-label="인라인 코드"
         >
           <Code size={13} />
         </button>
 
-        <span className="w-px h-3.5 bg-white/[0.1] mx-0.5" />
+        <span className="w-px h-3.5 bg-white/[0.08] mx-1" />
 
-        {/* Headings */}
+        {/* Headings (Icon-only) */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`px-1.5 py-1 text-[11px] font-mono font-bold rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('heading', { level: 1 })
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('heading', { level: 1 }))}
           title="제목 1 (H1)"
+          aria-label="제목 1"
         >
-          H1
+          <Heading1 size={14} />
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`px-1.5 py-1 text-[11px] font-mono font-bold rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('heading', { level: 2 })
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('heading', { level: 2 }))}
           title="제목 2 (H2)"
+          aria-label="제목 2"
         >
-          H2
+          <Heading2 size={14} />
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`px-1.5 py-1 text-[11px] font-mono font-bold rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('heading', { level: 3 })
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('heading', { level: 3 }))}
           title="제목 3 (H3)"
+          aria-label="제목 3"
         >
-          H3
+          <Heading3 size={14} />
         </button>
 
-        <span className="w-px h-3.5 bg-white/[0.1] mx-0.5" />
+        <span className="w-px h-3.5 bg-white/[0.08] mx-1" />
 
-        {/* Bullet List */}
+        {/* Lists & Blocks */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('bulletList')
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('bulletList'))}
           title="글머리 기호 목록"
+          aria-label="글머리 기호 목록"
         >
           <List size={13} />
         </button>
 
-        {/* Ordered List */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('orderedList')
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('orderedList'))}
           title="번호 매기기 목록"
+          aria-label="번호 매기기 목록"
         >
           <ListOrdered size={13} />
         </button>
 
-        {/* Blockquote */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-            editor.isActive('blockquote')
-              ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-              : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-          }`}
+          className={topBtnClass(editor.isActive('blockquote'))}
           title="인용구"
+          aria-label="인용구"
         >
           <Quote size={13} />
         </button>
 
-        {/* Horizontal Rule */}
         <button
           type="button"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          className="p-1.5 rounded-[2px] hover:bg-white/[0.06] hover:text-[#F0F3F6] transition-colors cursor-pointer"
+          className={topBtnClass(false)}
           title="구분선 삽입"
+          aria-label="구분선 삽입"
         >
           <Minus size={13} />
         </button>
 
-        <span className="w-px h-3.5 bg-white/[0.1] mx-0.5" />
+        <span className="w-px h-3.5 bg-white/[0.08] mx-1" />
 
-        {/* Table Controls (Creation & Structure Manipulation) */}
-        <div className="relative">
+        {/* Image Insertion (Icon-only + Single Non-overlapping Popover) */}
+        <div ref={imagePopoverRef} className="relative">
           <button
             type="button"
-            onClick={() => {
-              if (!isTableActive) {
-                // Instantly insert default 3x3 table with headers
-                editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
-              } else {
-                setIsTableMenuOpen(prev => !prev);
-              }
-            }}
-            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-[2px] transition-colors cursor-pointer ${
-              isTableActive
-                ? 'bg-blue-950/70 text-[#38BDF8] border border-blue-500/40'
-                : 'hover:bg-white/[0.06] hover:text-[#F0F3F6]'
-            }`}
-            title={isTableActive ? '표 메뉴 열기' : '3×3 표 삽입'}
+            onClick={() => setIsImageModalOpen((prev) => !prev)}
+            className={topBtnClass(isImageModalOpen || editor.isActive('image'))}
+            title="이미지 삽입 (업로드 · URL · 붙여넣기)"
+            aria-label="이미지 삽입"
           >
-            <TableIcon size={13} />
-            <span>표 {isTableActive ? '관리' : '삽입'}</span>
-            {isTableActive && <ChevronDown size={11} className="text-[#38BDF8]" />}
+            <ImageIcon size={13} />
           </button>
 
-          {/* Table Operations Dropdown Menu when active */}
-          {isTableActive && isTableMenuOpen && (
-            <div className="absolute left-0 top-full mt-1 z-30 min-w-[210px] bg-[#0E1217] border border-white/[0.12] rounded-[3px] p-1.5 shadow-2xl flex flex-col gap-0.5 text-xs text-[#F0F3F6]">
-              <div className="px-2 py-1 text-[10px] font-mono uppercase text-[#7A889B] tracking-wider border-b border-white/[0.06] mb-1">
-                행 / 열 구조 제어 (Rows & Cols)
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                handleImageFileUpload(file);
+                e.target.value = '';
+                setIsImageModalOpen(false);
+              }
+            }}
+          />
+
+          {isImageModalOpen && (
+            <div className="absolute left-0 top-full mt-1.5 z-50 w-72 bg-[#12161D] border border-white/[0.14] rounded-[3px] p-3 shadow-[0_16px_40px_rgba(0,0,0,0.75)] flex flex-col gap-2.5 text-xs text-[#E8ECF2]">
+              <div className="flex items-center justify-between pb-1.5 border-b border-white/[0.08]">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-[#D0D6E0] font-semibold flex items-center gap-1.5">
+                  <ImageIcon size={12} className="text-[#9AA5B5]" />
+                  이미지 삽입
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsImageModalOpen(false)}
+                  className="p-1 text-[#7D8796] hover:text-[#F0F3F6] rounded-[2px] cursor-pointer"
+                  aria-label="닫기"
+                >
+                  <X size={12} />
+                </button>
               </div>
 
-              {/* Add / Remove Rows */}
               <button
                 type="button"
-                onClick={() => {
-                  editor.chain().focus().addRowBefore().run();
-                  setIsTableMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-white/[0.06] text-left transition-colors cursor-pointer text-xs"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-[2px] bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.14] text-[#F0F3F6] font-medium text-xs transition-colors cursor-pointer"
               >
-                <ArrowUp size={12} className="text-[#38BDF8]" />
-                <span>위에 행 추가</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().addRowAfter().run();
-                  setIsTableMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-white/[0.06] text-left transition-colors cursor-pointer text-xs"
-              >
-                <ArrowDown size={12} className="text-[#38BDF8]" />
-                <span>아래에 행 추가</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().deleteRow().run();
-                  setIsTableMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-red-950/40 text-red-300 text-left transition-colors cursor-pointer text-xs"
-              >
-                <Trash2 size={12} />
-                <span>현재 행 삭제</span>
+                <Upload size={13} className="text-[#9AA5B5]" />
+                <span>파일 선택</span>
               </button>
 
-              <div className="my-1 border-t border-white/[0.06]" />
+              <form onSubmit={handleImageUrlSubmit} className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-1">
+                  <input
+                    type="url"
+                    value={imageUrlInput}
+                    onChange={(e) => setImageUrlInput(e.target.value)}
+                    placeholder="https:// 이미지 URL"
+                    className="flex-1 bg-[#0B0C10] border border-white/[0.1] focus:border-white/[0.28] focus:outline-none px-2 py-1.5 rounded-[2px] text-xs text-[#F0F3F6] placeholder-[#5C6675]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!imageUrlInput.trim()}
+                    className="px-2.5 py-1.5 rounded-[2px] bg-white/[0.14] hover:bg-white/[0.22] disabled:opacity-35 disabled:cursor-not-allowed text-[#F5F3ED] text-xs font-medium cursor-pointer transition-colors"
+                  >
+                    삽입
+                  </button>
+                </div>
+              </form>
 
-              {/* Add / Remove Columns */}
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().addColumnBefore().run();
-                  setIsTableMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-white/[0.06] text-left transition-colors cursor-pointer text-xs"
-              >
-                <ArrowLeft size={12} className="text-[#38BDF8]" />
-                <span>왼쪽에 열 추가</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().addColumnAfter().run();
-                  setIsTableMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-white/[0.06] text-left transition-colors cursor-pointer text-xs"
-              >
-                <ArrowRight size={12} className="text-[#38BDF8]" />
-                <span>오른쪽에 열 추가</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().deleteColumn().run();
-                  setIsTableMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-red-950/40 text-red-300 text-left transition-colors cursor-pointer text-xs"
-              >
-                <Trash2 size={12} />
-                <span>현재 열 삭제</span>
-              </button>
-
-              <div className="my-1 border-t border-white/[0.06]" />
-
-              {/* Cell Merge / Split */}
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().mergeCells().run();
-                  setIsTableMenuOpen(false);
-                }}
-                disabled={!editor.can().mergeCells()}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-white/[0.06] disabled:opacity-30 disabled:cursor-not-allowed text-left transition-colors cursor-pointer text-xs"
-              >
-                <Combine size={12} className="text-[#38BDF8]" />
-                <span>셀 병합</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().splitCell().run();
-                  setIsTableMenuOpen(false);
-                }}
-                disabled={!editor.can().splitCell()}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-white/[0.06] disabled:opacity-30 disabled:cursor-not-allowed text-left transition-colors cursor-pointer text-xs"
-              >
-                <Split size={12} className="text-[#38BDF8]" />
-                <span>셀 분할</span>
-              </button>
-
-              {/* Toggle Header */}
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().toggleHeaderRow().run();
-                  setIsTableMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-white/[0.06] text-left transition-colors cursor-pointer text-xs"
-              >
-                <TableIcon size={12} className="text-[#38BDF8]" />
-                <span>헤더 행 켜기/끄기</span>
-              </button>
-
-              <div className="my-1 border-t border-white/[0.06]" />
-
-              {/* Delete entire table */}
-              <button
-                type="button"
-                onClick={() => {
-                  editor.chain().focus().deleteTable().run();
-                  setIsTableMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-2 py-1 rounded-[2px] hover:bg-red-950/60 text-red-400 font-semibold text-left transition-colors cursor-pointer text-xs"
-              >
-                <Trash2 size={12} />
-                <span>표 전체 삭제</span>
-              </button>
+              <p className="text-[10px] text-[#7D8796] leading-relaxed">
+                캔버스 내 <kbd className="px-1 py-0.5 bg-[#0B0C10] border border-white/[0.1] rounded text-[#D0D6E0] font-mono">Ctrl+V</kbd> 또는 드래그로도 삽입됩니다.
+              </p>
             </div>
           )}
         </div>
 
-        {/* Dedicated Context Action Strip when inside Table */}
-        {isTableActive && (
-          <div className="flex items-center gap-1 ml-1 px-2 py-0.5 rounded-[2px] bg-blue-950/50 border border-blue-500/30 text-xs">
-            <span className="text-[10px] font-mono text-[#38BDF8] uppercase tracking-wider font-semibold mr-1">표 편집 중:</span>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().addRowAfter().run()}
-              className="px-1.5 py-0.5 hover:bg-blue-900/60 text-[#38BDF8] rounded-[2px] font-mono text-[11px] cursor-pointer flex items-center gap-0.5"
-              title="아래에 행 추가"
-            >
-              <Plus size={10} /> 행
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().addColumnAfter().run()}
-              className="px-1.5 py-0.5 hover:bg-blue-900/60 text-[#38BDF8] rounded-[2px] font-mono text-[11px] cursor-pointer flex items-center gap-0.5"
-              title="오른쪽에 열 추가"
-            >
-              <Plus size={10} /> 열
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().deleteRow().run()}
-              className="px-1.5 py-0.5 hover:bg-rose-950/60 text-rose-300 rounded-[2px] font-mono text-[11px] cursor-pointer"
-              title="행 삭제"
-            >
-              -행
-            </button>
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().deleteColumn().run()}
-              className="px-1.5 py-0.5 hover:bg-rose-950/60 text-rose-300 rounded-[2px] font-mono text-[11px] cursor-pointer"
-              title="열 삭제"
-            >
-              -열
-            </button>
-          </div>
-        )}
+        {/* Table Insertion (Icon-only; contextual actions live in the floating menu) */}
+        <button
+          type="button"
+          onClick={() => {
+            if (!isTableActive) {
+              editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+            } else {
+              editor.chain().focus().run();
+            }
+          }}
+          className={topBtnClass(isTableActive)}
+          title={isTableActive ? '표 편집 중 (플로팅 메뉴 사용)' : '표 삽입 (3×3)'}
+          aria-label="표 삽입"
+        >
+          <TableIcon size={13} />
+        </button>
 
         {/* History: Undo / Redo */}
         <div className="ml-auto flex items-center gap-0.5">
@@ -602,8 +692,9 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             type="button"
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
-            className="p-1.5 rounded-[2px] hover:bg-white/[0.06] hover:text-[#F0F3F6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="p-1.5 rounded-[2px] text-[#7D8796] hover:bg-white/[0.06] hover:text-[#E8ECF2] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
             title="실행 취소 (Ctrl+Z)"
+            aria-label="실행 취소"
           >
             <Undo size={13} />
           </button>
@@ -611,232 +702,268 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             type="button"
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            className="p-1.5 rounded-[2px] hover:bg-white/[0.06] hover:text-[#F0F3F6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="p-1.5 rounded-[2px] text-[#7D8796] hover:bg-white/[0.06] hover:text-[#E8ECF2] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
             title="다시 실행 (Ctrl+Y)"
+            aria-label="다시 실행"
           >
             <Redo size={13} />
           </button>
         </div>
       </div>
 
-      {/* Pure React Floating Bubble Menu with Bold, Italic, Underline & Table Structuring */}
+      {/* Contextual Minimalist Icon-Only Floating Bubble Menu */}
       {isMenuVisible && floatingMenuPos && (
         <div
+          ref={floatingMenuRef}
           style={{
             top: `${floatingMenuPos.top}px`,
             left: `${floatingMenuPos.left}px`,
           }}
           onMouseDown={(e) => {
-            // Prevent losing editor selection when clicking formatting buttons
+            // Keep active editor selection when clicking floating controls
             e.preventDefault();
           }}
-          className="absolute z-40 flex items-center gap-1 p-1 bg-[#0E1217] border border-blue-500/40 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.75)] rounded-[4px] backdrop-blur-md select-none transition-all duration-150 tiptap-table-bubble-menu max-w-full overflow-x-auto no-scrollbar"
+          className="absolute z-40 flex items-center gap-0.5 p-1 bg-[#12161D]/95 border border-white/[0.14] rounded-[4px] backdrop-blur-md select-none transition-all duration-150 tiptap-table-bubble-menu max-w-full overflow-x-auto no-scrollbar"
         >
-          {/* Text Formatting Controls: Bold, Italic, Underline */}
-          <div className="flex items-center gap-0.5">
-            {/* Bold */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              disabled={!editor.can().chain().focus().toggleBold().run()}
-              className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                editor.isActive('bold')
-                  ? 'bg-blue-950/80 text-[#38BDF8] border border-blue-500/50'
-                  : 'text-zinc-300 hover:bg-white/[0.08] hover:text-[#F0F3F6]'
-              }`}
-              title="굵게 (Ctrl+B)"
-            >
-              <Bold size={12} />
-            </button>
-
-            {/* Italic */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-              disabled={!editor.can().chain().focus().toggleItalic().run()}
-              className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                editor.isActive('italic')
-                  ? 'bg-blue-950/80 text-[#38BDF8] border border-blue-500/50'
-                  : 'text-zinc-300 hover:bg-white/[0.08] hover:text-[#F0F3F6]'
-              }`}
-              title="기울임 (Ctrl+I)"
-            >
-              <Italic size={12} />
-            </button>
-
-            {/* Underline */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleUnderline().run()}
-              disabled={!editor.can().chain().focus().toggleUnderline().run()}
-              className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                editor.isActive('underline')
-                  ? 'bg-blue-950/80 text-[#38BDF8] border border-blue-500/50'
-                  : 'text-zinc-300 hover:bg-white/[0.08] hover:text-[#F0F3F6]'
-              }`}
-              title="밑줄 (Ctrl+U)"
-            >
-              <UnderlineIcon size={12} />
-            </button>
-
-            {/* Strike */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleStrike().run()}
-              disabled={!editor.can().chain().focus().toggleStrike().run()}
-              className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                editor.isActive('strike')
-                  ? 'bg-blue-950/80 text-[#38BDF8] border border-blue-500/50'
-                  : 'text-zinc-300 hover:bg-white/[0.08] hover:text-[#F0F3F6]'
-              }`}
-              title="취소선"
-            >
-              <Strikethrough size={12} />
-            </button>
-
-            {/* Code */}
-            <button
-              type="button"
-              onClick={() => editor.chain().focus().toggleCode().run()}
-              disabled={!editor.can().chain().focus().toggleCode().run()}
-              className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                editor.isActive('code')
-                  ? 'bg-blue-950/80 text-[#38BDF8] border border-blue-500/50'
-                  : 'text-zinc-300 hover:bg-white/[0.08] hover:text-[#F0F3F6]'
-              }`}
-              title="인라인 코드"
-            >
-              <Code size={12} />
-            </button>
-          </div>
-
-          {/* Table Management Actions if Table is Active */}
-          {isTableActive && (
+          {/* Context 1: Selected Image Actions */}
+          {isImageActive && (
             <>
-              <span className="w-px h-4 bg-white/10 mx-0.5" />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className={bubbleBtnClass(false)}
+                title="다른 이미지로 교체"
+                aria-label="이미지 교체"
+              >
+                <Upload size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().deleteSelection().run()}
+                className={bubbleBtnClass(false, true)}
+                title="이미지 삭제"
+                aria-label="이미지 삭제"
+              >
+                <Trash2 size={13} />
+              </button>
+            </>
+          )}
 
-              {/* Badge Label */}
-              <div className="flex items-center gap-1.5 px-1.5 py-0.5 bg-blue-950/70 border border-blue-500/30 rounded-[2px] text-[#38BDF8] text-[10px] font-mono font-semibold">
-                <TableIcon size={11} className="text-[#38BDF8]" />
-                <span className="hidden xs:inline">표 제어</span>
-              </div>
+          {/* Context 2: Text Selection Formatting (outside table or text dragged inside a cell) */}
+          {hasTextSelection && (
+            <>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleBold().run()}
+                disabled={!editor.can().chain().focus().toggleBold().run()}
+                className={bubbleBtnClass(editor.isActive('bold'))}
+                title="굵게 (Ctrl+B)"
+                aria-label="굵게"
+              >
+                <Bold size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+                disabled={!editor.can().chain().focus().toggleItalic().run()}
+                className={bubbleBtnClass(editor.isActive('italic'))}
+                title="기울임 (Ctrl+I)"
+                aria-label="기울임"
+              >
+                <Italic size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleUnderline().run()}
+                disabled={!editor.can().chain().focus().toggleUnderline().run()}
+                className={bubbleBtnClass(editor.isActive('underline'))}
+                title="밑줄 (Ctrl+U)"
+                aria-label="밑줄"
+              >
+                <UnderlineIcon size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleStrike().run()}
+                disabled={!editor.can().chain().focus().toggleStrike().run()}
+                className={bubbleBtnClass(editor.isActive('strike'))}
+                title="취소선"
+                aria-label="취소선"
+              >
+                <Strikethrough size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleCode().run()}
+                disabled={!editor.can().chain().focus().toggleCode().run()}
+                className={bubbleBtnClass(editor.isActive('code'))}
+                title="인라인 코드"
+                aria-label="인라인 코드"
+              >
+                <Code size={13} />
+              </button>
+            </>
+          )}
 
-              <span className="w-px h-4 bg-white/10 mx-0.5" />
+          {/* Context 3: Table Structure & Visual Styles (single clean icon row) */}
+          {isTableActive && !hasTextSelection && !isImageActive && (
+            <>
+              {/* Row Management */}
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().addRowBefore().run()}
+                className={bubbleBtnClass(false)}
+                title="위에 행 추가"
+                aria-label="위에 행 추가"
+              >
+                <ArrowUpFromLine size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().addRowAfter().run()}
+                className={bubbleBtnClass(false)}
+                title="아래에 행 추가"
+                aria-label="아래에 행 추가"
+              >
+                <ArrowDownFromLine size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().deleteRow().run()}
+                className={bubbleBtnClass(false, true)}
+                title="현재 행 삭제"
+                aria-label="현재 행 삭제"
+              >
+                <ListMinus size={13} />
+              </button>
 
-              {/* Rows Management Section */}
-              <div className="flex items-center gap-0.5">
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().addRowBefore().run()}
-                  className="p-1 hover:bg-white/[0.08] active:bg-blue-950 text-[#F0F3F6] hover:text-[#38BDF8] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                  title="위에 행 추가"
-                >
-                  <ArrowUp size={11} className="text-[#38BDF8]" />
-                  <span className="hidden sm:inline">위 행</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().addRowAfter().run()}
-                  className="p-1 hover:bg-white/[0.08] active:bg-blue-950 text-[#F0F3F6] hover:text-[#38BDF8] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                  title="아래에 행 추가"
-                >
-                  <ArrowDown size={11} className="text-[#38BDF8]" />
-                  <span className="hidden sm:inline">아래 행</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().deleteRow().run()}
-                  className="p-1 hover:bg-rose-950/50 active:bg-rose-900/60 text-rose-300 rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                  title="현재 행 삭제"
-                >
-                  <Trash2 size={11} />
-                  <span className="hidden sm:inline">행 삭제</span>
-                </button>
-              </div>
+              <span className="w-px h-3.5 bg-white/[0.1] mx-0.5 shrink-0" />
 
-              <span className="w-px h-4 bg-white/10 mx-0.5" />
+              {/* Column Management */}
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().addColumnBefore().run()}
+                className={bubbleBtnClass(false)}
+                title="왼쪽에 열 추가"
+                aria-label="왼쪽에 열 추가"
+              >
+                <ArrowLeftFromLine size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().addColumnAfter().run()}
+                className={bubbleBtnClass(false)}
+                title="오른쪽에 열 추가"
+                aria-label="오른쪽에 열 추가"
+              >
+                <ArrowRightFromLine size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().deleteColumn().run()}
+                className={bubbleBtnClass(false, true)}
+                title="현재 열 삭제"
+                aria-label="현재 열 삭제"
+              >
+                <SquareMinus size={13} />
+              </button>
 
-              {/* Columns Management Section */}
-              <div className="flex items-center gap-0.5">
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().addColumnBefore().run()}
-                  className="p-1 hover:bg-white/[0.08] active:bg-blue-950 text-[#F0F3F6] hover:text-[#38BDF8] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                  title="왼쪽에 열 추가"
-                >
-                  <ArrowLeft size={11} className="text-[#38BDF8]" />
-                  <span className="hidden sm:inline">좌 열</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().addColumnAfter().run()}
-                  className="p-1 hover:bg-white/[0.08] active:bg-blue-950 text-[#F0F3F6] hover:text-[#38BDF8] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                  title="오른쪽에 열 추가"
-                >
-                  <ArrowRight size={11} className="text-[#38BDF8]" />
-                  <span className="hidden sm:inline">우 열</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().deleteColumn().run()}
-                  className="p-1 hover:bg-rose-950/50 active:bg-rose-900/60 text-rose-300 rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                  title="현재 열 삭제"
-                >
-                  <Trash2 size={11} />
-                  <span className="hidden sm:inline">열 삭제</span>
-                </button>
-              </div>
+              <span className="w-px h-3.5 bg-white/[0.1] mx-0.5 shrink-0" />
 
-              <span className="w-px h-4 bg-white/10 mx-0.5" />
-
-              {/* Merge & Split Cells Section */}
-              <div className="flex items-center gap-0.5">
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().mergeCells().run()}
-                  disabled={!editor.can().mergeCells()}
-                  className="p-1 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed text-[#F0F3F6] hover:text-[#38BDF8] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                  title="선택된 셀 병합"
-                >
-                  <Combine size={11} className="text-[#38BDF8]" />
-                  <span className="hidden md:inline">병합</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().splitCell().run()}
-                  disabled={!editor.can().splitCell()}
-                  className="p-1 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed text-[#F0F3F6] hover:text-[#38BDF8] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                  title="병합된 셀 분할"
-                >
-                  <Split size={11} className="text-[#38BDF8]" />
-                  <span className="hidden md:inline">분할</span>
-                </button>
-              </div>
-
-              <span className="w-px h-4 bg-white/10 mx-0.5" />
-
-              {/* Header Row Toggle */}
+              {/* Cell Merge / Split / Header Row */}
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().mergeCells().run()}
+                disabled={!editor.can().mergeCells()}
+                className={`${bubbleBtnClass(false)} disabled:opacity-25 disabled:cursor-not-allowed`}
+                title="선택된 셀 병합"
+                aria-label="셀 병합"
+              >
+                <TableCellsMerge size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().splitCell().run()}
+                disabled={!editor.can().splitCell()}
+                className={`${bubbleBtnClass(false)} disabled:opacity-25 disabled:cursor-not-allowed`}
+                title="병합된 셀 분할"
+                aria-label="셀 분할"
+              >
+                <TableCellsSplit size={13} />
+              </button>
               <button
                 type="button"
                 onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-                className="p-1 hover:bg-white/[0.08] text-[#F0F3F6] hover:text-[#38BDF8] rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-                title="상단 헤더 행 토글"
+                className={bubbleBtnClass(false)}
+                title="상단 헤더 행 켜기/끄기"
+                aria-label="헤더 행 토글"
               >
-                <TableIcon size={11} className="text-[#38BDF8]" />
-                <span className="hidden sm:inline">헤더</span>
+                <PanelTopDashed size={13} />
               </button>
 
-              <span className="w-px h-4 bg-white/10 mx-0.5" />
+              <span className="w-px h-3.5 bg-white/[0.1] mx-0.5 shrink-0" />
 
-              {/* Delete Whole Table */}
+              {/* Visual Style Toggles */}
+              <button
+                type="button"
+                onClick={() => toggleTableStyleAttr('striped')}
+                className={bubbleBtnClass(isStriped)}
+                title="줄무늬 행 스타일"
+                aria-label="줄무늬 행 스타일"
+              >
+                <Rows3 size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => toggleTableStyleAttr('headerHighlight')}
+                className={bubbleBtnClass(isHeaderHighlighted)}
+                title="헤더 강조 스타일"
+                aria-label="헤더 강조 스타일"
+              >
+                <PanelTop size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => toggleTableStyleAttr('minimalBorder')}
+                className={bubbleBtnClass(isMinimalBorder)}
+                title="미니멀 수평선 스타일"
+                aria-label="미니멀 수평선 스타일"
+              >
+                <SeparatorHorizontal size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => toggleTableStyleAttr('compact')}
+                className={bubbleBtnClass(isCompact)}
+                title="컴팩트 밀도 스타일"
+                aria-label="컴팩트 밀도 스타일"
+              >
+                <Minimize2 size={13} />
+              </button>
+
+              {hasAnyTableStyle && (
+                <button
+                  type="button"
+                  onClick={resetTableStyles}
+                  className={bubbleBtnClass(false)}
+                  title="기본 표 스타일로 초기화"
+                  aria-label="스타일 초기화"
+                >
+                  <RotateCcw size={12} />
+                </button>
+              )}
+
+              <span className="w-px h-3.5 bg-white/[0.1] mx-0.5 shrink-0" />
+
+              {/* Delete Table */}
               <button
                 type="button"
                 onClick={() => editor.chain().focus().deleteTable().run()}
-                className="p-1 hover:bg-red-950/70 text-red-400 font-semibold rounded-[2px] transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
+                className={bubbleBtnClass(false, true)}
                 title="표 전체 삭제"
+                aria-label="표 삭제"
               >
-                <Trash2 size={11} />
-                <span>표 삭제</span>
+                <Trash2 size={13} />
               </button>
             </>
           )}

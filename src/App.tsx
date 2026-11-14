@@ -33,11 +33,11 @@ const OnboardingTutorial = lazy(() =>
   import('./components/guide/OnboardingTutorial').then(m => ({ default: m.OnboardingTutorial }))
 );
 
-// Fallback loader in Sumi Black & Electric Azure
+// Fallback loader in Gallery White & Editorial Navy
 const PageLoader = () => (
-  <div className="min-h-screen bg-[#0B0C10] flex flex-col items-center justify-center gap-3">
-    <div className="w-7 h-7 border-2 border-blue-900/60 border-t-[#38BDF8] rounded-full animate-spin" />
-    <span className="text-[11px] font-mono tracking-widest text-[#60A5FA] uppercase font-semibold">GOGUMA ARCHITECT</span>
+  <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-center gap-3">
+    <div className="w-7 h-7 border-2 border-[#E5E7EB] border-t-[#1E3A8A] rounded-full animate-spin" />
+    <span className="text-[11px] font-mono tracking-widest text-[#1E3A8A] uppercase font-semibold">GOGUMA ARCHITECT</span>
   </div>
 );
 

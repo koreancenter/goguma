@@ -129,47 +129,47 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
   return (
     <>
       <aside 
-        className={`h-full flex flex-col bg-[#0E1217] border-r border-white/[0.08] transition-all duration-200 ease-out select-none shrink-0 ${
-          isCollapsed ? 'w-[58px]' : 'w-[260px] xl:w-[280px]'
+        className={`h-full flex flex-col bg-[#F7F8FA] border-r border-[#E5E7EB] transition-all duration-200 ease-out select-none shrink-0 ${
+          isCollapsed ? 'w-[52px]' : 'w-[240px]'
         }`}
         aria-label="기획서 목차 내비게이션"
       >
         {/* Dock / Sidebar Top Header */}
-        <div className={`h-12 border-b border-white/[0.08] bg-[#0E1217] flex items-center shrink-0 ${
-          isCollapsed ? 'justify-center px-1.5' : 'justify-between px-3.5'
+        <div className={`h-12 border-b border-[#E5E7EB] bg-[#F7F8FA] flex items-center shrink-0 ${
+          isCollapsed ? 'justify-center px-1' : 'justify-between px-3.5'
         }`}>
           {!isCollapsed ? (
             <div className="flex items-center gap-2 overflow-hidden min-w-0">
-              <span className="p-1 rounded-[2px] bg-blue-950/60 text-[#38BDF8] border border-blue-500/30 shrink-0">
+              <span className="p-1.5 rounded-lg bg-[#EFF6FF] text-[#1E3A8A] shrink-0">
                 <Compass size={14} />
               </span>
               <div className="min-w-0">
-                <span className="font-sans font-semibold text-xs text-[#F0F3F6] tracking-tight truncate block">
+                <span className="font-sans font-semibold text-xs text-[#111827] tracking-tight truncate block">
                   기획서 목차
                 </span>
-                <span className="text-[10px] font-mono text-[#9AA5B5] tabular-nums block truncate">
+                <span className="text-[11px] font-mono text-[#4B5563] tabular-nums block truncate">
                   {completedSectionsCount}/{totalSections} 작성 완료
                 </span>
               </div>
             </div>
           ) : (
-            <div 
-              className="flex flex-col items-center justify-center cursor-default"
-              title={`작성 현황: ${completedSectionsCount}/${totalSections} 완료`}
+            <button
+              onClick={onToggleCollapse}
+              className="w-8 h-8 rounded-lg bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-[#1E3A8A] flex items-center justify-center transition-colors cursor-pointer"
+              title={`목차 펼치기 (${completedSectionsCount}/${totalSections} 완료)`}
+              aria-label="목차 펼치기"
             >
-              <div className="w-7 h-7 rounded-[4px] bg-blue-950/60 border border-blue-500/30 text-[#38BDF8] flex items-center justify-center font-bold text-xs shadow-2xs">
-                <Compass size={15} />
-              </div>
-            </div>
+              <ChevronRight size={15} />
+            </button>
           )}
 
           <button
             onClick={onToggleCollapse}
-            className={`rounded-[2px] hover:bg-white/[0.08] text-[#9AA5B5] hover:text-[#F0F3F6] transition-colors cursor-pointer ${
+            className={`rounded-lg hover:bg-[#FFFFFF] text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer ${
               isCollapsed ? 'hidden' : 'p-1.5 ml-auto'
             }`}
-            title="아이콘 독으로 접기 (캔버스 공간 극대화)"
-            aria-label="아이콘 독으로 접기"
+            title="레일로 접기"
+            aria-label="레일로 접기"
           >
             <ChevronLeft size={15} />
           </button>
@@ -179,8 +179,8 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
         <nav 
           className={`flex-1 overflow-y-auto custom-scroll ${
             isCollapsed 
-              ? 'p-1.5 flex flex-col items-center gap-1.5' 
-              : 'p-1.5 space-y-0.5'
+              ? 'py-2 px-1 flex flex-col items-center gap-1' 
+              : 'p-2 space-y-1'
           }`}
         >
           {FLAT_SECTIONS.map((item) => {
@@ -189,7 +189,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
             const isDone = Boolean(val && val.length > 0);
             const Icon = item.Icon;
 
-            // 1. Icon Launcher Dock Mode
+            // 1. Slim 52px Icon & Number Rail Mode
             if (isCollapsed) {
               return (
                 <button
@@ -201,40 +201,40 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   }}
                   onMouseEnter={(e) => handleMouseEnter(item, e)}
                   onMouseLeave={handleMouseLeave}
-                  className={`relative w-10 h-10 rounded-[4px] flex flex-col items-center justify-center transition-all duration-150 cursor-pointer group ${
+                  className={`relative w-10 h-10 rounded-lg flex flex-col items-center justify-center transition-all duration-150 cursor-pointer group ${
                     isCurrent
-                      ? 'bg-[#13181F] text-[#38BDF8] border border-blue-500/50 shadow-xs ring-1 ring-blue-500/30'
-                      : 'text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.06] border border-transparent'
+                      ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#FFFFFF]'
                   }`}
                   aria-label={`${item.numStr}. ${item.title}`}
                 >
-                  {/* Active Azure Pip on the left edge */}
+                  {/* Active Navy Indicator on the left edge */}
                   {isCurrent && (
                     <span 
-                      className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-[3.5px] h-5 rounded-r-[2px] bg-[#38BDF8] shadow-xs" 
+                      className="absolute -left-1 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-[#1E3A8A]" 
                     />
                   )}
 
                   {/* Section Icon */}
                   <Icon 
-                    size={18} 
+                    size={16} 
                     className={`transition-transform duration-150 ${
-                      isCurrent ? 'scale-105 text-[#38BDF8]' : 'text-[#9AA5B5] group-hover:text-[#F0F3F6] group-hover:scale-110'
+                      isCurrent ? 'text-[#1E3A8A]' : 'text-[#4B5563] group-hover:text-[#111827]'
                     }`}
                   />
 
                   {/* Micro Index Number */}
-                  <span className={`text-[8.5px] font-mono leading-none mt-0.5 tabular-nums ${
-                    isCurrent ? 'text-[#38BDF8] font-bold' : 'text-[#5C6675] group-hover:text-[#9AA5B5]'
+                  <span className={`text-[9px] font-mono leading-none mt-0.5 tabular-nums ${
+                    isCurrent ? 'text-[#1E3A8A] font-bold' : 'text-[#9CA3AF] group-hover:text-[#4B5563]'
                   }`}>
                     {item.numStr}
                   </span>
 
-                  {/* Completed Dot Pip (Azure glow on top-right) */}
+                  {/* Completed Dot */}
                   {isDone && (
                     <span 
-                      className={`absolute top-1 right-1 w-1.5 h-1.5 rounded-full border border-[#0E1217] ${
-                        isCurrent ? 'bg-[#38BDF8]' : 'bg-[#60A5FA]'
+                      className={`absolute top-1 right-1 w-1.5 h-1.5 rounded-full ${
+                        isCurrent ? 'bg-[#1E3A8A]' : 'bg-[#15803D]'
                       }`}
                       title="작성 완료됨"
                     />
@@ -243,7 +243,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
               );
             }
 
-            // 2. Expanded Drawer Mode (Full Text Labels)
+            // 2. Expanded 240px Drawer Mode (40px row height, #EFF6FF active pill)
             return (
               <button
                 key={`${item.chapterId}_${item.sectionKey}`}
@@ -251,27 +251,27 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   onSelectChapter(item.chapterId);
                   onSelectSection(item.sectionKey);
                 }}
-                className={`w-full text-left px-2.5 py-1.5 rounded-[2px] text-xs transition-colors flex items-center justify-between cursor-pointer group border ${
+                className={`w-full min-h-[40px] h-10 text-left px-3 rounded-lg text-[13px] transition-colors flex items-center justify-between cursor-pointer group ${
                   isCurrent
-                    ? 'bg-[#13181F] border-blue-500/40 text-[#F0F3F6] font-semibold shadow-2xs'
-                    : 'border-transparent text-[#9AA5B5] hover:text-[#F0F3F6] hover:bg-white/[0.04]'
+                    ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+                    : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#FFFFFF]'
                 }`}
               >
-                <div className="flex items-center gap-2 min-w-0 truncate">
-                  <span className={`font-mono text-[10px] tabular-nums shrink-0 ${
-                    isCurrent ? 'text-[#38BDF8] font-bold' : 'text-[#5C6675]'
+                <div className="flex items-center gap-2.5 min-w-0 truncate">
+                  <span className={`font-mono text-[11px] tabular-nums shrink-0 ${
+                    isCurrent ? 'text-[#1E3A8A] font-bold' : 'text-[#9CA3AF]'
                   }`}>
                     {item.numStr}
                   </span>
-                  <Icon size={14} className={`shrink-0 ${isCurrent ? 'text-[#38BDF8]' : 'text-[#9AA5B5] group-hover:text-[#F0F3F6]'}`} />
+                  <Icon size={15} className={`shrink-0 ${isCurrent ? 'text-[#1E3A8A]' : 'text-[#4B5563] group-hover:text-[#111827]'}`} />
                   <span className="truncate">{item.title}</span>
                 </div>
 
                 {isDone && (
                   <span className={`shrink-0 ml-1.5 ${
-                    isCurrent ? 'text-[#38BDF8]' : 'text-[#60A5FA]'
+                    isCurrent ? 'text-[#1E3A8A]' : 'text-[#15803D]'
                   }`}>
-                    <Check size={12} strokeWidth={2.5} />
+                    <Check size={13} strokeWidth={2.5} />
                   </span>
                 )}
               </button>
@@ -280,8 +280,8 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
         </nav>
 
         {/* Dock Bottom Controls */}
-        <div className={`border-t border-white/[0.08] bg-[#0E1217] shrink-0 ${
-          isCollapsed ? 'p-1.5 flex flex-col items-center gap-1.5' : 'p-2'
+        <div className={`border-t border-[#E5E7EB] bg-[#F7F8FA] shrink-0 ${
+          isCollapsed ? 'py-2 px-1 flex flex-col items-center gap-1.5' : 'p-2.5'
         }`}>
           {isCollapsed ? (
             <>
@@ -291,17 +291,17 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   onSelectChapter(8);
                   onSelectSection('export_summary');
                 }}
-                className="w-10 h-10 rounded-[4px] bg-[#13181F] hover:bg-blue-950/60 border border-white/10 hover:border-blue-500/40 text-[#9AA5B5] hover:text-[#38BDF8] flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                className="w-9 h-9 rounded-lg bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-[#4B5563] hover:text-[#1E3A8A] flex items-center justify-center transition-colors cursor-pointer"
                 title="11종 사양서 배포 허브 바로가기"
                 aria-label="11종 사양서 배포 허브"
               >
-                <Archive size={17} />
+                <Archive size={16} />
               </button>
 
               {/* Expand Drawer Button */}
               <button
                 onClick={onToggleCollapse}
-                className="w-10 h-8 rounded-[4px] bg-transparent hover:bg-white/[0.08] text-[#9AA5B5] hover:text-[#F0F3F6] flex items-center justify-center transition-colors cursor-pointer"
+                className="w-9 h-8 rounded-lg bg-transparent hover:bg-[#FFFFFF] text-[#4B5563] hover:text-[#111827] flex items-center justify-center transition-colors cursor-pointer"
                 title="목차 전체 펼치기 (텍스트 목록 보기)"
                 aria-label="목차 전체 펼치기"
               >
@@ -314,9 +314,9 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                 onSelectChapter(8);
                 onSelectSection('export_summary');
               }}
-              className="w-full py-1.5 px-2 rounded-[2px] bg-[#13181F] hover:bg-blue-950/60 border border-white/10 hover:border-blue-500/40 text-[#F0F3F6] hover:text-[#38BDF8] font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              className="w-full h-10 px-3 rounded-lg bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-[#111827] hover:text-[#1E3A8A] font-medium text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
-              <Archive size={13} className="text-[#38BDF8]" />
+              <Archive size={14} className="text-[#1E3A8A]" />
               <span>11종 사양서 배포 허브</span>
             </button>
           )}
@@ -334,17 +334,15 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
           }}
           className="pointer-events-none select-none animate-in fade-in zoom-in-95 duration-100"
         >
-          {/* Tooltip Card: Only the Core Title clearly and boldly visible */}
-          <div className="relative flex items-center gap-2.5 px-3 py-2 bg-[#13181F] text-[#F0F3F6] rounded-[4px] shadow-2xl border border-blue-500/30 font-sans whitespace-nowrap">
-            {/* Left Triangle Arrow pointing to the dock icon */}
+          <div className="relative flex items-center gap-2 px-3 py-2 bg-[#FFFFFF] text-[#111827] rounded-lg shadow-[0_12px_32px_-4px_rgba(15,23,42,0.12)] border border-[#E5E7EB] font-sans whitespace-nowrap">
             <div 
-              className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#13181F] border-l border-b border-blue-500/30 rotate-45 shadow-xs"
+              className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#FFFFFF] border-l border-b border-[#E5E7EB] rotate-45"
             />
 
-            <span className="font-mono text-xs font-bold text-[#38BDF8] tabular-nums shrink-0">
+            <span className="font-mono text-xs font-bold text-[#1E3A8A] tabular-nums shrink-0">
               {tooltipState.item.numStr}.
             </span>
-            <span className="font-sans font-bold text-xs sm:text-[13px] text-[#F0F3F6] tracking-tight">
+            <span className="font-sans font-semibold text-xs text-[#111827] tracking-tight">
               {tooltipState.item.title}
             </span>
           </div>

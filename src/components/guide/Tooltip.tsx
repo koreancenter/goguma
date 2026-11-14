@@ -44,11 +44,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
             initial={{ opacity: 0, scale: 0.95, y: position === 'top' ? 4 : position === 'bottom' ? -4 : 0 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: position === 'top' ? 4 : position === 'bottom' ? -4 : 0 }}
-            className={`absolute z-[100] whitespace-nowrap px-2.5 py-1.5 bg-[#0E1217] text-[#F0F3F6] text-[10px] font-mono tracking-wider rounded-[2px] border border-white/[0.12] shadow-2xl pointer-events-none ${getPositionClasses()}`}
+            className={`absolute z-[100] whitespace-nowrap px-2.5 py-1.5 bg-[#FFFFFF] text-[#111827] text-[11px] font-medium rounded-md border border-[#E5E7EB] shadow-[0_8px_24px_-4px_rgba(15,23,42,0.12)] pointer-events-none ${getPositionClasses()}`}
           >
             {content}
             {/* Tooltip Arrow */}
-            <div className={`absolute w-2 h-2 bg-[#0E1217] border-t border-l border-white/[0.12] rotate-45 ${
+            <div className={`absolute w-2 h-2 bg-[#FFFFFF] border-t border-l border-[#E5E7EB] rotate-45 ${
               position === 'top' ? 'bottom-[-4px] left-1/2 -translate-x-1/2 border-t-0 border-l-0 border-b border-r' :
               position === 'bottom' ? 'top-[-4px] left-1/2 -translate-x-1/2' :
               position === 'left' ? 'right-[-4px] top-1/2 -translate-y-1/2 border-t border-r border-b-0 border-l-0' :
