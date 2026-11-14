@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { FormInputEntity } from '../../types';
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
+import { generatePlaybookVibePrompt } from '../../lib/executionPlaybook';
 import { getDocImpactStatus } from '../../lib/specImpact';
 import { downloadBlueprintZip } from '../../lib/bundleZipDownloader';
 import { compileStandalonePrototypeHtml, generatePrototypePrompt } from '../../lib/prototypeCompiler';
@@ -27,8 +28,9 @@ export default function PromptExtractionHub({
 }: PromptExtractionHubProps) {
   const { plan } = useSitePlan();
 
-  const [activeDocId, setActiveDocId] = useState<string>('01_proposal');
+  const [activeDocId, setActiveDocId] = useState<string>('00_EXECUTION_PLAYBOOK');
   const [copiedDocId, setCopiedDocId] = useState<string | null>(null);
+  const [copiedVibePrompt, setCopiedVibePrompt] = useState(false);
   const [copiedFirstPrompt, setCopiedFirstPrompt] = useState(false);
   const [copiedGoldenPrompt, setCopiedGoldenPrompt] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -119,6 +121,18 @@ export default function PromptExtractionHub({
       setTimeout(() => setCopiedGoldenPrompt(false), 2000);
     } catch (e) {
       console.error('Failed to copy golden prompt', e);
+    }
+  };
+
+  // One-click Copy Vibe-Coding Prompt distilled from 00_EXECUTION_PLAYBOOK.md
+  const handleCopyVibePrompt = async () => {
+    try {
+      const prompt = generatePlaybookVibePrompt({ plan, formInputs, lockedChapters });
+      await navigator.clipboard.writeText(prompt);
+      setCopiedVibePrompt(true);
+      setTimeout(() => setCopiedVibePrompt(false), 2500);
+    } catch (e) {
+      console.error('Failed to copy vibe-coding prompt', e);
     }
   };
 
@@ -377,10 +391,11 @@ export default function PromptExtractionHub({
           <span className="text-xs text-[#6B7280] font-mono">문서 탭을 선택하여 내용을 확인하세요.</span>
         </div>
 
-        {/* Document Tabs Strip - Clean Segmented Buttons with Spec Impact Indicator */}
+        {/* Document Tabs Strip - Clean Segmented Buttons with Featured Playbook & Spec Impact Indicator */}
         <div className="flex flex-wrap gap-1.5 bg-[#F7F8FA] p-2 rounded-xl">
           {docsList.map((doc) => {
             const isActive = doc.id === activeDocId;
+            const isPlaybook = doc.id === '00_EXECUTION_PLAYBOOK';
             const status = docImpactMap[doc.id] || 'idle';
             return (
               <button
@@ -389,14 +404,25 @@ export default function PromptExtractionHub({
                 className={`px-3 py-1.5 min-h-[34px] rounded-lg text-xs font-mono transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   isActive
                     ? 'bg-[#1E3A8A] text-white font-semibold'
+                    : isPlaybook
+                    ? 'bg-[#EFF6FF] text-[#1E3A8A] hover:bg-[#DBEAFE] font-semibold'
                     : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF]'
                 }`}
               >
-                <span className={isActive ? 'text-white/80 font-bold' : 'text-[#6B7280]'}>
-                  {doc.docNumber <= 11 ? String(doc.docNumber).padStart(2, '0') : '★'}
+                <span className={isActive ? 'text-white/80 font-bold' : isPlaybook ? 'text-[#1E3A8A] font-bold' : 'text-[#6B7280]'}>
+                  {doc.docNumber === 0 ? '00' : doc.docNumber <= 11 ? String(doc.docNumber).padStart(2, '0') : '★'}
                 </span>
                 <span className="font-sans">{doc.filename}</span>
-                {status !== 'idle' && (
+                {isPlaybook && (
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-sans font-semibold leading-none ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-[#1E3A8A] text-white'
+                    }`}
+                  >
+                    Playbook
+                  </span>
+                )}
+                {!isPlaybook && status !== 'idle' && (
                   <span
                     className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-sans font-medium leading-none ${
                       isActive
@@ -427,7 +453,7 @@ export default function PromptExtractionHub({
 
         {/* Active Document Viewer */}
         <div className="bg-[#FFFFFF] rounded-xl border border-[#E5E7EB] overflow-hidden">
-          <div className="bg-[#F7F8FA] px-4 py-3 border-b border-[#E5E7EB] flex items-center justify-between gap-2">
+          <div className="bg-[#F7F8FA] px-4 py-3 border-b border-[#E5E7EB] flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2 truncate text-xs">
               <span className="font-mono text-[#1E3A8A] font-semibold">
                 {activeDoc.relativePath}
@@ -453,22 +479,41 @@ export default function PromptExtractionHub({
                 </span>
               )}
             </div>
-            <button
-              onClick={() => handleCopyDoc(activeDoc)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-xs text-[#111827] hover:text-[#1E3A8A] font-medium transition-colors cursor-pointer shrink-0 ml-2"
-            >
-              {copiedDocId === activeDoc.id ? (
-                <>
-                  <Check size={13} className="text-[#1E3A8A]" />
-                  <span className="text-[#1E3A8A] font-semibold">복사됨</span>
-                </>
-              ) : (
-                <>
-                  <Copy size={13} className="text-[#6B7280]" />
-                  <span>문서 복사</span>
-                </>
-              )}
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleCopyVibePrompt}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-xs text-white font-semibold transition-colors cursor-pointer whitespace-nowrap"
+              >
+                {copiedVibePrompt ? (
+                  <>
+                    <Check size={13} />
+                    <span>Copied Vibe-Coding Prompt</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={13} />
+                    <span>Copy Vibe-Coding Prompt</span>
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => handleCopyDoc(activeDoc)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-xs text-[#111827] hover:text-[#1E3A8A] font-medium transition-colors cursor-pointer shrink-0 whitespace-nowrap"
+              >
+                {copiedDocId === activeDoc.id ? (
+                  <>
+                    <Check size={13} className="text-[#1E3A8A]" />
+                    <span className="text-[#1E3A8A] font-semibold">복사됨</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={13} className="text-[#6B7280]" />
+                    <span>문서 복사</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           <div className="p-4 sm:p-5 max-h-[460px] overflow-y-auto font-mono text-xs leading-relaxed text-[#111827] bg-[#FFFFFF] custom-scroll">

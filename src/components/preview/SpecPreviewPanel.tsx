@@ -16,6 +16,7 @@ import {
   PreviewRoleMode,
 } from '../../lib/prototypeCompiler';
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
+import { generatePlaybookVibePrompt } from '../../lib/executionPlaybook';
 import { getDocImpactStatus } from '../../lib/specImpact';
 import { copyProjectJsonToClipboard } from '../../lib/projectFileIO';
 import VisualSitemap from './VisualSitemap';
@@ -98,10 +99,11 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   const [devHubSubTab, setDevHubSubTab] = useState<DevHubSubTab>('typescript');
   const [codeOverrides, setCodeOverrides] = useState<Partial<Record<DevHubSubTab, string>>>({});
   const [copiedDevHub, setCopiedDevHub] = useState<string | null>(null);
-  const [selectedDocId, setSelectedDocId] = useState<string>('01_proposal');
+  const [selectedDocId, setSelectedDocId] = useState<string>('00_EXECUTION_PLAYBOOK');
   const [docFilterQuery, setDocFilterQuery] = useState<string>('');
   const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const [copiedDoc, setCopiedDoc] = useState(false);
+  const [copiedVibePrompt, setCopiedVibePrompt] = useState(false);
   const [copiedJson, setCopiedJson] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [isDownloadingZip, setIsDownloadingZip] = useState(false);
@@ -321,6 +323,18 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
       setTimeout(() => setCopiedDoc(false), 2000);
     } catch (e) {
       console.error('Failed to copy document', e);
+    }
+  };
+
+  // One-click Copy Vibe-Coding Prompt distilled from 00_EXECUTION_PLAYBOOK.md
+  const handleCopyVibeCodingPrompt = async () => {
+    try {
+      const prompt = generatePlaybookVibePrompt({ plan, formInputs, lockedChapters });
+      await navigator.clipboard.writeText(prompt);
+      setCopiedVibePrompt(true);
+      setTimeout(() => setCopiedVibePrompt(false), 2500);
+    } catch (e) {
+      console.error('Failed to copy vibe-coding prompt', e);
     }
   };
 
@@ -829,9 +843,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   {filteredDocs.map((doc) => {
                     const status = docImpactMap[doc.id] || 'idle';
                     const statusSuffix = status === 'locked' ? ' [Locked]' : status === 'updated' ? ' [Updated]' : '';
+                    const numLabel = doc.docNumber === 0 ? '[00]' : doc.docNumber <= 11 ? `[${String(doc.docNumber).padStart(2, '0')}]` : '[★]';
                     return (
                       <option key={doc.id} value={doc.id}>
-                        {doc.docNumber <= 11 ? `[${String(doc.docNumber).padStart(2, '0')}]` : '[★]'} {doc.filename} - {doc.title}{statusSuffix}
+                        {numLabel} {doc.filename} - {doc.title}{statusSuffix}
                       </option>
                     );
                   })}
@@ -867,7 +882,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   type="button"
                   onClick={handleDownloadCurrentDoc}
                   title="이 사양서 파일만 다운로드 (.md)"
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-xs text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-xs text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer whitespace-nowrap"
                 >
                   <FileDown size={13} className="text-[#1E3A8A]" />
                   <span className="hidden sm:inline">.md 저장</span>
@@ -875,13 +890,31 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
 
                 <button
                   type="button"
+                  onClick={handleCopyVibeCodingPrompt}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-xs text-white font-semibold transition-colors cursor-pointer whitespace-nowrap"
+                >
+                  {copiedVibePrompt ? (
+                    <>
+                      <Check size={13} />
+                      <span>Prompt Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Bot size={13} />
+                      <span>Copy Vibe-Coding Prompt</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
                   onClick={handleCopyCurrentDoc}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-xs text-white font-medium transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] hover:bg-[#EFF6FF] text-xs text-[#111827] hover:text-[#1E3A8A] font-medium transition-colors cursor-pointer whitespace-nowrap"
                 >
                   {copiedDoc ? (
                     <>
-                      <Check size={13} />
-                      <span>복사됨</span>
+                      <Check size={13} className="text-[#15803D]" />
+                      <span className="text-[#15803D]">복사됨</span>
                     </>
                   ) : (
                     <>
@@ -893,10 +926,11 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               </div>
             </div>
 
-            {/* Spec Impact Strip across all 11+ generated specifications */}
+            {/* Spec Impact Strip across 00_EXECUTION_PLAYBOOK + 11 generated specifications */}
             <div className="px-5 py-2.5 bg-[#FFFFFF] border-b border-[#E5E7EB]/60 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
               {filteredDocs.map((doc) => {
                 const isActive = doc.id === selectedDocId;
+                const isPlaybook = doc.id === '00_EXECUTION_PLAYBOOK';
                 const status = docImpactMap[doc.id] || 'idle';
                 return (
                   <button
@@ -906,24 +940,35 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                       isActive
                         ? 'bg-[#1E3A8A] text-white font-semibold'
+                        : isPlaybook
+                        ? 'bg-[#EFF6FF] text-[#1E3A8A] hover:bg-[#DBEAFE] font-semibold'
                         : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#111827] hover:bg-[#EFF6FF]'
                     }`}
                     title={`${doc.relativePath} · ${
                       status === 'locked' ? 'Locked' : status === 'updated' ? 'Updated' : 'Synced'
                     }`}
                   >
-                    {status === 'updated' && (
+                    {isPlaybook && (
+                      <span
+                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-sans font-semibold leading-none ${
+                          isActive ? 'bg-white/20 text-white' : 'bg-[#1E3A8A] text-white'
+                        }`}
+                      >
+                        Playbook
+                      </span>
+                    )}
+                    {!isPlaybook && status === 'updated' && (
                       <span className={`inline-flex items-center gap-1 ${isActive ? 'text-white' : 'text-[#15803D]'}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#86EFAC]' : 'bg-[#15803D]'}`} />
                       </span>
                     )}
-                    {status === 'locked' && (
+                    {!isPlaybook && status === 'locked' && (
                       <span className={`inline-flex items-center gap-1 ${isActive ? 'text-white' : 'text-[#1E3A8A]'}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#93C5FD]' : 'bg-[#1E3A8A]'}`} />
                       </span>
                     )}
                     <span>{doc.filename}</span>
-                    {status !== 'idle' && (
+                    {!isPlaybook && status !== 'idle' && (
                       <span
                         className={`text-[10px] font-sans font-medium ${
                           isActive

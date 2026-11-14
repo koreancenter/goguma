@@ -25,6 +25,9 @@ const StandardTemplateModal = lazy(() =>
 const AISettingsModal = lazy(() =>
   import('../guide/AISettingsModal').then(m => ({ default: m.AISettingsModal }))
 );
+const ExportSpecModal = lazy(() =>
+  import('../preview/ExportSpecModal').then(m => ({ default: m.ExportSpecModal }))
+);
 
 export interface WorkspaceViewProps {
   project: ProjectEntity;
@@ -85,7 +88,7 @@ export default function WorkspaceView({
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [backupModalTab, setBackupModalTab] = useState<'export' | 'import' | 'storage'>('export');
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isAISettingsModalOpen, setIsAISettingsModalOpen] = useState(false);
   const [aiSettings, setAiSettings] = useState<AISettings>(getAISettings);
   const [isChapterMenuOpen, setIsChapterMenuOpen] = useState(false);
@@ -228,17 +231,8 @@ export default function WorkspaceView({
     schedulePersistence();
   };
 
-  const handleExportZip = async () => {
-    if (isExporting) return;
-    setIsExporting(true);
-    try {
-      const { downloadBlueprintZip } = await import('../../lib/bundleZipDownloader');
-      await downloadBlueprintZip(plan, formInputs, project.lockedChapters);
-    } catch (err) {
-      console.error('Failed to export ZIP bundle:', err);
-    } finally {
-      setIsExporting(false);
-    }
+  const handleOpenExportModal = () => {
+    setIsExportModalOpen(true);
   };
 
   const currentChapterObj = GOGUMA_CHAPTERS.find(c => c.id === project.currentChapter) || GOGUMA_CHAPTERS[0];
@@ -463,17 +457,16 @@ export default function WorkspaceView({
             </button>
           </div>
 
-          {/* Primary CTA: Export 11 Specs in Editorial Navy (#1E3A8A) */}
-          <Tooltip content="11종 사양서 번들 ZIP 다운로드" position="bottom">
+          {/* Primary CTA: Export 11 Specs & Playbook Modal in Editorial Navy (#1E3A8A) */}
+          <Tooltip content="00_EXECUTION_PLAYBOOK & 11종 사양서 내보내기" position="bottom">
             <button
-              onClick={handleExportZip}
-              disabled={isExporting}
-              className="h-8 px-2.5 sm:px-3.5 flex items-center gap-1.5 justify-center rounded-lg bg-[#1E3A8A] hover:bg-[#172554] disabled:opacity-50 text-white transition-colors cursor-pointer text-xs font-medium whitespace-nowrap shrink-0 shadow-xs"
+              onClick={handleOpenExportModal}
+              className="h-8 px-2.5 sm:px-3.5 flex items-center gap-1.5 justify-center rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white transition-colors cursor-pointer text-xs font-medium whitespace-nowrap shrink-0 shadow-xs"
               aria-label="Export 11 Specs"
             >
-              <Download size={13} className={isExporting ? 'animate-bounce' : ''} />
+              <Download size={13} />
               <span className="hidden sm:inline">Export 11 Specs</span>
-              <span className="sm:hidden">ZIP</span>
+              <span className="sm:hidden">Export</span>
             </button>
           </Tooltip>
 
@@ -630,6 +623,20 @@ export default function WorkspaceView({
               setIsBackupModalOpen(false);
               schedulePersistence();
             }}
+          />
+        </Suspense>
+      )}
+
+      {/* Export 11 Specs & Execution Playbook Modal */}
+      {isExportModalOpen && (
+        <Suspense fallback={null}>
+          <ExportSpecModal
+            isOpen={isExportModalOpen}
+            onClose={() => setIsExportModalOpen(false)}
+            plan={plan}
+            formInputs={formInputs}
+            lockedChapters={project.lockedChapters}
+            updatedChapters={updatedChapters}
           />
         </Suspense>
       )}

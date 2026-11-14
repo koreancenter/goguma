@@ -8,8 +8,10 @@ import {
   isChapterOrSectionLocked,
 } from './businessRulesSerializer';
 import { GOGUMA_CHAPTERS } from './chapterData';
+import { generateExecutionPlaybook } from './executionPlaybook';
 
 export interface GogumaMarkdownBundle {
+  executionPlaybookMd: string;   // 00_EXECUTION_PLAYBOOK.md
   proposalMd: string;            // docs/01_proposal.md
   roadmapMd: string;             // docs/02_roadmap.md
   designMd: string;              // docs/03_DESIGN.md
@@ -522,6 +524,7 @@ ${allDomainRulesMd}` : ''}
 본 패키지는 웹/앱 개발 기획 스튜디오(GOGUMA)에서 생성된 완성형 기술 사양서 및 독립 실행형 프로토타입 번들입니다.
 
 ## 📦 패키지 구성
+- \`00_EXECUTION_PLAYBOOK.md\`: 단계별 바이브 코딩 실행 플레이북 및 도메인 전문가 QA 체크리스트
 - \`prototype.html\`: 별도 서버나 설치 없이 브라우저에서 즉시 열리는 단일 파일 인터랙티브 프로토타입
 - \`.cursorrules\`: Cursor AI 에이전트를 위한 아키텍처 및 구현 지침
 - \`CLAUDE.md\`: Claude Code CLI 에이전트를 위한 프로젝트 가이드라인
@@ -539,17 +542,24 @@ ${allDomainRulesMd}` : ''}
   - \`11_system-instructions.md\`: 시스템 프롬프트
 
 ## 🚀 빠른 시작 (Quick Start)
-1. \`prototype.html\`을 더블 클릭하여 브라우저에서 인터랙티브 동작 화면을 확인합니다.
-2. Cursor 또는 Claude Code에서 본 폴더를 열고 대화창에 다음 명령을 입력합니다:
-   > "docs/04_SPEC.md와 prototype.html을 기반으로 React 19 컴포넌트 구현을 시작해 줘."
+1. \`00_EXECUTION_PLAYBOOK.md\`를 열어 Phase 1 ~ Phase 4 실행 가이드를 확인합니다.
+2. \`prototype.html\`을 더블 클릭하여 브라우저에서 인터랙티브 동작 화면을 확인합니다.
+3. Cursor 또는 Claude Code에서 본 폴더를 열고 \`00_EXECUTION_PLAYBOOK.md\`의 Phase 1 프롬프트를 입력해 개발을 시작합니다.
 `;
 
   // --------------------------------------------------------------------------
-  // 13. prototype.html
+  // 13. prototype.html & 00_EXECUTION_PLAYBOOK.md
   // --------------------------------------------------------------------------
   const prototypeHtml = compileStandalonePrototypeHtml(plan, { formInputs });
+  const executionPlaybookMd = generateExecutionPlaybook({
+    plan,
+    formInputs,
+    lockedChapters,
+    projectName,
+  });
 
   return {
+    executionPlaybookMd,
     proposalMd,
     roadmapMd,
     designMd,
@@ -570,10 +580,20 @@ ${allDomainRulesMd}` : ''}
 }
 
 /**
- * Returns a list of all 11 docs with metadata for UI tabs, viewers, and exports.
+ * Returns the Execution Playbook plus all 11 docs with metadata for UI tabs, viewers, and exports.
  */
 export function getMarkdownDocsList(bundle: GogumaMarkdownBundle): MarkdownDocInfo[] {
   return [
+    {
+      id: '00_EXECUTION_PLAYBOOK',
+      docNumber: 0,
+      filename: '00_EXECUTION_PLAYBOOK.md',
+      relativePath: '00_EXECUTION_PLAYBOOK.md',
+      title: '실행 플레이북',
+      engTitle: 'Execution Playbook',
+      description: '단계별 바이브 코딩 실행 프롬프트 및 도메인 검증 체크리스트',
+      content: bundle.executionPlaybookMd,
+    },
     {
       id: '01_proposal',
       docNumber: 1,
