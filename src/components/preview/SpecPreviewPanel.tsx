@@ -9,7 +9,12 @@ import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { html as htmlLang } from '@codemirror/lang-html';
 import { SitePlan, FormInputEntity } from '../../types';
-import { compileStandalonePrototypeHtml, generatePrototypePrompt } from '../../lib/prototypeCompiler';
+import {
+  compileStandalonePrototypeHtml,
+  generatePrototypePrompt,
+  PreviewStateMode,
+  PreviewRoleMode,
+} from '../../lib/prototypeCompiler';
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
 import { copyProjectJsonToClipboard } from '../../lib/projectFileIO';
 import VisualSitemap from './VisualSitemap';
@@ -98,7 +103,13 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [previewState, setPreviewState] = useState<PreviewStateMode>('default');
+  const [previewRole, setPreviewRole] = useState<PreviewRoleMode>('user');
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
+  const previewStateRef = React.useRef<PreviewStateMode>(previewState);
+  previewStateRef.current = previewState;
+  const previewRoleRef = React.useRef<PreviewRoleMode>(previewRole);
+  previewRoleRef.current = previewRole;
 
   // Trigger pulse glow animation inside the prototype when plan updates
   React.useEffect(() => {
@@ -112,6 +123,29 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
     return () => clearTimeout(timer);
   }, [plan]);
 
+  // Instantly synchronize Preview State Switcher to the live iframe without mutating IndexedDB
+  React.useEffect(() => {
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        { type: 'GOGUMA_SET_PREVIEW_STATE', previewState, previewRole },
+        '*'
+      );
+    }
+  }, [previewState, previewRole]);
+
+  const handleIframeLoad = () => {
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        {
+          type: 'GOGUMA_SET_PREVIEW_STATE',
+          previewState: previewStateRef.current,
+          previewRole: previewRoleRef.current,
+        },
+        '*'
+      );
+    }
+  };
+
   // Copy Prototype-as-Spec golden prompt for Cursor/Claude
   const handleCopyAgentPrompt = async () => {
     try {
@@ -124,10 +158,14 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
     }
   };
 
-  // 1. Compile standalone prototype HTML
+  // 1. Compile standalone prototype HTML (uses refs for initial boot state; postMessage handles instant switching)
   const prototypeHtml = useMemo(() => {
-    return compileStandalonePrototypeHtml(plan);
-  }, [plan, reloadKey]);
+    return compileStandalonePrototypeHtml(plan, {
+      formInputs,
+      previewState: previewStateRef.current,
+      previewRole: previewRoleRef.current,
+    });
+  }, [plan, formInputs, reloadKey]);
 
   // 2. Compile full 11-markdown bundle in real time
   const bundle = useMemo(() => {
@@ -351,7 +389,14 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
 
   // Open standalone prototype in new tab
   const handleOpenStandalone = () => {
-    const blob = new Blob([effectivePrototypeHtml], { type: 'text/html;charset=utf-8' });
+    const htmlToOpen = codeOverrides.html !== undefined
+      ? codeOverrides.html
+      : compileStandalonePrototypeHtml(plan, {
+          formInputs,
+          previewState,
+          previewRole,
+        });
+    const blob = new Blob([htmlToOpen], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
   };
@@ -607,13 +652,80 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
         {/* TAB 1: Live Interactive Prototype */}
         {activeTab === 'prototype' && (
           <div className="w-full h-full flex flex-col">
+            {/* Preview State Switcher — Clean, Borderless Segmented Pill Bar */}
+            <div className="px-4 sm:px-6 pt-3.5 pb-3 bg-white flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+              <div
+                role="tablist"
+                aria-label="Preview State Switcher"
+                className="inline-flex items-center flex-wrap gap-1 bg-[#F7F8FA] p-1 rounded-full"
+              >
+                {(
+                  [
+                    { id: 'default', label: 'Default (Populated)' },
+                    { id: 'empty', label: 'Empty State (0 Records)' },
+                    { id: 'error', label: 'Blocked / Error State' },
+                    { id: 'role', label: 'Role: Admin vs. User' },
+                  ] as const
+                ).map((mode) => {
+                  const isActive = previewState === mode.id;
+                  return (
+                    <button
+                      key={mode.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setPreviewState(mode.id)}
+                      className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                        isActive
+                          ? 'bg-[#1E3A8A] text-white font-semibold'
+                          : 'text-[#4B5563] hover:text-[#111827] font-medium'
+                      }`}
+                    >
+                      {mode.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {previewState === 'role' && (
+                <div
+                  role="group"
+                  aria-label="Role Preview Sub-toggle"
+                  className="inline-flex items-center gap-1 bg-[#F7F8FA] p-1 rounded-full"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setPreviewRole('user')}
+                    className={`px-3 py-1 rounded-full text-[11px] transition-all cursor-pointer whitespace-nowrap ${
+                      previewRole === 'user'
+                        ? 'bg-[#FFFFFF] text-[#1E3A8A] font-semibold shadow-2xs'
+                        : 'text-[#4B5563] hover:text-[#111827] font-medium'
+                    }`}
+                  >
+                    Standard User
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewRole('admin')}
+                    className={`px-3 py-1 rounded-full text-[11px] transition-all cursor-pointer whitespace-nowrap ${
+                      previewRole === 'admin'
+                        ? 'bg-[#FFFFFF] text-[#1E3A8A] font-semibold shadow-2xs'
+                        : 'text-[#4B5563] hover:text-[#111827] font-medium'
+                    }`}
+                  >
+                    Admin / Operator
+                  </button>
+                </div>
+              )}
+            </div>
+
             <div className={`flex-1 overflow-auto flex items-center justify-center ${
               viewportMode === 'desktop' ? 'bg-white' : 'bg-[#F7F8FA]/55 p-4 sm:p-6'
             }`}>
               {viewportMode === 'desktop' ? (
                 <div className="w-full h-full flex flex-col bg-white">
                   {/* Minimal Light Browser Chrome */}
-                  <div className="h-9 px-4 bg-[#F7F8FA]/70 border-b border-[#E5E7EB]/70 flex items-center justify-between text-xs text-[#6B7280] select-none shrink-0 gap-3">
+                  <div className="h-9 px-4 bg-[#F7F8FA]/70 border-y border-[#E5E7EB]/70 flex items-center justify-between text-xs text-[#6B7280] select-none shrink-0 gap-3">
                     <div className="flex items-center gap-1.5 shrink-0">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#E5E7EB]" />
                       <span className="w-2.5 h-2.5 rounded-full bg-[#E5E7EB]" />
@@ -635,6 +747,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
+                    onLoad={handleIframeLoad}
                     srcDoc={effectivePrototypeHtml}
                     title="Interactive Prototype Preview"
                     sandbox="allow-scripts allow-forms allow-modals"
@@ -651,6 +764,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
+                    onLoad={handleIframeLoad}
                     srcDoc={effectivePrototypeHtml}
                     title="Tablet Prototype Preview"
                     sandbox="allow-scripts allow-forms allow-modals"
@@ -662,6 +776,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
+                    onLoad={handleIframeLoad}
                     srcDoc={effectivePrototypeHtml}
                     title="Mobile Prototype Preview"
                     sandbox="allow-scripts allow-forms allow-modals"

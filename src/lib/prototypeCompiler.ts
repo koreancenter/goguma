@@ -1,5 +1,15 @@
 import { SitePlan, FormInputEntity } from '../types';
-import { serializeAllBusinessRulesToMarkdown } from './businessRulesSerializer';
+import { serializeAllBusinessRulesToMarkdown, getSectionBusinessRules, hasMeaningfulRuleContent } from './businessRulesSerializer';
+import { GOGUMA_CHAPTERS } from './chapterData';
+
+export type PreviewStateMode = 'default' | 'empty' | 'error' | 'role';
+export type PreviewRoleMode = 'user' | 'admin';
+
+export interface PrototypePreviewOptions {
+  formInputs?: Record<string, FormInputEntity>;
+  previewState?: PreviewStateMode;
+  previewRole?: PreviewRoleMode;
+}
 
 /**
  * Defensive HTML entity escape to prevent XSS in standalone prototypes.
@@ -11,6 +21,10 @@ function escapeHtml(str: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function safeJsonForScript(value: unknown): string {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
 }
 
 /**
@@ -67,7 +81,14 @@ ${domainRulesMarkdown}` : ''}
  * Produces a fully self-contained HTML5 + Vanilla JS + Tailwind Play CDN web app.
  * Styled in high-end Luxury Black & White minimalism.
  */
-export function compileStandalonePrototypeHtml(plan: SitePlan): string {
+export function compileStandalonePrototypeHtml(
+  plan: SitePlan,
+  options?: PrototypePreviewOptions
+): string {
+  const formInputs = options?.formInputs;
+  const initialPreviewState: PreviewStateMode = options?.previewState || 'default';
+  const initialPreviewRole: PreviewRoleMode = options?.previewRole || 'user';
+
   const projectName = escapeHtml(plan.metadata?.projectName || '애플리케이션');
   const platform = plan.metadata?.platform === 'APP' ? 'APP' : 'WEB';
   const pages = plan.navigation?.pageStructure && plan.navigation.pageStructure.length > 0
@@ -79,12 +100,86 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
         { name: '통계 리포트', route: '/analytics', purpose: '월별 처리 현황 및 목표 달성률' },
       ];
   const themeColor = plan.design?.themeColor || '#FFFFFF';
-  const purpose = escapeHtml(plan.metadata?.projectOverview?.purpose || '사용자 친화적 업무 프로세스 자동화 및 생산성 향상');
-  const target = escapeHtml(plan.metadata?.projectOverview?.target || '현장 실무자 및 의사결정권자');
+  const purpose = escapeHtml(
+    formInputs?.['1_problem_background']?.userRawInput?.trim() ||
+    plan.metadata?.projectOverview?.purpose ||
+    '사용자 친화적 업무 프로세스 자동화 및 생산성 향상'
+  );
+  const target = escapeHtml(
+    formInputs?.['2_target_persona']?.userRawInput?.trim() ||
+    plan.metadata?.projectOverview?.target ||
+    '현장 실무자 및 의사결정권자'
+  );
   const kpi = escapeHtml(plan.metadata?.projectOverview?.kpi || '업무 처리 시간 50% 단축');
 
+  // Collect all structured Domain Business Rules across all chapters
+  const collectedDomainRules: Array<{
+    id: string;
+    chapterTitle: string;
+    sectionTitle: string;
+    when: string;
+    then: string;
+    exception: string;
+    isLocked: boolean;
+  }> = [];
+
+  if (formInputs) {
+    for (const ch of GOGUMA_CHAPTERS) {
+      for (const sec of ch.sections) {
+        const rules = getSectionBusinessRules(formInputs[`${ch.id}_${sec.key}`]).filter(hasMeaningfulRuleContent);
+        for (const r of rules) {
+          collectedDomainRules.push({
+            id: r.id,
+            chapterTitle: ch.title,
+            sectionTitle: sec.title,
+            when: r.when.trim(),
+            then: r.then.trim(),
+            exception: r.exception.trim(),
+            isLocked: Boolean(r.isLocked),
+          });
+        }
+      }
+    }
+  }
+
+  // Derive realistic domain sample records from user's current project inputs
+  const rawFeaturesText = formInputs?.['3_key_features']?.userRawInput?.trim() || '';
+  const featureLines = rawFeaturesText
+    .split(/\n+/)
+    .map(l => l.replace(/^[-*•\d.)\s]+/, '').trim())
+    .filter(l => l.length > 2)
+    .slice(0, 4);
+
+  const rawColumnsText = formInputs?.['4_data_columns']?.userRawInput?.trim() || '';
+  const dataColumnsList = rawColumnsText
+    .split(/[,;\n/·•]+/)
+    .map(c => c.replace(/^[-*•\d.)\s]+/, '').trim())
+    .filter(Boolean)
+    .slice(0, 6);
+
+  const domainOwnerHint = target.split(/[,\n/·]+/)[0]?.trim() || 'operator@service.io';
+  const statuses: Array<'진행중' | '대기' | '완료'> = ['진행중', '대기', '완료', '대기'];
+
+  const synthesizedDefaultData = featureLines.length > 0
+    ? featureLines.map((feat, idx) => ({
+        id: `item-${idx + 1}`,
+        title: feat.slice(0, 72),
+        contact: idx === 0 ? domainOwnerHint.slice(0, 28) : `team-${idx + 1}@${(plan.metadata?.projectName || 'app').replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'goguma'}.io`,
+        status: statuses[idx % statuses.length],
+        amount: dataColumnsList[idx] ? `${dataColumnsList[idx]} 연동` : `Sprint 0${idx + 1} · v1.${idx}.0`,
+        memo: `${pages[idx % pages.length]?.name || '핵심 화면'} · ${dataColumnsList.length > 0 ? `필드(${dataColumnsList.slice(0, 3).join(', ')})` : purpose.slice(0, 48)}`,
+        createdAt: new Date().toISOString(),
+        isAdminRestricted: idx === featureLines.length - 1,
+      }))
+    : [
+        { id: 'item-1', title: `[${plan.metadata?.projectName || 'CORE'}] 핵심 워크플로우 & 대시보드 처리`, contact: 'lead@service.io', status: '진행중', amount: dataColumnsList[0] ? `${dataColumnsList[0]} 매핑` : 'Sprint 02 • v1.2.0', memo: `${purpose.slice(0, 60)}`, createdAt: new Date().toISOString(), isAdminRestricted: false },
+        { id: 'item-2', title: `[API] ${pages[1]?.name || '실시간 데이터'} 조회 및 필터링 파이프라인`, contact: 'backend@service.io', status: '대기', amount: dataColumnsList[1] ? `${dataColumnsList[1]} 검증` : 'P99 < 35ms', memo: dataColumnsList.length > 0 ? `스키마 필드: ${dataColumnsList.join(', ')}` : 'IndexedDB 로컬 우선 조회 및 상태 동기화', createdAt: new Date().toISOString(), isAdminRestricted: false },
+        { id: 'item-3', title: `[RULE] 도메인 유효성 검증 및 상태 전이 가드`, contact: 'qa@service.io', status: '완료', amount: collectedDomainRules.length > 0 ? `규칙 ${collectedDomainRules.length}건 적용` : 'Validation v1.0', memo: collectedDomainRules[0]?.then || '필수 입력값 검증 및 중복 처리 방지 규칙 준수', createdAt: new Date().toISOString(), isAdminRestricted: false },
+        { id: 'item-4', title: `[ADMIN] 권한 제어(RBAC) 및 관리자 승인 오버라이드`, contact: 'security@service.io', status: '대기', amount: 'Admin Only', memo: collectedDomainRules[0]?.exception || '관리자 전용 감사 로그 및 예외 승인 권한 제어', createdAt: new Date().toISOString(), isAdminRestricted: true },
+      ];
+
   // JSON safe serialized pages with detected screen types and icons
-  const safePagesJson = JSON.stringify(pages.map(p => {
+  const safePagesJson = safeJsonForScript(pages.map(p => {
     const raw = (p.name + ' ' + (p.route || '') + ' ' + (p.purpose || '')).toLowerCase();
     let type = 'TABLE';
     let icon = '📋';
@@ -115,6 +210,10 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       icon
     };
   }));
+
+  const safeDefaultDataJson = safeJsonForScript(synthesizedDefaultData);
+  const safeDomainRulesJson = safeJsonForScript(collectedDomainRules);
+  const safeDataColumnsJson = safeJsonForScript(dataColumnsList);
 
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -223,7 +322,9 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
+        <span id="headerRoleBadge" class="hidden px-2 py-1 rounded-[2px] text-[10px] font-mono font-semibold border"></span>
         <button 
+          id="headerAddBtn"
           onclick="openAddModal()" 
           class="px-3 py-1.5 rounded-[2px] text-xs font-semibold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-[0_0_12px_rgba(37,99,235,0.25)] transition-all flex items-center gap-1 cursor-pointer"
         >
@@ -253,6 +354,9 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     <!-- Dynamic Content Area -->
     <main class="flex-1 p-3 sm:p-4 overflow-y-auto custom-scroll space-y-3 pb-16 sm:pb-4 bg-[#0B0C10]">
       
+      <!-- Preview State Simulation Banner (Blocked/Error or Role Mode) -->
+      <div id="previewStateBanner" class="hidden"></div>
+
       <!-- Screen Context Header Card -->
       <div id="screenHeaderCard" class="bg-[#13181F] p-3.5 rounded-[4px] border border-white/[0.08] flex items-center justify-between shadow-xs">
         <div>
@@ -407,26 +511,35 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
   <script>
     const STORAGE_KEY = 'proto_live_data_' + '${encodeURIComponent(projectName)}';
     const PAGES = ${safePagesJson};
+    const DOMAIN_RULES = ${safeDomainRulesJson};
+    const DATA_COLUMNS = ${safeDataColumnsJson};
     let activePageIndex = 0;
     let navHistory = [];
     let currentFilter = 'ALL';
     let isPhoneView = ${platform === 'APP' ? 'true' : 'false'};
     let currentDrawerItemId = null;
+    let previewState = '${initialPreviewState}';
+    let previewRole = '${initialPreviewRole}';
+    let activeErrorRuleIdx = 0;
 
-    // Initial domain mock records (Web Product & SaaS Engineering)
-    const DEFAULT_DATA = [
-      { id: 'item-1', title: '[FEAT] OAuth 2.0 및 JWT 세션 자동 갱신 모듈', contact: 'auth-lead@service.io', status: '진행중', amount: 'Sprint 02 • v1.2.0', memo: 'Refresh token silent rotation 및 CSRF 방어 헤더 적용 완료', createdAt: new Date().toISOString() },
-      { id: 'item-2', title: '[API] 실시간 대시보드 스트리밍 SSE 엔드포인트', contact: 'backend@service.io', status: '대기', amount: 'P99 < 35ms', memo: 'Redis Pub/Sub 브로드캐스트 및 백프레셔 버퍼 튜닝 검증', createdAt: new Date().toISOString() },
-      { id: 'item-3', title: '[BILLING] Stripe 웹훅 수신 및 구독 상태 라이프사이클', contact: 'billing@service.io', status: '완료', amount: 'Webhook v2.4', memo: '결제 성공 시 플랜 권한 테이블 즉각 트랜잭션 동기화', createdAt: new Date().toISOString() },
-      { id: 'item-4', title: '[SECURITY] RBAC 엔터프라이즈 권한 가드 & 감시 로그', contact: 'security@service.io', status: '대기', amount: 'OWASP ASVS L3', memo: '세밀한 역할 기반 라우트 가드 및 변조 방지 감사 로그 스트림', createdAt: new Date().toISOString() }
-    ];
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Domain-derived sample records (from user's current project inputs)
+    const DEFAULT_DATA = ${safeDefaultDataJson};
 
     function showToast(message, type = 'success') {
       const container = document.getElementById('toastContainer');
       if (!container) return;
       const toast = document.createElement('div');
       toast.className = 'px-4 py-2.5 rounded-[2px] border border-[#E5E0D8] shadow-xl text-xs font-medium flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto bg-[#191816] text-[#FAF8F5]';
-      toast.innerHTML = (type === 'success' ? '✓ ' : type === 'delete' ? '✕ ' : 'ℹ ') + message;
+      toast.innerHTML = (type === 'success' ? '✓ ' : type === 'delete' ? '✕ ' : 'ℹ ') + escapeHtml(message);
       container.appendChild(toast);
       setTimeout(() => {
         toast.style.opacity = '0';
@@ -454,6 +567,12 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
         }
         return inMemoryStore;
       }
+    }
+
+    // Non-destructive state view selector: Empty State returns 0 records without mutating saved data
+    function getEffectiveViewData() {
+      if (previewState === 'empty') return [];
+      return getStore();
     }
 
     function saveStore(data) {
@@ -654,6 +773,19 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 
     function toggleItemStatus(id, e) {
       if (e) e.stopPropagation();
+      if (previewState === 'error') {
+        const activeRule = getSimulatedRule();
+        showToast('차단됨: ' + (activeRule.then || '도메인 규칙 위반으로 상태 전이가 거부되었습니다.'), 'delete');
+        return;
+      }
+      if (previewState === 'role' && previewRole === 'user') {
+        const data = getStore();
+        const item = data.find(d => d.id === id);
+        if (item?.isAdminRestricted) {
+          showToast('접근 거부: Admin / Operator 권한이 필요한 작업입니다.', 'delete');
+          return;
+        }
+      }
       const data = getStore();
       const item = data.find(d => d.id === id);
       if (!item) return;
@@ -669,6 +801,14 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 
     function deleteItem(id, e) {
       if (e) e.stopPropagation();
+      if (previewState === 'error') {
+        showToast('정책 차단 상태에서는 레코드를 삭제할 수 없습니다.', 'delete');
+        return;
+      }
+      if (previewState === 'role' && previewRole === 'user') {
+        showToast('권한 제한: Standard User는 삭제할 수 없습니다. Admin으로 전환하세요.', 'delete');
+        return;
+      }
       if (confirm('이 항목을 삭제하시겠습니까?')) {
         const data = getStore().filter(d => d.id !== id);
         saveStore(data);
@@ -676,15 +816,173 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       }
     }
 
+    function getSimulatedRule() {
+      if (DOMAIN_RULES && DOMAIN_RULES.length > 0) {
+        const safeIdx = Math.abs(activeErrorRuleIdx) % DOMAIN_RULES.length;
+        return DOMAIN_RULES[safeIdx];
+      }
+      return {
+        id: 'default_sim_rule',
+        chapterTitle: '도메인 무결성 규약',
+        sectionTitle: '비즈니스 검증',
+        when: '중복된 상태 요청 또는 필수 제약 조건을 위반한 작업이 시도된 경우',
+        then: '작업을 즉시 차단하고 인라인 검증 경고 및 대체 가능한 안전 경로를 안내합니다',
+        exception: 'Admin / Operator 권한의 긴급 예외 오버라이드가 활성화된 경우',
+        isLocked: false,
+      };
+    }
+
+    function cycleSimulatedRule(delta) {
+      if (!DOMAIN_RULES || DOMAIN_RULES.length <= 1) return;
+      activeErrorRuleIdx = (activeErrorRuleIdx + delta + DOMAIN_RULES.length) % DOMAIN_RULES.length;
+      renderActiveScreen();
+    }
+
+    function triggerAdminOverrideSimulation() {
+      const rule = getSimulatedRule();
+      showToast('Admin Override 실행됨: ' + (rule.exception || '관리자 예외 권한으로 승인되었습니다.'), 'info');
+    }
+
+    function renderPreviewStateBanner() {
+      const banner = document.getElementById('previewStateBanner');
+      const roleBadge = document.getElementById('headerRoleBadge');
+      const headerAddBtn = document.getElementById('headerAddBtn');
+      if (!banner) return;
+
+      // Header role badge & add button state
+      if (roleBadge) {
+        if (previewState === 'role') {
+          roleBadge.classList.remove('hidden');
+          if (previewRole === 'admin') {
+            roleBadge.className = 'px-2 py-1 rounded-[2px] text-[10px] font-mono font-semibold border border-emerald-500/40 bg-emerald-950/50 text-emerald-300';
+            roleBadge.innerText = 'ROLE: ADMIN / OPERATOR';
+          } else {
+            roleBadge.className = 'px-2 py-1 rounded-[2px] text-[10px] font-mono font-semibold border border-amber-500/40 bg-amber-950/40 text-amber-300';
+            roleBadge.innerText = 'ROLE: STANDARD USER';
+          }
+        } else {
+          roleBadge.classList.add('hidden');
+        }
+      }
+
+      if (headerAddBtn) {
+        if (previewState === 'error') {
+          headerAddBtn.className = 'px-3 py-1.5 rounded-[2px] text-xs font-semibold text-rose-200 bg-rose-950/80 border border-rose-500/50 cursor-not-allowed flex items-center gap-1 opacity-80';
+          headerAddBtn.title = '도메인 규칙 위반으로 신규 등록 차단됨';
+        } else {
+          headerAddBtn.className = 'px-3 py-1.5 rounded-[2px] text-xs font-semibold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-[0_0_12px_rgba(37,99,235,0.25)] transition-all flex items-center gap-1 cursor-pointer';
+          headerAddBtn.title = '';
+        }
+      }
+
+      if (previewState === 'error') {
+        const rule = getSimulatedRule();
+        const ruleCount = DOMAIN_RULES ? DOMAIN_RULES.length : 0;
+        const ruleLabel = ruleCount > 0 ? ('Rule ' + String((activeErrorRuleIdx % ruleCount) + 1).padStart(2, '0') + ' / ' + String(ruleCount).padStart(2, '0')) : 'Simulated Rule';
+        const isUserDefined = ruleCount > 0;
+
+        banner.className = 'bg-rose-950/45 border border-rose-500/40 rounded-[4px] p-3.5 space-y-2.5';
+        banner.innerHTML = \`
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">BLOCKED · ERROR STATE</span>
+              <span class="text-xs font-mono font-semibold text-rose-200">\${escapeHtml(ruleLabel)}</span>
+              \${isUserDefined ? '<span class="text-[11px] text-rose-300/80">(' + escapeHtml(rule.sectionTitle) + ')</span>' : '<span class="text-[11px] text-rose-300/80">(기본 시뮬레이션 · Domain Rules 작성 시 실시간 반영)</span>'}
+            </div>
+            \${ruleCount > 1 ? \`
+              <div class="flex items-center gap-1">
+                <button onclick="cycleSimulatedRule(-1)" class="px-2 py-0.5 rounded-[2px] bg-rose-900/50 hover:bg-rose-800/60 text-rose-100 text-[10px] font-mono cursor-pointer">◀ 이전 규칙</button>
+                <button onclick="cycleSimulatedRule(1)" class="px-2 py-0.5 rounded-[2px] bg-rose-900/50 hover:bg-rose-800/60 text-rose-100 text-[10px] font-mono cursor-pointer">다음 규칙 ▶</button>
+              </div>
+            \` : ''}
+          </div>
+          <div class="space-y-1 text-xs">
+            <div class="text-rose-100"><span class="font-mono text-[10px] text-rose-300 font-bold mr-1.5">WHEN</span> \${escapeHtml(rule.when || '조건 트리거 발생')}</div>
+            <div class="text-white font-semibold"><span class="font-mono text-[10px] text-amber-300 font-bold mr-1.5">THEN</span> \${escapeHtml(rule.then || '요청이 차단되고 대체 경로가 표시됩니다')}</div>
+            \${rule.exception ? '<div class="text-neutral-300 text-[11px]"><span class="font-mono text-[10px] text-sky-300 font-bold mr-1.5">EXCEPT WHEN</span> ' + escapeHtml(rule.exception) + '</div>' : ''}
+          </div>
+        \`;
+        banner.classList.remove('hidden');
+      } else if (previewState === 'role') {
+        const overrideRule = DOMAIN_RULES?.find(r => r.exception) || getSimulatedRule();
+        if (previewRole === 'admin') {
+          banner.className = 'bg-emerald-950/35 border border-emerald-500/35 rounded-[4px] p-3.5 flex flex-wrap items-center justify-between gap-3';
+          banner.innerHTML = \`
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">ADMIN / OPERATOR VIEW</span>
+                <span class="text-xs font-semibold text-[#F0F3F6]">관리자 전용 제어 및 예외 오버라이드 활성화</span>
+              </div>
+              <p class="text-[11px] text-neutral-300">
+                모든 삭제/승인 액션이 잠금 해제되었으며, <span class="text-emerald-300 font-mono">EXCEPT WHEN</span> 예외 정책("\${escapeHtml(overrideRule.exception || '관리자 긴급 승인')}")을 실행할 수 있습니다.
+              </p>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button onclick="triggerAdminOverrideSimulation()" class="px-2.5 py-1.5 rounded-[2px] bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold cursor-pointer">
+                예외 오버라이드 실행
+              </button>
+            </div>
+          \`;
+        } else {
+          banner.className = 'bg-amber-950/30 border border-amber-500/35 rounded-[4px] p-3.5 flex flex-wrap items-center justify-between gap-3';
+          banner.innerHTML = \`
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">STANDARD USER VIEW</span>
+                <span class="text-xs font-semibold text-[#F0F3F6]">일반 사용자 권한 스코프 (제한된 제어)</span>
+              </div>
+              <p class="text-[11px] text-neutral-300">
+                삭제·시스템 설정·예외 오버라이드("\${escapeHtml(overrideRule.exception || '관리자 승인 필요')}")가 보안 정책에 의해 숨김 또는 잠금 처리됩니다.
+              </p>
+            </div>
+          \`;
+        }
+        banner.classList.remove('hidden');
+      } else {
+        banner.className = 'hidden';
+        banner.innerHTML = '';
+      }
+    }
+
+    function renderEmptyStatePanel(contextLabel) {
+      const colPreview = DATA_COLUMNS && DATA_COLUMNS.length > 0
+        ? DATA_COLUMNS.slice(0, 4).map(c => '<span class="px-2 py-0.5 rounded-[2px] bg-white/[0.06] text-neutral-300 font-mono text-[10px]">' + escapeHtml(c) + '</span>').join(' ')
+        : '<span class="text-[11px] text-neutral-400 font-mono">기본 스키마 준비됨</span>';
+
+      return \`
+        <div class="bg-[#13181F] border border-dashed border-white/[0.16] rounded-[4px] p-6 sm:p-8 text-center space-y-4">
+          <div class="w-11 h-11 rounded-[4px] bg-blue-950/60 border border-blue-800/50 text-[#38BDF8] flex items-center justify-center mx-auto text-lg font-mono">
+            0
+          </div>
+          <div class="space-y-1.5 max-w-md mx-auto">
+            <div class="text-[11px] font-mono text-[#38BDF8] uppercase tracking-wider">Empty State · First Launch (0 Records)</div>
+            <h3 class="text-sm sm:text-base font-bold text-[#F0F3F6]">\${escapeHtml(contextLabel)}에 아직 등록된 데이터가 없습니다</h3>
+            <p class="text-xs text-neutral-400 leading-relaxed">
+              최초 실행 시 사용자에게 빈 화면 대신 시작 가이드를 제공합니다. 아래 버튼을 눌러 첫 번째 레코드를 등록해 보세요.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+            \${colPreview}
+          </div>
+          <div class="pt-2 flex items-center justify-center gap-2">
+            <button onclick="openAddModal()" class="px-4 py-2 rounded-[2px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-semibold cursor-pointer shadow-xs">
+              + 첫 번째 레코드 생성하기
+            </button>
+          </div>
+        </div>
+      \`;
+    }
+
     // =========================================================================
-    // DYNAMIC SCREEN SYNTHESIS RENDERERS (Luxury Black & White)
+    // DYNAMIC SCREEN SYNTHESIS RENDERERS
     // =========================================================================
 
     function renderActiveScreen() {
       const container = document.getElementById('dynamicScreenView');
       if (!container) return;
+      renderPreviewStateBanner();
       const currentPage = PAGES[activePageIndex] || PAGES[0];
-      const data = getStore();
+      const data = getEffectiveViewData();
 
       switch (currentPage.type) {
         case 'DASHBOARD':
@@ -719,6 +1017,8 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       const progress = data.filter(d => d.status === '진행중').length;
       const done = data.filter(d => d.status === '완료').length;
       const doneRate = total > 0 ? Math.round((done / total) * 100) : 0;
+      const isUserRole = previewState === 'role' && previewRole === 'user';
+      const isErrorState = previewState === 'error';
 
       container.innerHTML = \`
         <!-- Interactive KPI Cards -->
@@ -756,56 +1056,67 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
           </div>
         </div>
 
-        <!-- Progress Distribution Bar -->
-        <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-2">
-          <div class="flex items-center justify-between text-xs font-medium text-[#F1F1F4]">
-            <span>스프린트 파이프라인 진척도</span>
-            <span class="text-[11px] font-mono text-neutral-400">배포 완료 \${done}건 / 전체 \${total}건</span>
-          </div>
-          <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden flex border border-white/[0.06]">
-            <div style="width: \${total > 0 ? (pending/total)*100 : 0}%; background-color: #525462;" title="대기: \${pending}건"></div>
-            <div style="width: \${total > 0 ? (progress/total)*100 : 0}%; background-color: #9B9DA8;" title="진행: \${progress}건"></div>
-            <div style="width: \${total > 0 ? (done/total)*100 : 0}%; background-color: #E4DFD7;" title="완료: \${done}건"></div>
-          </div>
-          <div class="flex items-center gap-4 text-[11px] font-mono text-neutral-400 pt-1">
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#525462]"></span> 백로그 (\${pending})</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#9B9DA8]"></span> 구현 중 (\${progress})</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#E4DFD7]"></span> 배포 완료 (\${done})</span>
-          </div>
-        </div>
-
-        <!-- Recent Priority Feed with Item Drawer Integration -->
-        <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-xs sm:text-sm font-bold text-[#F1F1F4]">핵심 엔지니어링 스펙 & 백로그 피드</h3>
-              <p class="text-[11px] text-neutral-400">항목을 클릭하면 실시간 상세 수정 드로어가 열립니다.</p>
+        \${total === 0 ? renderEmptyStatePanel('대시보드') : \`
+          <!-- Progress Distribution Bar -->
+          <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-2">
+            <div class="flex items-center justify-between text-xs font-medium text-[#F1F1F4]">
+              <span>스프린트 파이프라인 진척도</span>
+              <span class="text-[11px] font-mono text-neutral-400">배포 완료 \${done}건 / 전체 \${total}건</span>
             </div>
-            <button onclick="openAddModal()" class="text-xs font-medium text-[#E4DFD7] hover:underline cursor-pointer">+ 스펙 추가</button>
+            <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden flex border border-white/[0.06]">
+              <div style="width: \${total > 0 ? (pending/total)*100 : 0}%; background-color: #525462;" title="대기: \${pending}건"></div>
+              <div style="width: \${total > 0 ? (progress/total)*100 : 0}%; background-color: #9B9DA8;" title="진행: \${progress}건"></div>
+              <div style="width: \${total > 0 ? (done/total)*100 : 0}%; background-color: #E4DFD7;" title="완료: \${done}건"></div>
+            </div>
+            <div class="flex items-center gap-4 text-[11px] font-mono text-neutral-400 pt-1">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#525462]"></span> 백로그 (\${pending})</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#9B9DA8]"></span> 구현 중 (\${progress})</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#E4DFD7]"></span> 배포 완료 (\${done})</span>
+            </div>
           </div>
-          <div class="space-y-2">
-            \${data.slice(0, 4).map(item => \`
-              <div onclick="openItemDetail('\${item.id}')" class="p-3 bg-[#13141B] hover:bg-[#1A1B24] rounded-[4px] border border-white/[0.06] hover:border-white/15 transition-all flex items-center justify-between cursor-pointer">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-medium bg-white/[0.06] text-[#E4DFD7] border border-white/[0.08]">\${item.status}</span>
-                    <span class="text-xs font-semibold text-[#F1F1F4]">\${escapeHtml(item.title)}</span>
-                    \${item.amount ? \`<span class="text-[11px] font-mono text-neutral-400">(\${escapeHtml(item.amount)})</span>\` : ''}
-                  </div>
-                  <p class="text-[11px] text-neutral-400 mt-1 line-clamp-1">\${escapeHtml(item.memo)}</p>
-                </div>
-                <button onclick="toggleItemStatus('\${item.id}', event)" class="text-xs px-2.5 py-1 rounded-[3px] border border-white/[0.08] bg-[#171820] text-neutral-300 hover:text-white hover:bg-[#20222D] font-medium cursor-pointer shrink-0">
-                  상태전환
-                </button>
+
+          <!-- Recent Priority Feed with Item Drawer Integration -->
+          <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xs sm:text-sm font-bold text-[#F1F1F4]">핵심 엔지니어링 스펙 & 백로그 피드</h3>
+                <p class="text-[11px] text-neutral-400">항목을 클릭하면 실시간 상세 수정 드로어가 열립니다.</p>
               </div>
-            \`).join('')}
+              <button onclick="openAddModal()" class="text-xs font-medium text-[#E4DFD7] hover:underline cursor-pointer">+ 스펙 추가</button>
+            </div>
+            <div class="space-y-2">
+              \${data.slice(0, 4).map((item, idx) => {
+                const lockedForUser = isUserRole && item.isAdminRestricted;
+                const blockedInError = isErrorState && idx === 0;
+                return \`
+                <div onclick="openItemDetail('\${item.id}')" class="p-3 rounded-[4px] border transition-all flex items-center justify-between gap-2 cursor-pointer \${blockedInError ? 'bg-rose-950/35 border-rose-500/45' : lockedForUser ? 'bg-[#111218] border-white/[0.05] opacity-60' : 'bg-[#13141B] hover:bg-[#1A1B24] border-white/[0.06] hover:border-white/15'}">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-medium \${blockedInError ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-white/[0.06] text-[#E4DFD7] border border-white/[0.08]'}">\${blockedInError ? '차단됨' : item.status}</span>
+                      <span class="text-xs font-semibold text-[#F1F1F4] truncate">\${escapeHtml(item.title)}</span>
+                      \${item.amount ? \`<span class="text-[11px] font-mono text-neutral-400">(\${escapeHtml(item.amount)})</span>\` : ''}
+                      \${lockedForUser ? '<span class="text-[10px] font-mono text-amber-300">🔒 Admin Only</span>' : ''}
+                    </div>
+                    <p class="text-[11px] text-neutral-400 mt-1 line-clamp-1">\${escapeHtml(item.memo)}</p>
+                  </div>
+                  <button onclick="toggleItemStatus('\${item.id}', event)" class="text-xs px-2.5 py-1 rounded-[3px] border \${blockedInError ? 'border-rose-500/40 bg-rose-950/60 text-rose-200 cursor-not-allowed' : lockedForUser ? 'border-amber-500/30 bg-[#171820] text-amber-300/80 cursor-not-allowed' : 'border-white/[0.08] bg-[#171820] text-neutral-300 hover:text-white hover:bg-[#20222D] cursor-pointer'} font-medium shrink-0">
+                    \${blockedInError ? '차단됨' : lockedForUser ? '권한 필요' : '상태전환'}
+                  </button>
+                </div>
+              \`; }).join('')}
+            </div>
           </div>
-        </div>
+        \`}
       \`;
     }
 
     // 2. KANBAN VIEW SYNTHESIS
     function renderKanbanView(container, data) {
+      if (data.length === 0) {
+        container.innerHTML = renderEmptyStatePanel('진행 칸반');
+        return;
+      }
+      const isUserRole = previewState === 'role' && previewRole === 'user';
       const columns = [
         { id: '대기', title: '백로그 / 요구사항' },
         { id: '진행중', title: '스프린트 구현 중' },
@@ -829,7 +1140,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
                     <div onclick="openItemDetail('\${item.id}')" class="p-3 bg-[#13141B] rounded-[4px] border border-white/[0.06] hover:border-white/20 transition-all space-y-2 cursor-pointer">
                       <div class="flex items-start justify-between gap-1">
                         <h4 class="text-xs font-semibold text-[#F1F1F4] leading-snug">\${escapeHtml(item.title)}</h4>
-                        <button onclick="deleteItem('\${item.id}', event)" class="text-neutral-500 hover:text-white text-xs">✕</button>
+                        \${isUserRole ? '' : \`<button onclick="deleteItem('\${item.id}', event)" class="text-neutral-500 hover:text-white text-xs">✕</button>\`}
                       </div>
                       <p class="text-[11px] text-neutral-400 leading-relaxed line-clamp-2">\${escapeHtml(item.memo)}</p>
                       <div class="flex items-center justify-between pt-1 border-t border-white/[0.06] text-[10px] font-mono text-neutral-400">
@@ -853,6 +1164,11 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 
     // 3. TABLE / LIST VIEW SYNTHESIS
     function renderTableView(container, data) {
+      if (data.length === 0) {
+        container.innerHTML = renderEmptyStatePanel('데이터 목록');
+        return;
+      }
+      const isUserRole = previewState === 'role' && previewRole === 'user';
       let list = data;
       if (currentFilter !== 'ALL') {
         list = list.filter(d => d.status === currentFilter);
@@ -873,7 +1189,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
             <input 
               id="searchInput" 
               type="text" 
-              value="\${q}"
+              value="\${escapeHtml(q)}"
               placeholder="스펙명, 엔지니어, 메모 검색..." 
               oninput="renderActiveScreen()"
               class="w-full pl-7 pr-3 py-1.5 text-xs bg-[#0E0F14] rounded-[4px] border border-white/[0.08] text-[#F1F1F4] focus:outline-none focus:border-[#E4DFD7]/40"
@@ -919,7 +1235,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
                     <td class="p-3 text-neutral-400 max-w-xs truncate text-[11px]">\${escapeHtml(item.memo)}</td>
                     <td class="p-3 text-right space-x-1 whitespace-nowrap" onclick="event.stopPropagation()">
                       <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-1 rounded-[3px] bg-[#171820] hover:bg-[#20222D] text-neutral-300 hover:text-white font-medium border border-white/[0.08] cursor-pointer">상태전환</button>
-                      <button onclick="deleteItem('\${item.id}', event)" class="px-2 py-1 rounded-[3px] text-neutral-500 hover:text-rose-400 font-medium cursor-pointer">삭제</button>
+                      \${isUserRole ? '<span class="px-2 py-1 text-[10px] font-mono text-amber-400/80">🔒 Admin</span>' : \`<button onclick="deleteItem('\${item.id}', event)" class="px-2 py-1 rounded-[3px] text-neutral-500 hover:text-rose-400 font-medium cursor-pointer">삭제</button>\`}
                     </td>
                   </tr>
                 \`).join('')}
@@ -932,6 +1248,10 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
 
     // 4. TIMELINE / MILESTONES VIEW SYNTHESIS
     function renderTimelineView(container, data) {
+      if (data.length === 0) {
+        container.innerHTML = renderEmptyStatePanel('릴리스 타임라인');
+        return;
+      }
       const milestones = [
         { time: '09:00', label: 'Sprint-01', desc: '핵심 도메인 스키마 및 DB 마이그레이션' },
         { time: '10:30', label: 'Sprint-02', desc: 'OAuth 2.0 세션 및 JWT 인증 게이트웨이' },
@@ -1181,6 +1501,11 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
     }
 
     function openAddModal() {
+      if (previewState === 'error') {
+        const activeRule = getSimulatedRule();
+        showToast('차단됨: ' + (activeRule.then || '도메인 규칙 위반으로 신규 등록이 차단되었습니다.'), 'delete');
+        return;
+      }
       document.getElementById('addModal').classList.remove('hidden');
       document.getElementById('modalTitle').focus();
     }
@@ -1231,7 +1556,7 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
       }
     });
 
-    // Real-time synchronization pulse listener
+    // Real-time synchronization pulse & Preview State Switcher listener
     window.addEventListener('message', (e) => {
       if (e.data && e.data.type === 'GOGUMA_TRIGGER_PULSE') {
         const target = (e.data.targetId ? document.getElementById(e.data.targetId) : null) || document.getElementById('prototypeContainer');
@@ -1241,6 +1566,10 @@ export function compileStandalonePrototypeHtml(plan: SitePlan): string {
           target.classList.add('pulse-glow');
           setTimeout(() => target.classList.remove('pulse-glow'), 1300);
         }
+      } else if (e.data && e.data.type === 'GOGUMA_SET_PREVIEW_STATE') {
+        previewState = e.data.previewState || 'default';
+        previewRole = e.data.previewRole || 'user';
+        renderActiveScreen();
       }
     });
 

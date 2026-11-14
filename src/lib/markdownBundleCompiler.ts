@@ -518,7 +518,7 @@ ${allDomainRulesMd}` : ''}
   // --------------------------------------------------------------------------
   // 13. prototype.html
   // --------------------------------------------------------------------------
-  const prototypeHtml = compileStandalonePrototypeHtml(plan);
+  const prototypeHtml = compileStandalonePrototypeHtml(plan, { formInputs });
 
   return {
     proposalMd,
