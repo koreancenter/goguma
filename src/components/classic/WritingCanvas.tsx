@@ -4,7 +4,7 @@ import {
   BookOpen,
   Shield, Database, Compass,
   Maximize2, Minimize2,
-  Sparkles, Undo2, Check
+  Sparkles, Undo2, Check, Lock, Unlock
 } from 'lucide-react';
 import { GOGUMA_CHAPTERS, ChapterDef, SectionDef } from '../../lib/chapterData';
 import { FormInputEntity, DomainBusinessRule, SitePlan } from '../../types';
@@ -37,6 +37,9 @@ export interface WritingCanvasProps {
   largeTextMode?: boolean;
   isPreviewCollapsed?: boolean;
   onTogglePreviewCollapse?: () => void;
+  lockedChapters?: number[];
+  updatedChapters?: Set<number>;
+  onToggleChapterLock?: (chapterId: number) => void;
 }
 
 export const WritingCanvas: React.FC<WritingCanvasProps> = ({
@@ -53,12 +56,18 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   largeTextMode = false,
   isPreviewCollapsed = false,
   onTogglePreviewCollapse,
+  lockedChapters = [],
+  updatedChapters,
+  onToggleChapterLock,
 }) => {
   const chapter: ChapterDef = GOGUMA_CHAPTERS.find(c => c.id === currentChapter) || GOGUMA_CHAPTERS[0];
   const section: SectionDef = chapter.sections.find(s => s.key === currentSection) || chapter.sections[0];
   const currentKey = `${currentChapter}_${section.key}`;
   const currentValue = formInputs[currentKey]?.userRawInput || '';
   const currentBusinessRules = getSectionBusinessRules(formInputs[currentKey]);
+  const isChapterLocked = Boolean(
+    lockedChapters.includes(currentChapter) || formInputs[currentKey]?.isLocked
+  );
 
   // Inline AI Co-pilot State
   const [previousValueBeforeRefine, setPreviousValueBeforeRefine] = useState<string | null>(null);
@@ -112,6 +121,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   };
 
   const handleInlineRefine = async () => {
+    if (isChapterLocked) return;
     const raw = currentValue.trim();
     if (!raw) {
       const defaultStarter = section.placeholder || `${section.title}에 대한 요구사항 명세`;
@@ -125,7 +135,8 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
       currentChapter,
       section.key,
       formInputs,
-      plan.metadata?.projectName
+      plan.metadata?.projectName,
+      lockedChapters
     );
     const aiSettings = getAISettings();
     const canUseRemoteGemini = aiSettings.provider === 'gemini' && Boolean(aiSettings.gemini.apiKey?.trim());
@@ -189,6 +200,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
   // 2. Undo Refine
   const handleUndoRefine = () => {
+    if (isChapterLocked) return;
     if (previousValueBeforeRefine !== null) {
       onInputChange(currentChapter, section.key, previousValueBeforeRefine);
       setPreviousValueBeforeRefine(null);
@@ -352,6 +364,8 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
             onBack={() => onNavigateSection('prev')}
             onSave={() => {}}
             largeTextMode={largeTextMode}
+            lockedChapters={lockedChapters}
+            updatedChapters={updatedChapters}
           />
         </div>
       </section>
@@ -376,21 +390,56 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           <span className="text-[#4B5563] truncate">{section.title}</span>
         </div>
 
-        {onTogglePreviewCollapse && (
-          <Tooltip content={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'} position="bottom">
+        <div className="flex items-center gap-2 shrink-0">
+          {isChapterLocked && (
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1E3A8A] text-white text-[11px] font-medium whitespace-nowrap">
+              <Lock size={11} className="shrink-0" />
+              <span>Locked · AI Protected</span>
+            </span>
+          )}
+
+          {onToggleChapterLock && (
             <button
-              onClick={onTogglePreviewCollapse}
-              className={`h-7 w-7 flex items-center justify-center rounded-lg transition-colors cursor-pointer shrink-0 ${
-                isPreviewCollapsed
-                  ? 'bg-[#EFF6FF] text-[#1E3A8A]'
-                  : 'bg-transparent text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9]'
+              type="button"
+              onClick={() => onToggleChapterLock(currentChapter)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                isChapterLocked
+                  ? 'bg-[#EFF6FF] text-[#1E3A8A] hover:bg-[#DBEAFE]'
+                  : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
               }`}
-              aria-label={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'}
+              title={isChapterLocked ? '챕터 잠금 해제 (편집 허용)' : '챕터 사양 잠금 (AI context drift 및 실수 수정 방지)'}
+              aria-label={isChapterLocked ? 'Unlock Chapter Spec' : 'Lock Chapter Spec'}
             >
-              {isPreviewCollapsed ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+              {isChapterLocked ? (
+                <>
+                  <Unlock size={12} />
+                  <span>Unlock</span>
+                </>
+              ) : (
+                <>
+                  <Lock size={12} />
+                  <span>Lock Spec</span>
+                </>
+              )}
             </button>
-          </Tooltip>
-        )}
+          )}
+
+          {onTogglePreviewCollapse && (
+            <Tooltip content={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'} position="bottom">
+              <button
+                onClick={onTogglePreviewCollapse}
+                className={`h-7 w-7 flex items-center justify-center rounded-lg transition-colors cursor-pointer shrink-0 ${
+                  isPreviewCollapsed
+                    ? 'bg-[#EFF6FF] text-[#1E3A8A]'
+                    : 'bg-transparent text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9]'
+                }`}
+                aria-label={isPreviewCollapsed ? '미리보기 패널 열기' : '집중 집필 모드'}
+              >
+                {isPreviewCollapsed ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+              </button>
+            </Tooltip>
+          )}
+        </div>
       </div>
 
       {/* Main Unified Canvas Body */}
@@ -399,13 +448,22 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
       }`}>
         {/* Editorial Heading */}
         <div className="space-y-2.5 border-b border-[#E5E7EB] pb-6">
-          <div className="flex items-center gap-2 text-xs text-[#4B5563]">
-            <span className="font-mono text-[#1E3A8A] font-semibold">
-              0{currentSectionIdx + 1}.
-            </span>
-            <span className={`uppercase tracking-wider font-mono text-[#4B5563] ${largeTextMode ? 'text-xs sm:text-sm' : 'text-[11px]'}`}>
-              {chapter.engTitle}
-            </span>
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2 text-xs text-[#4B5563]">
+              <span className="font-mono text-[#1E3A8A] font-semibold">
+                0{currentSectionIdx + 1}.
+              </span>
+              <span className={`uppercase tracking-wider font-mono text-[#4B5563] ${largeTextMode ? 'text-xs sm:text-sm' : 'text-[11px]'}`}>
+                {chapter.engTitle}
+              </span>
+            </div>
+
+            {isChapterLocked && (
+              <span className="inline-flex sm:hidden items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#1E3A8A] text-white text-[11px] font-medium whitespace-nowrap">
+                <Lock size={10} className="shrink-0" />
+                <span>Locked · AI Protected</span>
+              </span>
+            )}
           </div>
           <h1 className={`font-sans font-bold text-[#111827] tracking-[-0.025em] leading-[1.3] ${
             largeTextMode ? 'text-3xl sm:text-4xl lg:text-5xl' : 'text-[28px]'
@@ -419,16 +477,22 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           </p>
         </div>
 
-        {/* 1. Natural Language Writing Area — Direct Fine White Paper */}
+        {/* 1. Natural Language Writing Area — Direct Fine White Paper (or Calm #F7F8FA Read-Only Surface when Locked) */}
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
               <h2 className={`font-sans font-semibold text-[#111827] tracking-[-0.015em] ${largeTextMode ? 'text-xl' : 'text-[18px]'}`}>
                 Thinking Canvas
               </h2>
               <span className="font-mono text-xs tabular-nums text-[#9CA3AF]">
                 {currentValue.length}자
               </span>
+              {isChapterLocked && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#1E3A8A] bg-[#EFF6FF] px-2 py-0.5 rounded-full whitespace-nowrap">
+                  <Lock size={10} />
+                  <span>Locked · AI Protected</span>
+                </span>
+              )}
             </div>
 
             {/* Inline AI Co-pilot Action */}
@@ -436,15 +500,19 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
               <button
                 type="button"
                 onClick={handleInlineRefine}
-                disabled={isRefining}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] disabled:opacity-50 text-xs font-medium text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer whitespace-nowrap"
-                title="일상 구어체 서술을 명확한 엔지니어링 개발 요구사항 문장으로 정제"
+                disabled={isRefining || isChapterLocked}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                  isChapterLocked
+                    ? 'bg-[#F7F8FA] text-[#9CA3AF] cursor-not-allowed'
+                    : 'bg-[#F7F8FA] hover:bg-[#EFF6FF] disabled:opacity-50 text-[#111827] hover:text-[#1E3A8A] cursor-pointer'
+                }`}
+                title={isChapterLocked ? '잠금 상태에서는 AI 자동 정제가 비활성화됩니다' : '일상 구어체 서술을 명확한 엔지니어링 개발 요구사항 문장으로 정제'}
               >
-                <Sparkles size={12} className={`text-[#1E3A8A] ${isRefining ? 'animate-spin' : ''}`} />
+                <Sparkles size={12} className={`${isChapterLocked ? 'text-[#9CA3AF]' : 'text-[#1E3A8A]'} ${isRefining ? 'animate-spin' : ''}`} />
                 <span>{isRefining ? '정제 중...' : 'AI 정제'}</span>
               </button>
 
-              {previousValueBeforeRefine !== null && (
+              {previousValueBeforeRefine !== null && !isChapterLocked && (
                 <button
                   type="button"
                   onClick={handleUndoRefine}
@@ -467,17 +535,24 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           )}
 
           {/* Direct-on-Paper Tiptap v3 Writing Canvas */}
-          <div className="relative flex flex-col bg-[#FFFFFF] transition-all duration-200">
+          <div className={`relative flex flex-col transition-all duration-200 ${
+            isChapterLocked
+              ? 'bg-[#F7F8FA] rounded-xl px-5 py-4 border border-[#E5E7EB]/80'
+              : 'bg-[#FFFFFF]'
+          }`}>
             <TiptapThinkingCanvas
               value={currentValue}
               onChange={(newText) => onInputChange(currentChapter, section.key, newText)}
               placeholder={section.placeholder}
               largeTextMode={largeTextMode}
+              readOnly={isChapterLocked}
             />
           </div>
 
           <p className="text-xs text-[#9CA3AF]">
-            생각나는 내용을 한 줄 또는 문장으로 서술해 주세요. 우측 화면에 실시간으로 반영됩니다.
+            {isChapterLocked
+              ? '이 챕터는 잠금 상태입니다. AI 컨텍스트 불변 제약으로 보호되며 상단 Unlock 버튼을 누르면 다시 편집할 수 있습니다.'
+              : '생각나는 내용을 한 줄 또는 문장으로 서술해 주세요. 우측 화면에 실시간으로 반영됩니다.'}
           </p>
         </div>
 
@@ -488,10 +563,14 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
             onBusinessRulesChange?.(currentChapter, section.key, updatedRules);
           }}
           largeTextMode={largeTextMode}
+          isParentLocked={isChapterLocked}
         />
 
         {/* 3. Unified Chapter Interactive Widget Section */}
-        <div>
+        <div
+          aria-disabled={isChapterLocked}
+          className={isChapterLocked ? 'pointer-events-none opacity-80 select-none' : undefined}
+        >
           {renderChapterInteractiveWidget()}
         </div>
 

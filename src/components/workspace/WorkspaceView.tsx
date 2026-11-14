@@ -43,6 +43,8 @@ export interface WorkspaceViewProps {
   isCol2Collapsed: boolean;
   setIsCol2Collapsed: React.Dispatch<React.SetStateAction<boolean>>;
   completedChapters: Set<number>;
+  updatedChapters?: Set<number>;
+  handleToggleChapterLock?: (chapterId: number) => void;
   handleSelectChapter: (chapterId: number) => void;
   handleSelectSection: (sectionKey: string) => void;
   handleInputChange: (chapterId: number, sectionKey: string, text: string) => void;
@@ -68,6 +70,8 @@ export default function WorkspaceView({
   isCol1Collapsed,
   setIsCol1Collapsed,
   completedChapters,
+  updatedChapters,
+  handleToggleChapterLock,
   handleSelectChapter,
   handleSelectSection,
   handleInputChange,
@@ -229,7 +233,7 @@ export default function WorkspaceView({
     setIsExporting(true);
     try {
       const { downloadBlueprintZip } = await import('../../lib/bundleZipDownloader');
-      await downloadBlueprintZip(plan, formInputs);
+      await downloadBlueprintZip(plan, formInputs, project.lockedChapters);
     } catch (err) {
       console.error('Failed to export ZIP bundle:', err);
     } finally {
@@ -510,6 +514,7 @@ export default function WorkspaceView({
           isCollapsed={isCol1Collapsed}
           onToggleCollapse={handleToggleSidebar}
           completedChapters={completedChapters}
+          lockedChapters={project.lockedChapters}
         />
 
         {/* 50:50 Fluid Split Workspace Area (Stacked/Toggled on < lg, 50:50 split on lg+) */}
@@ -537,6 +542,9 @@ export default function WorkspaceView({
               largeTextMode={largeTextMode}
               isPreviewCollapsed={isPreviewCollapsed}
               onTogglePreviewCollapse={togglePreviewCollapsed}
+              lockedChapters={project.lockedChapters}
+              updatedChapters={updatedChapters}
+              onToggleChapterLock={handleToggleChapterLock}
             />
           </div>
 
@@ -593,6 +601,8 @@ export default function WorkspaceView({
               largeTextMode={largeTextMode}
               onSelectChapter={handleSelectChapter}
               onSelectSection={handleSelectSection}
+              lockedChapters={project.lockedChapters}
+              updatedChapters={updatedChapters}
             />
           </div>
         </div>
@@ -615,6 +625,7 @@ export default function WorkspaceView({
             isOpen={isBackupModalOpen}
             initialTab={backupModalTab}
             formInputs={formInputs}
+            lockedChapters={project.lockedChapters}
             onClose={() => {
               setIsBackupModalOpen(false);
               schedulePersistence();

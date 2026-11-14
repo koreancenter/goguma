@@ -63,6 +63,7 @@ export interface TiptapThinkingCanvasProps {
   onChange: (val: string) => void;
   placeholder?: string;
   largeTextMode?: boolean;
+  readOnly?: boolean;
 }
 
 export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
@@ -70,6 +71,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
   onChange,
   placeholder = '생각나는 내용을 한 줄 또는 문장으로 서술해 주세요...',
   largeTextMode = false,
+  readOnly = false,
 }) => {
   const isInternalUpdateRef = useRef(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
@@ -138,16 +140,20 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
       }),
     ],
+    editable: !readOnly,
     content: value || '',
     editorProps: {
       attributes: {
-        class: `w-full bg-transparent py-1 text-[#111827] outline-none font-sans transition-all duration-200 focus:outline-none ${
+        class: `w-full bg-transparent py-1 outline-none font-sans transition-all duration-200 focus:outline-none ${
+          readOnly ? 'text-[#4B5563] cursor-not-allowed select-text' : 'text-[#111827]'
+        } ${
           largeTextMode
             ? 'text-lg sm:text-xl leading-[1.8] tracking-normal min-h-[200px]'
             : 'text-[15px] sm:text-base leading-[1.75] min-h-[160px]'
         }`,
       },
       handlePaste: (view, event) => {
+        if (!view.editable) return false;
         const items = Array.from(event.clipboardData?.items || []);
         const imageItem = items.find((item) => item.type.startsWith('image/'));
         if (imageItem) {
@@ -176,6 +182,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         return false;
       },
       handleDrop: (view, event, _slice, moved) => {
+        if (!view.editable) return false;
         if (!moved && event.dataTransfer?.files?.length) {
           const file = event.dataTransfer.files[0];
           if (file.type.startsWith('image/')) {
@@ -268,14 +275,23 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     }
   }, [value, editor]);
 
+  // Sync readOnly lock state safely without resetting editor content
+  useEffect(() => {
+    if (!editor) return;
+    editor.setEditable(!readOnly);
+    if (readOnly) {
+      setIsImageModalOpen(false);
+    }
+  }, [editor, readOnly]);
+
   const isTableActive = editor ? editor.isActive('table') : false;
   const isImageActive = editor ? editor.isActive('image') : false;
   const selection = editor?.state.selection;
   const isCellSelection = Boolean(selection && '$anchorCell' in selection);
   const hasTextSelection = Boolean(selection && !selection.empty && !isImageActive && !isCellSelection);
 
-  // Suppress floating bubble menu while image insertion popover is open to guarantee zero overlap
-  const isMenuVisible = !isImageModalOpen && (isTableActive || hasTextSelection || isImageActive);
+  // Suppress floating bubble menu while readOnly or image insertion popover is open
+  const isMenuVisible = !readOnly && !isImageModalOpen && (isTableActive || hasTextSelection || isImageActive);
 
   // Read active table visual style attributes
   const tableAttrs = editor && isTableActive ? editor.getAttributes('table') : {};
@@ -454,7 +470,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   return (
     <div ref={containerRef} className="relative flex flex-col w-full">
-      {/* Top Minimal Unobtrusive Formatting Toolbar */}
+      {/* Top Minimal Unobtrusive Formatting Toolbar (Hidden when spec is locked) */}
+      {!readOnly && (
       <div className="flex items-center gap-0.5 pb-2.5 mb-3 border-b border-[#E5E7EB]/80 flex-wrap select-none">
         {/* Text Formatting */}
         <button
@@ -710,6 +727,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           </button>
         </div>
       </div>
+      )}
 
       {/* Contextual Minimalist Icon-Only Floating Bubble Menu */}
       {isMenuVisible && floatingMenuPos && (

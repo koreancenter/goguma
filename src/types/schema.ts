@@ -10,6 +10,7 @@ export interface ProjectEntity {
   updatedAt: string;           // ISO 8601
   currentChapter: number;      // Active chapter (1 ~ 8)
   currentSection: string;      // Active sub-section key
+  lockedChapters?: number[];   // Chapters protected by Spec Lock
 }
 
 export interface DomainBusinessRule {
@@ -28,6 +29,7 @@ export interface FormInputEntity {
   userRawInput: string;        // Raw natural language input from user
   refinedGuideText?: string;   // Refined 1-line guidance text from AI tier
   businessRules?: DomainBusinessRule[]; // Structured When-Then-Exception domain constraints
+  isLocked?: boolean;          // Spec Lock persistence flag
   lastSavedAt: string;         // ISO timestamp
 }
 

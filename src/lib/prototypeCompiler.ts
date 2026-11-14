@@ -1,5 +1,11 @@
 import { SitePlan, FormInputEntity } from '../types';
-import { serializeAllBusinessRulesToMarkdown, getSectionBusinessRules, hasMeaningfulRuleContent } from './businessRulesSerializer';
+import {
+  serializeAllBusinessRulesToMarkdown,
+  getSectionBusinessRules,
+  hasMeaningfulRuleContent,
+  isChapterOrSectionLocked,
+  wrapImmutableConstraint,
+} from './businessRulesSerializer';
 import { GOGUMA_CHAPTERS } from './chapterData';
 
 export type PreviewStateMode = 'default' | 'empty' | 'error' | 'role';
@@ -33,17 +39,31 @@ function safeJsonForScript(value: unknown): string {
  */
 export function generatePrototypePrompt(
   plan: SitePlan,
-  formInputs?: Record<string, FormInputEntity>
+  formInputs?: Record<string, FormInputEntity>,
+  lockedChapters?: number[]
 ): string {
   const projectName = plan.metadata?.projectName || '애플리케이션';
   const platform = plan.metadata?.platform === 'APP' ? '모바일 웹/앱 (Mobile-First)' : '웹 대시보드 (Web-First)';
-  const themeColor = plan.design?.themeColor || '#2563EB';
-  const purpose = plan.metadata?.projectOverview?.purpose || '업무 자동화 및 프로세스 최적화';
   const pages = plan.navigation?.pageStructure || [
     { name: '대시보드', route: '/dashboard', purpose: '실시간 현황 모니터링' },
     { name: '목록 관리', route: '/list', purpose: '데이터 검색 및 상태 관리' },
   ];
-  const domainRulesMarkdown = serializeAllBusinessRulesToMarkdown(formInputs);
+  const domainRulesMarkdown = serializeAllBusinessRulesToMarkdown(formInputs, lockedChapters);
+
+  const lockedNarrativeBlocks: string[] = [];
+  if (formInputs) {
+    for (const ch of GOGUMA_CHAPTERS) {
+      for (const sec of ch.sections) {
+        const key = `${ch.id}_${sec.key}`;
+        const raw = formInputs[key]?.userRawInput?.trim();
+        if (raw && isChapterOrSectionLocked(ch.id, sec.key, formInputs, lockedChapters)) {
+          lockedNarrativeBlocks.push(
+            wrapImmutableConstraint(`### Chapter 0${ch.id} · ${sec.title} (\`${key}\`)\n${raw}`)
+          );
+        }
+      }
+    }
+  }
 
   return `당신은 [${projectName}]의 수석 프론트엔드 소프트웨어 엔지니어입니다.
 
@@ -71,7 +91,10 @@ ${pages.map((p, i) => `   - Screen ${i + 1} [${p.name}] (${p.route || '/'}): ${p
    - 무거운 외부 라이브러리(Redux, Axios, Lodash 등)를 설치하지 말고, 순수 React 19 + Tailwind CSS + Lucide Icons만으로 정갈하게 작성하십시오.${domainRulesMarkdown ? `
 
 5. **도메인 비즈니스 규칙 및 제약 사항 (Domain Rules & Constraints — 엄격 준수)**:
-${domainRulesMarkdown}` : ''}
+${domainRulesMarkdown}` : ''}${lockedNarrativeBlocks.length > 0 ? `
+
+6. **잠금된 불변 사양 (Spec Lock Guardrails — 임의 변경/생략 금지)**:
+${lockedNarrativeBlocks.join('\n\n')}` : ''}
 
 지금 prototype.html과 docs/ 폴더를 정독하고, src/ 구조 설계와 첫 번째 핵심 컴포넌트 코드를 작성해 주십시오.`;
 }

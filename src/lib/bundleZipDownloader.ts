@@ -14,12 +14,13 @@ export interface ZipDownloadResult {
  */
 export async function buildBlueprintZip(
   plan: SitePlan,
-  formInputs?: Record<string, FormInputEntity>
+  formInputs?: Record<string, FormInputEntity>,
+  lockedChapters?: number[]
 ): Promise<{ zipBlob: Blob; filename: string; fileCount: number }> {
   const JSZipModule = await import('jszip');
   const JSZip = (JSZipModule as any).default || JSZipModule;
   const zip = new JSZip();
-  const bundle = compileMarkdownBundle(plan, formInputs);
+  const bundle = compileMarkdownBundle(plan, formInputs, lockedChapters);
   const docsList = getMarkdownDocsList(bundle);
 
   const projectName = plan.metadata?.projectName?.trim() || 'goguma-project';
@@ -62,9 +63,10 @@ export async function buildBlueprintZip(
  */
 export async function downloadBlueprintZip(
   plan: SitePlan,
-  formInputs?: Record<string, FormInputEntity>
+  formInputs?: Record<string, FormInputEntity>,
+  lockedChapters?: number[]
 ): Promise<ZipDownloadResult> {
-  const { zipBlob, filename, fileCount } = await buildBlueprintZip(plan, formInputs);
+  const { zipBlob, filename, fileCount } = await buildBlueprintZip(plan, formInputs, lockedChapters);
 
   const url = URL.createObjectURL(zipBlob);
   const anchor = document.createElement('a');

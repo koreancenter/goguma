@@ -53,6 +53,7 @@ const createInitialProject = (): ProjectEntity => {
     updatedAt: now,
     currentChapter: 1,
     currentSection: 'project_name',
+    lockedChapters: [],
   };
 };
 
@@ -91,6 +92,7 @@ export default function App() {
   const [project, setProject] = useState<ProjectEntity>(createInitialProject);
   const [plan, setPlan] = useState<SitePlan>(INITIAL_SITE_PLAN);
   const [formInputs, setFormInputs] = useState<Record<string, FormInputEntity>>({});
+  const [updatedChapters, setUpdatedChapters] = useState<Set<number>>(() => new Set());
 
   // --------------------------------------------------------------------------
   // 2. UI Layout & Viewport Ergonomics State
@@ -143,11 +145,14 @@ export default function App() {
 
     async function hydrateFromLocalDb() {
       try {
-        // Load active project doc
+        // Load active project doc (backward-compatible: default lockedChapters to [] if undefined)
         const projSnap = await getDoc(doc(db, 'projects', 'active_project'));
         if (projSnap.exists() && isMounted) {
           const loadedProj = projSnap.data() as ProjectEntity;
-          setProject(loadedProj);
+          setProject({
+            ...loadedProj,
+            lockedChapters: Array.isArray(loadedProj.lockedChapters) ? loadedProj.lockedChapters : [],
+          });
         }
 
         // Load active plan doc
@@ -157,7 +162,7 @@ export default function App() {
           setPlan(loadedPlan);
         }
 
-        // Load form inputs map (backward-compatible: default businessRules to [] if undefined)
+        // Load form inputs map (backward-compatible: default businessRules to [] & isLocked to false if undefined)
         const inputsSnap = await getDoc(doc(db, 'form_inputs', 'active_inputs'));
         if (inputsSnap.exists() && isMounted) {
           const loadedInputs = (inputsSnap.data() || {}) as Record<string, FormInputEntity>;
@@ -167,6 +172,7 @@ export default function App() {
             normalizedInputs[k] = {
               ...entry,
               businessRules: normalizeBusinessRules(entry.businessRules),
+              isLocked: Boolean(entry.isLocked),
             };
           }
           setFormInputs(normalizedInputs);
@@ -241,6 +247,10 @@ export default function App() {
 
   const handleInputChange = useCallback((chapterId: number, sectionKey: string, text: string) => {
     const key = `${chapterId}_${sectionKey}`;
+    if (projectRef.current.lockedChapters?.includes(chapterId) || formInputsRef.current[key]?.isLocked) {
+      return;
+    }
+
     const now = new Date().toISOString();
 
     setFormInputs(prev => {
@@ -255,9 +265,17 @@ export default function App() {
           sectionKey,
           userRawInput: text,
           businessRules: normalizeBusinessRules(existing?.businessRules),
+          isLocked: Boolean(existing?.isLocked),
           lastSavedAt: now,
         }
       };
+    });
+
+    setUpdatedChapters(prev => {
+      if (prev.has(chapterId)) return prev;
+      const next = new Set(prev);
+      next.add(chapterId);
+      return next;
     });
 
     // Auto-reflect to high-level SitePlan properties for immediate prototype responsiveness
@@ -294,6 +312,10 @@ export default function App() {
 
   const handleBusinessRulesChange = useCallback((chapterId: number, sectionKey: string, businessRules: DomainBusinessRule[]) => {
     const key = `${chapterId}_${sectionKey}`;
+    if (projectRef.current.lockedChapters?.includes(chapterId) || formInputsRef.current[key]?.isLocked) {
+      return;
+    }
+
     const now = new Date().toISOString();
 
     setFormInputs(prev => {
@@ -308,10 +330,72 @@ export default function App() {
           sectionKey,
           userRawInput: existing?.userRawInput || '',
           businessRules: normalizeBusinessRules(businessRules),
+          isLocked: Boolean(existing?.isLocked),
           lastSavedAt: now,
         }
       };
     });
+
+    setUpdatedChapters(prev => {
+      if (prev.has(chapterId)) return prev;
+      const next = new Set(prev);
+      next.add(chapterId);
+      return next;
+    });
+
+    schedulePersistence();
+  }, [schedulePersistence]);
+
+  const handleToggleChapterLock = useCallback((chapterId: number) => {
+    const currentLocked = Array.isArray(projectRef.current.lockedChapters)
+      ? projectRef.current.lockedChapters
+      : [];
+    const nextLocked = !currentLocked.includes(chapterId);
+    const now = new Date().toISOString();
+
+    setProject(prev => {
+      const prevList = Array.isArray(prev.lockedChapters) ? prev.lockedChapters : [];
+      const updatedList = nextLocked
+        ? Array.from(new Set([...prevList, chapterId])).sort((a, b) => a - b)
+        : prevList.filter(id => id !== chapterId);
+      return {
+        ...prev,
+        lockedChapters: updatedList,
+        updatedAt: now,
+      };
+    });
+
+    const chapterDef = GOGUMA_CHAPTERS.find(c => c.id === chapterId);
+    if (chapterDef) {
+      setFormInputs(prev => {
+        const nextInputs = { ...prev };
+        for (const sec of chapterDef.sections) {
+          const key = `${chapterId}_${sec.key}`;
+          const existing = nextInputs[key];
+          nextInputs[key] = {
+            ...(existing || {}),
+            id: existing?.id || `input_${key}`,
+            projectId: existing?.projectId || projectRef.current.id,
+            chapterId,
+            sectionKey: sec.key,
+            userRawInput: existing?.userRawInput || '',
+            businessRules: normalizeBusinessRules(existing?.businessRules),
+            isLocked: nextLocked,
+            lastSavedAt: now,
+          };
+        }
+        return nextInputs;
+      });
+    }
+
+    if (nextLocked) {
+      setUpdatedChapters(prev => {
+        if (!prev.has(chapterId)) return prev;
+        const next = new Set(prev);
+        next.delete(chapterId);
+        return next;
+      });
+    }
 
     schedulePersistence();
   }, [schedulePersistence]);
@@ -361,7 +445,7 @@ export default function App() {
       } else if (isCmdOrCtrl && e.key.toLowerCase() === 'e') {
         e.preventDefault();
         import('./lib/bundleZipDownloader').then(({ downloadBlueprintZip }) => {
-          downloadBlueprintZip(planRef.current, formInputsRef.current);
+          downloadBlueprintZip(planRef.current, formInputsRef.current, projectRef.current.lockedChapters);
         });
       } else if (isCmdOrCtrl && e.key.toLowerCase() === 'p') {
         e.preventDefault();
@@ -419,6 +503,8 @@ export default function App() {
                   isCol2Collapsed={isCol2Collapsed}
                   setIsCol2Collapsed={setIsCol2Collapsed}
                   completedChapters={completedChapters}
+                  updatedChapters={updatedChapters}
+                  handleToggleChapterLock={handleToggleChapterLock}
                   handleSelectChapter={handleSelectChapter}
                   handleSelectSection={handleSelectSection}
                   handleInputChange={handleInputChange}

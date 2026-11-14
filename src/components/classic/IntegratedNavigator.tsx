@@ -4,7 +4,7 @@ import {
   Compass, Target, Users, HelpCircle, Cpu, GitBranch, 
   Database, FileCheck, Palette, Type, FolderTree, Navigation, 
   Code2, ShieldCheck, Archive, ListChecks, ChevronLeft, ChevronRight, 
-  Check, LayoutGrid, CheckCircle2, Circle
+  Check, LayoutGrid, Lock
 } from 'lucide-react';
 import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
 import { getSectionBusinessRules, hasMeaningfulRuleContent } from '../../lib/businessRulesSerializer';
@@ -19,6 +19,7 @@ interface IntegratedNavigatorProps {
   isCollapsed: boolean;
   onToggleCollapse: () => void;
   completedChapters?: Set<number>;
+  lockedChapters?: number[];
 }
 
 // 16 Distinct, highly-intuitive Lucide icons corresponding to each spec section
@@ -68,6 +69,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
   formInputs,
   isCollapsed,
   onToggleCollapse,
+  lockedChapters = [],
 }) => {
   // Tooltip portal state for the Ubuntu Dock mode
   const [tooltipState, setTooltipState] = useState<TooltipState | null>(null);
@@ -193,6 +195,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
           {FLAT_SECTIONS.map((item) => {
             const isCurrent = currentChapter === item.chapterId && currentSection === item.sectionKey;
             const isDone = isSectionCompleted(item.chapterId, item.sectionKey);
+            const isLocked = lockedChapters.includes(item.chapterId) || Boolean(formInputs[`${item.chapterId}_${item.sectionKey}`]?.isLocked);
             const Icon = item.Icon;
 
             // 1. Slim 52px Icon & Number Rail Mode
@@ -236,15 +239,22 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                     {item.numStr}
                   </span>
 
-                  {/* Completed Dot */}
-                  {isDone && (
+                  {/* Locked or Completed Indicator */}
+                  {isLocked ? (
+                    <span
+                      className="absolute top-0.5 right-0.5 text-[#1E3A8A]"
+                      title="Locked · AI Protected"
+                    >
+                      <Lock size={9} />
+                    </span>
+                  ) : isDone ? (
                     <span 
                       className={`absolute top-1 right-1 w-1.5 h-1.5 rounded-full ${
                         isCurrent ? 'bg-[#1E3A8A]' : 'bg-[#15803D]'
                       }`}
                       title="작성 완료됨"
                     />
-                  )}
+                  ) : null}
                 </button>
               );
             }
@@ -273,13 +283,17 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   <span className="truncate">{item.title}</span>
                 </div>
 
-                {isDone && (
+                {isLocked ? (
+                  <span className="shrink-0 ml-1.5 text-[#1E3A8A]" title="Locked · AI Protected">
+                    <Lock size={12} />
+                  </span>
+                ) : isDone ? (
                   <span className={`shrink-0 ml-1.5 ${
                     isCurrent ? 'text-[#1E3A8A]' : 'text-[#15803D]'
                   }`}>
                     <Check size={13} strokeWidth={2.5} />
                   </span>
-                )}
+                ) : null}
               </button>
             );
           })}

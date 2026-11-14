@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { FormInputEntity } from '../../types';
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
+import { getDocImpactStatus } from '../../lib/specImpact';
 import { downloadBlueprintZip } from '../../lib/bundleZipDownloader';
 import { compileStandalonePrototypeHtml, generatePrototypePrompt } from '../../lib/prototypeCompiler';
 
@@ -14,11 +15,15 @@ export interface PromptExtractionHubProps {
   onBack?: () => void;
   onSave?: () => void;
   largeTextMode?: boolean;
+  lockedChapters?: number[];
+  updatedChapters?: Set<number>;
 }
 
 export default function PromptExtractionHub({ 
   formInputs,
   largeTextMode = false,
+  lockedChapters = [],
+  updatedChapters,
 }: PromptExtractionHubProps) {
   const { plan } = useSitePlan();
 
@@ -31,13 +36,21 @@ export default function PromptExtractionHub({
 
   // 1. Compile 11-Markdown bundle
   const bundle = useMemo(() => {
-    return compileMarkdownBundle(plan, formInputs);
-  }, [plan, formInputs]);
+    return compileMarkdownBundle(plan, formInputs, lockedChapters);
+  }, [plan, formInputs, lockedChapters]);
 
   // 2. Docs list with metadata (SSOT)
   const docsList = useMemo(() => {
     return getMarkdownDocsList(bundle);
   }, [bundle]);
+
+  const docImpactMap = useMemo(() => {
+    const map: Record<string, 'updated' | 'locked' | 'idle'> = {};
+    for (const d of docsList) {
+      map[d.id] = getDocImpactStatus(d.id, formInputs, lockedChapters, updatedChapters);
+    }
+    return map;
+  }, [docsList, formInputs, lockedChapters, updatedChapters]);
 
   const activeDoc: MarkdownDocInfo = useMemo(() => {
     return docsList.find(d => d.id === activeDocId) || docsList[0];
@@ -45,8 +58,8 @@ export default function PromptExtractionHub({
 
   // Golden Prompt for Cursor / Claude Code / Windsurf (Prototype-as-Spec 1:1 reverse engineering)
   const goldenPromptText = useMemo(() => {
-    return generatePrototypePrompt(plan, formInputs);
-  }, [plan, formInputs]);
+    return generatePrototypePrompt(plan, formInputs, lockedChapters);
+  }, [plan, formInputs, lockedChapters]);
 
   // Quick kickoff instruction prompt
   const firstPromptText = useMemo(() => {
@@ -66,7 +79,7 @@ export default function PromptExtractionHub({
     if (isDownloading) return;
     setIsDownloading(true);
     try {
-      await downloadBlueprintZip(plan, formInputs);
+      await downloadBlueprintZip(plan, formInputs, lockedChapters);
       setDownloadDone(true);
       setTimeout(() => setDownloadDone(false), 3000);
     } catch (e: any) {
@@ -364,10 +377,11 @@ export default function PromptExtractionHub({
           <span className="text-xs text-[#6B7280] font-mono">문서 탭을 선택하여 내용을 확인하세요.</span>
         </div>
 
-        {/* Document Tabs Strip - Clean Segmented Buttons */}
+        {/* Document Tabs Strip - Clean Segmented Buttons with Spec Impact Indicator */}
         <div className="flex flex-wrap gap-1.5 bg-[#F7F8FA] p-2 rounded-xl">
           {docsList.map((doc) => {
             const isActive = doc.id === activeDocId;
+            const status = docImpactMap[doc.id] || 'idle';
             return (
               <button
                 key={doc.id}
@@ -382,6 +396,30 @@ export default function PromptExtractionHub({
                   {doc.docNumber <= 11 ? String(doc.docNumber).padStart(2, '0') : '★'}
                 </span>
                 <span className="font-sans">{doc.filename}</span>
+                {status !== 'idle' && (
+                  <span
+                    className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-sans font-medium leading-none ${
+                      isActive
+                        ? 'bg-white/15 text-white'
+                        : status === 'locked'
+                        ? 'bg-[#EFF6FF] text-[#1E3A8A]'
+                        : 'bg-[#F0FDF4] text-[#15803D]'
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isActive
+                          ? status === 'locked'
+                            ? 'bg-[#93C5FD]'
+                            : 'bg-[#86EFAC]'
+                          : status === 'locked'
+                          ? 'bg-[#1E3A8A]'
+                          : 'bg-[#15803D]'
+                      }`}
+                    />
+                    <span>{status === 'locked' ? 'Locked' : 'Updated'}</span>
+                  </span>
+                )}
               </button>
             );
           })}
@@ -389,7 +427,7 @@ export default function PromptExtractionHub({
 
         {/* Active Document Viewer */}
         <div className="bg-[#FFFFFF] rounded-xl border border-[#E5E7EB] overflow-hidden">
-          <div className="bg-[#F7F8FA] px-4 py-3 border-b border-[#E5E7EB] flex items-center justify-between">
+          <div className="bg-[#F7F8FA] px-4 py-3 border-b border-[#E5E7EB] flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 truncate text-xs">
               <span className="font-mono text-[#1E3A8A] font-semibold">
                 {activeDoc.relativePath}
@@ -398,6 +436,22 @@ export default function PromptExtractionHub({
               <span className="text-[#4B5563] truncate">
                 {activeDoc.title}
               </span>
+              {docImpactMap[activeDoc.id] && docImpactMap[activeDoc.id] !== 'idle' && (
+                <span
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap shrink-0 ${
+                    docImpactMap[activeDoc.id] === 'locked'
+                      ? 'bg-[#EFF6FF] text-[#1E3A8A]'
+                      : 'bg-[#F0FDF4] text-[#15803D]'
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      docImpactMap[activeDoc.id] === 'locked' ? 'bg-[#1E3A8A]' : 'bg-[#15803D]'
+                    }`}
+                  />
+                  <span>{docImpactMap[activeDoc.id] === 'locked' ? 'Locked' : 'Updated'}</span>
+                </span>
+              )}
             </div>
             <button
               onClick={() => handleCopyDoc(activeDoc)}

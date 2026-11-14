@@ -21,6 +21,7 @@ export interface LocalBackupModalProps {
   onClose: () => void;
   initialTab?: 'export' | 'import' | 'storage';
   formInputs?: Record<string, any>;
+  lockedChapters?: number[];
 }
 
 export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({ 
@@ -28,6 +29,7 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
   onClose,
   initialTab = 'export',
   formInputs,
+  lockedChapters,
 }) => {
   const { language } = useLanguage();
   const { plan: currentPlan } = useSitePlan();
@@ -111,7 +113,7 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
     setActionError(null);
     setIsDownloadingZip(true);
     try {
-      await downloadBlueprintZip(currentPlan, formInputs);
+      await downloadBlueprintZip(currentPlan, formInputs, lockedChapters);
       setZipSuccess(true);
       setTimeout(() => setZipSuccess(false), 3000);
     } catch (err: any) {

@@ -16,6 +16,7 @@ import {
   PreviewRoleMode,
 } from '../../lib/prototypeCompiler';
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
+import { getDocImpactStatus } from '../../lib/specImpact';
 import { copyProjectJsonToClipboard } from '../../lib/projectFileIO';
 import VisualSitemap from './VisualSitemap';
 import { Tooltip } from '../guide/Tooltip';
@@ -30,6 +31,8 @@ interface SpecPreviewPanelProps {
   width?: number;
   onSelectChapter?: (chapterId: number) => void;
   onSelectSection?: (sectionKey: string) => void;
+  lockedChapters?: number[];
+  updatedChapters?: Set<number>;
 }
 
 type PreviewTab = 'prototype' | 'docs' | 'devhub' | 'sitemap';
@@ -85,6 +88,8 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   width,
   onSelectChapter,
   onSelectSection,
+  lockedChapters = [],
+  updatedChapters,
 }) => {
   const [activeTab, setActiveTab] = useState<PreviewTab>('prototype');
   const [viewportMode, setViewportMode] = useState<ViewportMode>(() => 
@@ -149,7 +154,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   // Copy Prototype-as-Spec golden prompt for Cursor/Claude
   const handleCopyAgentPrompt = async () => {
     try {
-      const prompt = generatePrototypePrompt(plan, formInputs);
+      const prompt = generatePrototypePrompt(plan, formInputs, lockedChapters);
       await navigator.clipboard.writeText(prompt);
       setCopiedPrompt(true);
       setTimeout(() => setCopiedPrompt(false), 2500);
@@ -169,8 +174,8 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
 
   // 2. Compile full 11-markdown bundle in real time
   const bundle = useMemo(() => {
-    return compileMarkdownBundle(plan, formInputs);
-  }, [plan, formInputs]);
+    return compileMarkdownBundle(plan, formInputs, lockedChapters);
+  }, [plan, formInputs, lockedChapters]);
 
   // 3. Document list for the 11-doc switcher (SSOT)
   const docsList = useMemo(() => {
@@ -345,7 +350,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
     setIsDownloadingZip(true);
     try {
       const { downloadBlueprintZip } = await import('../../lib/bundleZipDownloader');
-      await downloadBlueprintZip(plan, formInputs);
+      await downloadBlueprintZip(plan, formInputs, lockedChapters);
       setDownloadSuccess(true);
       setTimeout(() => setDownloadSuccess(false), 2500);
     } catch (e: any) {
@@ -355,7 +360,18 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
     }
   };
 
-  const activePromptText = useMemo(() => generatePrototypePrompt(plan, formInputs), [plan, formInputs]);
+  const activePromptText = useMemo(
+    () => generatePrototypePrompt(plan, formInputs, lockedChapters),
+    [plan, formInputs, lockedChapters]
+  );
+
+  const docImpactMap = useMemo(() => {
+    const map: Record<string, 'updated' | 'locked' | 'idle'> = {};
+    for (const d of docsList) {
+      map[d.id] = getDocImpactStatus(d.id, formInputs, lockedChapters, updatedChapters);
+    }
+    return map;
+  }, [docsList, formInputs, lockedChapters, updatedChapters]);
 
   const activeCodeValue = useMemo(() => {
     const overridden = codeOverrides[devHubSubTab];
@@ -810,11 +826,15 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   onChange={(e) => setSelectedDocId(e.target.value)}
                   className="flex-1 min-h-[32px] text-xs font-mono bg-white border border-[#E5E7EB] rounded-lg px-3 py-1.5 text-[#111827] focus:outline-none focus:border-[#1E3A8A] truncate cursor-pointer"
                 >
-                  {filteredDocs.map((doc) => (
-                    <option key={doc.id} value={doc.id}>
-                      {doc.docNumber <= 11 ? `[${String(doc.docNumber).padStart(2, '0')}]` : '[★]'} {doc.filename} - {doc.title}
-                    </option>
-                  ))}
+                  {filteredDocs.map((doc) => {
+                    const status = docImpactMap[doc.id] || 'idle';
+                    const statusSuffix = status === 'locked' ? ' [Locked]' : status === 'updated' ? ' [Updated]' : '';
+                    return (
+                      <option key={doc.id} value={doc.id}>
+                        {doc.docNumber <= 11 ? `[${String(doc.docNumber).padStart(2, '0')}]` : '[★]'} {doc.filename} - {doc.title}{statusSuffix}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -873,13 +893,79 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               </div>
             </div>
 
+            {/* Spec Impact Strip across all 11+ generated specifications */}
+            <div className="px-5 py-2.5 bg-[#FFFFFF] border-b border-[#E5E7EB]/60 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+              {filteredDocs.map((doc) => {
+                const isActive = doc.id === selectedDocId;
+                const status = docImpactMap[doc.id] || 'idle';
+                return (
+                  <button
+                    key={doc.id}
+                    type="button"
+                    onClick={() => setSelectedDocId(doc.id)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                      isActive
+                        ? 'bg-[#1E3A8A] text-white font-semibold'
+                        : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#111827] hover:bg-[#EFF6FF]'
+                    }`}
+                    title={`${doc.relativePath} · ${
+                      status === 'locked' ? 'Locked' : status === 'updated' ? 'Updated' : 'Synced'
+                    }`}
+                  >
+                    {status === 'updated' && (
+                      <span className={`inline-flex items-center gap-1 ${isActive ? 'text-white' : 'text-[#15803D]'}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#86EFAC]' : 'bg-[#15803D]'}`} />
+                      </span>
+                    )}
+                    {status === 'locked' && (
+                      <span className={`inline-flex items-center gap-1 ${isActive ? 'text-white' : 'text-[#1E3A8A]'}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#93C5FD]' : 'bg-[#1E3A8A]'}`} />
+                      </span>
+                    )}
+                    <span>{doc.filename}</span>
+                    {status !== 'idle' && (
+                      <span
+                        className={`text-[10px] font-sans font-medium ${
+                          isActive
+                            ? 'text-white/85'
+                            : status === 'locked'
+                            ? 'text-[#1E3A8A]'
+                            : 'text-[#15803D]'
+                        }`}
+                      >
+                        {status === 'locked' ? 'Locked' : 'Updated'}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Editorial Document Reader */}
             <div className="flex-1 overflow-y-auto px-6 sm:px-10 py-8 bg-white custom-scroll">
               <div className="max-w-3xl mx-auto space-y-4">
-                <div className="flex items-center gap-2 text-xs pb-3 border-b border-[#E5E7EB]">
-                  <span className="font-mono text-[#1E3A8A] font-semibold">{activeDoc.relativePath}</span>
-                  <span className="text-[#D1D5DB]">·</span>
-                  <span className="text-[#4B5563] truncate">{activeDoc.description}</span>
+                <div className="flex items-center justify-between gap-2 text-xs pb-3 border-b border-[#E5E7EB]">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="font-mono text-[#1E3A8A] font-semibold shrink-0">{activeDoc.relativePath}</span>
+                    <span className="text-[#D1D5DB] shrink-0">·</span>
+                    <span className="text-[#4B5563] truncate">{activeDoc.description}</span>
+                  </div>
+                  {docImpactMap[activeDoc.id] && docImpactMap[activeDoc.id] !== 'idle' && (
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap shrink-0 ${
+                        docImpactMap[activeDoc.id] === 'locked'
+                          ? 'bg-[#EFF6FF] text-[#1E3A8A]'
+                          : 'bg-[#F0FDF4] text-[#15803D]'
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          docImpactMap[activeDoc.id] === 'locked' ? 'bg-[#1E3A8A]' : 'bg-[#15803D]'
+                        }`}
+                      />
+                      <span>{docImpactMap[activeDoc.id] === 'locked' ? 'Locked' : 'Updated'}</span>
+                    </span>
+                  )}
                 </div>
                 <pre className="whitespace-pre-wrap leading-[1.75] text-[#111827] font-mono text-xs sm:text-[13px] select-text">
                   {activeDoc.content}

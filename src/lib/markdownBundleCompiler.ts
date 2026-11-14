@@ -4,7 +4,10 @@ import {
   serializeAllBusinessRulesToMarkdown,
   serializeBusinessRulesToTestAssertions,
   serializeSectionBusinessRulesToMarkdown,
+  wrapImmutableConstraint,
+  isChapterOrSectionLocked,
 } from './businessRulesSerializer';
+import { GOGUMA_CHAPTERS } from './chapterData';
 
 export interface GogumaMarkdownBundle {
   proposalMd: string;            // docs/01_proposal.md
@@ -42,17 +45,30 @@ export interface MarkdownDocInfo {
  */
 export function compileMarkdownBundle(
   plan: SitePlan,
-  formInputs?: Record<string, FormInputEntity>
+  formInputs?: Record<string, FormInputEntity>,
+  lockedChapters?: number[]
 ): GogumaMarkdownBundle {
-  // Helper to extract raw input with fallbacks
-  const getRaw = (key: string, fallback: string = ''): string => {
-    if (formInputs && formInputs[key]?.userRawInput?.trim()) {
-      return formInputs[key].userRawInput.trim();
-    }
-    return fallback;
+  const isChapLocked = (chapterId: number): boolean => {
+    if (lockedChapters?.includes(chapterId)) return true;
+    const ch = GOGUMA_CHAPTERS.find(c => c.id === chapterId);
+    if (!ch || !formInputs) return false;
+    return ch.sections.some(s => Boolean(formInputs[`${chapterId}_${s.key}`]?.isLocked));
   };
 
-  const projectName = plan.metadata?.projectName?.trim() || getRaw('1_project_name', '모던 웹 서비스 기획서');
+  // Helper to extract raw input with fallbacks and wrap locked sections
+  const getRaw = (key: string, fallback: string = ''): string => {
+    const val = formInputs?.[key]?.userRawInput?.trim();
+    const text = val || fallback;
+    const [chStr, ...rest] = key.split('_');
+    const chId = Number(chStr);
+    const secKey = rest.join('_');
+    if (text && !Number.isNaN(chId) && isChapterOrSectionLocked(chId, secKey, formInputs, lockedChapters)) {
+      return wrapImmutableConstraint(text);
+    }
+    return text;
+  };
+
+  const projectName = plan.metadata?.projectName?.trim() || formInputs?.['1_project_name']?.userRawInput?.trim() || '모던 웹 서비스 기획서';
   const platform = plan.metadata?.platform === 'APP' ? 'APP' : 'WEB';
   const themeColor = plan.design?.themeColor || '#050505';
   const accentColor = plan.design?.accentColor || '#FFFFFF';
@@ -70,10 +86,10 @@ export function compileMarkdownBundle(
   const happyPath = getRaw('3_happy_path', '접속 ➔ 인증 로그인 ➔ 메인 대시보드 진입 ➔ 데이터 작업 수행 ➔ 실시간 상태 반영 및 결과 확인');
 
   // Ch 4 Inputs
-  const dataColumnsRaw = getRaw('4_data_columns', 'id, title, status, ownerId, metadata, createdAt');
-  const rawCols = dataColumnsRaw.split(/[,;\n]+/).map(c => c.trim()).filter(Boolean);
+  const dataColumnsRawPlain = formInputs?.['4_data_columns']?.userRawInput?.trim() || 'id, title, status, ownerId, metadata, createdAt';
+  const rawCols = dataColumnsRawPlain.split(/[,;\n]+/).map(c => c.trim()).filter(Boolean);
   const dataColumns = rawCols.length > 0 ? rawCols : ['id', 'title', 'status', 'ownerId', 'createdAt'];
-  const ch4StructuredRules = serializeSectionBusinessRulesToMarkdown(4, 'business_rules', formInputs);
+  const ch4StructuredRules = serializeSectionBusinessRulesToMarkdown(4, 'business_rules', formInputs, lockedChapters);
   const businessRulesProse = getRaw('4_business_rules', '');
   const businessRules = [
     businessRulesProse || (!ch4StructuredRules
@@ -82,8 +98,8 @@ export function compileMarkdownBundle(
     ch4StructuredRules ? `### Domain Rules & Constraints\n${ch4StructuredRules}` : '',
   ].filter(Boolean).join('\n\n');
 
-  const allDomainRulesMd = serializeAllBusinessRulesToMarkdown(formInputs);
-  const domainRuleAssertionsMd = serializeBusinessRulesToTestAssertions(formInputs);
+  const allDomainRulesMd = serializeAllBusinessRulesToMarkdown(formInputs, lockedChapters);
+  const domainRuleAssertionsMd = serializeBusinessRulesToTestAssertions(formInputs, lockedChapters);
 
   // Ch 5 Inputs
   const brandMood = getRaw('5_brand_mood', 'Luxury Monochrome: 칠흑의 딥 오닉스(#050505) + 고대비 순백(#FFFFFF) 미니멀리즘');
@@ -97,7 +113,8 @@ export function compileMarkdownBundle(
         { id: 'p2', name: '프로젝트 및 데이터 관리', slug: '/projects', script: '데이터 그리드 및 필터링 검색' },
         { id: 'p3', name: '설정 및 권한 제어', slug: '/settings', script: '계정 설정, 팀 권한 및 API 통합' },
       ];
-  const pagesSummary = pagesList.map((p, i) => `${i + 1}. **${p.name}** (\`${p.slug}\`): ${p.script || '주요 기능 화면'}`).join('\n');
+  const pagesSummaryRaw = pagesList.map((p, i) => `${i + 1}. **${p.name}** (\`${p.slug}\`): ${p.script || '주요 기능 화면'}`).join('\n');
+  const pagesSummary = isChapLocked(6) ? wrapImmutableConstraint(pagesSummaryRaw) : pagesSummaryRaw;
   const navHierarchy = getRaw('6_nav_hierarchy', '글로벌 상단 바 ➔ 좌측 사이드바 내비게이션 ➔ 메인 컨텐츠 영역 ➔ 모달/드로어 상세 뷰');
 
   // Ch 7 Inputs
@@ -213,7 +230,13 @@ ${happyPath}
 - **모달 및 드로어**: \`backdrop-blur-md bg-[#0D0D0D]/95 border border-white/10\`
 - **전환 애니메이션**: 과도한 바운스 효과 배제, 150ms 쾌속 페이드/슬라이드
 
-## 4. 안티-슬롭(Anti-Slop) 원칙
+## 4. 브랜드 무드 및 UI 톤앤매너 (Chapter 05 Spec)
+- **브랜드 분위기**:
+${brandMood}
+- **UI 톤앤매너**:
+${uiTone}
+
+## 5. 안티-슬롭(Anti-Slop) 원칙
 - 알록달록한 다색상 네온 그라데이션 금지
 - 둥근 알약형(Pill) 버튼 남발 금지 (샤프한 직각/미세 라운드 2px 고수)
 - 본질과 무관한 만화풍 일러스트 및 유치한 아이콘 장식 금지
@@ -347,6 +370,12 @@ ${allDomainRulesMd}` : ''}
 ## 2. 보안 가드레일 (Security Guardrails)
 1. **XSS 방지**: \`dangerouslySetInnerHTML\`의 무분별한 사용을 엄격히 금지합니다.
 2. **의존성 무결성**: 정기적인 취약점 스캔을 통해 안전한 패키지만 유지합니다.
+
+## 3. 데이터 주권 및 기술 스택 요구사항 (Chapter 07 Spec)
+- **아키텍처 & 기술 스택**:
+${stackRequirements}
+- **데이터 주권 & 보안**:
+${dataSovereignty}
 `;
 
   // --------------------------------------------------------------------------
