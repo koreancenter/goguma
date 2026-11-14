@@ -7,6 +7,7 @@ import {
   Check, LayoutGrid, CheckCircle2, Circle
 } from 'lucide-react';
 import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
+import { getSectionBusinessRules, hasMeaningfulRuleContent } from '../../lib/businessRulesSerializer';
 import { FormInputEntity } from '../../types';
 
 interface IntegratedNavigatorProps {
@@ -91,10 +92,16 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
     })
   );
 
-  const completedSectionsCount = FLAT_SECTIONS.filter(item => {
-    const v = formInputs[`${item.chapterId}_${item.sectionKey}`]?.userRawInput?.trim();
-    return Boolean(v && v.length > 0);
-  }).length;
+  const isSectionCompleted = (chapterId: number, sectionKey: string): boolean => {
+    const entry = formInputs[`${chapterId}_${sectionKey}`];
+    const hasProse = Boolean(entry?.userRawInput?.trim());
+    const hasRules = getSectionBusinessRules(entry).some(hasMeaningfulRuleContent);
+    return hasProse || hasRules;
+  };
+
+  const completedSectionsCount = FLAT_SECTIONS.filter(item =>
+    isSectionCompleted(item.chapterId, item.sectionKey)
+  ).length;
   const totalSections = FLAT_SECTIONS.length; // 16
 
   // Clean up timer on unmount
@@ -185,8 +192,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
         >
           {FLAT_SECTIONS.map((item) => {
             const isCurrent = currentChapter === item.chapterId && currentSection === item.sectionKey;
-            const val = formInputs[`${item.chapterId}_${item.sectionKey}`]?.userRawInput?.trim();
-            const isDone = Boolean(val && val.length > 0);
+            const isDone = isSectionCompleted(item.chapterId, item.sectionKey);
             const Icon = item.Icon;
 
             // 1. Slim 52px Icon & Number Rail Mode

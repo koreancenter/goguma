@@ -45,8 +45,8 @@ export default function PromptExtractionHub({
 
   // Golden Prompt for Cursor / Claude Code / Windsurf (Prototype-as-Spec 1:1 reverse engineering)
   const goldenPromptText = useMemo(() => {
-    return generatePrototypePrompt(plan);
-  }, [plan]);
+    return generatePrototypePrompt(plan, formInputs);
+  }, [plan, formInputs]);
 
   // Quick kickoff instruction prompt
   const firstPromptText = useMemo(() => {

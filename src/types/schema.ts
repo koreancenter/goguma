@@ -12,6 +12,14 @@ export interface ProjectEntity {
   currentSection: string;      // Active sub-section key
 }
 
+export interface DomainBusinessRule {
+  id: string;
+  when: string;
+  then: string;
+  exception: string;
+  isLocked?: boolean;
+}
+
 export interface FormInputEntity {
   id: string;                  // Composite key: `${projectId}_${chapterId}_${sectionKey}`
   projectId: string;           // Associated Project ID
@@ -19,6 +27,7 @@ export interface FormInputEntity {
   sectionKey: string;          // Section key (e.g. "target_user", "happy_path", "data_columns")
   userRawInput: string;        // Raw natural language input from user
   refinedGuideText?: string;   // Refined 1-line guidance text from AI tier
+  businessRules?: DomainBusinessRule[]; // Structured When-Then-Exception domain constraints
   lastSavedAt: string;         // ISO timestamp
 }
 

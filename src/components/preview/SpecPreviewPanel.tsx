@@ -115,7 +115,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   // Copy Prototype-as-Spec golden prompt for Cursor/Claude
   const handleCopyAgentPrompt = async () => {
     try {
-      const prompt = generatePrototypePrompt(plan);
+      const prompt = generatePrototypePrompt(plan, formInputs);
       await navigator.clipboard.writeText(prompt);
       setCopiedPrompt(true);
       setTimeout(() => setCopiedPrompt(false), 2500);
@@ -317,7 +317,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
     }
   };
 
-  const activePromptText = useMemo(() => generatePrototypePrompt(plan), [plan]);
+  const activePromptText = useMemo(() => generatePrototypePrompt(plan, formInputs), [plan, formInputs]);
 
   const activeCodeValue = useMemo(() => {
     const overridden = codeOverrides[devHubSubTab];

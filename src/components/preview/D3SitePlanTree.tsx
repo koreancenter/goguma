@@ -7,6 +7,7 @@ import {
   CheckCircle2, Clock, Cpu, Users, Database, Shield, Palette
 } from 'lucide-react';
 import { SitePlan, FormInputEntity } from '../../types';
+import { getSectionBusinessRules, hasMeaningfulRuleContent, serializeRulesToMarkdown } from '../../lib/businessRulesSerializer';
 import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
 
 export type SitePlanNodeType = 
@@ -334,6 +335,9 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
     // --- Branch 4: Data Models & Business Rules (Ch. 4) ---
     const dataColumnsRaw = formInputs['4_data_columns']?.userRawInput || '';
     const businessRulesRaw = formInputs['4_business_rules']?.userRawInput || '';
+    const ch4Rules = getSectionBusinessRules(formInputs['4_business_rules']).filter(hasMeaningfulRuleContent);
+    const ch4RulesSummary = ch4Rules.length > 0 ? serializeRulesToMarkdown(ch4Rules) : '';
+    const combinedRulesText = [businessRulesRaw, ch4RulesSummary].filter(Boolean).join('\n\n');
 
     const dataChildren: SitePlanTreeNode[] = [
       {
@@ -363,16 +367,20 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       },
       {
         id: 'data_business_rules',
-        name: businessRulesRaw ? `유효성 규칙: ${businessRulesRaw.split('\n')[0].slice(0, 22)}...` : '비즈니스 로직 & 300ms 디바운스',
+        name: businessRulesRaw
+          ? `유효성 규칙: ${businessRulesRaw.split('\n')[0].slice(0, 22)}...`
+          : ch4Rules.length > 0
+          ? `도메인 규칙 ${ch4Rules.length}건 정의됨`
+          : '비즈니스 로직 & 300ms 디바운스',
         type: 'user_input',
-        badge: '무결성 규칙',
+        badge: ch4Rules.length > 0 ? `규칙 ${ch4Rules.length}건` : '무결성 규칙',
         badgeColor: 'indigo',
         chapterId: 4,
         sectionKey: 'business_rules',
         chapterTitle: '제4장: 비즈니스 규칙 & 유효성 검증',
-        sourceText: businessRulesRaw || '모든 데이터 300ms 디바운스 및 브라우저 온디바이스 무손실 영속성',
-        charCount: businessRulesRaw.length,
-        isUserInput: Boolean(businessRulesRaw),
+        sourceText: combinedRulesText || '모든 데이터 300ms 디바운스 및 브라우저 온디바이스 무손실 영속성',
+        charCount: combinedRulesText.length,
+        isUserInput: Boolean(combinedRulesText),
       }
     ];
 

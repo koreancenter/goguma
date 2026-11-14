@@ -1,8 +1,11 @@
+import { DomainBusinessRule } from '../types/schema';
+
 export interface SectionDef {
   key: string;
   title: string;
   question: string;
   placeholder: string;
+  businessRules?: DomainBusinessRule[];
 }
 
 export interface ChapterDef {
@@ -11,6 +14,7 @@ export interface ChapterDef {
   engTitle: string;
   description: string;
   sections: SectionDef[];
+  businessRules?: DomainBusinessRule[];
 }
 
 export const GOGUMA_CHAPTERS: ChapterDef[] = [

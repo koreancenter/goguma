@@ -1,4 +1,5 @@
-import { SitePlan } from '../types';
+import { SitePlan, FormInputEntity } from '../types';
+import { serializeAllBusinessRulesToMarkdown } from './businessRulesSerializer';
 
 /**
  * Defensive HTML entity escape to prevent XSS in standalone prototypes.
@@ -16,7 +17,10 @@ function escapeHtml(str: string): string {
  * Generates a golden, unambiguous "Prototype-as-Spec" prompt for Cursor, Claude Code, Windsurf, etc.
  * Instructs the AI agent to reverse-engineer prototype.html 1:1 into production React 19 code without hallucinations.
  */
-export function generatePrototypePrompt(plan: SitePlan): string {
+export function generatePrototypePrompt(
+  plan: SitePlan,
+  formInputs?: Record<string, FormInputEntity>
+): string {
   const projectName = plan.metadata?.projectName || '애플리케이션';
   const platform = plan.metadata?.platform === 'APP' ? '모바일 웹/앱 (Mobile-First)' : '웹 대시보드 (Web-First)';
   const themeColor = plan.design?.themeColor || '#2563EB';
@@ -25,6 +29,7 @@ export function generatePrototypePrompt(plan: SitePlan): string {
     { name: '대시보드', route: '/dashboard', purpose: '실시간 현황 모니터링' },
     { name: '목록 관리', route: '/list', purpose: '데이터 검색 및 상태 관리' },
   ];
+  const domainRulesMarkdown = serializeAllBusinessRulesToMarkdown(formInputs);
 
   return `당신은 [${projectName}]의 수석 프론트엔드 소프트웨어 엔지니어입니다.
 
@@ -49,7 +54,10 @@ ${pages.map((p, i) => `   - Screen ${i + 1} [${p.name}] (${p.route || '/'}): ${p
    - IndexedDB 또는 LocalStorage 기반의 영속성 커스텀 훅 (예: useRecordStore)
 
 4. **패키지 설치 통제 (Zero-Slop Rule)**:
-   - 무거운 외부 라이브러리(Redux, Axios, Lodash 등)를 설치하지 말고, 순수 React 19 + Tailwind CSS + Lucide Icons만으로 정갈하게 작성하십시오.
+   - 무거운 외부 라이브러리(Redux, Axios, Lodash 등)를 설치하지 말고, 순수 React 19 + Tailwind CSS + Lucide Icons만으로 정갈하게 작성하십시오.${domainRulesMarkdown ? `
+
+5. **도메인 비즈니스 규칙 및 제약 사항 (Domain Rules & Constraints — 엄격 준수)**:
+${domainRulesMarkdown}` : ''}
 
 지금 prototype.html과 docs/ 폴더를 정독하고, src/ 구조 설계와 첫 번째 핵심 컴포넌트 코드를 작성해 주십시오.`;
 }

@@ -7,13 +7,20 @@ import {
   Sparkles, Undo2, Check
 } from 'lucide-react';
 import { GOGUMA_CHAPTERS, ChapterDef, SectionDef } from '../../lib/chapterData';
-import { FormInputEntity, SitePlan } from '../../types';
+import { FormInputEntity, DomainBusinessRule, SitePlan } from '../../types';
+import { getAISettings } from '../../lib/aiConfig';
+import {
+  getSectionBusinessRules,
+  buildChapterAIContext,
+  serializeSectionBusinessRulesToMarkdown,
+} from '../../lib/businessRulesSerializer';
 import PromptExtractionHub from './PromptExtractionHub';
 import { FeatureMappingInteractiveWidget } from './FeatureMappingInteractiveWidget';
 import { DesignSystemInteractiveWidget } from './DesignSystemInteractiveWidget';
 import { NavigationArchitectureInteractiveWidget } from './NavigationArchitectureInteractiveWidget';
 import { VisualSchemaBridgeWidget } from './VisualSchemaBridgeWidget';
 import { TiptapThinkingCanvas } from './TiptapThinkingCanvas';
+import { DomainRulesSection } from './DomainRulesSection';
 import { Tooltip } from '../guide/Tooltip';
 
 export interface WritingCanvasProps {
@@ -21,6 +28,7 @@ export interface WritingCanvasProps {
   currentSection: string;
   formInputs: Record<string, FormInputEntity>;
   onInputChange: (chapterId: number, sectionKey: string, text: string) => void;
+  onBusinessRulesChange?: (chapterId: number, sectionKey: string, rules: DomainBusinessRule[]) => void;
   onNavigateSection: (direction: 'prev' | 'next') => void;
   plan: SitePlan;
   setPlan: (plan: SitePlan) => void;
@@ -36,6 +44,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   currentSection,
   formInputs,
   onInputChange,
+  onBusinessRulesChange,
   onNavigateSection,
   plan,
   setPlan,
@@ -49,10 +58,12 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   const section: SectionDef = chapter.sections.find(s => s.key === currentSection) || chapter.sections[0];
   const currentKey = `${currentChapter}_${section.key}`;
   const currentValue = formInputs[currentKey]?.userRawInput || '';
+  const currentBusinessRules = getSectionBusinessRules(formInputs[currentKey]);
 
   // Inline AI Co-pilot State
   const [previousValueBeforeRefine, setPreviousValueBeforeRefine] = useState<string | null>(null);
   const [coPilotNotification, setCoPilotNotification] = useState<string | null>(null);
+  const [isRefining, setIsRefining] = useState(false);
 
   // Reset refine state when switching sections
   useEffect(() => {
@@ -75,8 +86,32 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   const isFirstSection = currentChapter === 1 && currentSectionIdx === 0;
   const isLastSection = currentChapter === 8 && currentSectionIdx === chapter.sections.length - 1;
 
-  // 1. Inline AI Co-pilot: [✨ 1-Line Refine]
-  const handleInlineRefine = () => {
+  // 1. Inline AI Co-pilot: [✨ 1-Line Refine] with deterministic chapter context + businessRules constraints
+  const buildDeterministicRefinement = (raw: string): string => {
+    const rulesMarkdown = serializeSectionBusinessRulesToMarkdown(currentChapter, section.key, formInputs);
+    let refined = '';
+
+    if (currentChapter === 1 && section.key === 'project_name') {
+      refined = `서비스 공식 명칭: ${raw} (시스템 식별자: ${raw.replace(/\s+/g, '-').toLowerCase()})`;
+    } else if (currentChapter === 1 && (section.key === 'target_user' || section.key === 'primary_goal' || section.key === 'problem_background')) {
+      refined = `[핵심 타깃] ${raw}\n[충족 가치] 실시간 엑셀 장부 매핑 및 무설치 로컬 퍼스트 사용자 경험 제공\n[성공 지표] 업무 소요 시간 70% 단축 및 입력 실수 0건 달성`;
+    } else if (currentChapter === 4) {
+      const tokens = raw.split(/[,;\n/·]+/).map(t => t.trim()).filter(Boolean);
+      refined = tokens.map((t, i) => `${i + 1}. ${t}: 필수 입력값 검증 및 실시간 장부 1:1 매핑`).join('\n');
+    } else if (currentChapter === 3) {
+      refined = `[기능 명세] ${raw}\n- 실행 주체: 인증된 시스템 사용자\n- 사전 조건: 필수 항목 유효성 검증 통과\n- 사후 결과: 데이터베이스 즉시 반영 및 감사 로그 기록`;
+    } else {
+      refined = `[공식 규격 명세]\n- 핵심 내용: ${raw}\n- 기술 규약: 100% 무설치 로컬 퍼스트 아키텍처 준수\n- 무결성 원칙: 0ms 즉각 반응 및 브라우저 IndexedDB 영구 보존`;
+    }
+
+    if (rulesMarkdown && !refined.includes('WHEN:')) {
+      refined = `${refined}\n\n[적용된 도메인 제약 요약]\n${rulesMarkdown}`;
+    }
+
+    return refined;
+  };
+
+  const handleInlineRefine = async () => {
     const raw = currentValue.trim();
     if (!raw) {
       const defaultStarter = section.placeholder || `${section.title}에 대한 요구사항 명세`;
@@ -86,22 +121,67 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
     setPreviousValueBeforeRefine(currentValue);
 
-    let refined = '';
-    if (currentChapter === 1 && section.key === 'project_name') {
-      refined = `서비스 공식 명칭: ${raw} (시스템 식별자: ${raw.replace(/\s+/g, '-').toLowerCase()})`;
-    } else if (currentChapter === 1 && (section.key === 'target_user' || section.key === 'primary_goal')) {
-      refined = `[핵심 타깃] ${raw}\n[충족 가치] 실시간 엑셀 장부 매핑 및 무설치 로컬 퍼스트 사용자 경험 제공\n[성공 지표] 업무 소요 시간 70% 단축 및 입력 실수 0건 달성`;
-    } else if (currentChapter === 4) {
-      // Data schema refinement
-      const tokens = raw.split(/[,;\n/·]+/).map(t => t.trim()).filter(Boolean);
-      refined = tokens.map((t, i) => `${i + 1}. ${t}: 필수 입력값 검증 및 실시간 장부 1:1 매핑`).join('\n');
-    } else if (currentChapter === 3) {
-      // Feature specs refinement
-      refined = `[기능 명세] ${raw}\n- 실행 주체: 인증된 시스템 사용자\n- 사전 조건: 필수 항목 유효성 검증 통과\n- 사후 결과: 데이터베이스 즉시 반영 및 감사 로그 기록`;
-    } else {
-      refined = `[공식 규격 명세]\n- 핵심 내용: ${raw}\n- 기술 규약: 100% 무설치 로컬 퍼스트 아키텍처 준수\n- 무결성 원칙: 0ms 즉각 반응 및 브라우저 IndexedDB 영구 보존`;
+    const chapterContext = buildChapterAIContext(
+      currentChapter,
+      section.key,
+      formInputs,
+      plan.metadata?.projectName
+    );
+    const aiSettings = getAISettings();
+    const canUseRemoteGemini = aiSettings.provider === 'gemini' && Boolean(aiSettings.gemini.apiKey?.trim());
+    const canUseLocalOllama = aiSettings.provider === 'ollama';
+
+    if (canUseRemoteGemini || canUseLocalOllama) {
+      setIsRefining(true);
+      try {
+        const promptText = `You are refining a software engineering PRD section. Strictly enforce all Domain Rules & Constraints below.\n\n${chapterContext}\n\nReturn only the refined, unambiguous Korean engineering specification text.`;
+        let aiText = '';
+
+        if (canUseRemoteGemini) {
+          const res = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: aiSettings.gemini.model,
+              contents: promptText,
+              apiKey: aiSettings.gemini.apiKey.trim(),
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            aiText = (data.text || '').trim();
+          }
+        } else if (canUseLocalOllama) {
+          const res = await fetch('/api/ollama/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              endpoint: aiSettings.ollama.endpoint,
+              model: aiSettings.ollama.model,
+              messages: [{ role: 'user', content: promptText }],
+              stream: false,
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            aiText = (data.text || '').trim();
+          }
+        }
+
+        if (aiText) {
+          onInputChange(currentChapter, section.key, aiText);
+          setCoPilotNotification('✨ 3-Tier AI가 도메인 규칙 제약을 반영해 명세를 정제했습니다.');
+          setTimeout(() => setCoPilotNotification(null), 3000);
+          return;
+        }
+      } catch {
+        // Fallback seamlessly to local deterministic refinement
+      } finally {
+        setIsRefining(false);
+      }
     }
 
+    const refined = buildDeterministicRefinement(raw);
     onInputChange(currentChapter, section.key, refined);
     setCoPilotNotification('✨ 전문 엔지니어링 명세 어조로 정제되었습니다.');
     setTimeout(() => setCoPilotNotification(null), 3000);
@@ -356,11 +436,12 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
               <button
                 type="button"
                 onClick={handleInlineRefine}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] text-xs font-medium text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer"
+                disabled={isRefining}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] disabled:opacity-50 text-xs font-medium text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer whitespace-nowrap"
                 title="일상 구어체 서술을 명확한 엔지니어링 개발 요구사항 문장으로 정제"
               >
-                <Sparkles size={12} className="text-[#1E3A8A]" />
-                <span>AI 정제</span>
+                <Sparkles size={12} className={`text-[#1E3A8A] ${isRefining ? 'animate-spin' : ''}`} />
+                <span>{isRefining ? '정제 중...' : 'AI 정제'}</span>
               </button>
 
               {previousValueBeforeRefine !== null && (
@@ -400,7 +481,16 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           </p>
         </div>
 
-        {/* 2. Unified Chapter Interactive Widget Section */}
+        {/* 2. Domain Rules & Constraints Builder (When - Then - Except When) */}
+        <DomainRulesSection
+          rules={currentBusinessRules}
+          onChange={(updatedRules) => {
+            onBusinessRulesChange?.(currentChapter, section.key, updatedRules);
+          }}
+          largeTextMode={largeTextMode}
+        />
+
+        {/* 3. Unified Chapter Interactive Widget Section */}
         <div>
           {renderChapterInteractiveWidget()}
         </div>

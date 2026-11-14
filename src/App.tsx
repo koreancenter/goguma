@@ -3,9 +3,10 @@ import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-
 import { ChevronLeft } from 'lucide-react';
 
 // Domain Types strictly matching docs/06_DATA_SCHEMA.md
-import { ProjectEntity, FormInputEntity, SitePlan } from './types';
+import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from './types';
 import { INITIAL_SITE_PLAN } from './lib/initialPlan';
 import { GOGUMA_CHAPTERS } from './lib/chapterData';
+import { normalizeBusinessRules, hasMeaningfulRuleContent } from './lib/businessRulesSerializer';
 import { db, doc, setDoc, getDoc } from './lib/localDb';
 import { auth, LocalUser } from './lib/localAuth';
 
@@ -156,11 +157,19 @@ export default function App() {
           setPlan(loadedPlan);
         }
 
-        // Load form inputs map
+        // Load form inputs map (backward-compatible: default businessRules to [] if undefined)
         const inputsSnap = await getDoc(doc(db, 'form_inputs', 'active_inputs'));
         if (inputsSnap.exists() && isMounted) {
-          const loadedInputs = inputsSnap.data() as Record<string, FormInputEntity>;
-          setFormInputs(loadedInputs);
+          const loadedInputs = (inputsSnap.data() || {}) as Record<string, FormInputEntity>;
+          const normalizedInputs: Record<string, FormInputEntity> = {};
+          for (const [k, entry] of Object.entries(loadedInputs)) {
+            if (!entry || typeof entry !== 'object') continue;
+            normalizedInputs[k] = {
+              ...entry,
+              businessRules: normalizeBusinessRules(entry.businessRules),
+            };
+          }
+          setFormInputs(normalizedInputs);
         }
       } catch (err) {
         console.warn('Local database hydration notice (first load or fresh browser session):', err);
@@ -234,17 +243,22 @@ export default function App() {
     const key = `${chapterId}_${sectionKey}`;
     const now = new Date().toISOString();
 
-    setFormInputs(prev => ({
-      ...prev,
-      [key]: {
-        id: `input_${key}`,
-        projectId: projectRef.current.id,
-        chapterId,
-        sectionKey,
-        userRawInput: text,
-        lastSavedAt: now,
-      }
-    }));
+    setFormInputs(prev => {
+      const existing = prev[key];
+      return {
+        ...prev,
+        [key]: {
+          ...(existing || {}),
+          id: existing?.id || `input_${key}`,
+          projectId: existing?.projectId || projectRef.current.id,
+          chapterId,
+          sectionKey,
+          userRawInput: text,
+          businessRules: normalizeBusinessRules(existing?.businessRules),
+          lastSavedAt: now,
+        }
+      };
+    });
 
     // Auto-reflect to high-level SitePlan properties for immediate prototype responsiveness
     if (chapterId === 1 && sectionKey === 'project_name' && text.trim()) {
@@ -274,6 +288,30 @@ export default function App() {
         }
       }));
     }
+
+    schedulePersistence();
+  }, [schedulePersistence]);
+
+  const handleBusinessRulesChange = useCallback((chapterId: number, sectionKey: string, businessRules: DomainBusinessRule[]) => {
+    const key = `${chapterId}_${sectionKey}`;
+    const now = new Date().toISOString();
+
+    setFormInputs(prev => {
+      const existing = prev[key];
+      return {
+        ...prev,
+        [key]: {
+          ...(existing || {}),
+          id: existing?.id || `input_${key}`,
+          projectId: existing?.projectId || projectRef.current.id,
+          chapterId,
+          sectionKey,
+          userRawInput: existing?.userRawInput || '',
+          businessRules: normalizeBusinessRules(businessRules),
+          lastSavedAt: now,
+        }
+      };
+    });
 
     schedulePersistence();
   }, [schedulePersistence]);
@@ -342,8 +380,10 @@ export default function App() {
     const set = new Set<number>();
     for (const ch of GOGUMA_CHAPTERS) {
       const allFilled = ch.sections.every(s => {
-        const val = formInputs[`${ch.id}_${s.key}`]?.userRawInput || '';
-        return val.trim().length > 0;
+        const entry = formInputs[`${ch.id}_${s.key}`];
+        const val = entry?.userRawInput || '';
+        const hasRules = normalizeBusinessRules(entry?.businessRules).some(hasMeaningfulRuleContent);
+        return val.trim().length > 0 || hasRules;
       });
       if (allFilled) set.add(ch.id);
     }
@@ -382,6 +422,7 @@ export default function App() {
                   handleSelectChapter={handleSelectChapter}
                   handleSelectSection={handleSelectSection}
                   handleInputChange={handleInputChange}
+                  handleBusinessRulesChange={handleBusinessRulesChange}
                   handleNavigateSection={handleNavigateSection}
                   schedulePersistence={schedulePersistence}
                   currentUser={currentUser}

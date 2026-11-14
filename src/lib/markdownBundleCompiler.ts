@@ -1,5 +1,10 @@
 import { SitePlan, FormInputEntity } from '../types';
 import { compileStandalonePrototypeHtml } from './prototypeCompiler';
+import {
+  serializeAllBusinessRulesToMarkdown,
+  serializeBusinessRulesToTestAssertions,
+  serializeSectionBusinessRulesToMarkdown,
+} from './businessRulesSerializer';
 
 export interface GogumaMarkdownBundle {
   proposalMd: string;            // docs/01_proposal.md
@@ -68,7 +73,17 @@ export function compileMarkdownBundle(
   const dataColumnsRaw = getRaw('4_data_columns', 'id, title, status, ownerId, metadata, createdAt');
   const rawCols = dataColumnsRaw.split(/[,;\n]+/).map(c => c.trim()).filter(Boolean);
   const dataColumns = rawCols.length > 0 ? rawCols : ['id', 'title', 'status', 'ownerId', 'createdAt'];
-  const businessRules = getRaw('4_business_rules', '1. 필수 식별 항목(ID, Title)은 공백 없이 필수 입력\n2. 상태 전이는 사전 정의된 파이프라인 순서에 따라 변경\n3. 권한에 따른 데이터 읽기/쓰기 접근 제어(RBAC) 적용');
+  const ch4StructuredRules = serializeSectionBusinessRulesToMarkdown(4, 'business_rules', formInputs);
+  const businessRulesProse = getRaw('4_business_rules', '');
+  const businessRules = [
+    businessRulesProse || (!ch4StructuredRules
+      ? '1. 필수 식별 항목(ID, Title)은 공백 없이 필수 입력\n2. 상태 전이는 사전 정의된 파이프라인 순서에 따라 변경\n3. 권한에 따른 데이터 읽기/쓰기 접근 제어(RBAC) 적용'
+      : ''),
+    ch4StructuredRules ? `### Domain Rules & Constraints\n${ch4StructuredRules}` : '',
+  ].filter(Boolean).join('\n\n');
+
+  const allDomainRulesMd = serializeAllBusinessRulesToMarkdown(formInputs);
+  const domainRuleAssertionsMd = serializeBusinessRulesToTestAssertions(formInputs);
 
   // Ch 5 Inputs
   const brandMood = getRaw('5_brand_mood', 'Luxury Monochrome: 칠흑의 딥 오닉스(#050505) + 고대비 순백(#FFFFFF) 미니멀리즘');
@@ -236,7 +251,12 @@ ${keyFeatures}
 
 ## 4. 프로토타입 시각 기준 (Prototype-as-Spec Protocol)
 - 프로젝트 루트 디렉터리의 \`prototype.html\`은 화면 구조와 인터랙션의 시각적 기준점입니다.
-- 개발팀과 AI 에이전트는 \`prototype.html\`에 정의된 화면 컴포넌트 계층, 화면 전환 구조를 React + TypeScript 코드로 1:1 충실히 변환하여 구현합니다.
+- 개발팀과 AI 에이전트는 \`prototype.html\`에 정의된 화면 컴포넌트 계층, 화면 전환 구조를 React + TypeScript 코드로 1:1 충실히 변환하여 구현합니다.${allDomainRulesMd ? `
+
+---
+
+## 5. 도메인 비즈니스 규칙 및 제약 사항 (Domain Rules & Constraints)
+${allDomainRulesMd}` : ''}
 `;
 
   // --------------------------------------------------------------------------
@@ -302,7 +322,10 @@ ${dataColumns.map(col => `  ${translateColumnToProp(col)}: string;        // ${c
 ---
 
 ## 3. 비즈니스 로직 및 유효성 검증 규칙
-${businessRules}
+${businessRules}${allDomainRulesMd && !ch4StructuredRules ? `
+
+### 전 챕터 도메인 제약 사항 (Cross-Chapter Constraints)
+${allDomainRulesMd}` : ''}
 `;
 
   // --------------------------------------------------------------------------
@@ -348,7 +371,12 @@ ${verificationChecklist}
 3. **검색 및 필터링 속도**:
    - 키워드 입력 시 16ms 이내 빠른 인라인 필터링 검증.
 4. **반응형 뷰포트 레이아웃**:
-   - 모바일, 태블릿, 데스크톱 화면에서 레이아웃 깨짐 현상 제로 확인.
+   - 모바일, 태블릿, 데스크톱 화면에서 레이아웃 깨짐 현상 제로 확인.${domainRuleAssertionsMd ? `
+
+---
+
+## 🔒 도메인 규칙 인수 검증 (Domain Rules Verification)
+${domainRuleAssertionsMd}` : ''}
 `;
 
   // --------------------------------------------------------------------------
@@ -396,7 +424,12 @@ npm run build
 
 ## 2. 작업 수칙
 - 코드를 수정하기 전 반드시 \`docs/04_SPEC.md\`와 \`docs/06_DATA_SCHEMA.md\`를 검토할 것.
-- 컴포넌트 작성 시 엄격한 TypeScript 타입을 부여하고 콘솔 에러가 없도록 관리할 것.
+- 컴포넌트 작성 시 엄격한 TypeScript 타입을 부여하고 콘솔 에러가 없도록 관리할 것.${allDomainRulesMd ? `
+
+---
+
+## 3. 도메인 불변 규칙 (Domain Rules & Constraints)
+${allDomainRulesMd}` : ''}
 `;
 
   // --------------------------------------------------------------------------
@@ -414,7 +447,10 @@ npm run build
 3. **디자인 규약 준수**:
    - \`docs/03_DESIGN.md\`에 정의된 모노크롬 딥 오닉스(#050505) 테마와 고대비 UI를 적용하십시오.
 4. **타입 안전성**:
-   - 엄격한 TypeScript 인터페이스를 유지하고 \`any\` 타입을 배제하십시오.
+   - 엄격한 TypeScript 인터페이스를 유지하고 \`any\` 타입을 배제하십시오.${allDomainRulesMd ? `
+
+## 🔒 Domain Rules & Constraints (Mandatory Invariants)
+${allDomainRulesMd}` : ''}
 
 지금 \`docs/04_SPEC.md\`와 \`docs/06_DATA_SCHEMA.md\`를 검토하고, 핵심 컴포넌트 구현을 시작하십시오.
 `;
@@ -429,7 +465,10 @@ npm run build
 - Specification First: Always read the docs/ folder before modifying code (specifically 03_DESIGN.md, 04_SPEC.md, 05_ARCH_CONSTITUTION.md, 06_DATA_SCHEMA.md).
 - Strict Design System: Follow the Archival Paper & Sumuk Ink palette (Canvas #FAF8F5, Surface #F3EFEA, Card #FCFBF9, Hairline #E5E0D8, Ink #191816, Accent #23392D).
 - Zero Dependency Slop: Do NOT install heavy unapproved third-party libraries (Redux, Axios, etc.). Use native fetch, React 19 hooks, and Lucide icons.
-- Strict Type Safety: Maintain clean, modular, and strictly typed TypeScript with zero any types.
+- Strict Type Safety: Maintain clean, modular, and strictly typed TypeScript with zero any types.${allDomainRulesMd ? `
+
+## Domain Rules & Constraints
+${allDomainRulesMd}` : ''}
 `;
 
   const clinerules = cursorrules;
@@ -443,7 +482,10 @@ npm run build
    - \`docs/06_DATA_SCHEMA.md\` (Data models and validation rules)
 2. **Visual SSOT**: \`prototype.html\` is the interactive reference. Reverse engineer its components 1:1.
 3. **Design System**: Archival Paper & Sumuk Ink (Warm paper #FAF8F5, hairline borders #E5E0D8, sumuk ink #191816, deep green #23392D).
-4. **Clean Code**: TypeScript strict mode, functional components, zero console errors.
+4. **Clean Code**: TypeScript strict mode, functional components, zero console errors.${allDomainRulesMd ? `
+
+## Domain Rules & Constraints
+${allDomainRulesMd}` : ''}
 `;
 
   const readmeMd = `# ${projectName} - 개발 기획서 및 11종 기술 사양서 패키지

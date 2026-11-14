@@ -4,7 +4,7 @@ import {
   Download, FolderOpen, PanelRight, PanelLeft, LogOut, LayoutTemplate, Cpu, Type, ChevronDown, Check
 } from 'lucide-react';
 
-import { ProjectEntity, FormInputEntity, SitePlan } from '../../types';
+import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from '../../types';
 import { LocalUser } from '../../lib/localAuth';
 import { getAISettings, getActiveAILabel, AISettings } from '../../lib/aiConfig';
 import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
@@ -46,6 +46,7 @@ export interface WorkspaceViewProps {
   handleSelectChapter: (chapterId: number) => void;
   handleSelectSection: (sectionKey: string) => void;
   handleInputChange: (chapterId: number, sectionKey: string, text: string) => void;
+  handleBusinessRulesChange?: (chapterId: number, sectionKey: string, rules: DomainBusinessRule[]) => void;
   handleNavigateSection: (direction: 'prev' | 'next') => void;
   schedulePersistence: () => void;
   currentUser: LocalUser | null;
@@ -70,6 +71,7 @@ export default function WorkspaceView({
   handleSelectChapter,
   handleSelectSection,
   handleInputChange,
+  handleBusinessRulesChange,
   handleNavigateSection,
   schedulePersistence,
   currentUser,
@@ -526,6 +528,7 @@ export default function WorkspaceView({
               currentSection={project.currentSection}
               formInputs={formInputs}
               onInputChange={handleInputChange}
+              onBusinessRulesChange={handleBusinessRulesChange}
               onNavigateSection={handleNavigateSection}
               plan={plan}
               setPlan={setPlan}

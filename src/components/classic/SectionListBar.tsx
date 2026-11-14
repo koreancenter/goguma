@@ -4,6 +4,7 @@ import {
   Bookmark 
 } from 'lucide-react';
 import { GOGUMA_CHAPTERS, SectionDef } from '../../lib/chapterData';
+import { getSectionBusinessRules, hasMeaningfulRuleContent } from '../../lib/businessRulesSerializer';
 import { FormInputEntity } from '../../types';
 
 interface SectionListBarProps {
@@ -58,8 +59,10 @@ export const SectionListBar: React.FC<SectionListBarProps> = ({
       <nav className="flex-1 overflow-y-auto p-1.5 space-y-1">
         {chapter.sections.map((section: SectionDef, index: number) => {
           const inputKey = `${currentChapter}_${section.key}`;
-          const rawInput = formInputs[inputKey]?.userRawInput || '';
-          const isFilled = rawInput.trim().length > 0;
+          const entry = formInputs[inputKey];
+          const rawInput = entry?.userRawInput || '';
+          const hasRules = getSectionBusinessRules(entry).some(hasMeaningfulRuleContent);
+          const isFilled = rawInput.trim().length > 0 || hasRules;
           const isActive = section.key === currentSection;
 
           return (
