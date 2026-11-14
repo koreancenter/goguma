@@ -83,6 +83,7 @@ export default function WorkspaceView({
   const [isAISettingsModalOpen, setIsAISettingsModalOpen] = useState(false);
   const [aiSettings, setAiSettings] = useState<AISettings>(getAISettings);
   const [isChapterMenuOpen, setIsChapterMenuOpen] = useState(false);
+  const [mobilePane, setMobilePane] = useState<'editor' | 'preview'>('editor');
   const chapterMenuRef = useRef<HTMLDivElement>(null);
   const splitContainerRef = useRef<HTMLDivElement>(null);
 
@@ -243,9 +244,9 @@ export default function WorkspaceView({
       : 'Gemini';
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#FFFFFF] text-[#111827] font-sans selection:bg-[#EFF6FF] selection:text-[#1E3A8A]">
+    <div className="flex flex-col h-screen w-full overflow-hidden bg-[#FFFFFF] text-[#111827] font-sans selection:bg-[#EFF6FF] selection:text-[#1E3A8A]">
       {/* Top Utility Header (h-14 / 56px, #FFFFFF, 1px solid #E5E7EB hairline) */}
-      <header className="h-14 px-4 sm:px-5 bg-[#FFFFFF] border-b border-[#E5E7EB] flex items-center justify-between shrink-0 select-none z-30 gap-4">
+      <header className="h-14 px-3 sm:px-5 bg-[#FFFFFF] border-b border-[#E5E7EB] flex items-center justify-between shrink-0 select-none z-30 gap-2 sm:gap-4">
         {/* Left Zone: Sidebar Toggle + GOGUMA Logo + Editable Project Title */}
         <div className="flex items-center gap-2.5 min-w-0 shrink-0">
           <Tooltip content={isCol1Collapsed ? '목차 서랍 펼치기' : '목차 서랍 접기'} position="bottom">
@@ -270,10 +271,10 @@ export default function WorkspaceView({
             <span>GOGUMA</span>
           </button>
 
-          <span className="text-[#D1D5DB] select-none leading-none shrink-0" aria-hidden="true">/</span>
+          <span className="text-[#D1D5DB] select-none leading-none shrink-0 hidden xs:inline" aria-hidden="true">/</span>
 
           {/* Inline Editable Project Title */}
-          <div className="min-w-0 max-w-[160px] sm:max-w-[240px] lg:max-w-[280px] flex items-center">
+          <div className="min-w-0 max-w-[110px] sm:max-w-[220px] lg:max-w-[280px] flex items-center">
             <input
               type="text"
               value={project.name}
@@ -430,16 +431,43 @@ export default function WorkspaceView({
 
           <div className="w-px h-4 bg-[#E5E7EB] hidden sm:block" />
 
+          {/* Responsive Editor / Preview Toggle (< lg) */}
+          <div className="flex lg:hidden items-center bg-[#F7F8FA] p-0.5 rounded-lg border border-[#E5E7EB] shrink-0">
+            <button
+              type="button"
+              onClick={() => setMobilePane('editor')}
+              className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                mobilePane === 'editor'
+                  ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
+                  : 'text-[#4B5563] hover:text-[#111827]'
+              }`}
+            >
+              에디터
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobilePane('preview')}
+              className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                mobilePane === 'preview'
+                  ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
+                  : 'text-[#4B5563] hover:text-[#111827]'
+              }`}
+            >
+              미리보기
+            </button>
+          </div>
+
           {/* Primary CTA: Export 11 Specs in Editorial Navy (#1E3A8A) */}
           <Tooltip content="11종 사양서 번들 ZIP 다운로드" position="bottom">
             <button
               onClick={handleExportZip}
               disabled={isExporting}
-              className="h-8 px-3.5 flex items-center gap-1.5 justify-center rounded-lg bg-[#1E3A8A] hover:bg-[#172554] disabled:opacity-50 text-white transition-colors cursor-pointer text-xs font-medium whitespace-nowrap shrink-0 shadow-xs"
+              className="h-8 px-2.5 sm:px-3.5 flex items-center gap-1.5 justify-center rounded-lg bg-[#1E3A8A] hover:bg-[#172554] disabled:opacity-50 text-white transition-colors cursor-pointer text-xs font-medium whitespace-nowrap shrink-0 shadow-xs"
               aria-label="Export 11 Specs"
             >
               <Download size={13} className={isExporting ? 'animate-bounce' : ''} />
-              <span>Export 11 Specs</span>
+              <span className="hidden sm:inline">Export 11 Specs</span>
+              <span className="sm:hidden">ZIP</span>
             </button>
           </Tooltip>
 
@@ -482,12 +510,16 @@ export default function WorkspaceView({
           completedChapters={completedChapters}
         />
 
-        {/* 50:50 Fluid Split Workspace Area */}
+        {/* 50:50 Fluid Split Workspace Area (Stacked/Toggled on < lg, 50:50 split on lg+) */}
         <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">
           {/* 50% Left Editor Pane (#FFFFFF) */}
           <div
-            style={!isPreviewCollapsed ? { width: `${splitPercent}%` } : undefined}
-            className={`${isPreviewCollapsed ? 'flex-1' : 'shrink-0'} min-w-0 h-full bg-[#FFFFFF] overflow-hidden flex flex-col`}
+            style={!isPreviewCollapsed ? ({ '--split-left': `${splitPercent}%` } as React.CSSProperties) : undefined}
+            className={`${
+              mobilePane === 'editor' ? 'flex w-full' : 'hidden lg:flex'
+            } ${
+              isPreviewCollapsed ? 'lg:flex-1' : 'lg:shrink-0 lg:w-[var(--split-left)]'
+            } min-w-0 h-full bg-[#FFFFFF] overflow-hidden flex-col`}
           >
             <WritingCanvas
               currentChapter={project.currentChapter}
@@ -505,7 +537,7 @@ export default function WorkspaceView({
             />
           </div>
 
-          {/* Single 1px solid #E5E7EB Vertical Divider (with subtle drag-resize affordance) */}
+          {/* Single 1px solid #E5E7EB Vertical Divider (Desktop lg+ only) */}
           {!isPreviewCollapsed && (
             <div
               role="separator"
@@ -519,7 +551,7 @@ export default function WorkspaceView({
               onMouseDown={handleMouseDownResizer}
               onDoubleClick={handleResetSplit}
               title="드래그하여 비율 조절 (더블클릭 시 50:50 초기화)"
-              className="w-px bg-[#E5E7EB] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[#1E3A8A] group"
+              className="hidden lg:block w-px bg-[#E5E7EB] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[#1E3A8A] group"
             >
               <div
                 className={`absolute inset-y-0 -left-1 -right-1 cursor-col-resize transition-colors ${
@@ -536,15 +568,25 @@ export default function WorkspaceView({
 
           {/* 50% Right Preview Stage (#F7F8FA) or Collapsed 52px Rail */}
           <div
-            style={!isPreviewCollapsed ? { width: `${100 - splitPercent}%` } : undefined}
-            className={`${isPreviewCollapsed ? 'shrink-0' : 'shrink-0'} min-w-0 h-full bg-[#F7F8FA] overflow-hidden flex flex-col`}
+            style={!isPreviewCollapsed ? ({ '--split-right': `${100 - splitPercent}%` } as React.CSSProperties) : undefined}
+            className={`${
+              mobilePane === 'preview' ? 'flex w-full' : 'hidden lg:flex'
+            } ${
+              isPreviewCollapsed ? 'lg:w-auto lg:shrink-0' : 'lg:shrink-0 lg:w-[var(--split-right)]'
+            } min-w-0 h-full bg-[#F7F8FA] overflow-hidden flex-col`}
           >
             <SpecPreviewPanel
               plan={plan}
               formInputs={formInputs}
               currentChapter={project.currentChapter}
-              isCollapsed={isPreviewCollapsed}
-              onToggleCollapse={togglePreviewCollapsed}
+              isCollapsed={mobilePane === 'preview' ? false : isPreviewCollapsed}
+              onToggleCollapse={() => {
+                if (mobilePane === 'preview') {
+                  setMobilePane('editor');
+                } else {
+                  togglePreviewCollapsed();
+                }
+              }}
               largeTextMode={largeTextMode}
               onSelectChapter={handleSelectChapter}
               onSelectSection={handleSelectSection}

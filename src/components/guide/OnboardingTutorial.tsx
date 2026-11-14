@@ -89,7 +89,7 @@ export const OnboardingTutorial: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]"
+          className="absolute inset-0 bg-[#111827]/40 backdrop-blur-[2px]"
           style={{
             clipPath: targetRect ? (
               `polygon(
@@ -118,10 +118,10 @@ export const OnboardingTutorial: React.FC = () => {
               left: targetRect.left - 6,
               width: targetRect.width + 12,
               height: targetRect.height + 12,
-              border: '2px solid #38BDF8',
-              borderRadius: '3px',
+              border: '2px solid #1E3A8A',
+              borderRadius: '10px',
               zIndex: 10001,
-              boxShadow: '0 0 0 10000px rgba(11, 12, 16, 0.75), 0 0 20px rgba(56, 189, 248, 0.35)',
+              boxShadow: '0 0 0 10000px rgba(17, 24, 39, 0.42), 0 0 24px rgba(30, 58, 138, 0.28)',
             }}
             transition={{ type: 'spring', damping: 25, stiffness: 120 }}
           />
@@ -136,36 +136,36 @@ export const OnboardingTutorial: React.FC = () => {
             className="fixed z-[10001] pointer-events-auto"
             style={getTooltipStyle()}
           >
-            <div className="bg-[#0E1217] rounded-[4px] p-6 shadow-2xl border border-white/[0.08] max-w-[380px] w-full text-[#F0F3F6] font-sans">
-              <div className="flex items-center justify-between mb-3 border-b border-white/[0.08] pb-2.5">
+            <div className="bg-[#FFFFFF] rounded-2xl p-6 shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] border border-[#E5E7EB] max-w-[380px] w-full text-[#111827] font-sans">
+              <div className="flex items-center justify-between mb-3 border-b border-[#E5E7EB] pb-2.5">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-blue-950/60 border border-blue-800/60 text-[#38BDF8] flex items-center justify-center rounded-[2px] font-bold text-xs">
+                  <div className="w-6 h-6 bg-[#EFF6FF] border border-[#1E3A8A]/20 text-[#1E3A8A] flex items-center justify-center rounded-md font-bold text-xs">
                     ✦
                   </div>
-                  <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">ONBOARDING GUIDE</span>
+                  <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-widest">ONBOARDING GUIDE</span>
                 </div>
                 <button 
                   onClick={stopTutorial}
-                  className="text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                  className="text-[#6B7280] hover:text-[#111827] transition-colors cursor-pointer"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              <h3 className="text-base font-semibold text-white tracking-tight mb-1.5">
+              <h3 className="text-base font-semibold text-[#111827] tracking-tight mb-1.5">
                 {t(currentStep.titleKey)}
               </h3>
-              <p className="text-xs text-zinc-300 font-sans leading-relaxed mb-6">
+              <p className="text-xs text-[#4B5563] font-sans leading-relaxed mb-6">
                 {t(currentStep.descriptionKey)}
               </p>
 
-              <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
+              <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB]">
                 <div className="flex items-center gap-1.5">
                   {steps.map((_, idx) => (
                     <div 
                       key={`dot-${idx}`}
-                      className={`h-1 rounded-[1px] transition-all duration-300 ${
-                        idx === currentStepIndex ? 'w-4 bg-[#2563EB]' : 'w-1.5 bg-white/[0.12]'
+                      className={`h-1 rounded-full transition-all duration-300 ${
+                        idx === currentStepIndex ? 'w-4 bg-[#1E3A8A]' : 'w-1.5 bg-[#E5E7EB]'
                       }`}
                     />
                   ))}
@@ -174,14 +174,14 @@ export const OnboardingTutorial: React.FC = () => {
                   {currentStepIndex > 0 && (
                     <button
                       onClick={prevStep}
-                      className="p-1.5 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                      className="p-1.5 text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer"
                     >
                       <ChevronLeft size={16} />
                     </button>
                   )}
                   <button
                     onClick={nextStep}
-                    className="flex items-center gap-1.5 bg-[#2563EB] hover:bg-[#1D4ED8] px-4 py-1.5 rounded-[2px] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 bg-[#1E3A8A] hover:bg-[#172554] px-4 py-1.5 rounded-lg text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
                   >
                     <span>{currentStepIndex === steps.length - 1 ? t('start_exploring') : t('next_step')}</span>
                     <ChevronRight size={14} />

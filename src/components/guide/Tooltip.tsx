@@ -90,13 +90,13 @@ export const IconButton: React.FC<IconButtonProps> = ({
 }) => {
   const getVariantClasses = () => {
     switch (variant) {
-      case 'primary': return 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] border border-[#2563EB] font-semibold shadow-[0_0_15px_rgba(37,99,235,0.25)]';
-      case 'secondary': return 'bg-[#13181F] text-[#F0F3F6] hover:bg-[#1A222C] border border-white/[0.08] shadow-xs';
-      case 'danger': return 'bg-[#2A1215] text-red-300 hover:text-red-200 border border-red-900/50 shadow-xs';
-      case 'warning': return 'bg-blue-950/60 text-[#38BDF8] hover:text-sky-200 border border-blue-900/50 shadow-xs';
-      case 'ai': return 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] border border-[#2563EB] font-semibold shadow-[0_0_15px_rgba(37,99,235,0.25)]';
-      case 'ghost': return 'bg-transparent text-zinc-400 hover:text-[#F0F3F6] hover:bg-[#13181F] border border-transparent shadow-none';
-      default: return 'bg-[#2563EB] text-white border border-[#2563EB]';
+      case 'primary': return 'bg-[#1E3A8A] text-white hover:bg-[#172554] border border-[#1E3A8A] font-semibold shadow-xs';
+      case 'secondary': return 'bg-[#F7F8FA] text-[#111827] hover:bg-[#F1F5F9] border border-[#E5E7EB]';
+      case 'danger': return 'bg-[#FEF2F2] text-[#B91C1C] hover:bg-[#FEE2E2] border border-[#FECACA]';
+      case 'warning': return 'bg-[#EFF6FF] text-[#1E3A8A] hover:bg-[#DBEAFE] border border-[#BFDBFE]';
+      case 'ai': return 'bg-[#1E3A8A] text-white hover:bg-[#172554] border border-[#1E3A8A] font-semibold shadow-xs';
+      case 'ghost': return 'bg-transparent text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] border border-transparent shadow-none';
+      default: return 'bg-[#1E3A8A] text-white border border-[#1E3A8A]';
     }
   };
 

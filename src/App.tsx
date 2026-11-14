@@ -396,18 +396,18 @@ export default function App() {
             path="/profile" 
             element={
               <ProtectedRoute user={currentUser}>
-                <div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] flex flex-col font-sans">
-                  <header className="h-14 px-6 bg-[#0E1217] border-b border-white/[0.08] flex items-center justify-between">
+                <div className="min-h-screen bg-[#F7F8FA] text-[#111827] flex flex-col font-sans">
+                  <header className="h-14 px-6 bg-[#FFFFFF] border-b border-[#E5E7EB] flex items-center justify-between">
                     <button
                       onClick={() => navigate('/workspace')}
-                      className="flex items-center gap-2 text-xs font-medium text-[#9AA5B5] hover:text-[#F0F3F6] transition-colors cursor-pointer"
+                      className="flex items-center gap-2 text-xs font-medium text-[#4B5563] hover:text-[#1E3A8A] transition-colors cursor-pointer"
                     >
                       <ChevronLeft size={16} />
                       <span>작업실로 복귀</span>
                     </button>
-                    <span className="font-semibold text-xs text-[#F0F3F6]">사용자 설정 및 통계</span>
+                    <span className="font-semibold text-xs text-[#111827]">사용자 설정 및 통계</span>
                   </header>
-                  <main className="flex-1 p-8 max-w-4xl mx-auto w-full">
+                  <main className="flex-1 p-4 sm:p-8 max-w-4xl mx-auto w-full">
                     <MyAccount />
                   </main>
                   <Footer />
@@ -417,13 +417,13 @@ export default function App() {
           />
 
           {/* Legal & Informational Pages */}
-          <Route path="/terms" element={<div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
+          <Route path="/terms" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
           <Route path="/license" element={<Navigate to="/terms" replace />} />
-          <Route path="/privacy" element={<div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
-          <Route path="/about" element={<div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
-          <Route path="/contact" element={<div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
-          <Route path="/support" element={<div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
-          <Route path="/community" element={<div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
+          <Route path="/privacy" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
+          <Route path="/about" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
+          <Route path="/contact" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
+          <Route path="/support" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
+          <Route path="/community" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
           <Route path="/welcome" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
 

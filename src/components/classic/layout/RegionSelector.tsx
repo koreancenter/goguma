@@ -63,21 +63,21 @@ export default function RegionSelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-3 px-3.5 py-2 bg-[#13181F] hover:bg-[#18202A] rounded-[2px] border border-white/[0.08] transition-all group min-w-[150px] cursor-pointer"
+        className="flex items-center justify-between gap-3 px-3.5 py-2 bg-[#F7F8FA] hover:bg-[#F1F5F9] rounded-lg border border-[#E5E7EB] transition-all group min-w-[150px] cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <Globe size={14} className="text-[#38BDF8] flex-shrink-0" />
+          <Globe size={14} className="text-[#1E3A8A] flex-shrink-0" />
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#F0F3F6] truncate max-w-[80px]">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-[#111827] truncate max-w-[80px]">
               {selectedRegion.name[language as 'en' | 'ko' | 'id']}
             </span>
-            <span className="text-[10px] text-zinc-600">|</span>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#38BDF8]">
+            <span className="text-[10px] text-[#D1D5DB]">|</span>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-[#1E3A8A] font-semibold">
               {language.toUpperCase()}
             </span>
           </div>
         </div>
-        <ChevronDown size={14} className={`text-zinc-400 transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown size={14} className={`text-[#6B7280] transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence>
@@ -86,20 +86,20 @@ export default function RegionSelector() {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute bottom-full left-0 mb-4 w-72 bg-[#0E1217] rounded-[4px] shadow-2xl border border-white/[0.08] overflow-hidden z-50 p-5 space-y-5"
+            className="absolute bottom-full left-0 mb-4 w-72 bg-[#FFFFFF] rounded-2xl shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] border border-[#E5E7EB] overflow-hidden z-50 p-5 space-y-5"
           >
             {/* Region Selection */}
             <div className="space-y-2.5">
-              <h4 className="text-[10px] font-mono text-zinc-400 uppercase tracking-[0.2em]">{t('select_region')}</h4>
+              <h4 className="text-[10px] font-mono text-[#6B7280] uppercase tracking-[0.2em]">{t('select_region')}</h4>
               <div className="grid grid-cols-2 gap-2">
                 {regions.map((r) => (
                   <button
                     key={r.id}
                     onClick={() => handleRegionChange(r)}
-                    className={`text-left px-3 py-2 rounded-[2px] text-[10px] font-medium transition-all cursor-pointer ${
+                    className={`text-left px-3 py-2 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
                       selectedRegion.id === r.id
-                        ? 'bg-blue-950/60 text-[#38BDF8] border border-blue-800/60 font-semibold'
-                        : 'bg-[#13181F] text-zinc-300 border border-white/[0.08] hover:bg-[#18202A] hover:text-white'
+                        ? 'bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/30 font-semibold'
+                        : 'bg-[#F7F8FA] text-[#374151] border border-[#E5E7EB] hover:bg-[#F1F5F9] hover:text-[#111827]'
                     }`}
                   >
                     {r.name[language as 'en' | 'ko' | 'id']}
@@ -110,29 +110,29 @@ export default function RegionSelector() {
 
             {/* Language Selection */}
             <div className="space-y-2.5">
-              <h4 className="text-[10px] font-mono text-zinc-400 uppercase tracking-[0.2em]">{t('select_language')}</h4>
+              <h4 className="text-[10px] font-mono text-[#6B7280] uppercase tracking-[0.2em]">{t('select_language')}</h4>
               <div className="grid grid-cols-1 gap-2">
                 {languages.map((l) => (
                   <button
                     key={l.id}
                     onClick={() => setLanguage(l.id as any)}
-                    className={`flex items-center justify-between px-3 py-2 rounded-[2px] text-[10px] font-medium transition-all cursor-pointer ${
+                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
                       language === l.id
-                        ? 'bg-blue-950/60 text-[#38BDF8] border border-blue-800/60 font-semibold'
-                        : 'bg-[#13181F] text-zinc-300 border border-white/[0.08] hover:bg-[#18202A] hover:text-white'
+                        ? 'bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/30 font-semibold'
+                        : 'bg-[#F7F8FA] text-[#374151] border border-[#E5E7EB] hover:bg-[#F1F5F9] hover:text-[#111827]'
                     }`}
                   >
                     <span>{l.nativeName}</span>
-                    {language === l.id && <Check size={12} className="text-[#38BDF8]" />}
+                    {language === l.id && <Check size={12} className="text-[#1E3A8A]" />}
                   </button>
                 ))}
               </div>
             </div>
             
-            <div className="pt-3 border-t border-white/[0.08]">
+            <div className="pt-3 border-t border-[#E5E7EB]">
               <button 
                 onClick={() => setIsOpen(false)}
-                className="w-full py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-[2px] text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
+                className="w-full py-2.5 bg-[#1E3A8A] hover:bg-[#172554] text-white rounded-lg text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
               >
                 {t('confirm')}
               </button>

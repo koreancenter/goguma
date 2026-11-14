@@ -33,27 +33,27 @@ export const ChapterNavBar: React.FC<ChapterNavBarProps> = ({
 }) => {
   return (
     <aside 
-      className={`h-full flex flex-col bg-[#0D0D11] border-r border-[#23232A] transition-all duration-300 ease-in-out select-none ${
+      className={`h-full flex flex-col bg-[#F7F8FA] border-r border-[#E5E7EB] transition-all duration-300 ease-in-out select-none ${
         isCollapsed ? 'w-[56px]' : 'w-[190px] xl:w-[208px]'
       }`}
       aria-label="대분류 챕터 내비게이션"
     >
       {/* Column 1 Header / Toggle */}
-      <div className="h-14 px-3.5 flex items-center justify-between border-b border-[#23232A]">
+      <div className="h-14 px-3.5 flex items-center justify-between border-b border-[#E5E7EB]">
         {!isCollapsed && (
           <div className="flex items-center gap-2 overflow-hidden">
-            <span className="font-sans font-semibold text-xs text-[#F5F3ED] tracking-wider uppercase">
+            <span className="font-sans font-semibold text-xs text-[#111827] tracking-wider uppercase">
               Chapters
             </span>
-            <span aria-hidden="true" className="text-[#78756E]/40 text-xs">·</span>
-            <span className="text-xs font-mono tabular-nums text-[#78756E]">
+            <span aria-hidden="true" className="text-[#9CA3AF] text-xs">·</span>
+            <span className="text-xs font-mono tabular-nums text-[#6B7280]">
               08
             </span>
           </div>
         )}
         <button
           onClick={onToggleCollapse}
-          className="p-1.5 rounded-[2px] hover:bg-[#181820] text-[#B8B5AC] hover:text-[#F5F3ED] transition-colors ml-auto cursor-pointer"
+          className="p-1.5 rounded-lg hover:bg-[#FFFFFF] text-[#4B5563] hover:text-[#111827] transition-colors ml-auto cursor-pointer"
           title={isCollapsed ? '챕터 목록 펼치기' : '챕터 목록 접기'}
           aria-label={isCollapsed ? '챕터 목록 펼치기' : '챕터 목록 접기'}
         >
@@ -73,27 +73,27 @@ export const ChapterNavBar: React.FC<ChapterNavBarProps> = ({
               key={ch.id}
               onClick={() => onSelectChapter(ch.id)}
               title={`${ch.id}장: ${ch.title}`}
-              className={`w-full flex items-center gap-2.5 px-2.5 py-2 min-h-[42px] text-left transition-all duration-150 relative group cursor-pointer rounded-[2px] ${
+              className={`w-full flex items-center gap-2.5 px-2.5 py-2 min-h-[40px] text-left transition-all duration-150 relative group cursor-pointer rounded-lg ${
                 isActive
-                  ? 'bg-[#18202A] text-[#F0F3F6] font-semibold border-l-2 border-[#38BDF8]'
-                  : 'text-[#9AA5B5] hover:bg-[#13181F] hover:text-[#F0F3F6] border-l-2 border-transparent'
+                  ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+                  : 'text-[#4B5563] hover:bg-[#FFFFFF] hover:text-[#111827]'
               }`}
             >
               {/* Icon & Badge */}
               <div className="relative shrink-0 flex items-center justify-center">
                 <div
-                  className={`w-7 h-7 rounded-[2px] flex items-center justify-center transition-colors ${
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
                     isActive
-                      ? 'bg-[#2563EB] text-white'
+                      ? 'bg-[#1E3A8A] text-white'
                       : isDone
-                      ? 'bg-blue-950/60 text-[#38BDF8] border border-blue-500/30'
-                      : 'bg-[#13181F] text-[#5C6675] group-hover:text-[#F0F3F6] border border-white/[0.08]'
+                      ? 'bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20'
+                      : 'bg-[#FFFFFF] text-[#6B7280] group-hover:text-[#111827] border border-[#E5E7EB]'
                   }`}
                 >
                   <Icon size={14} />
                 </div>
                 {isDone && !isActive && (
-                  <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#38BDF8] text-[#0B0C10] rounded-full flex items-center justify-center text-[8px] font-bold">
+                  <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-[#1E3A8A] text-white rounded-full flex items-center justify-center text-[8px] font-bold">
                     <Check size={8} strokeWidth={3} />
                   </span>
                 )}
@@ -103,14 +103,14 @@ export const ChapterNavBar: React.FC<ChapterNavBarProps> = ({
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 leading-tight">
-                    <span className="font-mono text-xs font-semibold text-[#5C6675]">
+                    <span className={`font-mono text-xs font-semibold ${isActive ? 'text-[#1E3A8A]' : 'text-[#6B7280]'}`}>
                       0{ch.id}
                     </span>
-                    <span className={`truncate text-xs ${isActive ? 'text-[#F0F3F6] font-semibold' : 'text-[#9AA5B5]'}`}>
+                    <span className={`truncate text-xs ${isActive ? 'text-[#1E3A8A] font-semibold' : 'text-[#374151]'}`}>
                       {ch.title}
                     </span>
                   </div>
-                  <p className="text-[10px] text-[#5C6675] truncate mt-0.5 font-mono">
+                  <p className="text-[10px] text-[#6B7280] truncate mt-0.5 font-mono">
                     {ch.engTitle}
                   </p>
                 </div>
@@ -122,16 +122,16 @@ export const ChapterNavBar: React.FC<ChapterNavBarProps> = ({
 
       {/* Column Footer: Chapter Progress */}
       {!isCollapsed && (
-        <div className="p-3 border-t border-white/[0.08] bg-[#0E1217] text-xs text-[#9AA5B5]">
+        <div className="p-3 border-t border-[#E5E7EB] bg-[#FFFFFF] text-xs text-[#4B5563]">
           <div className="flex justify-between items-center mb-1 font-medium">
-            <span className="font-semibold text-xs text-[#F0F3F6]">기획 진행도</span>
-            <span className="font-mono text-xs text-[#38BDF8] font-semibold">
+            <span className="font-semibold text-xs text-[#111827]">기획 진행도</span>
+            <span className="font-mono text-xs text-[#1E3A8A] font-semibold">
               {currentChapter} / 8
             </span>
           </div>
-          <div className="w-full h-1 bg-[#13181F] rounded-none overflow-hidden">
+          <div className="w-full h-1.5 bg-[#E5E7EB] rounded-full overflow-hidden">
             <div 
-              className="h-full bg-[#2563EB] transition-all duration-300"
+              className="h-full bg-[#1E3A8A] transition-all duration-300"
               style={{ width: `${(currentChapter / 8) * 100}%` }}
             />
           </div>

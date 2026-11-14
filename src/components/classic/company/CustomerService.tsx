@@ -56,25 +56,25 @@ export default function CustomerService() {
 
   return (
     <>
-    <div className="min-h-screen bg-[#0B0C10] text-[#F0F3F6] pt-28 pb-24 font-sans selection:bg-[#2563EB]/30 selection:text-[#F0F3F6]">
+    <div className="min-h-screen bg-[#F7F8FA] text-[#111827] pt-28 pb-24 font-sans selection:bg-[#1E3A8A]/15 selection:text-[#111827]">
       <div className="max-w-5xl mx-auto px-6">
         <button 
           onClick={() => navigate('/workspace')}
-          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#64748B] hover:text-[#F0F3F6] transition-colors mb-10 cursor-pointer"
+          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-10 cursor-pointer"
         >
-          <ArrowLeft size={14} className="text-[#38BDF8]" />
+          <ArrowLeft size={14} className="text-[#1E3A8A]" />
           <span>{language === 'ko' ? '워크스페이스로 돌아가기' : 'Back to Workspace'}</span>
         </button>
 
         <div className="text-center mb-14 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[2px] bg-blue-950/60 text-[#38BDF8] text-xs font-mono border border-blue-500/30 uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFF6FF] text-[#1E3A8A] text-xs font-mono border border-[#1E3A8A]/15 uppercase tracking-wider font-semibold">
             <ShieldCheck size={14} />
             <span>{language === 'ko' ? '공개 소프트웨어 안내 & 가이드' : 'Open Software & Privacy Guide'}</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-semibold text-[#F0F3F6] tracking-tight uppercase">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-[#111827] tracking-tight uppercase">
             {language === 'ko' ? '도움말 및 로컬 데이터 가이드' : 'Help & Local Data Guide'}
           </h1>
-          <p className="text-[#94A3B8] font-sans max-w-xl mx-auto text-xs sm:text-sm leading-relaxed">
+          <p className="text-[#4B5563] font-sans max-w-xl mx-auto text-xs sm:text-sm leading-relaxed">
             {language === 'ko'
               ? 'GOGUMA는 개인에게 무료로 배포되는 공개 소프트웨어입니다. 사용자 기기 중심의 안전한 로컬 기획 환경을 지원합니다.'
               : 'GOGUMA is free, privacy-first software for individuals. Plan, design, and export with zero subscription lock-in.'}
@@ -88,28 +88,28 @@ export default function CustomerService() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.06 }}
-              className="bg-[#0E1217] rounded-[2px] p-6 sm:p-7 border border-white/[0.08] flex flex-col justify-between hover:border-[#2563EB]/40 transition-all space-y-6"
+              className="bg-[#FFFFFF] rounded-2xl p-6 sm:p-7 border border-[#E5E7EB] flex flex-col justify-between hover:border-[#1E3A8A]/30 transition-all space-y-6 shadow-[0_8px_24px_-4px_rgba(15,23,42,0.04)]"
             >
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <div className="w-10 h-10 bg-[#13181F] border border-white/[0.08] text-[#38BDF8] rounded-[2px] flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] rounded-xl flex items-center justify-center font-bold">
                     <guide.icon size={18} />
                   </div>
-                  <span className="text-[10px] font-mono text-[#64748B] uppercase tracking-widest">
+                  <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-widest">
                     STEP 0{index + 1}
                   </span>
                 </div>
-                <h3 className="text-sm sm:text-base font-semibold text-[#F0F3F6] uppercase tracking-tight mb-2">
+                <h3 className="text-sm sm:text-base font-semibold text-[#111827] uppercase tracking-tight mb-2">
                   {guide.title}
                 </h3>
-                <p className="text-xs text-[#64748B] font-sans leading-relaxed">
+                <p className="text-xs text-[#4B5563] font-sans leading-relaxed">
                   {guide.description}
                 </p>
               </div>
 
               <button
                 onClick={guide.action}
-                className="w-full py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] active:bg-[#1E40AF] text-white rounded-[2px] text-xs font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                className="w-full py-2.5 bg-[#1E3A8A] hover:bg-[#1E40AF] active:bg-[#1D4ED8] text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
               >
                 <span>{guide.actionText}</span>
               </button>
@@ -118,22 +118,22 @@ export default function CustomerService() {
         </div>
 
         {/* Local Storage FAQ Section */}
-        <div className="mt-12 bg-[#0E1217] rounded-[2px] p-6 sm:p-8 border border-white/[0.08] space-y-6">
-          <div className="flex items-center gap-2.5 border-b border-white/[0.08] pb-4">
-            <div className="w-7 h-7 bg-[#13181F] border border-white/[0.08] text-[#38BDF8] rounded-[2px] flex items-center justify-center font-bold">
+        <div className="mt-12 bg-[#FFFFFF] rounded-2xl p-6 sm:p-8 border border-[#E5E7EB] space-y-6 shadow-[0_8px_24px_-4px_rgba(15,23,42,0.04)]">
+          <div className="flex items-center gap-2.5 border-b border-[#E5E7EB] pb-4">
+            <div className="w-7 h-7 bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] rounded-lg flex items-center justify-center font-bold">
               <Shield size={14} />
             </div>
-            <h2 className="text-sm sm:text-base font-semibold text-[#F0F3F6] uppercase tracking-wider">
+            <h2 className="text-sm sm:text-base font-semibold text-[#111827] uppercase tracking-wider">
               {language === 'ko' ? '자주 묻는 질문 (FAQ)' : 'Frequently Asked Questions'}
             </h2>
           </div>
 
-          <div className="space-y-4 divide-y divide-white/[0.08] text-xs">
+          <div className="space-y-4 divide-y divide-[#E5E7EB] text-xs">
             <div className="pt-3 space-y-1">
-              <h4 className="font-semibold text-[#F0F3F6] text-xs sm:text-sm">
+              <h4 className="font-semibold text-[#111827] text-xs sm:text-sm">
                 Q. {language === 'ko' ? '내 기획안 데이터는 어디에 저장되나요?' : 'Where is my project data stored?'}
               </h4>
-              <p className="text-[#64748B] leading-relaxed font-sans">
+              <p className="text-[#4B5563] leading-relaxed font-sans">
                 {language === 'ko'
                   ? '모든 기획 데이터(사이트맵, 아키텍처, 프롬프트 등)는 브라우저의 로컬 저장소(localStorage / IndexedDB)에 100% 저장됩니다. 외부 서버로 자동 전송되지 않으므로 브라우저 캐시를 지우기 전 백업 파일(JSON)을 내보내 두세요.'
                   : 'All your architecture blueprints, sitemaps, and extracted prompts are stored 100% inside your browser localStorage. No data is sent to external servers.'}
@@ -141,10 +141,10 @@ export default function CustomerService() {
             </div>
 
             <div className="pt-3 space-y-1">
-              <h4 className="font-semibold text-[#F0F3F6] text-xs sm:text-sm">
+              <h4 className="font-semibold text-[#111827] text-xs sm:text-sm">
                 Q. {language === 'ko' ? 'Gemini API 키가 안전한가요?' : 'Is my Gemini API key secure?'}
               </h4>
-              <p className="text-[#64748B] leading-relaxed font-sans">
+              <p className="text-[#4B5563] leading-relaxed font-sans">
                 {language === 'ko'
                   ? '입력하신 개인 API 키는 귀하의 로컬 브라우저에만 저장되며, AI 요청 시 Google의 공식 Gemini 엔드포인트로만 전송됩니다. 제3자 서버에 수집되거나 공유되지 않습니다.'
                   : 'Your API key is saved exclusively in your local browser sandbox and transmitted only directly to Google official endpoints. It is never logged or stored remotely.'}
@@ -152,10 +152,10 @@ export default function CustomerService() {
             </div>
 
             <div className="pt-3 space-y-1">
-              <h4 className="font-semibold text-[#F0F3F6] text-xs sm:text-sm">
+              <h4 className="font-semibold text-[#111827] text-xs sm:text-sm">
                 Q. {language === 'ko' ? '인터넷 연결 없이도 작동하나요?' : 'Can I use this completely offline?'}
               </h4>
-              <p className="text-[#64748B] leading-relaxed font-sans">
+              <p className="text-[#4B5563] leading-relaxed font-sans">
                 {language === 'ko'
                   ? '네! AI 엔진 설정에서 Ollama를 선택하고 로컬 PC의 LLM(Llama 3, DeepSeek 등)과 연동하면 비행기 모드나 완전한 폐쇄망에서도 모든 기능을 사용할 수 있습니다.'
                   : 'Yes! Select Ollama or pre-cache a WebLLM model, and you can build web architectures with zero internet connection.'}

@@ -62,20 +62,20 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-xs select-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[#111827]/35 backdrop-blur-xs select-none">
       <div 
-        className="bg-[#0E1217] w-full max-w-4xl h-[640px] rounded-[2px] border border-white/[0.08] shadow-2xl flex flex-col overflow-hidden text-[#F0F3F6] font-sans animate-in fade-in zoom-in-95 duration-150"
+        className="bg-[#FFFFFF] w-full max-w-4xl max-h-[90vh] h-[640px] rounded-2xl border border-[#E5E7EB] shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] flex flex-col overflow-hidden text-[#111827] font-sans animate-in fade-in zoom-in-95 duration-150"
         role="dialog"
         aria-modal="true"
       >
         {/* Modal Header */}
-        <div className="px-6 py-4 bg-[#13181F] border-b border-white/[0.08] flex items-center justify-between shrink-0">
+        <div className="px-6 py-4 bg-[#F7F8FA] border-b border-[#E5E7EB] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-[2px] bg-[#2563EB] text-white flex items-center justify-center font-bold shadow-xs shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-[#1E3A8A] text-white flex items-center justify-center font-bold shrink-0">
               <LayoutTemplate size={18} />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-sans font-bold text-[#F0F3F6] tracking-tight">
+              <h2 className="text-base sm:text-lg font-sans font-bold text-[#111827] tracking-tight">
                 표준 앱/웹 개발계획서 프리셋
               </h2>
             </div>
@@ -83,7 +83,7 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
 
           <button 
             onClick={onClose}
-            className="p-1.5 rounded-[2px] text-[#7A889B] hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#111827] hover:bg-[#E5E7EB]/60 transition-colors cursor-pointer"
             aria-label="닫기"
           >
             <X size={16} />
@@ -91,13 +91,13 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="px-6 py-2 bg-[#13181F] border-b border-white/[0.08] flex items-center gap-2 shrink-0">
+        <div className="px-6 py-2.5 bg-[#F7F8FA] border-b border-[#E5E7EB] flex items-center gap-2 shrink-0 overflow-x-auto">
           <button
             onClick={() => setActiveTab('preset')}
-            className={`px-3 py-1.5 rounded-[2px] text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'preset'
-                ? 'bg-[#2563EB] text-white shadow-xs'
-                : 'text-[#94A3B8] hover:text-[#F0F3F6] hover:bg-white/[0.04]'
+                ? 'bg-[#1E3A8A] text-white shadow-xs'
+                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#E5E7EB]/50'
             }`}
           >
             <FileText size={14} />
@@ -106,10 +106,10 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
 
           <button
             onClick={() => setActiveTab('aiParse')}
-            className={`px-3 py-1.5 rounded-[2px] text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'aiParse'
-                ? 'bg-[#2563EB] text-white shadow-xs'
-                : 'text-[#94A3B8] hover:text-[#F0F3F6] hover:bg-white/[0.04]'
+                ? 'bg-[#1E3A8A] text-white shadow-xs'
+                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#E5E7EB]/50'
             }`}
           >
             <Zap size={14} />
@@ -118,100 +118,100 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto custom-scroll p-6 space-y-6 bg-[#0E1217]">
+        <div className="flex-1 overflow-y-auto custom-scroll p-6 space-y-6 bg-[#FFFFFF]">
           {activeTab === 'preset' ? (
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               {/* Left Column: Template Cards */}
               <div className="md:col-span-5 space-y-2.5">
-                <span className="text-xs font-mono text-[#7A889B] block mb-1 uppercase tracking-wider">비즈니스 유형 선택</span>
+                <span className="text-xs font-mono text-[#6B7280] block mb-1 uppercase tracking-wider">비즈니스 유형 선택</span>
                 {STANDARD_PRD_TEMPLATES.map((tmpl) => {
                   const isSelected = tmpl.id === selectedTemplateId;
                   return (
                     <div
                       key={tmpl.id}
                       onClick={() => setSelectedTemplateId(tmpl.id)}
-                      className={`p-3.5 rounded-[2px] border transition-all cursor-pointer text-left ${
+                      className={`p-3.5 rounded-xl border transition-all cursor-pointer text-left ${
                         isSelected
-                          ? 'bg-[#16202E] border-[#38BDF8] ring-1 ring-[#38BDF8]/40 shadow-xs'
-                          : 'bg-[#13181F] border-white/[0.08] hover:bg-[#18212B]'
+                          ? 'bg-[#EFF6FF] border-[#1E3A8A]/40 ring-2 ring-[#1E3A8A]/15'
+                          : 'bg-[#F7F8FA] border-[#E5E7EB] hover:bg-[#F1F5F9]'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-blue-950/60 text-[#38BDF8] border border-blue-500/30 font-semibold">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FFFFFF] text-[#1E3A8A] border border-[#1E3A8A]/20 font-semibold">
                           {tmpl.badge}
                         </span>
-                        <div className="flex items-center gap-1 text-[11px] font-mono text-[#7A889B]">
+                        <div className="flex items-center gap-1 text-[11px] font-mono text-[#6B7280]">
                           {tmpl.platform === 'APP' ? <Smartphone size={12} /> : <Monitor size={12} />}
                           <span>{tmpl.platform}</span>
                         </div>
                       </div>
-                      <h4 className="text-sm font-sans font-semibold text-[#F0F3F6]">{tmpl.name}</h4>
-                      <p className="text-xs text-[#94A3B8] line-clamp-1 mt-0.5">{tmpl.subtitle}</p>
+                      <h4 className="text-sm font-sans font-semibold text-[#111827]">{tmpl.name}</h4>
+                      <p className="text-xs text-[#4B5563] line-clamp-1 mt-0.5">{tmpl.subtitle}</p>
                     </div>
                   );
                 })}
               </div>
 
               {/* Right Column: Template Detail Preview */}
-              <div className="md:col-span-7 bg-[#13181F] p-5 rounded-[2px] border border-white/[0.08] flex flex-col justify-between space-y-4">
+              <div className="md:col-span-7 bg-[#F7F8FA] p-5 rounded-xl border border-[#E5E7EB] flex flex-col justify-between space-y-4">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+                  <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
                     <div>
-                      <span className="text-xs font-mono text-[#7A889B] uppercase tracking-wider">기획서 상세 스펙 미리보기</span>
-                      <h3 className="text-base font-sans font-bold text-[#F0F3F6] mt-0.5">{currentTemplate.name}</h3>
+                      <span className="text-xs font-mono text-[#6B7280] uppercase tracking-wider">기획서 상세 스펙 미리보기</span>
+                      <h3 className="text-base font-sans font-bold text-[#111827] mt-0.5">{currentTemplate.name}</h3>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-[#7A889B]">{currentTemplate.platform} 플랫폼</span>
+                      <span className="text-xs font-mono text-[#4B5563]">{currentTemplate.platform} 플랫폼</span>
                     </div>
                   </div>
 
                   <div>
-                    <h5 className="text-xs font-semibold text-[#F0F3F6] mb-1">기획 목적 및 문제 해결</h5>
-                    <p className="text-xs text-[#C5D0DC] bg-[#0E1217] p-3 rounded-[2px] border border-white/[0.08] leading-relaxed font-sans shadow-2xs">
+                    <h5 className="text-xs font-semibold text-[#111827] mb-1">기획 목적 및 문제 해결</h5>
+                    <p className="text-xs text-[#374151] bg-[#FFFFFF] p-3 rounded-lg border border-[#E5E7EB] leading-relaxed font-sans">
                       {currentTemplate.description}
                     </p>
                   </div>
 
                   <div>
-                    <h5 className="text-xs font-semibold text-[#F0F3F6] mb-1">타깃 사용자</h5>
-                    <p className="text-xs text-[#C5D0DC] font-medium pl-1">{currentTemplate.targetUser}</p>
+                    <h5 className="text-xs font-semibold text-[#111827] mb-1">타깃 사용자</h5>
+                    <p className="text-xs text-[#374151] font-medium pl-1">{currentTemplate.targetUser}</p>
                   </div>
 
                   <div>
-                    <h5 className="text-xs font-semibold text-[#F0F3F6] mb-1.5">표준 포함 화면 ({currentTemplate.screens.length})</h5>
+                    <h5 className="text-xs font-semibold text-[#111827] mb-1.5">표준 포함 화면 ({currentTemplate.screens.length})</h5>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {currentTemplate.screens.map((sc, idx) => (
-                        <div key={idx} className="p-2.5 bg-[#0E1217] rounded-[2px] border border-white/[0.08] text-xs shadow-2xs">
+                        <div key={idx} className="p-2.5 bg-[#FFFFFF] rounded-lg border border-[#E5E7EB] text-xs">
                           <div className="flex items-center justify-between">
-                            <span className="font-semibold text-[#F0F3F6]">{sc.name}</span>
-                            <span className="text-[10px] font-mono text-[#38BDF8] font-semibold">{sc.route}</span>
+                            <span className="font-semibold text-[#111827]">{sc.name}</span>
+                            <span className="text-[10px] font-mono text-[#1E3A8A] font-semibold">{sc.route}</span>
                           </div>
-                          <p className="text-[11px] text-[#94A3B8] mt-0.5 line-clamp-1">{sc.purpose}</p>
+                          <p className="text-[11px] text-[#4B5563] mt-0.5 line-clamp-1">{sc.purpose}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <h5 className="text-xs font-semibold text-[#F0F3F6] mb-1">핵심 기능 명세 (FRD)</h5>
-                    <ul className="space-y-1 text-xs text-[#94A3B8] pl-1">
+                    <h5 className="text-xs font-semibold text-[#111827] mb-1">핵심 기능 명세 (FRD)</h5>
+                    <ul className="space-y-1 text-xs text-[#4B5563] pl-1">
                       {currentTemplate.keyFeatures.map((feat, idx) => (
                         <li key={idx} className="flex items-center gap-1.5">
-                          <Check size={13} className="text-[#38BDF8] shrink-0" />
-                          <span className="text-[#C5D0DC]">{feat}</span>
+                          <Check size={13} className="text-[#1E3A8A] shrink-0" />
+                          <span className="text-[#374151]">{feat}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between">
-                  <span className="text-xs text-[#7A889B] font-mono">
+                <div className="pt-3 border-t border-[#E5E7EB] flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs text-[#6B7280] font-mono">
                     적용 시 11종 사양서와 프로토타입이 즉시 동기화됩니다.
                   </span>
                   <button
                     onClick={handleApplyPreset}
-                    className="px-5 py-2 rounded-[2px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                    className="px-5 py-2 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs"
                   >
                     <span>이 표준 기획서로 시작하기</span>
                     <ArrowRight size={14} />
@@ -221,13 +221,13 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="bg-[#13181F] p-5 rounded-[2px] border border-white/[0.08] space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-sans font-semibold text-[#F0F3F6] flex items-center gap-2">
-                    <Zap size={15} className="text-[#38BDF8]" />
+              <div className="bg-[#F7F8FA] p-5 rounded-xl border border-[#E5E7EB] space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h4 className="text-sm font-sans font-semibold text-[#111827] flex items-center gap-2">
+                    <Zap size={15} className="text-[#1E3A8A]" />
                     <span>자유 메모 또는 아이디어 붙여넣기</span>
                   </h4>
-                  <span className="text-xs text-[#7A889B] font-mono">단어 몇 개만 적어도 표준 기획서로 자동 구조화</span>
+                  <span className="text-xs text-[#6B7280] font-mono">단어 몇 개만 적어도 표준 기획서로 자동 구조화</span>
                 </div>
 
                 <textarea
@@ -235,18 +235,18 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
                   value={rawIdeaInput}
                   onChange={(e) => setRawIdeaInput(e.target.value)}
                   placeholder="웹 애플리케이션 요구사항을 자유롭게 입력하세요. (예: 대용량 데이터 시각화 및 실시간 협업 워크스페이스를 위한 엔터프라이즈 모던 웹 SaaS 플랫폼)"
-                  className="w-full p-3.5 text-xs sm:text-sm bg-[#0E1217] rounded-[2px] border border-white/[0.12] focus:outline-none focus:border-[#38BDF8] leading-relaxed font-sans text-[#F0F3F6] placeholder-[#7A889B] shadow-2xs"
+                  className="w-full p-3.5 text-xs sm:text-sm bg-[#FFFFFF] rounded-lg border border-[#E5E7EB] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15 leading-relaxed font-sans text-[#111827] placeholder-[#9CA3AF]"
                 />
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs text-[#94A3B8]">
-                    <HelpCircle size={14} />
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-1.5 text-xs text-[#4B5563]">
+                    <HelpCircle size={14} className="shrink-0" />
                     <span>핵심 키워드(SaaS, 커머스, 어드민, 미디어 등)를 인식하여 적합한 웹 개발 표준 규격으로 자동 매핑합니다.</span>
                   </div>
                   <button
                     onClick={handleRunSmartParse}
                     disabled={!rawIdeaInput.trim()}
-                    className="px-4 py-2 rounded-[2px] bg-[#2563EB] text-white disabled:opacity-30 text-xs font-semibold hover:bg-[#1D4ED8] transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+                    className="px-4 py-2 rounded-lg bg-[#1E3A8A] text-white disabled:opacity-40 text-xs font-semibold hover:bg-[#172554] transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
                   >
                     <Zap size={14} />
                     <span>표준 기획서 분석 실행</span>
@@ -255,23 +255,23 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
               </div>
 
               {parsedPreview && (
-                <div className="bg-[#13181F] p-5 rounded-[2px] border border-white/[0.08] space-y-3 animate-in fade-in">
+                <div className="bg-[#F7F8FA] p-5 rounded-xl border border-[#E5E7EB] space-y-3 animate-in fade-in">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-semibold text-[#F0F3F6]">추천 표준 템플릿 매핑 결과</span>
+                      <span className="text-xs font-mono font-semibold text-[#111827]">추천 표준 템플릿 매핑 결과</span>
                     </div>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded-[2px] bg-blue-950/60 text-[#38BDF8] border border-blue-500/30 font-semibold">
+                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 font-semibold">
                       {parsedPreview.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-sm sm:text-base font-sans font-semibold text-[#F0F3F6]">{parsedPreview.name}</h3>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed font-sans">{parsedPreview.description}</p>
+                  <h3 className="text-sm sm:text-base font-sans font-semibold text-[#111827]">{parsedPreview.name}</h3>
+                  <p className="text-xs text-[#4B5563] leading-relaxed font-sans">{parsedPreview.description}</p>
 
                   <div className="pt-2 flex justify-end">
                     <button
                       onClick={handleApplySmartParse}
-                      className="px-5 py-2.5 rounded-[2px] bg-[#2563EB] text-white text-xs sm:text-sm font-semibold hover:bg-[#1D4ED8] transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                      className="px-5 py-2.5 rounded-lg bg-[#1E3A8A] text-white text-xs sm:text-sm font-semibold hover:bg-[#172554] transition-all flex items-center gap-2 cursor-pointer shadow-xs"
                     >
                       <span>이 기획서로 프로젝트 적용하기</span>
                       <ArrowRight size={14} />
@@ -284,11 +284,11 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3.5 bg-[#13181F] border-t border-white/[0.08] flex items-center justify-between text-xs text-[#7A889B] shrink-0 font-mono">
-          <span>팁: 템플릿을 적용한 후에도 개별 문항과 화면을 언제든지 자유롭게 수정할 수 있습니다.</span>
+        <div className="px-6 py-3.5 bg-[#F7F8FA] border-t border-[#E5E7EB] flex items-center justify-between gap-2 text-xs text-[#6B7280] shrink-0 font-mono">
+          <span className="truncate">팁: 템플릿을 적용한 후에도 개별 문항과 화면을 언제든지 자유롭게 수정할 수 있습니다.</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-[2px] border border-white/[0.08] bg-[#0E1217] hover:bg-[#18212B] text-[#F0F3F6] cursor-pointer font-sans text-xs transition-colors shadow-2xs"
+            className="px-4 py-1.5 rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] hover:bg-[#F1F5F9] text-[#111827] cursor-pointer font-sans text-xs font-medium transition-colors shrink-0"
           >
             닫기
           </button>
