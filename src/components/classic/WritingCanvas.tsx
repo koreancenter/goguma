@@ -122,21 +122,21 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
     switch (currentChapter) {
       case 1: {
         return (
-          <div className="bg-[#0E1217] rounded-[2px] p-5 border border-white/[0.08] space-y-4 shadow-xs">
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0F3F6]">
-              <Compass size={15} className="text-[#38BDF8]" />
+          <div className="bg-[#F7F8FA] rounded-xl p-5 space-y-4">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#1E3A8A]">
+              <Compass size={15} className="text-[#1E3A8A]" />
               <span className="font-sans font-semibold">프로젝트 기본 정보 요약</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="bg-[#13181F] p-3.5 rounded-[2px] border border-white/[0.06]">
-                <span className="text-xs text-zinc-400 block font-mono">서비스 명칭</span>
-                <span className="font-sans font-semibold text-[#F0F3F6] text-sm mt-1 block truncate">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-[#FFFFFF] px-4 py-3 rounded-lg">
+                <span className="text-[11px] text-[#4B5563] block font-mono">서비스 명칭</span>
+                <span className="font-sans font-semibold text-[#111827] text-sm mt-1 block truncate">
                   {plan.metadata?.projectName || '새 프로젝트'}
                 </span>
               </div>
-              <div className="bg-[#13181F] p-3.5 rounded-[2px] border border-white/[0.06]">
-                <span className="text-xs text-zinc-400 block font-mono">플랫폼 대상</span>
-                <span className="font-sans font-medium text-[#F0F3F6] text-sm mt-1 block">
+              <div className="bg-[#FFFFFF] px-4 py-3 rounded-lg">
+                <span className="text-[11px] text-[#4B5563] block font-mono">플랫폼 대상</span>
+                <span className="font-sans font-medium text-[#111827] text-sm mt-1 block">
                   {plan.metadata?.platform === 'APP' ? '모바일 웹 (PWA App)' : '웹 애플리케이션 (Web)'}
                 </span>
               </div>
@@ -147,13 +147,13 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
       case 2: {
         return (
-          <div className="bg-[#0E1217] rounded-[2px] p-5 border border-white/[0.08] space-y-3 shadow-xs">
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0F3F6]">
-              <BookOpen size={15} className="text-[#38BDF8]" />
+          <div className="bg-[#F7F8FA] rounded-xl p-5 space-y-2.5">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#1E3A8A]">
+              <BookOpen size={15} className="text-[#1E3A8A]" />
               <span className="font-sans font-semibold">타깃 사용자 및 결핍 정의 요약</span>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-              작성하신 페르소나와 결핍 사항은 <code className="text-[#38BDF8] font-mono bg-blue-950/40 px-1.5 py-0.5 rounded-[2px] border border-blue-900/40">docs/01_proposal.md</code>의 <strong>문제 정의(Problem Statement)</strong>와 <strong>가치 제안(Value Proposition)</strong>에 구조화되어 자동 반영됩니다.
+            <p className="text-xs sm:text-sm text-[#4B5563] leading-[1.7]">
+              작성하신 페르소나와 결핍 사항은 <code className="text-[#1E3A8A] font-mono bg-[#EFF6FF] px-1.5 py-0.5 rounded">docs/01_proposal.md</code>의 <strong className="text-[#111827]">문제 정의(Problem Statement)</strong>와 <strong className="text-[#111827]">가치 제안(Value Proposition)</strong>에 구조화되어 자동 반영됩니다.
             </p>
           </div>
         );
@@ -203,19 +203,19 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
       case 7: {
         return (
-          <div className="bg-[#13181F] rounded-[2px] p-5 border border-white/[0.08] space-y-4 shadow-xs">
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0F3F6]">
-              <Shield size={15} className="text-[#38BDF8]" />
+          <div className="bg-[#F7F8FA] rounded-xl p-5 space-y-4">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#1E3A8A]">
+              <Shield size={15} className="text-[#1E3A8A]" />
               <span className="font-sans font-semibold">로컬 퍼스트 & 아키텍처 규칙</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="bg-[#0E1217] p-3.5 rounded-[2px] border border-white/[0.06]">
-                <span className="font-sans font-medium text-sm text-[#F0F3F6] block">IndexedDB 로컬 스토리지</span>
-                <span className="text-xs text-[#9AA5B5] mt-1 block">외부 클라우드 전송 없이 브라우저 내 안전 보관</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-[#FFFFFF] px-4 py-3 rounded-lg">
+                <span className="font-sans font-semibold text-sm text-[#111827] block">IndexedDB 로컬 스토리지</span>
+                <span className="text-xs text-[#4B5563] mt-1 block">외부 클라우드 전송 없이 브라우저 내 안전 보관</span>
               </div>
-              <div className="bg-[#0E1217] p-3.5 rounded-[2px] border border-white/[0.06]">
-                <span className="font-sans font-medium text-sm text-[#F0F3F6] block">단일 파일 완결성</span>
-                <span className="text-xs text-[#9AA5B5] mt-1 block">규약에 따른 무설치 단일 파일 보장</span>
+              <div className="bg-[#FFFFFF] px-4 py-3 rounded-lg">
+                <span className="font-sans font-semibold text-sm text-[#111827] block">단일 파일 완결성</span>
+                <span className="text-xs text-[#4B5563] mt-1 block">규약에 따른 무설치 단일 파일 보장</span>
               </div>
             </div>
           </div>
@@ -314,11 +314,11 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
       </div>
 
       {/* Main Unified Canvas Body */}
-      <div className={`flex-1 w-full mx-auto px-6 sm:px-10 py-8 sm:py-10 flex flex-col space-y-8 transition-all duration-300 ease-in-out ${
+      <div className={`flex-1 w-full mx-auto px-8 sm:px-10 py-10 flex flex-col space-y-10 transition-all duration-300 ease-in-out ${
         isPreviewCollapsed ? 'max-w-4xl' : 'max-w-3xl'
       }`}>
         {/* Editorial Heading */}
-        <div className="space-y-2 border-b border-[#E5E7EB] pb-5">
+        <div className="space-y-2.5 border-b border-[#E5E7EB] pb-6">
           <div className="flex items-center gap-2 text-xs text-[#4B5563]">
             <span className="font-mono text-[#1E3A8A] font-semibold">
               0{currentSectionIdx + 1}.
@@ -327,25 +327,25 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
               {chapter.engTitle}
             </span>
           </div>
-          <h1 className={`font-sans font-bold text-[#111827] tracking-tight leading-tight ${
-            largeTextMode ? 'text-3xl sm:text-4xl lg:text-5xl' : 'text-2xl sm:text-3xl'
+          <h1 className={`font-sans font-bold text-[#111827] tracking-[-0.025em] leading-[1.3] ${
+            largeTextMode ? 'text-3xl sm:text-4xl lg:text-5xl' : 'text-[28px]'
           }`} style={{ textWrap: 'balance' }}>
             {section.title}
           </h1>
           <p className={`leading-[1.7] font-sans ${
-            largeTextMode ? 'text-lg sm:text-xl text-[#4B5563]' : 'text-sm sm:text-base text-[#4B5563]'
+            largeTextMode ? 'text-lg sm:text-xl text-[#4B5563]' : 'text-[15px] text-[#4B5563]'
           }`}>
             {section.question}
           </p>
         </div>
 
-        {/* 1. Natural Language Writing Area */}
-        <div className="space-y-3">
+        {/* 1. Natural Language Writing Area — Direct Fine White Paper */}
+        <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className={`font-sans font-semibold text-[#111827] ${largeTextMode ? 'text-sm sm:text-base' : 'text-xs'}`}>
+            <div className="flex items-center gap-2.5">
+              <h2 className={`font-sans font-semibold text-[#111827] tracking-[-0.015em] ${largeTextMode ? 'text-xl' : 'text-[18px]'}`}>
                 Thinking Canvas
-              </span>
+              </h2>
               <span className="font-mono text-xs tabular-nums text-[#9CA3AF]">
                 {currentValue.length}자
               </span>
@@ -356,7 +356,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
               <button
                 type="button"
                 onClick={handleInlineRefine}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-xs font-medium text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] text-xs font-medium text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer"
                 title="일상 구어체 서술을 명확한 엔지니어링 개발 요구사항 문장으로 정제"
               >
                 <Sparkles size={12} className="text-[#1E3A8A]" />
@@ -367,7 +367,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
                 <button
                   type="button"
                   onClick={handleUndoRefine}
-                  className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-mono text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-mono text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
                   title="정제 전 원고로 복원"
                 >
                   <Undo2 size={11} />
@@ -379,14 +379,14 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
           {/* Co-pilot Feedback Notification */}
           {coPilotNotification && (
-            <div className="px-3 py-2 rounded-lg bg-[#EFF6FF] border border-[#1E3A8A]/20 text-[#1E3A8A] text-xs flex items-center gap-2">
-              <Check size={12} className="stroke-[2.5]" />
+            <div className="px-4 py-2.5 rounded-xl bg-[#EFF6FF] text-[#1E3A8A] text-xs font-medium flex items-center gap-2">
+              <Check size={13} className="stroke-[2.5] shrink-0" />
               <span>{coPilotNotification}</span>
             </div>
           )}
 
-          {/* Editorial Light Writing Field with Tiptap Engine */}
-          <div className="relative flex flex-col bg-[#F7F8FA] focus-within:bg-[#FFFFFF] border border-[#E5E7EB] focus-within:border-[#1E3A8A]/40 focus-within:ring-2 focus-within:ring-[#1E3A8A]/10 rounded-xl p-3 sm:p-4 transition-all duration-200">
+          {/* Direct-on-Paper Tiptap v3 Writing Canvas */}
+          <div className="relative flex flex-col bg-[#FFFFFF] transition-all duration-200">
             <TiptapThinkingCanvas
               value={currentValue}
               onChange={(newText) => onInputChange(currentChapter, section.key, newText)}
@@ -395,13 +395,13 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
             />
           </div>
 
-          <p className="text-[11px] text-[#9CA3AF] pt-1">
+          <p className="text-xs text-[#9CA3AF]">
             생각나는 내용을 한 줄 또는 문장으로 서술해 주세요. 우측 화면에 실시간으로 반영됩니다.
           </p>
         </div>
 
         {/* 2. Unified Chapter Interactive Widget Section */}
-        <div className="pt-2">
+        <div>
           {renderChapterInteractiveWidget()}
         </div>
 

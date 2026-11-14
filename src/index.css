@@ -168,7 +168,7 @@ samp {
 .tiptap-editor-wrap .tiptap {
   outline: none !important;
   color: #111827;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .tiptap-editor-wrap .tiptap p.is-editor-empty:first-child::before {
@@ -181,8 +181,8 @@ samp {
 
 .tiptap-editor-wrap .tiptap p {
   color: #111827;
-  margin-bottom: 0.5em;
-  line-height: 1.7;
+  margin-bottom: 0.55em;
+  line-height: 1.75;
 }
 
 .tiptap-editor-wrap .tiptap h1 {

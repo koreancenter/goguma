@@ -88,29 +88,29 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
         codeBlock: {
           HTMLAttributes: {
-            class: 'bg-[#0B0C10] p-2.5 rounded-[2px] font-mono text-xs text-[#D8DEE8] border border-white/[0.08] my-2',
+            class: 'bg-[#F7F8FA] p-3.5 rounded-lg font-mono text-xs text-[#111827] border border-[#E5E7EB] my-3',
           },
         },
         blockquote: {
           HTMLAttributes: {
-            class: 'border-l-2 border-white/[0.24] pl-3 my-2 text-zinc-400 italic',
+            class: 'border-l-2 border-[#1E3A8A]/35 pl-4 my-3 text-[#4B5563] italic',
           },
         },
         bulletList: {
           HTMLAttributes: {
-            class: 'list-disc pl-5 my-1.5 space-y-0.5',
+            class: 'list-disc pl-5 my-2 space-y-1',
           },
         },
         orderedList: {
           HTMLAttributes: {
-            class: 'list-decimal pl-5 my-1.5 space-y-0.5',
+            class: 'list-decimal pl-5 my-2 space-y-1',
           },
         },
       }),
       Placeholder.configure({
         placeholder,
         emptyEditorClass:
-          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#5C6675] before:float-left before:pointer-events-none before:h-0',
+          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#9CA3AF] before:float-left before:pointer-events-none before:h-0',
       }),
       Underline,
       ImageExtension.configure({
@@ -129,22 +129,22 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       TableRow,
       TableHeader.configure({
         HTMLAttributes: {
-          class: 'tiptap-th bg-[#10141B] text-[#D8DEE8] font-semibold text-xs text-left p-2.5 border border-white/[0.12]',
+          class: 'tiptap-th bg-[#F7F8FA] text-[#111827] font-semibold text-xs text-left p-2.5 border border-[#E5E7EB]',
         },
       }),
       TableCell.configure({
         HTMLAttributes: {
-          class: 'tiptap-td p-2 text-xs text-[#F0F3F6] border border-white/[0.08] bg-[#13181F]/35 align-top',
+          class: 'tiptap-td p-2.5 text-xs text-[#111827] border border-[#E5E7EB] bg-[#FFFFFF] align-top',
         },
       }),
     ],
     content: value || '',
     editorProps: {
       attributes: {
-        class: `w-full bg-transparent px-1 py-1 text-[#F0F3F6] outline-none font-sans transition-all duration-200 focus:outline-none ${
+        class: `w-full bg-transparent py-1 text-[#111827] outline-none font-sans transition-all duration-200 focus:outline-none ${
           largeTextMode
-            ? 'text-lg sm:text-xl leading-loose tracking-wide min-h-[190px]'
-            : 'text-base sm:text-lg leading-relaxed min-h-[140px]'
+            ? 'text-lg sm:text-xl leading-[1.8] tracking-normal min-h-[200px]'
+            : 'text-[15px] sm:text-base leading-[1.75] min-h-[160px]'
         }`,
       },
       handlePaste: (view, event) => {
@@ -429,33 +429,33 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   if (!editor) {
     return (
-      <div className="w-full min-h-[150px] bg-transparent p-2 animate-pulse text-[#5C6675] text-sm font-mono">
+      <div className="w-full min-h-[160px] bg-transparent p-2 animate-pulse text-[#9CA3AF] text-sm font-sans">
         에디터 초기화 중...
       </div>
     );
   }
 
-  // Calm eye-friendly button style helpers
+  // Minimal unobtrusive formatting toolbar button helpers
   const topBtnClass = (active: boolean) =>
-    `p-1.5 rounded-[2px] border transition-colors cursor-pointer ${
+    `p-1.5 rounded-md transition-colors cursor-pointer ${
       active
-        ? 'bg-white/[0.12] text-[#F5F3ED] border-white/[0.20]'
-        : 'border-transparent text-[#7D8796] hover:bg-white/[0.06] hover:text-[#E8ECF2]'
+        ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+        : 'text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#111827]'
     }`;
 
   const bubbleBtnClass = (active = false, destructive = false) =>
-    `p-1.5 rounded-[2px] border transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
+    `p-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
       destructive
-        ? 'border-transparent text-[#7D8796] hover:bg-white/[0.06] hover:text-[#D9B0B0]'
+        ? 'text-[#6B7280] hover:bg-[#FEF2F2] hover:text-[#B91C1C]'
         : active
-        ? 'bg-white/[0.12] text-[#F5F3ED] border-white/[0.20]'
-        : 'border-transparent text-[#8B95A5] hover:bg-white/[0.07] hover:text-[#F0F3F6]'
+        ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+        : 'text-[#4B5563] hover:bg-[#F7F8FA] hover:text-[#111827]'
     }`;
 
   return (
     <div ref={containerRef} className="relative flex flex-col w-full">
-      {/* Top Minimalist Icon-Only Toolbar */}
-      <div className="flex items-center gap-0.5 pb-2.5 mb-2 border-b border-white/[0.08] flex-wrap select-none">
+      {/* Top Minimal Unobtrusive Formatting Toolbar */}
+      <div className="flex items-center gap-0.5 pb-2.5 mb-3 border-b border-[#E5E7EB]/80 flex-wrap select-none">
         {/* Text Formatting */}
         <button
           type="button"
@@ -512,7 +512,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           <Code size={13} />
         </button>
 
-        <span className="w-px h-3.5 bg-white/[0.08] mx-1" />
+        <span className="w-px h-3.5 bg-[#E5E7EB] mx-1" />
 
         {/* Headings (Icon-only) */}
         <button
@@ -545,7 +545,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           <Heading3 size={14} />
         </button>
 
-        <span className="w-px h-3.5 bg-white/[0.08] mx-1" />
+        <span className="w-px h-3.5 bg-[#E5E7EB] mx-1" />
 
         {/* Lists & Blocks */}
         <button
@@ -588,7 +588,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           <Minus size={13} />
         </button>
 
-        <span className="w-px h-3.5 bg-white/[0.08] mx-1" />
+        <span className="w-px h-3.5 bg-[#E5E7EB] mx-1" />
 
         {/* Image Insertion (Icon-only + Single Non-overlapping Popover) */}
         <div ref={imagePopoverRef} className="relative">
@@ -618,16 +618,16 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           />
 
           {isImageModalOpen && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 w-72 bg-[#12161D] border border-white/[0.14] rounded-[3px] p-3 shadow-[0_16px_40px_rgba(0,0,0,0.75)] flex flex-col gap-2.5 text-xs text-[#E8ECF2]">
-              <div className="flex items-center justify-between pb-1.5 border-b border-white/[0.08]">
-                <span className="font-mono text-[11px] uppercase tracking-wider text-[#D0D6E0] font-semibold flex items-center gap-1.5">
-                  <ImageIcon size={12} className="text-[#9AA5B5]" />
+            <div className="absolute left-0 top-full mt-1.5 z-50 w-72 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-3.5 shadow-[0_12px_32px_-4px_rgba(15,23,42,0.12)] flex flex-col gap-2.5 text-xs text-[#111827]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-[#4B5563] font-semibold flex items-center gap-1.5">
+                  <ImageIcon size={12} className="text-[#1E3A8A]" />
                   이미지 삽입
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsImageModalOpen(false)}
-                  className="p-1 text-[#7D8796] hover:text-[#F0F3F6] rounded-[2px] cursor-pointer"
+                  className="p-1 text-[#9CA3AF] hover:text-[#111827] rounded-md cursor-pointer"
                   aria-label="닫기"
                 >
                   <X size={12} />
@@ -637,33 +637,33 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-[2px] bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.14] text-[#F0F3F6] font-medium text-xs transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] text-[#111827] hover:text-[#1E3A8A] font-medium text-xs transition-colors cursor-pointer"
               >
-                <Upload size={13} className="text-[#9AA5B5]" />
+                <Upload size={13} className="text-[#1E3A8A]" />
                 <span>파일 선택</span>
               </button>
 
               <form onSubmit={handleImageUrlSubmit} className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <input
                     type="url"
                     value={imageUrlInput}
                     onChange={(e) => setImageUrlInput(e.target.value)}
                     placeholder="https:// 이미지 URL"
-                    className="flex-1 bg-[#0B0C10] border border-white/[0.1] focus:border-white/[0.28] focus:outline-none px-2 py-1.5 rounded-[2px] text-xs text-[#F0F3F6] placeholder-[#5C6675]"
+                    className="flex-1 bg-[#F7F8FA] focus:bg-[#FFFFFF] border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/15 focus:outline-none px-3 py-1.5 rounded-lg text-xs text-[#111827] placeholder-[#9CA3AF] transition-all"
                   />
                   <button
                     type="submit"
                     disabled={!imageUrlInput.trim()}
-                    className="px-2.5 py-1.5 rounded-[2px] bg-white/[0.14] hover:bg-white/[0.22] disabled:opacity-35 disabled:cursor-not-allowed text-[#F5F3ED] text-xs font-medium cursor-pointer transition-colors"
+                    className="px-3 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] disabled:opacity-35 disabled:cursor-not-allowed text-white text-xs font-medium cursor-pointer transition-colors"
                   >
                     삽입
                   </button>
                 </div>
               </form>
 
-              <p className="text-[10px] text-[#7D8796] leading-relaxed">
-                캔버스 내 <kbd className="px-1 py-0.5 bg-[#0B0C10] border border-white/[0.1] rounded text-[#D0D6E0] font-mono">Ctrl+V</kbd> 또는 드래그로도 삽입됩니다.
+              <p className="text-[11px] text-[#4B5563] leading-relaxed">
+                캔버스 내 <kbd className="px-1.5 py-0.5 bg-[#F7F8FA] border border-[#E5E7EB] rounded text-[#111827] font-mono">Ctrl+V</kbd> 또는 드래그로도 삽입됩니다.
               </p>
             </div>
           )}
@@ -692,7 +692,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             type="button"
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
-            className="p-1.5 rounded-[2px] text-[#7D8796] hover:bg-white/[0.06] hover:text-[#E8ECF2] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="p-1.5 rounded-md text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#111827] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
             title="실행 취소 (Ctrl+Z)"
             aria-label="실행 취소"
           >
@@ -702,7 +702,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             type="button"
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            className="p-1.5 rounded-[2px] text-[#7D8796] hover:bg-white/[0.06] hover:text-[#E8ECF2] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="p-1.5 rounded-md text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#111827] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
             title="다시 실행 (Ctrl+Y)"
             aria-label="다시 실행"
           >
@@ -723,7 +723,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             // Keep active editor selection when clicking floating controls
             e.preventDefault();
           }}
-          className="absolute z-40 flex items-center gap-0.5 p-1 bg-[#12161D]/95 border border-white/[0.14] rounded-[4px] backdrop-blur-md select-none transition-all duration-150 tiptap-table-bubble-menu max-w-full overflow-x-auto no-scrollbar"
+          className="absolute z-40 flex items-center gap-0.5 p-1 bg-[#FFFFFF]/95 border border-[#E5E7EB] rounded-lg backdrop-blur-md select-none transition-all duration-150 tiptap-table-bubble-menu max-w-full overflow-x-auto no-scrollbar"
         >
           {/* Context 1: Selected Image Actions */}
           {isImageActive && (
@@ -837,7 +837,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 <ListMinus size={13} />
               </button>
 
-              <span className="w-px h-3.5 bg-white/[0.1] mx-0.5 shrink-0" />
+              <span className="w-px h-3.5 bg-[#E5E7EB] mx-0.5 shrink-0" />
 
               {/* Column Management */}
               <button
@@ -868,7 +868,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 <SquareMinus size={13} />
               </button>
 
-              <span className="w-px h-3.5 bg-white/[0.1] mx-0.5 shrink-0" />
+              <span className="w-px h-3.5 bg-[#E5E7EB] mx-0.5 shrink-0" />
 
               {/* Cell Merge / Split / Header Row */}
               <button
@@ -901,7 +901,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 <PanelTopDashed size={13} />
               </button>
 
-              <span className="w-px h-3.5 bg-white/[0.1] mx-0.5 shrink-0" />
+              <span className="w-px h-3.5 bg-[#E5E7EB] mx-0.5 shrink-0" />
 
               {/* Visual Style Toggles */}
               <button
@@ -953,7 +953,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 </button>
               )}
 
-              <span className="w-px h-3.5 bg-white/[0.1] mx-0.5 shrink-0" />
+              <span className="w-px h-3.5 bg-[#E5E7EB] mx-0.5 shrink-0" />
 
               {/* Delete Table */}
               <button
