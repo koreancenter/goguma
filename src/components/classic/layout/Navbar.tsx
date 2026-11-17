@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, ChevronRight, SlidersHorizontal, Cpu, Type, FolderOpen, User, MessageSquare } from 'lucide-react';
+import { Menu, X, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { auth, LocalUser } from '../../../lib/localAuth';
@@ -20,7 +20,6 @@ interface MegaMenuItem {
   labelEn: string;
   to?: string;
   action?: () => void;
-  Icon?: React.ElementType;
 }
 
 interface MegaMenuColumn {
@@ -140,11 +139,21 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
       labelEn: 'Preferences',
       onHeaderClick: () => openPreferences('engine'),
       items: [
-        { labelKo: '인공지능 엔진 설정', labelEn: 'AI Engine Setup', Icon: Cpu, action: () => openPreferences('engine') },
-        { labelKo: '화면 및 언어 설정', labelEn: 'Display & Language', Icon: Type, action: () => openPreferences('display') },
-        { labelKo: '로컬 데이터 및 백업', labelEn: 'Storage & Backup', Icon: FolderOpen, action: () => openPreferences('storage') },
-        { labelKo: '내 계정 및 프로필', labelEn: 'Profile', Icon: User, to: user ? '/profile' : '/login' },
-        { labelKo: '문의 및 기술 지원', labelEn: 'Contact Support', Icon: MessageSquare, to: '/contact' },
+        { labelKo: '인공지능 엔진 설정', labelEn: 'AI Engine Setup', action: () => openPreferences('engine') },
+        { labelKo: '화면 및 언어 설정', labelEn: 'Display & Language', action: () => openPreferences('display') },
+        { labelKo: '로컬 데이터 및 백업', labelEn: 'Storage & Backup', action: () => openPreferences('storage') },
+        { labelKo: '내 계정 및 프로필', labelEn: 'Profile', to: user ? '/profile' : '/login' },
+        { labelKo: '문의 및 기술 지원', labelEn: 'Contact Support', to: '/contact' },
+      ],
+    },
+    {
+      id: 'help',
+      labelKo: '도움말',
+      labelEn: 'Help',
+      to: '/support',
+      items: [
+        { labelKo: '스튜디오 안내', labelEn: 'Studio Guide', to: '/landing' },
+        { labelKo: '도움말', labelEn: 'Help & Guide', to: '/support' },
       ],
     },
   ];
@@ -181,25 +190,11 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
 
           <div className="flex items-stretch h-full shrink-0 divide-x divide-white/20 border-l border-white/20">
             <Link
-              to="/support"
-              className="hidden sm:flex items-center px-3.5 text-[#FFFFFF] hover:bg-white/15 transition-colors whitespace-nowrap"
-            >
-              {isKo ? '도움말' : 'Guide'}
-            </Link>
-            <Link
               to="/community"
               className="hidden sm:flex items-center px-3.5 text-[#FFFFFF] hover:bg-white/15 transition-colors whitespace-nowrap"
             >
               {isKo ? '커뮤니티' : 'Community'}
             </Link>
-            <button
-              type="button"
-              onClick={() => openPreferences('engine')}
-              className="flex items-center gap-1.5 px-3.5 text-[#FFFFFF] hover:bg-white/15 transition-colors cursor-pointer whitespace-nowrap"
-            >
-              <SlidersHorizontal size={13} />
-              <span>{isKo ? '환경 설정' : 'Settings'}</span>
-            </button>
             <Link
               to="/login"
               className="flex items-center px-3.5 text-[#FFFFFF] hover:bg-white/15 transition-colors whitespace-nowrap"
@@ -298,25 +293,23 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
         </div>
       </header>
 
-      {/* Full-Width 5-Column Sejong Architectural Mega-Menu */}
+      {/* Full-Width 6-Column Sejong Architectural Mega-Menu */}
       {isMegaMenuOpen && (
         <div
           className="hidden md:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-t border-[#E4E2DC] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-50"
           role="region"
           aria-label="전체 내비게이션 메가메뉴"
         >
-          <div className="max-w-7xl mx-auto grid grid-cols-5 divide-x divide-[#E4E2DC] border-x border-[#E4E2DC]">
+          <div className="max-w-7xl mx-auto grid grid-cols-6 divide-x divide-[#E4E2DC] border-x border-[#E4E2DC]">
             {MEGA_COLUMNS.map((col) => {
               const isColActive = activeColumnId === col.id;
               return (
                 <div
                   key={col.id}
                   onMouseEnter={() => setActiveColumnId(col.id)}
-                  className={`flex flex-col min-h-[260px] transition-colors duration-150 ${
-                    isColActive ? 'bg-[#000000] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#000000]'
-                  }`}
+                  className="flex flex-col min-h-[260px] bg-[#FFFFFF] text-[#000000]"
                 >
-                  {/* Column Title */}
+                  {/* Column Title — Black Hover Highlight Box Only */}
                   <button
                     type="button"
                     onClick={() => {
@@ -327,35 +320,27 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
                         setIsMegaMenuOpen(false);
                       }
                     }}
-                    className={`w-full px-5 py-4 text-center border-b text-[19px] xl:text-[21px] font-extrabold tracking-[-0.03em] cursor-pointer transition-colors ${
+                    className={`w-full px-5 py-4 text-center border-b text-[19px] xl:text-[21px] font-extrabold tracking-[-0.03em] cursor-pointer transition-colors duration-150 ${
                       isColActive
-                        ? 'border-white/30 text-[#FFFFFF]'
-                        : 'border-[#E4E2DC] text-[#000000] hover:bg-[#F6F5F1]'
+                        ? 'bg-[#000000] text-[#FFFFFF] border-[#000000]'
+                        : 'bg-[#FFFFFF] text-[#000000] border-[#E4E2DC] hover:bg-[#000000] hover:text-[#FFFFFF] hover:border-[#000000]'
                     }`}
                   >
                     {isKo ? col.labelKo : col.labelEn}
                   </button>
 
-                  {/* Sub-Navigation List */}
-                  <ul className="p-4 space-y-1.5 flex-1">
+                  {/* Sub-Navigation List (Clean White Surface) */}
+                  <ul className="p-4 space-y-1.5 flex-1 bg-[#FFFFFF] text-[#000000]">
                     {col.items.map((item) => {
-                      const ItemIcon = item.Icon;
                       if (item.action) {
                         return (
                           <li key={item.labelKo}>
                             <button
                               type="button"
                               onClick={item.action}
-                              className={`w-full px-3 py-2 text-left text-[15px] font-semibold rounded-[2px] flex items-center justify-between gap-2 transition-colors cursor-pointer ${
-                                isColActive
-                                  ? 'text-[#FFFFFF] hover:bg-white/15'
-                                  : 'text-[#000000] hover:bg-[#F6F5F1]'
-                              }`}
+                              className="w-full px-3 py-2 text-left text-[15px] font-semibold rounded-[2px] flex items-center justify-between gap-2 transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
                             >
-                              <span className="flex items-center gap-2 min-w-0 truncate">
-                                {ItemIcon && <ItemIcon size={14} className="shrink-0" />}
-                                <span className="truncate">{isKo ? item.labelKo : item.labelEn}</span>
-                              </span>
+                              <span className="truncate">{isKo ? item.labelKo : item.labelEn}</span>
                               <ChevronRight size={14} className="shrink-0 opacity-60" />
                             </button>
                           </li>
@@ -367,16 +352,9 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
                           <Link
                             to={item.to || '/landing'}
                             onClick={() => setIsMegaMenuOpen(false)}
-                            className={`w-full px-3 py-2 text-[15px] font-semibold rounded-[2px] flex items-center justify-between gap-2 transition-colors ${
-                              isColActive
-                                ? 'text-[#FFFFFF] hover:bg-white/15'
-                                : 'text-[#000000] hover:bg-[#F6F5F1]'
-                            }`}
+                            className="w-full px-3 py-2 text-[15px] font-semibold rounded-[2px] flex items-center justify-between gap-2 transition-colors text-[#000000] hover:bg-[#F6F5F1]"
                           >
-                            <span className="flex items-center gap-2 min-w-0 truncate">
-                              {ItemIcon && <ItemIcon size={14} className="shrink-0" />}
-                              <span className="truncate">{isKo ? item.labelKo : item.labelEn}</span>
-                            </span>
+                            <span className="truncate">{isKo ? item.labelKo : item.labelEn}</span>
                             <ChevronRight size={14} className="shrink-0 opacity-60" />
                           </Link>
                         </li>

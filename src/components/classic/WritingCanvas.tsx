@@ -31,8 +31,6 @@ export interface WritingCanvasProps {
   saveStatus: 'idle' | 'saving' | 'saved';
   lastSavedTime: string | null;
   largeTextMode?: boolean;
-  isPreviewCollapsed?: boolean;
-  onTogglePreviewCollapse?: () => void;
   lockedChapters?: number[];
   updatedChapters?: Set<number>;
   onToggleChapterLock?: (chapterId: number) => void;
@@ -50,8 +48,6 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   saveStatus,
   lastSavedTime,
   largeTextMode = false,
-  isPreviewCollapsed = false,
-  onTogglePreviewCollapse,
   lockedChapters = [],
   updatedChapters,
   onToggleChapterLock,
@@ -74,18 +70,6 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   useEffect(() => {
     setPreviousValueBeforeRefine(null);
   }, [currentChapter, currentSection]);
-
-  // Keyboard shortcut: Cmd/Ctrl + P to toggle 2-track Wide Focus Mode
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'p') {
-        e.preventDefault();
-        onTogglePreviewCollapse?.();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onTogglePreviewCollapse]);
 
   const currentSectionIdx = chapter.sections.findIndex(s => s.key === section.key);
   const isFirstSection = currentChapter === 1 && currentSectionIdx === 0;
@@ -268,9 +252,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
         className="flex-1 min-w-0 w-full h-full flex flex-col bg-[#FFFFFF] overflow-y-auto selection:bg-[#111111] selection:text-[#FFFFFF]"
         aria-label="산출물 사출 허브"
       >
-        <div className={`flex-1 w-full mx-auto px-8 sm:px-14 py-14 flex flex-col transition-all duration-300 ease-in-out ${
-          isPreviewCollapsed ? 'max-w-5xl' : 'max-w-3xl'
-        }`}>
+        <div className="flex-1 w-full mx-auto px-8 sm:px-14 py-14 flex flex-col max-w-3xl">
           <PromptExtractionHub
             formInputs={formInputs}
             onBack={() => onNavigateSection('prev')}
@@ -290,9 +272,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
       className="flex-1 min-w-0 w-full h-full flex flex-col bg-[#FFFFFF] overflow-y-auto selection:bg-[#111111] selection:text-[#FFFFFF]"
       aria-label="집필 캔버스"
     >
-      <div className={`flex-1 w-full mx-auto px-8 sm:px-14 pt-12 pb-20 flex flex-col space-y-12 transition-all duration-300 ease-in-out ${
-        isPreviewCollapsed ? 'max-w-4xl' : 'max-w-3xl'
-      }`}>
+      <div className="flex-1 w-full mx-auto px-8 sm:px-14 pt-12 pb-20 flex flex-col space-y-12 max-w-3xl">
         {/* Monograph Chapter Kicker + Serif Editorial Title */}
         <header className="pt-2 pb-7 border-b border-[#111111]/20 space-y-3">
           <div className="flex items-center justify-between gap-4">

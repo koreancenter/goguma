@@ -24,8 +24,6 @@ interface SpecPreviewPanelProps {
   plan: SitePlan;
   formInputs?: Record<string, FormInputEntity>;
   currentChapter: number;
-  isCollapsed?: boolean;
-  onToggleCollapse?: () => void;
   largeTextMode?: boolean;
   width?: number;
   onSelectChapter?: (chapterId: number) => void;
@@ -81,8 +79,6 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   plan,
   formInputs,
   currentChapter,
-  isCollapsed = false,
-  onToggleCollapse,
   largeTextMode = false,
   width,
   onSelectChapter,
@@ -413,35 +409,6 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
   };
-
-  // If collapsed, show a sleek ergonomic 52px rail
-  if (isCollapsed) {
-    return (
-      <aside 
-        className="w-[52px] h-full flex flex-col items-center bg-[#F6F5F1] border-l border-[#E4E2DC] shrink-0 select-none py-3 justify-between"
-        aria-label="미리보기 패널 펼치기"
-      >
-        <div className="flex flex-col items-center gap-2.5 w-full px-1.5">
-          <button
-            onClick={onToggleCollapse}
-            className="w-9 h-9 rounded-[2px] bg-[#FFFFFF] border border-[#E4E2DC] hover:bg-[#111111] hover:text-[#FFFFFF] hover:border-[#111111] text-[#52524E] flex items-center justify-center transition-colors cursor-pointer"
-            title="미리보기 패널 펼치기"
-            aria-label="미리보기 패널 펼치기"
-          >
-            <ChevronLeft size={16} />
-          </button>
-        </div>
-
-        <button
-          onClick={onToggleCollapse}
-          className="p-2 rounded-[2px] hover:bg-[#EFEDE7] text-[#52524E] hover:text-[#111111] text-xs font-medium cursor-pointer"
-          title="패널 펼치기"
-        >
-          열기
-        </button>
-      </aside>
-    );
-  }
 
   const activeStateShortLabel =
     previewState === 'empty'

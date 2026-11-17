@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Download, FolderOpen, PanelRight, PanelLeft, LogOut, LayoutTemplate, Cpu, Type, ChevronDown, Check, User, Lock, Menu, X, ChevronRight, SlidersHorizontal
+  Download, PanelLeft, ChevronDown, Check, Menu, X, ChevronRight
 } from 'lucide-react';
 
 import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from '../../types';
@@ -38,8 +38,6 @@ export interface WorkspaceViewProps {
   lastSavedTime: string | null;
   largeTextMode: boolean;
   toggleLargeTextMode: () => void;
-  isPreviewCollapsed: boolean;
-  togglePreviewCollapsed: () => void;
   isCol1Collapsed: boolean;
   setIsCol1Collapsed: React.Dispatch<React.SetStateAction<boolean>>;
   isCol2Collapsed: boolean;
@@ -67,8 +65,6 @@ export default function WorkspaceView({
   lastSavedTime,
   largeTextMode,
   toggleLargeTextMode,
-  isPreviewCollapsed,
-  togglePreviewCollapsed,
   isCol1Collapsed,
   setIsCol1Collapsed,
   completedChapters,
@@ -91,7 +87,7 @@ export default function WorkspaceView({
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [preferencesTab, setPreferencesTab] = useState<PreferencesTab>('engine');
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
-  const [hoveredMenuId, setHoveredMenuId] = useState<number | 'settings'>(project.currentChapter);
+  const [hoveredMenuId, setHoveredMenuId] = useState<number | 'settings' | 'help'>(project.currentChapter);
   const [isMobileChapterDrawerOpen, setIsMobileChapterDrawerOpen] = useState(false);
   const [mobilePane, setMobilePane] = useState<'editor' | 'preview'>('editor');
   const headerWrapperRef = useRef<HTMLDivElement>(null);
@@ -259,25 +255,21 @@ export default function WorkspaceView({
   const SETTINGS_MENU_ITEMS: {
     id: string;
     label: string;
-    Icon: React.ElementType;
     action: () => void;
   }[] = [
     {
       id: 'engine',
       label: '인공지능 엔진 설정',
-      Icon: Cpu,
       action: () => openPreferences('engine'),
     },
     {
       id: 'display',
       label: '화면 및 가독성 설정',
-      Icon: Type,
       action: () => openPreferences('display'),
     },
     {
       id: 'templates',
       label: '표준 기획서 템플릿',
-      Icon: LayoutTemplate,
       action: () => {
         setIsTemplateModalOpen(true);
         setIsMegaMenuOpen(false);
@@ -287,7 +279,6 @@ export default function WorkspaceView({
     {
       id: 'storage',
       label: '보관함 및 로컬 백업',
-      Icon: FolderOpen,
       action: () => {
         setBackupModalTab('storage');
         setIsBackupModalOpen(true);
@@ -298,7 +289,6 @@ export default function WorkspaceView({
     {
       id: 'account',
       label: '내 계정 및 프로필',
-      Icon: User,
       action: () => {
         setIsMegaMenuOpen(false);
         setIsMobileChapterDrawerOpen(false);
@@ -308,11 +298,35 @@ export default function WorkspaceView({
     {
       id: 'logout',
       label: '로그아웃',
-      Icon: LogOut,
       action: () => {
         setIsMegaMenuOpen(false);
         setIsMobileChapterDrawerOpen(false);
         onOpenLogoutModal();
+      },
+    },
+  ];
+
+  const HELP_MENU_ITEMS: {
+    id: string;
+    label: string;
+    action: () => void;
+  }[] = [
+    {
+      id: 'studio-guide',
+      label: '스튜디오 안내',
+      action: () => {
+        setIsMegaMenuOpen(false);
+        setIsMobileChapterDrawerOpen(false);
+        navigate('/landing');
+      },
+    },
+    {
+      id: 'help-guide',
+      label: '도움말',
+      action: () => {
+        setIsMegaMenuOpen(false);
+        setIsMobileChapterDrawerOpen(false);
+        navigate('/support');
       },
     },
   ];
@@ -368,47 +382,8 @@ export default function WorkspaceView({
             </span>
           </div>
 
-          {/* Right: Clean Pure-Korean Studio Navigation & Preview Toggle */}
-          <div className="flex items-stretch h-full shrink-0 divide-x divide-white/20 border-l border-white/20">
-            <button
-              type="button"
-              onClick={() => navigate('/landing')}
-              className="hidden sm:flex items-center px-3.5 text-[#FFFFFF] hover:bg-white/15 transition-colors cursor-pointer whitespace-nowrap"
-            >
-              스튜디오 안내
-            </button>
-
-            <button
-              type="button"
-              onClick={() => navigate('/support')}
-              className="hidden md:flex items-center px-3.5 text-[#FFFFFF] hover:bg-white/15 transition-colors cursor-pointer whitespace-nowrap"
-            >
-              도움말
-            </button>
-
-            <button
-              type="button"
-              onClick={togglePreviewCollapsed}
-              className={`hidden lg:flex items-center gap-1.5 px-3.5 transition-colors cursor-pointer whitespace-nowrap ${
-                isPreviewCollapsed
-                  ? 'bg-[#FFFFFF] text-[#000000]'
-                  : 'text-[#FFFFFF] hover:bg-white/15'
-              }`}
-              aria-label="미리보기 패널 토글"
-            >
-              <PanelRight size={14} />
-              <span>{isPreviewCollapsed ? '미리보기 열기' : '미리보기'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => openPreferences('engine')}
-              className="flex items-center gap-1.5 px-3.5 bg-[#FFFFFF] text-[#000000] hover:bg-[#F6F5F1] transition-colors cursor-pointer whitespace-nowrap"
-            >
-              <SlidersHorizontal size={13} />
-              <span>환경 설정</span>
-            </button>
-          </div>
+          {/* Tier 1 Right: Minimalist Editorial Empty Strip */}
+          <div className="shrink-0" />
         </div>
 
         {/* Tier 2: Main White Navigation Row (#FFFFFF) — Doubled Font Size & Maximum Ink Contrast */}
@@ -426,13 +401,12 @@ export default function WorkspaceView({
 
           {/* Center: High-Contrast Single-Line Horizontal Main Menu (Zero Numbers, Zero English, 2x Scale) */}
           <nav
-            className="hidden lg:flex items-center justify-center flex-1 min-w-0 h-full gap-0.5 xl:gap-2 2xl:gap-3"
+            className="hidden lg:flex items-center justify-center flex-1 min-w-0 h-full gap-0.5 xl:gap-1.5 2xl:gap-2.5"
             aria-label="기획서 주요 메뉴"
           >
             {GOGUMA_CHAPTERS.map((ch) => {
               const isCurrent = ch.id === project.currentChapter;
               const isHighlighted = isMegaMenuOpen ? hoveredMenuId === ch.id : isCurrent;
-              const isDone = completedChapters.has(ch.id);
 
               return (
                 <button
@@ -455,16 +429,13 @@ export default function WorkspaceView({
                       setIsMegaMenuOpen(true);
                     }
                   }}
-                  className={`relative h-full px-2 xl:px-3 2xl:px-3.5 flex items-center gap-1.5 text-[18px] xl:text-[22px] 2xl:text-[24px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+                  className={`relative h-full px-1.5 xl:px-2.5 2xl:px-3 flex items-center gap-1.5 text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                     isHighlighted ? 'text-[#000000]' : 'text-[#111111] hover:text-[#000000]'
                   }`}
                 >
                   <span>{CHAPTER_SHORT_LABELS[ch.id] || ch.title}</span>
-                  {isDone && (
-                    <span className="w-2 h-2 rounded-full bg-[#1F5132] shrink-0" aria-hidden="true" />
-                  )}
                   {(isCurrent || (isMegaMenuOpen && hoveredMenuId === ch.id)) && (
-                    <span className="absolute bottom-0 left-2 right-2 h-[3px] bg-[#000000]" />
+                    <span className="absolute bottom-0 left-1.5 right-1.5 h-[3px] bg-[#000000]" />
                   )}
                 </button>
               );
@@ -482,13 +453,38 @@ export default function WorkspaceView({
                 setIsMegaMenuOpen(true);
               }}
               onClick={() => openPreferences('engine')}
-              className={`relative h-full px-2 xl:px-3 2xl:px-3.5 flex items-center gap-1.5 text-[18px] xl:text-[22px] 2xl:text-[24px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+              className={`relative h-full px-1.5 xl:px-2.5 2xl:px-3 flex items-center gap-1.5 text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                 isMegaMenuOpen && hoveredMenuId === 'settings' ? 'text-[#000000]' : 'text-[#111111] hover:text-[#000000]'
               }`}
             >
               <span>환경 설정</span>
               {((isMegaMenuOpen && hoveredMenuId === 'settings') || isPreferencesOpen) && (
-                <span className="absolute bottom-0 left-2 right-2 h-[3px] bg-[#000000]" />
+                <span className="absolute bottom-0 left-1.5 right-1.5 h-[3px] bg-[#000000]" />
+              )}
+            </button>
+
+            {/* Unified [도움말] Top-Level Main Menu */}
+            <button
+              type="button"
+              onMouseEnter={() => {
+                setHoveredMenuId('help');
+                setIsMegaMenuOpen(true);
+              }}
+              onFocus={() => {
+                setHoveredMenuId('help');
+                setIsMegaMenuOpen(true);
+              }}
+              onClick={() => {
+                setIsMegaMenuOpen(false);
+                navigate('/support');
+              }}
+              className={`relative h-full px-1.5 xl:px-2.5 2xl:px-3 flex items-center gap-1.5 text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+                isMegaMenuOpen && hoveredMenuId === 'help' ? 'text-[#000000]' : 'text-[#111111] hover:text-[#000000]'
+              }`}
+            >
+              <span>도움말</span>
+              {isMegaMenuOpen && hoveredMenuId === 'help' && (
+                <span className="absolute bottom-0 left-1.5 right-1.5 h-[3px] bg-[#000000]" />
               )}
             </button>
           </nav>
@@ -558,91 +554,72 @@ export default function WorkspaceView({
           </div>
         </header>
 
-        {/* Full-Width 9-Column Sejong Architectural Mega-Menu (8 Chapters + [환경 설정]) */}
+        {/* Full-Width 10-Column Sejong Architectural Mega-Menu (8 Chapters + [환경 설정] + [도움말]) */}
         {isMegaMenuOpen && (
           <div
             className="hidden lg:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-t border-[#E4E2DC] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-50"
             role="region"
-            aria-label="전체 메뉴 및 환경 설정 메가메뉴"
+            aria-label="전체 메뉴, 환경 설정 및 도움말 메가메뉴"
           >
-            <div className="grid grid-cols-9 divide-x divide-[#E4E2DC]">
+            <div className="grid grid-cols-10 divide-x divide-[#E4E2DC]">
               {GOGUMA_CHAPTERS.map((ch) => {
                 const isActiveCol = hoveredMenuId === ch.id;
-                const isChapterDone = completedChapters.has(ch.id);
-                const isChapterLocked = project.lockedChapters?.includes(ch.id);
 
                 return (
                   <div
                     key={ch.id}
                     onMouseEnter={() => setHoveredMenuId(ch.id)}
-                    className={`flex flex-col min-h-[260px] transition-colors duration-150 ${
-                      isActiveCol ? 'bg-[#000000] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#000000]'
-                    }`}
+                    className="flex flex-col min-h-[260px] bg-[#FFFFFF] text-[#000000]"
                   >
-                    {/* Pure Korean Column Heading (2x Typography & High Contrast) */}
+                    {/* Pure Korean Column Heading — Black Hover Highlight Box Only */}
                     <button
                       type="button"
                       onClick={() => {
                         handleSelectChapter(ch.id);
                         setIsMegaMenuOpen(false);
                       }}
-                      className={`w-full px-3 py-4 text-center border-b cursor-pointer transition-colors ${
+                      className={`w-full px-2.5 py-4 text-center border-b cursor-pointer transition-colors duration-150 ${
                         isActiveCol
-                          ? 'border-white/30 text-[#FFFFFF]'
-                          : 'border-[#E4E2DC] text-[#000000] hover:bg-[#F6F5F1]'
+                          ? 'bg-[#000000] text-[#FFFFFF] border-[#000000]'
+                          : 'bg-[#FFFFFF] text-[#000000] border-[#E4E2DC] hover:bg-[#000000] hover:text-[#FFFFFF] hover:border-[#000000]'
                       }`}
                     >
-                      <div className="text-[17px] xl:text-[20px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
+                      <div className="text-[16px] xl:text-[19px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
                         {CHAPTER_SHORT_LABELS[ch.id] || ch.title}
                       </div>
                     </button>
 
-                    {/* Column Sub-Sections */}
-                    <div className="flex-1 p-3 flex flex-col justify-between gap-3">
-                      <div className="space-y-1.5">
-                        {ch.sections.map((sec) => {
-                          const isSecCurrent = project.currentChapter === ch.id && project.currentSection === sec.key;
-                          const secEntry = formInputs[`${ch.id}_${sec.key}`];
-                          const isSecFilled = Boolean(secEntry?.userRawInput?.trim());
+                    {/* Column Sub-Sections (Clean White Surface) */}
+                    <div className="flex-1 p-2.5 flex flex-col gap-1.5 bg-[#FFFFFF] text-[#000000]">
+                      {ch.sections.map((sec) => {
+                        const isSecCurrent = project.currentChapter === ch.id && project.currentSection === sec.key;
+                        const secEntry = formInputs[`${ch.id}_${sec.key}`];
+                        const isSecFilled = Boolean(secEntry?.userRawInput?.trim());
 
-                          return (
-                            <button
-                              key={sec.key}
-                              type="button"
-                              onClick={() => {
-                                handleSelectChapter(ch.id);
-                                handleSelectSection(sec.key);
-                                setIsMegaMenuOpen(false);
-                              }}
-                              className={`w-full px-2.5 py-2 text-left text-[14px] xl:text-[15px] font-semibold leading-snug flex items-start justify-between gap-2 rounded-[2px] transition-colors cursor-pointer ${
-                                isActiveCol
-                                  ? isSecCurrent
-                                    ? 'bg-white/20 text-[#FFFFFF] font-bold'
-                                    : 'text-[#FFFFFF] hover:bg-white/15'
-                                  : isSecCurrent
-                                  ? 'bg-[#F6F5F1] text-[#000000] font-bold'
-                                  : 'text-[#000000] hover:bg-[#F6F5F1]'
-                              }`}
-                            >
-                              <span className="break-keep">{sec.title}</span>
-                              {isSecFilled ? (
-                                <Check size={14} className={`shrink-0 mt-0.5 ${isActiveCol ? 'text-[#FFFFFF]' : 'text-[#1F5132]'}`} />
-                              ) : (
-                                <ChevronRight size={14} className="shrink-0 mt-0.5 opacity-60" />
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      <div className={`pt-2.5 border-t text-[12px] font-bold flex items-center justify-between gap-1 ${
-                        isActiveCol ? 'border-white/20 text-[#FFFFFF]' : 'border-[#E4E2DC] text-[#111111]'
-                      }`}>
-                        <span>
-                          {isChapterLocked ? '잠금 보호됨' : isChapterDone ? '작성 완료' : '바로 이동'}
-                        </span>
-                        {isChapterLocked && <Lock size={12} className="shrink-0" />}
-                      </div>
+                        return (
+                          <button
+                            key={sec.key}
+                            type="button"
+                            onClick={() => {
+                              handleSelectChapter(ch.id);
+                              handleSelectSection(sec.key);
+                              setIsMegaMenuOpen(false);
+                            }}
+                            className={`w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-start justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer ${
+                              isSecCurrent
+                                ? 'bg-[#F6F5F1] text-[#000000] font-bold'
+                                : 'text-[#000000] hover:bg-[#F6F5F1]'
+                            }`}
+                          >
+                            <span className="break-keep">{sec.title}</span>
+                            {isSecFilled ? (
+                              <Check size={13} className="shrink-0 mt-0.5 text-[#1F5132]" />
+                            ) : (
+                              <ChevronRight size={13} className="shrink-0 mt-0.5 opacity-60" />
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -651,47 +628,74 @@ export default function WorkspaceView({
               {/* 9th Column: Dedicated [환경 설정] Mega-Menu Column */}
               <div
                 onMouseEnter={() => setHoveredMenuId('settings')}
-                className={`flex flex-col min-h-[260px] transition-colors duration-150 ${
-                  hoveredMenuId === 'settings' ? 'bg-[#000000] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#000000]'
-                }`}
+                className="flex flex-col min-h-[260px] bg-[#FFFFFF] text-[#000000]"
               >
                 <button
                   type="button"
                   onClick={() => openPreferences('engine')}
-                  className={`w-full px-3 py-4 text-center border-b cursor-pointer transition-colors ${
+                  className={`w-full px-2.5 py-4 text-center border-b cursor-pointer transition-colors duration-150 ${
                     hoveredMenuId === 'settings'
-                      ? 'border-white/30 text-[#FFFFFF]'
-                      : 'border-[#E4E2DC] text-[#000000] hover:bg-[#F6F5F1]'
+                      ? 'bg-[#000000] text-[#FFFFFF] border-[#000000]'
+                      : 'bg-[#FFFFFF] text-[#000000] border-[#E4E2DC] hover:bg-[#000000] hover:text-[#FFFFFF] hover:border-[#000000]'
                   }`}
                 >
-                  <div className="text-[17px] xl:text-[20px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
+                  <div className="text-[16px] xl:text-[19px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
                     환경 설정
                   </div>
                 </button>
 
-                <div className="flex-1 p-3 flex flex-col justify-between gap-2">
+                <div className="flex-1 p-2.5 flex flex-col justify-between gap-2 bg-[#FFFFFF] text-[#000000]">
                   <div className="space-y-1">
-                    {SETTINGS_MENU_ITEMS.map((item) => {
-                      const Icon = item.Icon;
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={item.action}
-                          className={`w-full px-2.5 py-2 text-left text-[14px] xl:text-[15px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer ${
-                            hoveredMenuId === 'settings'
-                              ? 'text-[#FFFFFF] hover:bg-white/15'
-                              : 'text-[#000000] hover:bg-[#F6F5F1]'
-                          }`}
-                        >
-                          <span className="flex items-center gap-2 min-w-0">
-                            <Icon size={14} className="shrink-0" />
-                            <span className="break-keep">{item.label}</span>
-                          </span>
-                          <ChevronRight size={13} className="shrink-0 opacity-60" />
-                        </button>
-                      );
-                    })}
+                    {SETTINGS_MENU_ITEMS.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={item.action}
+                        className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                      >
+                        <span className="break-keep">{item.label}</span>
+                        <ChevronRight size={13} className="shrink-0 opacity-60" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 10th Column: Dedicated [도움말] Mega-Menu Column */}
+              <div
+                onMouseEnter={() => setHoveredMenuId('help')}
+                className="flex flex-col min-h-[260px] bg-[#FFFFFF] text-[#000000]"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMegaMenuOpen(false);
+                    navigate('/support');
+                  }}
+                  className={`w-full px-2.5 py-4 text-center border-b cursor-pointer transition-colors duration-150 ${
+                    hoveredMenuId === 'help'
+                      ? 'bg-[#000000] text-[#FFFFFF] border-[#000000]'
+                      : 'bg-[#FFFFFF] text-[#000000] border-[#E4E2DC] hover:bg-[#000000] hover:text-[#FFFFFF] hover:border-[#000000]'
+                  }`}
+                >
+                  <div className="text-[16px] xl:text-[19px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
+                    도움말
+                  </div>
+                </button>
+
+                <div className="flex-1 p-2.5 flex flex-col justify-between gap-2 bg-[#FFFFFF] text-[#000000]">
+                  <div className="space-y-1">
+                    {HELP_MENU_ITEMS.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={item.action}
+                        className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                      >
+                        <span className="break-keep">{item.label}</span>
+                        <ChevronRight size={13} className="shrink-0 opacity-60" />
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -699,26 +703,39 @@ export default function WorkspaceView({
           </div>
         )}
 
-        {/* Mobile & Tablet Drawer (< lg) — Zero Numbers, Zero English, Unified Settings */}
+        {/* Mobile & Tablet Drawer (< lg) — Zero Numbers, Zero English, Unified Settings & Help */}
         {isMobileChapterDrawerOpen && (
           <div className="lg:hidden absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-lg z-50 max-h-[75vh] overflow-y-auto">
-            <div className="p-4 border-b border-[#E4E2DC] bg-[#F6F5F1] space-y-2">
-              <div className="text-xs font-extrabold text-[#000000] mb-2">환경 설정</div>
-              <div className="grid grid-cols-2 gap-2">
-                {SETTINGS_MENU_ITEMS.map((item) => {
-                  const Icon = item.Icon;
-                  return (
+            <div className="p-4 border-b border-[#E4E2DC] bg-[#F6F5F1] space-y-4">
+              <div>
+                <div className="text-xs font-extrabold text-[#000000] mb-2">환경 설정</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {SETTINGS_MENU_ITEMS.map((item) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={item.action}
-                      className="px-3 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] text-xs font-bold text-[#000000] flex items-center gap-1.5 rounded-[2px] cursor-pointer text-left"
+                      className="px-3 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] text-xs font-bold text-[#000000] flex items-center rounded-[2px] cursor-pointer text-left"
                     >
-                      <Icon size={13} className="shrink-0" />
                       <span className="truncate">{item.label}</span>
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs font-extrabold text-[#000000] mb-2">도움말</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {HELP_MENU_ITEMS.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={item.action}
+                      className="px-3 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] text-xs font-bold text-[#000000] flex items-center rounded-[2px] cursor-pointer text-left"
+                    >
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -785,12 +802,10 @@ export default function WorkspaceView({
         <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">
           {/* 50% Left Editor Pane (#FFFFFF) */}
           <div
-            style={!isPreviewCollapsed ? ({ '--split-left': `${splitPercent}%` } as React.CSSProperties) : undefined}
+            style={{ '--split-left': `${splitPercent}%` } as React.CSSProperties}
             className={`${
               mobilePane === 'editor' ? 'flex w-full' : 'hidden lg:flex'
-            } ${
-              isPreviewCollapsed ? 'lg:flex-1' : 'lg:shrink-0 lg:w-[var(--split-left)]'
-            } min-w-0 h-full bg-[#FFFFFF] overflow-hidden flex-col`}
+            } lg:shrink-0 lg:w-[var(--split-left)] min-w-0 h-full bg-[#FFFFFF] overflow-hidden flex-col`}
           >
             <WritingCanvas
               currentChapter={project.currentChapter}
@@ -804,8 +819,6 @@ export default function WorkspaceView({
               saveStatus={saveStatus}
               lastSavedTime={lastSavedTime}
               largeTextMode={largeTextMode}
-              isPreviewCollapsed={isPreviewCollapsed}
-              onTogglePreviewCollapse={togglePreviewCollapsed}
               lockedChapters={project.lockedChapters}
               updatedChapters={updatedChapters}
               onToggleChapterLock={handleToggleChapterLock}
@@ -813,28 +826,26 @@ export default function WorkspaceView({
           </div>
 
           {/* Single 1px solid #E4E2DC Vertical Divider (Desktop lg+ only) */}
-          {!isPreviewCollapsed && (
+          <div
+            role="separator"
+            tabIndex={0}
+            aria-orientation="vertical"
+            aria-valuenow={Math.round(splitPercent)}
+            aria-valuemin={35}
+            aria-valuemax={65}
+            aria-label="에디터 및 미리보기 분할 비율 조절"
+            onKeyDown={handleResizerKeyDown}
+            onMouseDown={handleMouseDownResizer}
+            onDoubleClick={handleResetSplit}
+            title="드래그하여 비율 조절 (더블클릭 시 50:50 초기화)"
+            className="hidden lg:block w-px bg-[#E4E2DC] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[#111111] group"
+          >
             <div
-              role="separator"
-              tabIndex={0}
-              aria-orientation="vertical"
-              aria-valuenow={Math.round(splitPercent)}
-              aria-valuemin={35}
-              aria-valuemax={65}
-              aria-label="에디터 및 미리보기 분할 비율 조절"
-              onKeyDown={handleResizerKeyDown}
-              onMouseDown={handleMouseDownResizer}
-              onDoubleClick={handleResetSplit}
-              title="드래그하여 비율 조절 (더블클릭 시 50:50 초기화)"
-              className="hidden lg:block w-px bg-[#E4E2DC] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[#111111] group"
-            >
-              <div
-                className={`absolute inset-y-0 -left-1 -right-1 cursor-col-resize transition-colors ${
-                  isResizing ? 'bg-[#111111]/15' : 'group-hover:bg-[#111111]/10'
-                }`}
-              />
-            </div>
-          )}
+              className={`absolute inset-y-0 -left-1 -right-1 cursor-col-resize transition-colors ${
+                isResizing ? 'bg-[#111111]/15' : 'group-hover:bg-[#111111]/10'
+              }`}
+            />
+          </div>
 
           {isResizing && (
             <div className="fixed inset-0 z-40 cursor-col-resize select-none bg-transparent" />
@@ -842,25 +853,15 @@ export default function WorkspaceView({
 
           {/* 50% Right Exhibition Preview Stage (#F6F5F1) */}
           <div
-            style={!isPreviewCollapsed ? ({ '--split-right': `${100 - splitPercent}%` } as React.CSSProperties) : undefined}
+            style={{ '--split-right': `${100 - splitPercent}%` } as React.CSSProperties}
             className={`${
               mobilePane === 'preview' ? 'flex w-full' : 'hidden lg:flex'
-            } ${
-              isPreviewCollapsed ? 'lg:w-auto lg:shrink-0' : 'lg:shrink-0 lg:w-[var(--split-right)]'
-            } min-w-0 h-full bg-[#F6F5F1] overflow-hidden flex-col`}
+            } lg:shrink-0 lg:w-[var(--split-right)] min-w-0 h-full bg-[#F6F5F1] overflow-hidden flex-col`}
           >
             <SpecPreviewPanel
               plan={plan}
               formInputs={formInputs}
               currentChapter={project.currentChapter}
-              isCollapsed={mobilePane === 'preview' ? false : isPreviewCollapsed}
-              onToggleCollapse={() => {
-                if (mobilePane === 'preview') {
-                  setMobilePane('editor');
-                } else {
-                  togglePreviewCollapsed();
-                }
-              }}
               largeTextMode={largeTextMode}
               onSelectChapter={handleSelectChapter}
               onSelectSection={handleSelectSection}
@@ -917,8 +918,6 @@ export default function WorkspaceView({
             onClose={() => setIsPreferencesOpen(false)}
             largeTextMode={largeTextMode}
             onToggleLargeTextMode={toggleLargeTextMode}
-            isPreviewCollapsed={isPreviewCollapsed}
-            onTogglePreviewCollapsed={togglePreviewCollapsed}
             onOpenTemplates={() => setIsTemplateModalOpen(true)}
             onOpenBackup={(tab = 'storage') => {
               setBackupModalTab(tab);

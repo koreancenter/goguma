@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Key, HardDrive, CheckCircle2, AlertCircle, RefreshCw, X, Eye, EyeOff,
-  Server, Shield, Cpu, SlidersHorizontal, Type, PanelRight, Globe,
+  Server, Shield, Cpu, SlidersHorizontal, Type, Globe,
   FolderOpen, LayoutTemplate, Download, User, LogOut
 } from 'lucide-react';
 import { AISettings, getAISettings, saveAISettings } from '../../lib/aiConfig';
@@ -17,8 +17,6 @@ export interface PreferencesModalProps {
   onClose: () => void;
   largeTextMode?: boolean;
   onToggleLargeTextMode?: () => void;
-  isPreviewCollapsed?: boolean;
-  onTogglePreviewCollapsed?: () => void;
   onOpenTemplates?: () => void;
   onOpenBackup?: (tab?: 'export' | 'import' | 'storage') => void;
   currentUserName?: string;
@@ -33,8 +31,6 @@ export const PreferencesModal: React.FC<PreferencesModalProps> = ({
   onClose,
   largeTextMode,
   onToggleLargeTextMode,
-  isPreviewCollapsed,
-  onTogglePreviewCollapsed,
   onOpenTemplates,
   onOpenBackup,
   currentUserName,
@@ -578,31 +574,6 @@ export const PreferencesModal: React.FC<PreferencesModalProps> = ({
                     {isLarge ? '활성화됨' : '끄기'}
                   </button>
                 </div>
-
-                {onTogglePreviewCollapsed && (
-                  <div className="py-4 flex items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-sm font-bold text-[#111111]">
-                        <PanelRight size={15} />
-                        <span>우측 실시간 사양서 미리보기 패널</span>
-                      </div>
-                      <p className="text-xs text-[#52524E]">
-                        집필과 동시에 실시간 프로토타입과 마크다운 사양서를 나란히 표시하거나 넓게 집중 집필합니다.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={onTogglePreviewCollapsed}
-                      className={`px-4 py-2 rounded-[2px] text-xs font-bold border transition-colors cursor-pointer shrink-0 ${
-                        !isPreviewCollapsed
-                          ? 'bg-[#000000] text-[#FFFFFF] border-[#000000]'
-                          : 'bg-[#FFFFFF] text-[#111111] border-[#CBC8BF] hover:border-[#000000]'
-                      }`}
-                    >
-                      {!isPreviewCollapsed ? '표시 중' : '접힘'}
-                    </button>
-                  </div>
-                )}
 
                 <div className="py-4 flex items-center justify-between gap-4">
                   <div className="space-y-1">
