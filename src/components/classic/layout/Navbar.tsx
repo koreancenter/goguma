@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { auth, LocalUser } from '../../../lib/localAuth';
-import type { PreferencesTab } from '../../guide/PreferencesModal';
-
-const PreferencesModal = lazy(() =>
-  import('../../guide/PreferencesModal').then(m => ({ default: m.PreferencesModal }))
-);
 
 interface NavbarProps {
   projectTitle?: string;
@@ -39,8 +34,6 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [activeColumnId, setActiveColumnId] = useState<string>('studio');
   const [user, setUser] = useState<LocalUser | null>(() => auth.currentUser);
-  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
-  const [preferencesTab, setPreferencesTab] = useState<PreferencesTab>('engine');
   const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,11 +69,10 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
     };
   }, [isMegaMenuOpen, isMobileOpen]);
 
-  const openPreferences = (tab: PreferencesTab = 'engine') => {
-    setPreferencesTab(tab);
-    setIsPreferencesOpen(true);
+  const goToPage = (path: string) => {
     setIsMegaMenuOpen(false);
     setIsMobileOpen(false);
+    navigate(path);
   };
 
   const MEGA_COLUMNS: MegaMenuColumn[] = [
@@ -128,7 +120,7 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
       to: '/community',
       items: [
         { labelKo: '오픈소스 커뮤니티', labelEn: 'Community Hub', to: '/community' },
-        { labelKo: '오픈소스 라이선스', labelEn: 'License Notice', to: '/terms' },
+        { labelKo: '오픈소스 라이선스', labelEn: 'License Notice', to: '/license' },
         { labelKo: '개인정보처리방침', labelEn: 'Privacy Policy', to: '/privacy' },
         { labelKo: '도움말 및 안내서', labelEn: 'Help & Guide', to: '/support' },
       ],
@@ -137,11 +129,11 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
       id: 'settings',
       labelKo: '환경 설정',
       labelEn: 'Preferences',
-      onHeaderClick: () => openPreferences('engine'),
+      to: '/settings?tab=engine',
       items: [
-        { labelKo: '인공지능 엔진 설정', labelEn: 'AI Engine Setup', action: () => openPreferences('engine') },
-        { labelKo: '화면 및 언어 설정', labelEn: 'Display & Language', action: () => openPreferences('display') },
-        { labelKo: '로컬 데이터 및 백업', labelEn: 'Storage & Backup', action: () => openPreferences('storage') },
+        { labelKo: '인공지능 엔진 설정', labelEn: 'AI Engine Setup', action: () => goToPage('/settings?tab=engine') },
+        { labelKo: '화면 및 언어 설정', labelEn: 'Display & Language', action: () => goToPage('/settings?tab=display') },
+        { labelKo: '로컬 데이터 및 백업', labelEn: 'Storage & Backup', action: () => goToPage('/backup?tab=storage') },
         { labelKo: '내 계정 및 프로필', labelEn: 'Profile', to: user ? '/profile' : '/login' },
         { labelKo: '문의 및 기술 지원', labelEn: 'Contact Support', to: '/contact' },
       ],
@@ -424,19 +416,6 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {isPreferencesOpen && (
-        <Suspense fallback={null}>
-          <PreferencesModal
-            isOpen={isPreferencesOpen}
-            initialTab={preferencesTab}
-            onClose={() => setIsPreferencesOpen(false)}
-            currentUserName={user?.displayName}
-            currentUserRole={user?.role}
-            onNavigateProfile={() => navigate(user ? '/profile' : '/login')}
-          />
-        </Suspense>
-      )}
     </div>
   );
 }

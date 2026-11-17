@@ -25,11 +25,20 @@ const LoginGateway = lazy(() => import('./components/auth/LoginGateway'));
 const MyAccount = lazy(() => import('./components/classic/profile/MyAccount'));
 const TermsOfService = lazy(() => import('./components/classic/legal/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./components/classic/legal/PrivacyPolicy'));
+const OpenSourceLicensePage = lazy(() => import('./components/classic/legal/OpenSourceLicensePage'));
+const AIPolicyPage = lazy(() => import('./components/classic/legal/AIPolicyPage'));
+const CommunityTermsPage = lazy(() => import('./components/classic/legal/CommunityTermsPage'));
+const CookiePolicyPage = lazy(() => import('./components/classic/legal/CookiePolicyPage'));
+const PreferencesPage = lazy(() => import('./components/pages/PreferencesPage'));
+const TemplatesPage = lazy(() => import('./components/pages/TemplatesPage'));
+const BackupPage = lazy(() => import('./components/pages/BackupPage'));
+const ExportSpecPage = lazy(() => import('./components/pages/ExportSpecPage'));
+const CreateAccountPage = lazy(() => import('./components/pages/CreateAccountPage'));
+const LogoutPage = lazy(() => import('./components/pages/LogoutPage'));
 const About = lazy(() => import('./components/classic/company/About'));
 const Contact = lazy(() => import('./components/classic/company/Contact'));
 const CustomerService = lazy(() => import('./components/classic/company/CustomerService'));
 const Community = lazy(() => import('./components/classic/company/Community'));
-const LogoutConfirmModal = lazy(() => import('./components/auth/LogoutConfirmModal'));
 const OnboardingTutorial = lazy(() =>
   import('./components/guide/OnboardingTutorial').then(m => ({ default: m.OnboardingTutorial }))
 );
@@ -73,7 +82,6 @@ export default function App() {
   // Local-First Auth State (Zero Server Independent Session)
   // --------------------------------------------------------------------------
   const [currentUser, setCurrentUser] = useState<LocalUser | null>(() => auth.currentUser);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   useEffect(() => {
     return auth.onAuthStateChanged((user) => {
@@ -458,6 +466,42 @@ export default function App() {
     return set;
   }, [formInputs]);
 
+  const handleApplyPrdTemplate = useCallback((template: any) => {
+    const newName = template.plan?.metadata?.projectName || template.name;
+    setProject(prev => ({
+      ...prev,
+      name: newName,
+      slug: template.id,
+      updatedAt: new Date().toISOString(),
+    }));
+
+    setPlan(prev => ({
+      ...prev,
+      metadata: {
+        ...prev.metadata,
+        ...template.plan.metadata,
+        projectName: newName,
+        title: newName,
+      },
+      design: {
+        ...prev.design,
+        ...template.plan.design,
+      },
+      navigation: {
+        ...prev.navigation,
+        ...template.plan.navigation,
+      },
+    }));
+
+    if (template.formInputs) {
+      Object.entries(template.formInputs).forEach(([key, val]) => {
+        handleInputChange(1, key, val as string);
+      });
+    }
+
+    schedulePersistence();
+  }, [handleInputChange, schedulePersistence]);
+
   return (
     <SitePlanProvider plan={plan} onChange={setPlan}>
       <Suspense fallback={<PageLoader />}>
@@ -490,7 +534,6 @@ export default function App() {
                   handleNavigateSection={handleNavigateSection}
                   schedulePersistence={schedulePersistence}
                   currentUser={currentUser}
-                  onOpenLogoutModal={() => setIsLogoutModalOpen(true)}
                 />
               </ProtectedRoute>
             } 
@@ -501,18 +544,9 @@ export default function App() {
             path="/profile" 
             element={
               <ProtectedRoute user={currentUser}>
-                <div className="min-h-screen bg-[#F7F8FA] text-[#111827] flex flex-col font-sans">
-                  <header className="h-14 px-6 bg-[#FFFFFF] border-b border-[#E5E7EB] flex items-center justify-between">
-                    <button
-                      onClick={() => navigate('/workspace')}
-                      className="flex items-center gap-2 text-xs font-medium text-[#4B5563] hover:text-[#1E3A8A] transition-colors cursor-pointer"
-                    >
-                      <ChevronLeft size={16} />
-                      <span>작업실로 복귀</span>
-                    </button>
-                    <span className="font-semibold text-xs text-[#111827]">사용자 설정 및 통계</span>
-                  </header>
-                  <main className="flex-1 p-4 sm:p-8 max-w-4xl mx-auto w-full">
+                <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                  <Navbar />
+                  <main className="flex-1">
                     <MyAccount />
                   </main>
                   <Footer />
@@ -521,14 +555,102 @@ export default function App() {
             } 
           />
 
+          {/* Workspace & Utility Full-Page Views (Replacing All Modals) */}
+          <Route
+            path="/settings"
+            element={
+              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                <Navbar />
+                <main className="flex-1">
+                  <PreferencesPage
+                    largeTextMode={largeTextMode}
+                    onToggleLargeTextMode={toggleLargeTextMode}
+                    currentUser={currentUser}
+                  />
+                </main>
+                <Footer />
+              </div>
+            }
+          />
+          <Route
+            path="/templates"
+            element={
+              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                <Navbar />
+                <main className="flex-1">
+                  <TemplatesPage onApplyTemplate={handleApplyPrdTemplate} />
+                </main>
+                <Footer />
+              </div>
+            }
+          />
+          <Route
+            path="/backup"
+            element={
+              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                <Navbar />
+                <main className="flex-1">
+                  <BackupPage formInputs={formInputs} lockedChapters={project.lockedChapters} />
+                </main>
+                <Footer />
+              </div>
+            }
+          />
+          <Route
+            path="/export"
+            element={
+              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                <Navbar />
+                <main className="flex-1">
+                  <ExportSpecPage
+                    plan={plan}
+                    formInputs={formInputs}
+                    lockedChapters={project.lockedChapters}
+                    updatedChapters={updatedChapters}
+                  />
+                </main>
+                <Footer />
+              </div>
+            }
+          />
+          <Route
+            path="/create-account"
+            element={
+              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                <Navbar />
+                <main className="flex-1">
+                  <CreateAccountPage />
+                </main>
+                <Footer />
+              </div>
+            }
+          />
+          <Route
+            path="/logout"
+            element={
+              <ProtectedRoute user={currentUser}>
+                <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                  <Navbar />
+                  <main className="flex-1">
+                    <LogoutPage currentUser={currentUser} onConfirmLogout={handleLogout} />
+                  </main>
+                  <Footer />
+                </div>
+              </ProtectedRoute>
+            }
+          />
+
           {/* Legal & Informational Pages */}
-          <Route path="/terms" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
-          <Route path="/license" element={<Navigate to="/terms" replace />} />
-          <Route path="/privacy" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
-          <Route path="/about" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
-          <Route path="/contact" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
-          <Route path="/support" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
-          <Route path="/community" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111827] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
+          <Route path="/terms" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
+          <Route path="/license" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><OpenSourceLicensePage /></main><Footer /></div>} />
+          <Route path="/privacy" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
+          <Route path="/ai-policy" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><AIPolicyPage /></main><Footer /></div>} />
+          <Route path="/community-terms" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><CommunityTermsPage /></main><Footer /></div>} />
+          <Route path="/cookies" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><CookiePolicyPage /></main><Footer /></div>} />
+          <Route path="/about" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
+          <Route path="/contact" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
+          <Route path="/support" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
+          <Route path="/community" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
           <Route path="/welcome" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
 
@@ -541,17 +663,6 @@ export default function App() {
       <Suspense fallback={null}>
         <OnboardingTutorial />
       </Suspense>
-
-      {isLogoutModalOpen && (
-        <Suspense fallback={null}>
-          <LogoutConfirmModal
-            isOpen={isLogoutModalOpen}
-            onClose={() => setIsLogoutModalOpen(false)}
-            onConfirm={handleLogout}
-            userName={currentUser?.displayName}
-          />
-        </Suspense>
-      )}
     </SitePlanProvider>
   );
 }

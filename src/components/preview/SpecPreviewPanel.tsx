@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   FileCode, RefreshCw, ExternalLink, 
   Copy, Check, ChevronLeft, ChevronRight, ChevronDown,
-  Monitor, Tablet, Smartphone, Search, FileDown, X,
+  Monitor, Tablet, Smartphone, Search, FileDown,
   Code, Database, Layers, CheckCheck, Bot, RotateCcw, Network
 } from 'lucide-react';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
@@ -86,6 +87,7 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   lockedChapters = [],
   updatedChapters,
 }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<PreviewTab>('prototype');
   const [viewportMode, setViewportMode] = useState<ViewportMode>(() => 
     plan.metadata?.platform === 'APP' ? 'mobile' : 'desktop'
@@ -95,10 +97,8 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   const [copiedDevHub, setCopiedDevHub] = useState<string | null>(null);
   const [selectedDocId, setSelectedDocId] = useState<string>('00_EXECUTION_PLAYBOOK');
   const [docFilterQuery, setDocFilterQuery] = useState<string>('');
-  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const [copiedDoc, setCopiedDoc] = useState(false);
   const [copiedVibePrompt, setCopiedVibePrompt] = useState(false);
-  const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
   const [previewState, setPreviewState] = useState<PreviewStateMode>('default');
@@ -154,18 +154,6 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
         },
         '*'
       );
-    }
-  };
-
-  // Copy Prototype-as-Spec golden prompt for Cursor/Claude
-  const handleCopyAgentPrompt = async () => {
-    try {
-      const prompt = generatePrototypePrompt(plan, formInputs, lockedChapters);
-      await navigator.clipboard.writeText(prompt);
-      setCopiedPrompt(true);
-      setTimeout(() => setCopiedPrompt(false), 2500);
-    } catch (e) {
-      console.error('Failed to copy agent prompt', e);
     }
   };
 
@@ -656,8 +644,8 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => {
-                    setIsPromptModalOpen(true);
                     setIsStateMenuOpen(false);
+                    navigate('/export');
                   }}
                   className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[#52524E] hover:text-[#111111] hover:bg-[#EFEDE7] flex items-center justify-center gap-1 cursor-pointer"
                 >
@@ -896,52 +884,6 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <pre className="whitespace-pre-wrap leading-[1.8] text-[#1C1C1A] font-mono text-xs sm:text-[13px] select-text">
                   {activeDoc.content}
                 </pre>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Golden Prompt Modal */}
-        {isPromptModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111111]/40 backdrop-blur-xs select-none">
-            <div className="w-full max-w-2xl bg-white rounded-[2px] border border-[#CBC8BF] shadow-[0_24px_48px_-12px_rgba(17,17,17,0.2)] flex flex-col overflow-hidden text-[#111111]">
-              <div className="px-5 py-4 bg-[#F6F5F1] border-b border-[#E4E2DC] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Bot size={16} className="text-[#111111]" />
-                  <h3 className="font-sans font-semibold text-sm text-[#111111]">
-                    에이전트 지시 골든 프롬프트 (Golden Prompt)
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsPromptModalOpen(false)}
-                  className="p-1.5 rounded-[2px] text-[#52524E] hover:text-[#111111] hover:bg-white cursor-pointer"
-                >
-                  <X size={15} />
-                </button>
-              </div>
-
-              <div className="p-5 max-h-[460px] overflow-y-auto font-mono text-xs leading-relaxed text-[#1C1C1A] bg-white custom-scroll">
-                <pre className="whitespace-pre-wrap select-text">
-                  {activePromptText}
-                </pre>
-              </div>
-
-              <div className="px-5 py-3.5 border-t border-[#E4E2DC] bg-[#F6F5F1] flex items-center justify-between gap-3">
-                <span className="text-[11px] text-[#52524E] font-sans">
-                  Cursor 또는 Claude Code 창에 붙여넣으면 프로토타입 기반으로 개발을 시작합니다.
-                </span>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    await handleCopyAgentPrompt();
-                    setIsPromptModalOpen(false);
-                  }}
-                  className="px-4 py-2 rounded-[2px] bg-[#111111] text-white text-xs font-medium hover:bg-[#2A2A28] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
-                >
-                  <Copy size={13} />
-                  <span>프롬프트 복사하기</span>
-                </button>
               </div>
             </div>
           </div>

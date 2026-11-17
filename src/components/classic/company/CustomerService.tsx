@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { 
-  HelpCircle, Shield, ArrowLeft, Key, Laptop, HardDrive, 
+  Shield, ArrowLeft, Key, Laptop, HardDrive, 
   FolderArchive, ShieldCheck
 } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { LocalBackupModal } from '../LocalBackupModal';
-import { AISettingsModal } from '../../guide/AISettingsModal';
 
 export default function CustomerService() {
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const [isBackupOpen, setIsBackupOpen] = useState(false);
-  const [isAISettingsOpen, setIsAISettingsOpen] = useState(false);
 
   const guides = [
     {
@@ -23,7 +19,7 @@ export default function CustomerService() {
         ? 'Google AI Studio에서 발급받은 개인 무료 API 키를 등록하여 클라우드 제한 없이 빠른 속도로 기획안을 생성합니다.'
         : 'Connect your personal Google AI Studio API key for high-speed cloud generation with zero SaaS subscriptions.',
       actionText: language === 'ko' ? '키 설정 열기' : 'Configure API Key',
-      action: () => setIsAISettingsOpen(true),
+      action: () => navigate('/settings?tab=engine'),
     },
     {
       icon: Laptop,
@@ -32,7 +28,7 @@ export default function CustomerService() {
         ? '서버 설치 없이 WebGPU 가속을 통해 브라우저 안에서 Llama-3 / Gemma-2 로컬 모델을 즉시 구동합니다.'
         : 'Run Llama-3 or Gemma-2 locally inside your browser via WebGPU with zero installations.',
       actionText: language === 'ko' ? '모델 설정 열기' : 'Launch WebLLM',
-      action: () => setIsAISettingsOpen(true),
+      action: () => navigate('/settings?tab=engine'),
     },
     {
       icon: HardDrive,
@@ -41,7 +37,7 @@ export default function CustomerService() {
         ? '내 PC(localhost:11434)에서 실행 중인 Ollama의 오픈소스 LLM을 연동하여 완전한 오프라인 환경을 구축합니다.'
         : 'Connect to your local Ollama instance (localhost:11434) for 100% private, offline generation.',
       actionText: language === 'ko' ? 'Ollama 연결 설정' : 'Connect Ollama',
-      action: () => setIsAISettingsOpen(true),
+      action: () => navigate('/settings?tab=engine'),
     },
     {
       icon: FolderArchive,
@@ -50,12 +46,11 @@ export default function CustomerService() {
         ? '모든 기획 데이터는 브라우저 로컬에 저장됩니다. JSON 파일로 백업하고 언제든 다른 기기로 복원할 수 있습니다.'
         : 'All architecture projects stay on your device. Export to JSON or restore anytime with one click.',
       actionText: language === 'ko' ? '백업 관리 열기' : 'Open Backup Hub',
-      action: () => setIsBackupOpen(true),
+      action: () => navigate('/backup'),
     }
   ];
 
   return (
-    <>
     <div className="min-h-screen bg-[#F7F8FA] text-[#111827] pt-28 pb-24 font-sans selection:bg-[#1E3A8A]/15 selection:text-[#111827]">
       <div className="max-w-5xl mx-auto px-6">
         <button 
@@ -165,9 +160,5 @@ export default function CustomerService() {
         </div>
       </div>
     </div>
-
-    <LocalBackupModal isOpen={isBackupOpen} onClose={() => setIsBackupOpen(false)} />
-    <AISettingsModal isOpen={isAISettingsOpen} onClose={() => setIsAISettingsOpen(false)} />
-    </>
   );
 }

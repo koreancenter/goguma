@@ -1,9 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Github, ChevronDown } from 'lucide-react';
-import GlobalPolicyModal from './GlobalPolicyModal';
-import CookiePolicyModal from './CookiePolicyModal';
-import AIPolicyModal from './AIPolicyModal';
-import OpenSourceLicenseModal from './OpenSourceLicenseModal';
 
 const RELATED_SITES = [
   { label: 'nettodot.org', url: 'https://nettodot.org' },
@@ -16,16 +13,23 @@ const RELATED_SITES = [
   { label: 'aipodium.net', url: 'https://aipodium.net' },
 ];
 
+const FOOTER_POLICY_LINKS = [
+  { label: '개인정보처리방침', to: '/privacy' },
+  { label: '이용약관', to: '/terms' },
+  { label: '오픈소스 라이선스', to: '/license' },
+  { label: '인공지능 정책', to: '/ai-policy' },
+  { label: '커뮤니티 이용 규약', to: '/community-terms' },
+  { label: '쿠키 정책', to: '/cookies' },
+];
+
 export default function Footer() {
-  const [isPolicyOpen, setIsPolicyOpen] = useState(false);
-  const [isCookieOpen, setIsCookieOpen] = useState(false);
-  const [isAIPolicyOpen, setIsAIPolicyOpen] = useState(false);
-  const [isLicenseOpen, setIsLicenseOpen] = useState(false);
-  const [licenseTab, setLicenseTab] = useState<'terms' | 'license' | 'community'>('license');
+  const location = useLocation();
   const [isSiteMenuOpen, setIsSiteMenuOpen] = useState(false);
   const [selectedSite, setSelectedSite] = useState<{ label: string; url: string } | null>(null);
   const siteDropdownRef = useRef<HTMLDivElement>(null);
   const year = new Date().getFullYear();
+
+  const isOnLegalPage = FOOTER_POLICY_LINKS.some((item) => item.to === location.pathname);
 
   useEffect(() => {
     if (!isSiteMenuOpen) return;
@@ -49,62 +53,30 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-[#FFFFFF] text-[#111111] font-sans border-t border-[#E4E2DC]">
-      {/* Top Black Utility Menu Strip — Same Font & Sharp Editorial Scale as Top Bar */}
+      {/* Top Black Utility Menu Strip — Links directly to dedicated Sejong-style pages */}
       <div className="w-full bg-[#000000] text-[#FFFFFF]">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 min-h-14 py-2.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-          {/* 6 Editorial Policy Menu Items */}
+          {/* 6 Editorial Policy Links */}
           <nav className="flex flex-wrap items-center gap-x-6 sm:gap-x-8 gap-y-2" aria-label="푸터 정책 메뉴">
-            <button
-              type="button"
-              onClick={() => setIsPolicyOpen(true)}
-              className="text-[13px] sm:text-[14px] font-bold tracking-tight text-[#FFE600] hover:underline underline-offset-4 rounded-none transition-colors cursor-pointer whitespace-nowrap"
-            >
-              개인정보처리방침
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setLicenseTab('terms');
-                setIsLicenseOpen(true);
-              }}
-              className="text-[13px] sm:text-[14px] font-bold tracking-tight text-[#FFFFFF] hover:text-[#FFE600] rounded-none transition-colors cursor-pointer whitespace-nowrap"
-            >
-              이용약관
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setLicenseTab('license');
-                setIsLicenseOpen(true);
-              }}
-              className="text-[13px] sm:text-[14px] font-bold tracking-tight text-[#FFFFFF] hover:text-[#FFE600] rounded-none transition-colors cursor-pointer whitespace-nowrap"
-            >
-              오픈소스 라이선스
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsAIPolicyOpen(true)}
-              className="text-[13px] sm:text-[14px] font-bold tracking-tight text-[#FFFFFF] hover:text-[#FFE600] rounded-none transition-colors cursor-pointer whitespace-nowrap"
-            >
-              인공지능 정책
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setLicenseTab('community');
-                setIsLicenseOpen(true);
-              }}
-              className="text-[13px] sm:text-[14px] font-bold tracking-tight text-[#FFFFFF] hover:text-[#FFE600] rounded-none transition-colors cursor-pointer whitespace-nowrap"
-            >
-              커뮤니티 이용 규약
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsCookieOpen(true)}
-              className="text-[13px] sm:text-[14px] font-bold tracking-tight text-[#FFFFFF] hover:text-[#FFE600] rounded-none transition-colors cursor-pointer whitespace-nowrap"
-            >
-              쿠키 정책
-            </button>
+            {FOOTER_POLICY_LINKS.map((item) => {
+              const isHighlighted = isOnLegalPage
+                ? location.pathname === item.to
+                : item.to === '/privacy';
+
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`text-[13px] sm:text-[14px] font-bold tracking-tight rounded-none transition-colors whitespace-nowrap ${
+                    isHighlighted
+                      ? 'text-[#FFE600]'
+                      : 'text-[#FFFFFF] hover:text-[#FFE600]'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right Social Media Icon: GitHub (Matches Sejong SNS Position) */}
@@ -128,7 +100,6 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           {/* Left: Architectural Mark + Company Info */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8">
-            {/* Architectural Square Emblem */}
             <div className="shrink-0 flex items-center" aria-hidden="true">
               <svg
                 width="48"
@@ -146,7 +117,6 @@ export default function Footer() {
               </svg>
             </div>
 
-            {/* Company Info Lines */}
             <div className="text-[13px] text-[#3F3F3C] leading-[1.75] space-y-0.5 font-medium">
               <p className="text-[#000000] font-bold">
                 한국센터글로벌네트워크 지식관리실 고구마앱팀
@@ -162,7 +132,6 @@ export default function Footer() {
 
           {/* Right: Net-to-Dot Movement Member Logo Lockup + Related Sites Selector */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-6 lg:gap-8 shrink-0">
-            {/* Logo Slot: Net-to-Dot Movement Member */}
             <a
               href="https://nettodot.org"
               target="_blank"
@@ -196,7 +165,6 @@ export default function Footer() {
               </div>
             </a>
 
-            {/* Related Sites Box: [ 관련 사이트 v | 이동 ] */}
             <div ref={siteDropdownRef} className="relative flex items-stretch h-11 border border-[#111111]/35 bg-[#FFFFFF] rounded-none">
               <button
                 type="button"
@@ -272,16 +240,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
-      {/* Modal Dialogs */}
-      <GlobalPolicyModal isOpen={isPolicyOpen} onClose={() => setIsPolicyOpen(false)} />
-      <CookiePolicyModal isOpen={isCookieOpen} onClose={() => setIsCookieOpen(false)} />
-      <AIPolicyModal isOpen={isAIPolicyOpen} onClose={() => setIsAIPolicyOpen(false)} />
-      <OpenSourceLicenseModal
-        isOpen={isLicenseOpen}
-        onClose={() => setIsLicenseOpen(false)}
-        defaultTab={licenseTab}
-      />
     </footer>
   );
 }

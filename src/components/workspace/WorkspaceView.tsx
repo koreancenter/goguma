@@ -1,32 +1,18 @@
-import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ChevronDown, Check, Menu, X, ChevronRight, User, LayoutGrid
 } from 'lucide-react';
 
 import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan, Language } from '../../types';
-import { auth, LocalUser } from '../../lib/localAuth';
+import { LocalUser } from '../../lib/localAuth';
 import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
 import { useLanguage } from '../../contexts/LanguageContext';
-import type { PreferencesTab } from '../guide/PreferencesModal';
 
 import { WritingCanvas } from '../classic/WritingCanvas';
 import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
 import { WorkspaceDropZoneOverlay } from '../classic/WorkspaceDropZoneOverlay';
 import Footer from '../classic/layout/Footer';
-
-const LocalBackupModal = lazy(() =>
-  import('../classic/LocalBackupModal').then(m => ({ default: m.LocalBackupModal }))
-);
-const StandardTemplateModal = lazy(() =>
-  import('../classic/StandardTemplateModal').then(m => ({ default: m.StandardTemplateModal }))
-);
-const PreferencesModal = lazy(() =>
-  import('../guide/PreferencesModal').then(m => ({ default: m.PreferencesModal }))
-);
-const ExportSpecModal = lazy(() =>
-  import('../preview/ExportSpecModal').then(m => ({ default: m.ExportSpecModal }))
-);
 
 export interface WorkspaceViewProps {
   project: ProjectEntity;
@@ -48,7 +34,6 @@ export interface WorkspaceViewProps {
   handleNavigateSection: (direction: 'prev' | 'next') => void;
   schedulePersistence: () => void;
   currentUser: LocalUser | null;
-  onOpenLogoutModal: () => void;
 }
 
 export default function WorkspaceView({
@@ -60,7 +45,6 @@ export default function WorkspaceView({
   saveStatus,
   lastSavedTime,
   largeTextMode,
-  toggleLargeTextMode,
   completedChapters,
   updatedChapters,
   handleToggleChapterLock,
@@ -71,26 +55,12 @@ export default function WorkspaceView({
   handleNavigateSection,
   schedulePersistence,
   currentUser,
-  onOpenLogoutModal,
 }: WorkspaceViewProps) {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
-  const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
-  const [backupModalTab, setBackupModalTab] = useState<'export' | 'import' | 'storage'>('export');
-  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
-  const [preferencesTab, setPreferencesTab] = useState<PreferencesTab>('engine');
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isAppsMenuOpen, setIsAppsMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false);
-  const [newAccountName, setNewAccountName] = useState('');
-  const [newAccountEmail, setNewAccountEmail] = useState('');
-  const [newAccountTeam, setNewAccountTeam] = useState('');
-  const [newAccountPin, setNewAccountPin] = useState('');
-  const [createAccountError, setCreateAccountError] = useState('');
-  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [hoveredMenuId, setHoveredMenuId] = useState<number | 'settings' | 'help'>(project.currentChapter);
   const [isMobileChapterDrawerOpen, setIsMobileChapterDrawerOpen] = useState(false);
   const [mobilePane, setMobilePane] = useState<'editor' | 'preview'>('editor');
@@ -101,13 +71,12 @@ export default function WorkspaceView({
     setHoveredMenuId(project.currentChapter);
   }, [project.currentChapter]);
 
-  const openPreferences = (tab: PreferencesTab = 'engine') => {
-    setPreferencesTab(tab);
-    setIsPreferencesOpen(true);
+  const navigateFromMenu = (path: string) => {
     setIsMegaMenuOpen(false);
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
     setIsMobileChapterDrawerOpen(false);
+    navigate(path);
   };
 
   const handleOpenMegaMenu = (menuId: number | 'settings' | 'help') => {
@@ -207,46 +176,6 @@ export default function WorkspaceView({
     }
   };
 
-  const handleApplyPrdTemplate = (template: any) => {
-    const newName = template.plan?.metadata?.projectName || template.name;
-    setProject(prev => ({
-      ...prev,
-      name: newName,
-      slug: template.id,
-      updatedAt: new Date().toISOString()
-    }));
-
-    setPlan(prev => ({
-      ...prev,
-      metadata: {
-        ...prev.metadata,
-        ...template.plan.metadata,
-        projectName: newName,
-        title: newName
-      },
-      design: {
-        ...prev.design,
-        ...template.plan.design
-      },
-      navigation: {
-        ...prev.navigation,
-        ...template.plan.navigation
-      }
-    }));
-
-    if (template.formInputs) {
-      Object.entries(template.formInputs).forEach(([key, val]) => {
-        handleInputChange(1, key, val as string);
-      });
-    }
-
-    schedulePersistence();
-  };
-
-  const handleOpenExportModal = () => {
-    setIsExportModalOpen(true);
-  };
-
   const CHAPTER_SHORT_LABELS: Record<number, string> = {
     1: '개요',
     2: '사용자',
@@ -268,49 +197,32 @@ export default function WorkspaceView({
     {
       id: 'engine',
       label: '인공지능 엔진 설정',
-      action: () => openPreferences('engine'),
+      action: () => navigateFromMenu('/settings?tab=engine'),
     },
     {
       id: 'display',
       label: '화면 및 가독성 설정',
-      action: () => openPreferences('display'),
+      action: () => navigateFromMenu('/settings?tab=display'),
     },
     {
       id: 'templates',
       label: '표준 기획서 템플릿',
-      action: () => {
-        setIsTemplateModalOpen(true);
-        setIsMegaMenuOpen(false);
-        setIsMobileChapterDrawerOpen(false);
-      },
+      action: () => navigateFromMenu('/templates'),
     },
     {
       id: 'storage',
       label: '보관함 및 로컬 백업',
-      action: () => {
-        setBackupModalTab('storage');
-        setIsBackupModalOpen(true);
-        setIsMegaMenuOpen(false);
-        setIsMobileChapterDrawerOpen(false);
-      },
+      action: () => navigateFromMenu('/backup?tab=storage'),
     },
     {
       id: 'account',
       label: '내 계정 및 프로필',
-      action: () => {
-        setIsMegaMenuOpen(false);
-        setIsMobileChapterDrawerOpen(false);
-        navigate('/profile');
-      },
+      action: () => navigateFromMenu('/profile'),
     },
     {
       id: 'logout',
       label: '로그아웃',
-      action: () => {
-        setIsMegaMenuOpen(false);
-        setIsMobileChapterDrawerOpen(false);
-        onOpenLogoutModal();
-      },
+      action: () => navigateFromMenu('/logout'),
     },
   ];
 
@@ -432,21 +344,14 @@ export default function WorkspaceView({
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setIsAppsMenuOpen(false);
-                      setIsTemplateModalOpen(true);
-                    }}
+                    onClick={() => navigateFromMenu('/templates')}
                     className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
                   >
                     표준 기획서 템플릿
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setIsAppsMenuOpen(false);
-                      setBackupModalTab('storage');
-                      setIsBackupModalOpen(true);
-                    }}
+                    onClick={() => navigateFromMenu('/backup?tab=storage')}
                     className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
                   >
                     로컬 데이터 보관함
@@ -521,13 +426,7 @@ export default function WorkspaceView({
             {/* 3. 로컬 계정 만들기 */}
             <button
               type="button"
-              onClick={() => {
-                setIsAppsMenuOpen(false);
-                setIsLangMenuOpen(false);
-                setIsMegaMenuOpen(false);
-                setCreateAccountError('');
-                setIsCreateAccountModalOpen(true);
-              }}
+              onClick={() => navigateFromMenu('/create-account')}
               className="hidden sm:flex h-full px-3 sm:px-4 items-center text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] bg-[#000000] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap"
             >
               로컬 계정 만들기
@@ -536,16 +435,7 @@ export default function WorkspaceView({
             {/* 4. 로그인 / 로그아웃 */}
             <button
               type="button"
-              onClick={() => {
-                setIsAppsMenuOpen(false);
-                setIsLangMenuOpen(false);
-                setIsMegaMenuOpen(false);
-                if (currentUser) {
-                  onOpenLogoutModal();
-                } else {
-                  navigate('/login');
-                }
-              }}
+              onClick={() => navigateFromMenu(currentUser ? '/logout' : '/login')}
               className="h-full px-3 sm:px-4 flex items-center text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] bg-[#000000] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap"
             >
               {currentUser ? '로그아웃' : '로그인'}
@@ -611,7 +501,7 @@ export default function WorkspaceView({
               type="button"
               onMouseEnter={() => handleOpenMegaMenu('settings')}
               onFocus={() => handleOpenMegaMenu('settings')}
-              onClick={() => openPreferences('engine')}
+              onClick={() => navigateFromMenu('/settings?tab=engine')}
               className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                 isMegaMenuOpen && hoveredMenuId === 'settings'
                   ? 'bg-[#000000] text-[#FFFFFF]'
@@ -619,9 +509,6 @@ export default function WorkspaceView({
               }`}
             >
               <span>환경 설정</span>
-              {isPreferencesOpen && !(isMegaMenuOpen && hoveredMenuId === 'settings') && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
-              )}
             </button>
 
             {/* 10th Unified Column: [도움말] */}
@@ -744,10 +631,7 @@ export default function WorkspaceView({
                   {ch.id === 8 && (
                     <button
                       type="button"
-                      onClick={() => {
-                        setIsMegaMenuOpen(false);
-                        handleOpenExportModal();
-                      }}
+                      onClick={() => navigateFromMenu('/export')}
                       className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
                     >
                       <span className="break-keep">사양서 내보내기</span>
@@ -870,10 +754,7 @@ export default function WorkspaceView({
                       {ch.id === 8 && (
                         <button
                           type="button"
-                          onClick={() => {
-                            setIsMobileChapterDrawerOpen(false);
-                            handleOpenExportModal();
-                          }}
+                          onClick={() => navigateFromMenu('/export')}
                           className={`px-3 py-1.5 text-xs font-bold rounded-[2px] border cursor-pointer ${
                             isActive
                               ? 'border-white text-[#FFFFFF]'
@@ -969,189 +850,6 @@ export default function WorkspaceView({
 
       {/* Common Global Editorial Footer */}
       <Footer />
-
-      {isTemplateModalOpen && (
-        <Suspense fallback={null}>
-          <StandardTemplateModal
-            isOpen={isTemplateModalOpen}
-            onClose={() => setIsTemplateModalOpen(false)}
-            onApplyTemplate={handleApplyPrdTemplate}
-          />
-        </Suspense>
-      )}
-
-      {isBackupModalOpen && (
-        <Suspense fallback={null}>
-          <LocalBackupModal
-            isOpen={isBackupModalOpen}
-            initialTab={backupModalTab}
-            formInputs={formInputs}
-            lockedChapters={project.lockedChapters}
-            onClose={() => {
-              setIsBackupModalOpen(false);
-              schedulePersistence();
-            }}
-          />
-        </Suspense>
-      )}
-
-      {isExportModalOpen && (
-        <Suspense fallback={null}>
-          <ExportSpecModal
-            isOpen={isExportModalOpen}
-            onClose={() => setIsExportModalOpen(false)}
-            plan={plan}
-            formInputs={formInputs}
-            lockedChapters={project.lockedChapters}
-            updatedChapters={updatedChapters}
-          />
-        </Suspense>
-      )}
-
-      {isPreferencesOpen && (
-        <Suspense fallback={null}>
-          <PreferencesModal
-            isOpen={isPreferencesOpen}
-            initialTab={preferencesTab}
-            onClose={() => setIsPreferencesOpen(false)}
-            largeTextMode={largeTextMode}
-            onToggleLargeTextMode={toggleLargeTextMode}
-            onOpenTemplates={() => setIsTemplateModalOpen(true)}
-            onOpenBackup={(tab = 'storage') => {
-              setBackupModalTab(tab);
-              setIsBackupModalOpen(true);
-            }}
-            currentUserName={currentUser?.displayName}
-            currentUserRole={currentUser?.role}
-            onNavigateProfile={() => navigate('/profile')}
-            onOpenLogout={onOpenLogoutModal}
-          />
-        </Suspense>
-      )}
-
-      {isCreateAccountModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#FFFFFF] border border-[#000000] rounded-none shadow-2xl">
-            <div className="px-6 py-4 bg-[#000000] text-[#FFFFFF] flex items-center justify-between">
-              <h2 className="text-base font-extrabold tracking-tight">로컬 계정 만들기</h2>
-              <button
-                type="button"
-                onClick={() => setIsCreateAccountModalOpen(false)}
-                className="p-1.5 rounded-none text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
-                aria-label="닫기"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                if (!newAccountName.trim()) {
-                  setCreateAccountError('계정 이름(작업자명)을 입력해 주세요.');
-                  return;
-                }
-                setIsCreatingAccount(true);
-                setCreateAccountError('');
-                try {
-                  await auth.signInLocal({
-                    displayName: newAccountName.trim(),
-                    email: newAccountEmail.trim() || undefined,
-                    companyName: newAccountTeam.trim() || undefined,
-                    pin: newAccountPin.trim() || undefined,
-                    rememberMe: true,
-                    role: 'ADMIN',
-                  });
-                  setNewAccountName('');
-                  setNewAccountEmail('');
-                  setNewAccountTeam('');
-                  setNewAccountPin('');
-                  setIsCreateAccountModalOpen(false);
-                } catch (err: any) {
-                  setCreateAccountError(err?.message || '로컬 계정 생성에 실패했습니다.');
-                } finally {
-                  setIsCreatingAccount(false);
-                }
-              }}
-              className="p-6 space-y-4"
-            >
-              <p className="text-xs text-[#52524E] leading-relaxed">
-                브라우저 로컬 저장소에만 보관되는 독립 계정을 생성하고 즉시 전환합니다.
-              </p>
-
-              {createAccountError && (
-                <div className="p-3 bg-[#FEF2F2] border border-[#DC2626] text-xs font-bold text-[#DC2626] rounded-none">
-                  {createAccountError}
-                </div>
-              )}
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#000000]">이름 / 닉네임 *</label>
-                <input
-                  type="text"
-                  value={newAccountName}
-                  onChange={(e) => setNewAccountName(e.target.value)}
-                  placeholder="예: 홍길동 디렉터"
-                  className="w-full px-3 py-2 border border-[#CBC8BF] focus:border-[#000000] rounded-none text-sm outline-none"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#000000]">이메일 (선택)</label>
-                <input
-                  type="email"
-                  value={newAccountEmail}
-                  onChange={(e) => setNewAccountEmail(e.target.value)}
-                  placeholder="director@studio.local"
-                  className="w-full px-3 py-2 border border-[#CBC8BF] focus:border-[#000000] rounded-none text-sm outline-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-[#000000]">소속 / 팀명 (선택)</label>
-                  <input
-                    type="text"
-                    value={newAccountTeam}
-                    onChange={(e) => setNewAccountTeam(e.target.value)}
-                    placeholder="Goguma Studio"
-                    className="w-full px-3 py-2 border border-[#CBC8BF] focus:border-[#000000] rounded-none text-sm outline-none"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-[#000000]">보안 PIN (선택)</label>
-                  <input
-                    type="password"
-                    value={newAccountPin}
-                    onChange={(e) => setNewAccountPin(e.target.value)}
-                    placeholder="4자리 숫자"
-                    maxLength={8}
-                    className="w-full px-3 py-2 border border-[#CBC8BF] focus:border-[#000000] rounded-none text-sm outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateAccountModalOpen(false)}
-                  className="px-4 py-2 border border-[#CBC8BF] text-xs font-bold text-[#000000] rounded-none hover:bg-[#F6F5F1] cursor-pointer"
-                >
-                  취소
-                </button>
-                <button
-                  type="submit"
-                  disabled={isCreatingAccount}
-                  className="px-5 py-2 bg-[#000000] text-[#FFFFFF] text-xs font-bold rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  {isCreatingAccount ? '생성 중...' : '로컬 계정 생성'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       <WorkspaceDropZoneOverlay
         onProjectLoaded={(loadedPlan) => {

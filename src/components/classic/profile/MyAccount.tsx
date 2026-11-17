@@ -8,8 +8,6 @@ import {
 import { db, handleFirestoreError, OperationType, doc, getDoc, updateDoc, getStorageUsageStats, exportAllLocalData } from '../../../lib/localDb';
 import { auth, updateProfile } from '../../../lib/localAuth';
 import { useLanguage } from '../../../contexts/LanguageContext';
-import { LocalBackupModal } from '../LocalBackupModal';
-import LogoutConfirmModal from '../../auth/LogoutConfirmModal';
 
 export default function MyAccount() {
   const { t, language } = useLanguage();
@@ -22,11 +20,9 @@ export default function MyAccount() {
   const [userStats, setUserStats] = useState({ totalApiCalls: 0 });
   const [role, setRole] = useState('USER');
   const [error, setError] = useState('');
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   
   // Storage Stats
   const [storageStats, setStorageStats] = useState(getStorageUsageStats);
-  const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [backupExportSuccess, setBackupExportSuccess] = useState(false);
 
   useEffect(() => {
@@ -198,7 +194,7 @@ export default function MyAccount() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => setIsLogoutModalOpen(true)}
+                      onClick={() => navigate('/logout')}
                       className="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] text-xs font-medium transition-colors cursor-pointer"
                     >
                       <LogOut size={13} />
@@ -315,7 +311,7 @@ export default function MyAccount() {
 
                   <button
                     type="button"
-                    onClick={() => setIsBackupModalOpen(true)}
+                    onClick={() => navigate('/backup')}
                     className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#1E40AF] text-white font-semibold text-xs transition-all cursor-pointer shadow-xs"
                   >
                     <FolderArchive size={13} />
@@ -364,19 +360,6 @@ export default function MyAccount() {
           </div>
         </div>
       </div>
-      <LocalBackupModal isOpen={isBackupModalOpen} onClose={() => {
-        setIsBackupModalOpen(false);
-        setStorageStats(getStorageUsageStats());
-      }} />
-      <LogoutConfirmModal
-        isOpen={isLogoutModalOpen}
-        onClose={() => setIsLogoutModalOpen(false)}
-        onConfirm={async () => {
-          await auth.signOut();
-          navigate('/login', { replace: true, state: null });
-        }}
-        userName={displayName}
-      />
     </div>
   );
 }

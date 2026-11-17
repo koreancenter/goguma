@@ -13,13 +13,10 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../../contexts/LanguageContext';
-import OpenSourceLicenseModal from '../layout/OpenSourceLicenseModal';
 
 export default function Community() {
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const [isLicenseOpen, setIsLicenseOpen] = useState(false);
-  const [licenseTab, setLicenseTab] = useState<'license' | 'community'>('license');
   const [copiedClone, setCopiedClone] = useState(false);
 
   const cloneCommand = 'git clone https://github.com/goguma-app/goguma.git';
@@ -60,10 +57,7 @@ export default function Community() {
             </button>
 
             <button
-              onClick={() => {
-                setLicenseTab('license');
-                setIsLicenseOpen(true);
-              }}
+              onClick={() => navigate('/license')}
               className="px-6 py-2.5 bg-[#FFFFFF] hover:bg-[#F7F8FA] border border-[#E5E7EB] text-[#111827] rounded-lg text-xs font-medium transition-all flex items-center gap-2 cursor-pointer shadow-xs"
             >
               <Code2 size={14} className="text-[#1E3A8A]" />
@@ -134,10 +128,7 @@ export default function Community() {
 
             <div className="flex items-center gap-2">
               <button
-                onClick={() => {
-                  setLicenseTab('community');
-                  setIsLicenseOpen(true);
-                }}
+                onClick={() => navigate('/community-terms')}
                 className="px-3.5 py-1.5 bg-[#F7F8FA] hover:bg-[#EFF6FF] text-[#4B5563] hover:text-[#1E3A8A] border border-[#E5E7EB] rounded-lg text-xs font-medium transition-colors cursor-pointer"
               >
                 {language === 'ko' ? '커뮤니티 규약' : 'Community Guidelines'}
@@ -157,12 +148,6 @@ export default function Community() {
           </div>
         </div>
       </div>
-
-      <OpenSourceLicenseModal
-        isOpen={isLicenseOpen}
-        onClose={() => setIsLicenseOpen(false)}
-        defaultTab={licenseTab}
-      />
     </div>
   );
 }
