@@ -1,6 +1,5 @@
 export * from './ChapterNavBar';
 export * from './SectionListBar';
-export * from './IntegratedNavigator';
 export * from './WritingCanvas';
 export { default as PromptExtractionHub } from './PromptExtractionHub';
 export * from './LocalBackupModal';

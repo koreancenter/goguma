@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Download, PanelLeft, ChevronDown, Check, Menu, X, ChevronRight
+  ChevronDown, Check, Menu, X, ChevronRight
 } from 'lucide-react';
 
 import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from '../../types';
 import { LocalUser } from '../../lib/localAuth';
 import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
-import { Tooltip } from '../guide/Tooltip';
 import type { PreferencesTab } from '../guide/PreferencesModal';
 
-import { IntegratedNavigator } from '../classic/IntegratedNavigator';
 import { WritingCanvas } from '../classic/WritingCanvas';
 import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
 import { WorkspaceDropZoneOverlay } from '../classic/WorkspaceDropZoneOverlay';
@@ -38,10 +36,6 @@ export interface WorkspaceViewProps {
   lastSavedTime: string | null;
   largeTextMode: boolean;
   toggleLargeTextMode: () => void;
-  isCol1Collapsed: boolean;
-  setIsCol1Collapsed: React.Dispatch<React.SetStateAction<boolean>>;
-  isCol2Collapsed: boolean;
-  setIsCol2Collapsed: React.Dispatch<React.SetStateAction<boolean>>;
   completedChapters: Set<number>;
   updatedChapters?: Set<number>;
   handleToggleChapterLock?: (chapterId: number) => void;
@@ -65,8 +59,6 @@ export default function WorkspaceView({
   lastSavedTime,
   largeTextMode,
   toggleLargeTextMode,
-  isCol1Collapsed,
-  setIsCol1Collapsed,
   completedChapters,
   updatedChapters,
   handleToggleChapterLock,
@@ -135,14 +127,6 @@ export default function WorkspaceView({
     return 50;
   });
   const [isResizing, setIsResizing] = useState(false);
-
-  const handleToggleSidebar = () => {
-    setIsCol1Collapsed(prev => {
-      const next = !prev;
-      localStorage.setItem('goguma_nav_collapsed', String(next));
-      return next;
-    });
-  };
 
   const handleResetSplit = () => {
     setSplitPercent(50);
@@ -339,29 +323,40 @@ export default function WorkspaceView({
         onMouseLeave={() => setIsMegaMenuOpen(false)}
         className="relative shrink-0 z-40 select-none bg-[#FFFFFF]"
       >
-        {/* Tier 1: Slim Black Utility Strip (#000000) — High-Contrast Pure White Links */}
+        {/* Tier 1: Slim Black Utility Strip (#000000) — App Brand Mark + Project Title + Save Status */}
         <div className="h-10 bg-[#000000] text-[#FFFFFF] border-b border-white/20 px-4 sm:px-6 flex items-center justify-between gap-3 text-[13px] font-bold">
-          {/* Left: Sidebar Toggle + Editable Project Title + Quiet Save Indicator */}
+          {/* Left: Custom Brand Icon & App Title ("고구마") + Editable Project Title + Quiet Save Indicator */}
           <div className="flex items-center gap-3 min-w-0">
-            <Tooltip content={isCol1Collapsed ? '목차 서랍 펼치기' : '목차 서랍 접기'} position="bottom">
-              <button
-                type="button"
-                onClick={handleToggleSidebar}
-                className={`h-7 px-2.5 flex items-center gap-1.5 rounded-[2px] text-[13px] font-bold transition-colors cursor-pointer shrink-0 ${
-                  !isCol1Collapsed
-                    ? 'bg-[#FFFFFF] text-[#000000]'
-                    : 'text-[#FFFFFF] hover:bg-white/15'
-                }`}
-                aria-label="목차 서랍 토글"
+            <button
+              type="button"
+              onClick={() => navigate('/landing')}
+              className="flex items-center gap-2 text-[#FFFFFF] hover:opacity-80 transition-opacity cursor-pointer whitespace-nowrap shrink-0"
+              title="고구마 스튜디오 홈으로 이동"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="shrink-0"
+                aria-hidden="true"
               >
-                <PanelLeft size={14} />
-                <span className="hidden sm:inline">목차</span>
-              </button>
-            </Tooltip>
+                <rect x="2" y="2" width="20" height="20" rx="2" stroke="currentColor" strokeWidth="1.75" />
+                <path
+                  d="M7.5 14.5C7.5 11.2 10.6 7.5 14.8 7.5C16.2 7.5 17 8.4 17 9.8C17 13.4 13.7 16.5 9.8 16.5C8.3 16.5 7.5 15.7 7.5 14.5Z"
+                  fill="currentColor"
+                />
+                <path d="M14.5 7.5C15.2 6.3 16.3 5.6 17.5 5.5" stroke="#C5A880" strokeWidth="1.75" strokeLinecap="round" />
+              </svg>
+              <span className="font-display font-extrabold text-[15px] tracking-[-0.03em] leading-none">
+                고구마
+              </span>
+            </button>
 
-            <span className="text-white/30 select-none hidden sm:inline" aria-hidden="true">|</span>
+            <span className="text-white/25 select-none shrink-0" aria-hidden="true">|</span>
 
-            <div className="min-w-0 max-w-[150px] sm:max-w-[260px] lg:max-w-[320px] flex items-center">
+            <div className="min-w-0 max-w-[180px] sm:max-w-[280px] lg:max-w-[360px] flex items-center">
               <input
                 type="text"
                 value={project.name}
@@ -386,19 +381,8 @@ export default function WorkspaceView({
           <div className="shrink-0" />
         </div>
 
-        {/* Tier 2: Main White Navigation Row (#FFFFFF) — Doubled Font Size & Maximum Ink Contrast */}
+        {/* Tier 2: Main White Navigation Row (#FFFFFF) — Pure Centered Editorial Navigation */}
         <header className="h-20 px-4 sm:px-6 bg-[#FFFFFF] border-b border-[#E4E2DC] flex items-center justify-between gap-4">
-          {/* Left: Bold Editorial Wordmark */}
-          <div className="flex items-center shrink-0">
-            <button
-              type="button"
-              onClick={() => navigate('/landing')}
-              className="font-display font-extrabold text-[22px] sm:text-[24px] tracking-[-0.04em] text-[#000000] hover:opacity-75 transition-opacity cursor-pointer whitespace-nowrap leading-none"
-            >
-              고구마
-            </button>
-          </div>
-
           {/* Center: High-Contrast Single-Line Horizontal Main Menu (Zero Numbers, Zero English, 2x Scale) */}
           <nav
             className="hidden lg:flex items-center justify-center flex-1 min-w-0 h-full gap-0.5 xl:gap-1.5 2xl:gap-2.5"
@@ -501,10 +485,10 @@ export default function WorkspaceView({
             </button>
           </div>
 
-          {/* Right: Mobile Split Toggle + Pure-Korean Export CTA */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Right: Mobile Controls (< lg) */}
+          <div className="flex lg:hidden items-center gap-2 shrink-0">
             {/* Responsive Editor / Preview Toggle (< lg) */}
-            <div className="flex lg:hidden items-center bg-[#F6F5F1] p-0.5 rounded-[2px] border border-[#E4E2DC] shrink-0">
+            <div className="flex items-center bg-[#F6F5F1] p-0.5 rounded-[2px] border border-[#E4E2DC] shrink-0">
               <button
                 type="button"
                 onClick={() => setMobilePane('editor')}
@@ -533,24 +517,11 @@ export default function WorkspaceView({
             <button
               type="button"
               onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
-              className="lg:hidden p-2 rounded-[2px] border border-[#111111] text-[#000000] cursor-pointer"
+              className="p-2 rounded-[2px] border border-[#111111] text-[#000000] cursor-pointer"
               aria-label="전체 메뉴 열기"
             >
               {isMobileChapterDrawerOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
-
-            <Tooltip content="개발 사양서 및 실행 플레이북 내보내기" position="bottom">
-              <button
-                type="button"
-                onClick={handleOpenExportModal}
-                className="h-10 px-4 sm:px-5 flex items-center gap-2 justify-center rounded-[2px] bg-[#000000] hover:bg-[#1C1C1A] text-[#FFFFFF] transition-colors cursor-pointer text-[14px] font-bold whitespace-nowrap shrink-0 tracking-tight"
-                aria-label="사양서 내보내기"
-              >
-                <Download size={14} />
-                <span className="hidden sm:inline">사양서 내보내기</span>
-                <span className="sm:hidden">내보내기</span>
-              </button>
-            </Tooltip>
           </div>
         </header>
 
@@ -620,6 +591,19 @@ export default function WorkspaceView({
                           </button>
                         );
                       })}
+                      {ch.id === 8 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsMegaMenuOpen(false);
+                            handleOpenExportModal();
+                          }}
+                          className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                        >
+                          <span className="break-keep">사양서 내보내기</span>
+                          <ChevronRight size={13} className="shrink-0 opacity-60" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -774,6 +758,22 @@ export default function WorkspaceView({
                           {sec.title}
                         </button>
                       ))}
+                      {ch.id === 8 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsMobileChapterDrawerOpen(false);
+                            handleOpenExportModal();
+                          }}
+                          className={`px-3 py-1.5 text-xs font-bold rounded-[2px] border cursor-pointer ${
+                            isActive
+                              ? 'border-white text-[#FFFFFF]'
+                              : 'border-[#000000] text-[#000000]'
+                          }`}
+                        >
+                          사양서 내보내기
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -785,20 +785,6 @@ export default function WorkspaceView({
 
       {/* Main Workspace Shell: Fluid Remaining Height */}
       <div className={`flex-1 min-h-0 flex overflow-hidden bg-[#FFFFFF] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
-        {!isCol1Collapsed && (
-          <IntegratedNavigator
-            currentChapter={project.currentChapter}
-            currentSection={project.currentSection}
-            onSelectChapter={handleSelectChapter}
-            onSelectSection={handleSelectSection}
-            formInputs={formInputs}
-            isCollapsed={false}
-            onToggleCollapse={handleToggleSidebar}
-            completedChapters={completedChapters}
-            lockedChapters={project.lockedChapters}
-          />
-        )}
-
         <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">
           {/* 50% Left Editor Pane (#FFFFFF) */}
           <div

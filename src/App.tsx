@@ -97,8 +97,6 @@ export default function App() {
   // --------------------------------------------------------------------------
   // 2. UI Layout & Viewport Ergonomics State
   // --------------------------------------------------------------------------
-  const [isCol1Collapsed, setIsCol1Collapsed] = useState<boolean>(true);
-  const [isCol2Collapsed, setIsCol2Collapsed] = useState(false);
 
   // Large-text accessibility mode (50+ ergonomics)
   const [largeTextMode, setLargeTextMode] = useState<boolean>(() => {
@@ -426,7 +424,7 @@ export default function App() {
     }
   }, [project.currentChapter, project.currentSection, handleSelectSection, handleSelectChapter, schedulePersistence]);
 
-  // Global Ergonomic Shortcuts (Cmd+Enter: next, Cmd+E: export zip, Esc: toggle bar)
+  // Global Ergonomic Shortcuts (Cmd+Enter: next, Cmd+E: export zip)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isCmdOrCtrl = e.metaKey || e.ctrlKey;
@@ -438,8 +436,6 @@ export default function App() {
         import('./lib/bundleZipDownloader').then(({ downloadBlueprintZip }) => {
           downloadBlueprintZip(planRef.current, formInputsRef.current, projectRef.current.lockedChapters);
         });
-      } else if (e.key === 'Escape') {
-        setIsCol1Collapsed(prev => !prev);
       }
     };
 
@@ -484,10 +480,6 @@ export default function App() {
                   lastSavedTime={lastSavedTime}
                   largeTextMode={largeTextMode}
                   toggleLargeTextMode={toggleLargeTextMode}
-                  isCol1Collapsed={isCol1Collapsed}
-                  setIsCol1Collapsed={setIsCol1Collapsed}
-                  isCol2Collapsed={isCol2Collapsed}
-                  setIsCol2Collapsed={setIsCol2Collapsed}
                   completedChapters={completedChapters}
                   updatedChapters={updatedChapters}
                   handleToggleChapterLock={handleToggleChapterLock}
