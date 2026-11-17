@@ -205,27 +205,27 @@ export default function PreferencesPage({
       activeTabId={activeTab}
     >
       {activeTab === 'engine' && (
-        <div className="space-y-8">
+        <div className="space-y-12">
           <EditorialSection chapter="1. 추론 엔진 계층 선택">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               <button
                 type="button"
                 onClick={() => setSettings(s => ({ ...s, provider: 'gemini' }))}
-                className={`p-5 rounded-none border text-left transition-colors cursor-pointer flex flex-col justify-between space-y-3 ${
+                className={`p-7 rounded-none border text-left transition-colors cursor-pointer flex flex-col justify-between space-y-5 ${
                   settings.provider === 'gemini'
                     ? 'border-[#000000] bg-[#000000] text-[#FFE600]'
                     : 'border-[#E4E2DC] bg-[#F6F5F1] text-[#111111] hover:border-[#000000]'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <Cpu size={16} />
-                  <span className="text-[10px] px-2 py-0.5 border border-current uppercase font-bold tracking-wider">
+                  <Cpu size={20} />
+                  <span className="text-[14px] px-2.5 py-0.5 border border-current uppercase font-bold tracking-wider">
                     클라우드
                   </span>
                 </div>
                 <div>
-                  <div className="text-base font-extrabold">Gemini 3.8</div>
-                  <div className={`text-xs mt-1 ${settings.provider === 'gemini' ? 'text-white/80' : 'text-[#52524E]'}`}>
+                  <div className="text-[22px] font-extrabold">Gemini 3.8</div>
+                  <div className={`text-[17px] mt-1.5 ${settings.provider === 'gemini' ? 'text-white/80' : 'text-[#52524E]'}`}>
                     서버 프록시 / 개인 키(BYOK)
                   </div>
                 </div>
@@ -234,21 +234,21 @@ export default function PreferencesPage({
               <button
                 type="button"
                 onClick={() => setSettings(s => ({ ...s, provider: 'ollama' }))}
-                className={`p-5 rounded-none border text-left transition-colors cursor-pointer flex flex-col justify-between space-y-3 ${
+                className={`p-7 rounded-none border text-left transition-colors cursor-pointer flex flex-col justify-between space-y-5 ${
                   settings.provider === 'ollama'
                     ? 'border-[#000000] bg-[#000000] text-[#FFE600]'
                     : 'border-[#E4E2DC] bg-[#F6F5F1] text-[#111111] hover:border-[#000000]'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <HardDrive size={16} />
-                  <span className="text-[10px] px-2 py-0.5 border border-current uppercase font-bold tracking-wider">
+                  <HardDrive size={20} />
+                  <span className="text-[14px] px-2.5 py-0.5 border border-current uppercase font-bold tracking-wider">
                     로컬 서버
                   </span>
                 </div>
                 <div>
-                  <div className="text-base font-extrabold">Ollama 로컬</div>
-                  <div className={`text-xs mt-1 ${settings.provider === 'ollama' ? 'text-white/80' : 'text-[#52524E]'}`}>
+                  <div className="text-[22px] font-extrabold">Ollama 로컬</div>
+                  <div className={`text-[17px] mt-1.5 ${settings.provider === 'ollama' ? 'text-white/80' : 'text-[#52524E]'}`}>
                     오프라인 기기 직접 추론
                   </div>
                 </div>
@@ -257,21 +257,21 @@ export default function PreferencesPage({
               <button
                 type="button"
                 onClick={() => setSettings(s => ({ ...s, provider: 'webllm' }))}
-                className={`p-5 rounded-none border text-left transition-colors cursor-pointer flex flex-col justify-between space-y-3 ${
+                className={`p-7 rounded-none border text-left transition-colors cursor-pointer flex flex-col justify-between space-y-5 ${
                   settings.provider === 'webllm'
                     ? 'border-[#000000] bg-[#000000] text-[#FFE600]'
                     : 'border-[#E4E2DC] bg-[#F6F5F1] text-[#111111] hover:border-[#000000]'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <Server size={16} />
-                  <span className="text-[10px] px-2 py-0.5 border border-current uppercase font-bold tracking-wider">
+                  <Server size={20} />
+                  <span className="text-[14px] px-2.5 py-0.5 border border-current uppercase font-bold tracking-wider">
                     브라우저 내장
                   </span>
                 </div>
                 <div>
-                  <div className="text-base font-extrabold">WebLLM</div>
-                  <div className={`text-xs mt-1 ${settings.provider === 'webllm' ? 'text-white/80' : 'text-[#52524E]'}`}>
+                  <div className="text-[22px] font-extrabold">WebLLM</div>
+                  <div className={`text-[17px] mt-1.5 ${settings.provider === 'webllm' ? 'text-white/80' : 'text-[#52524E]'}`}>
                     무설치 WebGPU 가속
                   </div>
                 </div>
@@ -281,17 +281,17 @@ export default function PreferencesPage({
 
           <EditorialSection chapter="2. 상세 연결 구성">
             {settings.provider === 'gemini' && (
-              <div className="space-y-4 p-6 rounded-none bg-[#F6F5F1] border border-[#E4E2DC]">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-extrabold text-[#000000] flex items-center gap-1.5">
-                    <Key size={14} />
+              <div className="space-y-6 p-8 rounded-none bg-[#F6F5F1] border border-[#E4E2DC]">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-[18px] font-extrabold text-[#000000] flex items-center gap-2">
+                    <Key size={18} />
                     <span>개인 Gemini API 키 (선택 사항 · BYOK)</span>
                   </span>
                   <a
                     href="https://aistudio.google.com/app/apikey"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-[#000000] underline underline-offset-4 font-bold hover:text-[#DC2626]"
+                    className="text-[17px] text-[#000000] underline underline-offset-4 font-bold hover:text-[#DC2626]"
                   >
                     키 발급 안내 ↗
                   </a>
@@ -305,25 +305,25 @@ export default function PreferencesPage({
                     onChange={(e) =>
                       setSettings(s => ({ ...s, gemini: { ...s.gemini, apiKey: e.target.value } }))
                     }
-                    className="w-full pl-3.5 pr-10 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-xs text-[#111111] outline-none"
+                    className="w-full pl-4 pr-12 py-3.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#111111] outline-none"
                   />
                   <button
                     type="button"
                     onClick={() => setShowKey(!showKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#52524E] hover:text-[#000000] cursor-pointer"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#52524E] hover:text-[#000000] cursor-pointer"
                   >
-                    {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
+                    {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-extrabold text-[#000000] mb-1.5">모델 선택</label>
+                  <label className="block text-[17px] font-extrabold text-[#000000] mb-2">모델 선택</label>
                   <select
                     value={settings.gemini.model}
                     onChange={(e) =>
                       setSettings(s => ({ ...s, gemini: { ...s.gemini, model: e.target.value } }))
                     }
-                    className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-xs text-[#111111] outline-none cursor-pointer"
+                    className="w-full px-4 py-3.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#111111] outline-none cursor-pointer"
                   >
                     <option value="gemini-3.8-flash">gemini-3.8-flash (권장 · 균형형)</option>
                     <option value="gemini-2.5-flash">gemini-2.5-flash (고속 응답)</option>
@@ -334,19 +334,19 @@ export default function PreferencesPage({
             )}
 
             {settings.provider === 'ollama' && (
-              <div className="space-y-4 p-6 rounded-none bg-[#F6F5F1] border border-[#E4E2DC]">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-extrabold text-[#000000] flex items-center gap-1.5">
-                    <Server size={14} />
+              <div className="space-y-6 p-8 rounded-none bg-[#F6F5F1] border border-[#E4E2DC]">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-[18px] font-extrabold text-[#000000] flex items-center gap-2">
+                    <Server size={18} />
                     <span>Ollama 로컬 서버 주소</span>
                   </span>
                   <button
                     type="button"
                     onClick={handleFetchOllamaModels}
                     disabled={fetchingOllama}
-                    className="inline-flex items-center gap-1.5 text-xs text-[#000000] underline underline-offset-4 font-bold cursor-pointer disabled:opacity-50"
+                    className="inline-flex items-center gap-2 text-[17px] text-[#000000] underline underline-offset-4 font-bold cursor-pointer disabled:opacity-50"
                   >
-                    <RefreshCw size={12} className={fetchingOllama ? 'animate-spin' : ''} />
+                    <RefreshCw size={16} className={fetchingOllama ? 'animate-spin' : ''} />
                     <span>설치된 모델 스캔</span>
                   </button>
                 </div>
@@ -358,18 +358,18 @@ export default function PreferencesPage({
                   onChange={(e) =>
                     setSettings(s => ({ ...s, ollama: { ...s.ollama, endpoint: e.target.value } }))
                   }
-                  className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-xs text-[#111111] outline-none"
+                  className="w-full px-4 py-3.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#111111] outline-none"
                 />
 
                 <div>
-                  <label className="block text-xs font-extrabold text-[#000000] mb-1.5">Ollama 모델명</label>
+                  <label className="block text-[17px] font-extrabold text-[#000000] mb-2">Ollama 모델명</label>
                   {availableOllamaModels.length > 0 ? (
                     <select
                       value={settings.ollama.model}
                       onChange={(e) =>
                         setSettings(s => ({ ...s, ollama: { ...s.ollama, model: e.target.value } }))
                       }
-                      className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-xs text-[#111111] outline-none cursor-pointer"
+                      className="w-full px-4 py-3.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#111111] outline-none cursor-pointer"
                     >
                       {availableOllamaModels.map(m => (
                         <option key={m} value={m}>{m}</option>
@@ -383,7 +383,7 @@ export default function PreferencesPage({
                       onChange={(e) =>
                         setSettings(s => ({ ...s, ollama: { ...s.ollama, model: e.target.value } }))
                       }
-                      className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-xs text-[#111111] outline-none"
+                      className="w-full px-4 py-3.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#111111] outline-none"
                     />
                   )}
                 </div>
@@ -391,25 +391,25 @@ export default function PreferencesPage({
             )}
 
             {settings.provider === 'webllm' && (
-              <div className="space-y-4 p-6 rounded-none bg-[#F6F5F1] border border-[#E4E2DC]">
+              <div className="space-y-6 p-8 rounded-none bg-[#F6F5F1] border border-[#E4E2DC]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-extrabold text-[#000000] flex items-center gap-1.5">
-                    <Shield size={14} />
+                  <span className="text-[18px] font-extrabold text-[#000000] flex items-center gap-2">
+                    <Shield size={18} />
                     <span>브라우저 내장 WebGPU 로컬 모델</span>
                   </span>
-                  <span className="text-[11px] font-bold text-[#000000] bg-[#FFFFFF] px-2.5 py-1 border border-[#E4E2DC]">
+                  <span className="text-[15px] font-bold text-[#000000] bg-[#FFFFFF] px-3.5 py-1.5 border border-[#E4E2DC]">
                     완전 오프라인
                   </span>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-extrabold text-[#000000] mb-1.5">내장 추론 모델</label>
+                  <label className="block text-[17px] font-extrabold text-[#000000] mb-2">내장 추론 모델</label>
                   <select
                     value={settings.webllm?.model || 'Qwen2.5-Coder-1.5B'}
                     onChange={(e) =>
                       setSettings(s => ({ ...s, webllm: { ...s.webllm, model: e.target.value } }))
                     }
-                    className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-xs text-[#111111] outline-none cursor-pointer"
+                    className="w-full px-4 py-3.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#111111] outline-none cursor-pointer"
                   >
                     <option value="Qwen2.5-Coder-1.5B">Qwen2.5-Coder-1.5B (코드 · 명세 최적화)</option>
                     <option value="Llama-3.2-1B-Instruct">Llama-3.2-1B-Instruct (경량 범용)</option>
@@ -421,36 +421,36 @@ export default function PreferencesPage({
 
             {testResult && (
               <div
-                className={`p-4 rounded-none text-xs flex items-start gap-2.5 border ${
+                className={`p-5 rounded-none text-[17px] flex items-start gap-3 border ${
                   testResult.success
                     ? 'bg-[#F3F7F4] text-[#1F5132] border-[#1F5132]'
                     : 'bg-[#FEF2F2] text-[#DC2626] border-[#DC2626]'
                 }`}
               >
                 {testResult.success ? (
-                  <CheckCircle2 size={15} className="shrink-0 mt-0.5" />
+                  <CheckCircle2 size={18} className="shrink-0 mt-1" />
                 ) : (
-                  <AlertCircle size={15} className="shrink-0 mt-0.5" />
+                  <AlertCircle size={18} className="shrink-0 mt-1" />
                 )}
-                <span className="leading-relaxed font-semibold">{testResult.message}</span>
+                <span className="leading-[1.7] font-semibold">{testResult.message}</span>
               </div>
             )}
 
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-4">
               <button
                 type="button"
                 onClick={handleTestConnection}
                 disabled={isTesting}
-                className="px-4 py-2.5 bg-[#FFFFFF] border border-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] rounded-none text-xs font-bold flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                className="px-6 py-3.5 bg-[#FFFFFF] border border-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] rounded-none text-[17px] font-bold flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
               >
-                <RefreshCw size={13} className={isTesting ? 'animate-spin' : ''} />
+                <RefreshCw size={16} className={isTesting ? 'animate-spin' : ''} />
                 <span>{isTesting ? '연결 테스트 중...' : '연결 테스트 실행'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleSaveEngine}
-                className="px-6 py-2.5 bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] rounded-none text-xs font-bold transition-colors cursor-pointer"
+                className="px-7 py-3.5 bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] rounded-none text-[18px] font-bold transition-colors cursor-pointer"
               >
                 로컬 설정 저장하기
               </button>
@@ -462,20 +462,20 @@ export default function PreferencesPage({
       {activeTab === 'display' && (
         <EditorialSection chapter="화면 및 가독성 규격">
           <div className="divide-y divide-[#E4E2DC] border-y border-[#E4E2DC]">
-            <div className="py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm font-extrabold text-[#000000]">
-                  <Type size={16} />
+            <div className="py-7 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2.5 text-[21px] font-extrabold text-[#000000]">
+                  <Type size={20} />
                   <span>큰 글씨 가독성 모드</span>
                 </div>
-                <p className="text-xs text-[#52524E]">
+                <p className="text-[18px] text-[#52524E]">
                   에디터 본문과 제목의 글자 크기 및 줄 간격을 확대하여 장시간 집필 피로를 줄입니다.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={handleToggleLargeText}
-                className={`px-5 py-2.5 rounded-none text-xs font-bold border transition-colors cursor-pointer shrink-0 ${
+                className={`px-6 py-3.5 rounded-none text-[17px] font-bold border transition-colors cursor-pointer shrink-0 ${
                   isLarge
                     ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
                     : 'bg-[#FFFFFF] text-[#000000] border-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626]'
@@ -485,17 +485,17 @@ export default function PreferencesPage({
               </button>
             </div>
 
-            <div className="py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm font-extrabold text-[#000000]">
-                  <Globe size={16} />
+            <div className="py-7 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2.5 text-[21px] font-extrabold text-[#000000]">
+                  <Globe size={20} />
                   <span>인터페이스 언어 설정</span>
                 </div>
-                <p className="text-xs text-[#52524E]">
+                <p className="text-[18px] text-[#52524E]">
                   스튜디오 인터페이스 및 문서 표시 언어를 전환합니다.
                 </p>
               </div>
-              <div className="flex items-center border border-[#000000] rounded-none divide-x divide-[#000000] shrink-0">
+              <div className="flex flex-wrap items-center border border-[#000000] rounded-none divide-x divide-[#000000] shrink-0">
                 {(
                   [
                     { code: 'ko', label: '한국어' },
@@ -508,7 +508,7 @@ export default function PreferencesPage({
                     key={opt.code}
                     type="button"
                     onClick={() => setLanguage(opt.code)}
-                    className={`px-4 py-2 text-xs font-bold transition-colors cursor-pointer ${
+                    className={`px-5 py-3 text-[17px] font-bold transition-colors cursor-pointer ${
                       language === opt.code
                         ? 'bg-[#000000] text-[#FFE600]'
                         : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#DC2626] hover:text-[#FFE600]'
@@ -524,7 +524,7 @@ export default function PreferencesPage({
       )}
 
       {activeTab === 'storage' && (
-        <div className="space-y-6">
+        <div className="space-y-12">
           <EditorialSection chapter="로컬 저장소 현황 및 빠른 이동">
             <EditorialTable
               headers={['항목', '현재 상태', '설명']}
@@ -536,54 +536,54 @@ export default function PreferencesPage({
             />
 
             {exportNotice && (
-              <div className="p-3.5 rounded-none bg-[#F3F7F4] border border-[#1F5132] text-[#1F5132] text-xs font-bold flex items-center gap-2">
-                <CheckCircle2 size={14} />
+              <div className="p-5 rounded-none bg-[#F3F7F4] border border-[#1F5132] text-[#1F5132] text-[17px] font-bold flex items-center gap-2.5">
+                <CheckCircle2 size={18} />
                 <span>전체 로컬 프로젝트 백업 파일이 다운로드되었습니다.</span>
               </div>
             )}
 
             <div className="divide-y divide-[#E4E2DC] border-y border-[#E4E2DC]">
-              <div className="py-4 flex items-center justify-between gap-4">
+              <div className="py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <div className="text-sm font-extrabold text-[#000000]">표준 기획서 템플릿 불러오기</div>
-                  <p className="text-xs text-[#52524E] mt-0.5">검증된 표준 아키텍처 템플릿으로 새 기획서를 빠르게 시작합니다.</p>
+                  <div className="text-[20px] font-extrabold text-[#000000]">표준 기획서 템플릿 불러오기</div>
+                  <p className="text-[17px] text-[#52524E] mt-1">검증된 표준 아키텍처 템플릿으로 새 기획서를 빠르게 시작합니다.</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => navigate('/templates')}
-                  className="px-4 py-2 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                  className="px-5 py-3 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-[17px] font-bold flex items-center gap-2 transition-colors cursor-pointer shrink-0"
                 >
-                  <LayoutTemplate size={13} />
+                  <LayoutTemplate size={16} />
                   <span>템플릿 페이지로</span>
                 </button>
               </div>
 
-              <div className="py-4 flex items-center justify-between gap-4">
+              <div className="py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <div className="text-sm font-extrabold text-[#000000]">보관함 및 로컬 백업 허브</div>
-                  <p className="text-xs text-[#52524E] mt-0.5">백업 내보내기, JSON 복원 및 저장소 정리를 수행합니다.</p>
+                  <div className="text-[20px] font-extrabold text-[#000000]">보관함 및 로컬 백업 허브</div>
+                  <p className="text-[17px] text-[#52524E] mt-1">백업 내보내기, JSON 복원 및 저장소 정리를 수행합니다.</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => navigate('/backup?tab=storage')}
-                  className="px-4 py-2 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                  className="px-5 py-3 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] text-[17px] font-bold flex items-center gap-2 transition-colors cursor-pointer shrink-0"
                 >
-                  <FolderOpen size={13} />
+                  <FolderOpen size={16} />
                   <span>보관함 열기</span>
                 </button>
               </div>
 
-              <div className="py-4 flex items-center justify-between gap-4">
+              <div className="py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <div className="text-sm font-extrabold text-[#000000]">전체 데이터 즉시 백업 다운로드</div>
-                  <p className="text-xs text-[#52524E] mt-0.5">현재 브라우저에 저장된 모든 원고를 단일 JSON 파일로 내려받습니다.</p>
+                  <div className="text-[20px] font-extrabold text-[#000000]">전체 데이터 즉시 백업 다운로드</div>
+                  <p className="text-[17px] text-[#52524E] mt-1">현재 브라우저에 저장된 모든 원고를 단일 JSON 파일로 내려받습니다.</p>
                 </div>
                 <button
                   type="button"
                   onClick={handleQuickExportBackup}
-                  className="px-4 py-2 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                  className="px-5 py-3 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] text-[17px] font-bold flex items-center gap-2 transition-colors cursor-pointer shrink-0"
                 >
-                  <Download size={13} />
+                  <Download size={16} />
                   <span>즉시 백업</span>
                 </button>
               </div>
@@ -594,35 +594,35 @@ export default function PreferencesPage({
 
       {activeTab === 'account' && (
         <EditorialSection chapter="로컬 계정 및 작업 세션 관리">
-          <div className="p-6 bg-[#F6F5F1] border border-[#E4E2DC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="w-12 h-12 rounded-none bg-[#000000] text-[#FFE600] font-extrabold text-lg flex items-center justify-center shrink-0">
+          <div className="p-8 bg-[#F6F5F1] border border-[#E4E2DC] flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="flex items-center gap-5 min-w-0">
+              <div className="w-14 h-14 rounded-none bg-[#000000] text-[#FFE600] font-extrabold text-[24px] flex items-center justify-center shrink-0">
                 {(currentUser?.displayName || 'D')[0]}
               </div>
               <div className="min-w-0">
-                <div className="text-base font-extrabold text-[#000000] truncate">
+                <div className="text-[22px] font-extrabold text-[#000000] truncate">
                   {currentUser?.displayName || '로컬 디렉터'}
                 </div>
-                <div className="text-xs text-[#52524E] mt-0.5">
+                <div className="text-[17px] text-[#52524E] mt-1">
                   {currentUser?.role === 'ADMIN' ? '디렉터 · 로컬 독립 세션' : '게스트 · 로컬 세션'}
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => navigate('/profile')}
-                className="px-4 py-2 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-xs font-bold transition-colors cursor-pointer"
+                className="px-5 py-3 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-[17px] font-bold transition-colors cursor-pointer"
               >
                 내 계정 및 프로필
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/logout')}
-                className="px-4 py-2 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-5 py-3 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] text-[17px] font-bold flex items-center gap-2 transition-colors cursor-pointer"
               >
-                <LogOut size={13} />
+                <LogOut size={16} />
                 <span>로그아웃</span>
               </button>
             </div>

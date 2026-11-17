@@ -93,9 +93,9 @@ export default function ExportSpecPage({
       <button
         type="button"
         onClick={handleCopyVibePrompt}
-        className="px-4 py-2.5 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
+        className="px-6 py-3.5 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-[17px] font-bold flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
       >
-        {copiedPrompt ? <Check size={14} /> : <Sparkles size={14} />}
+        {copiedPrompt ? <Check size={17} /> : <Sparkles size={17} />}
         <span>{copiedPrompt ? '바이브 코딩 프롬프트 복사됨' : '바이브 코딩 프롬프트 복사'}</span>
       </button>
 
@@ -103,9 +103,9 @@ export default function ExportSpecPage({
         type="button"
         onClick={handleDownloadZip}
         disabled={isDownloadingZip}
-        className="px-4 py-2.5 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] disabled:opacity-50 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
+        className="px-6 py-3.5 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] disabled:opacity-50 text-[17px] font-bold flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
       >
-        {zipDownloaded ? <Check size={14} /> : <Download size={14} />}
+        {zipDownloaded ? <Check size={17} /> : <Download size={17} />}
         <span>{zipDownloaded ? 'ZIP 다운로드 완료' : isDownloadingZip ? 'ZIP 패키징 중...' : '11종 사양서 ZIP 다운로드'}</span>
       </button>
     </>
@@ -121,7 +121,7 @@ export default function ExportSpecPage({
     >
       {/* Document Selector Grid */}
       <div className="border border-[#000000] divide-y divide-[#E4E2DC]">
-        <div className="bg-[#F6F5F1] p-3 flex flex-wrap gap-1.5 border-b border-[#000000]">
+        <div className="bg-[#F6F5F1] p-4 sm:p-5 flex flex-wrap gap-2 border-b border-[#000000]">
           {docsList.map((doc) => {
             const isActive = doc.id === activeDoc.id;
             const status = docImpactMap[doc.id] || 'idle';
@@ -130,7 +130,7 @@ export default function ExportSpecPage({
                 key={doc.id}
                 type="button"
                 onClick={() => setSelectedDocId(doc.id)}
-                className={`px-3 py-2 text-xs font-bold rounded-none transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-4 py-2.5 text-[16px] font-bold rounded-none transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                   isActive
                     ? 'bg-[#000000] text-[#FFE600]'
                     : 'bg-[#FFFFFF] text-[#111111] border border-[#E4E2DC] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626]'
@@ -141,7 +141,7 @@ export default function ExportSpecPage({
                 </span>
                 <span>{doc.filename}</span>
                 {status !== 'idle' && (
-                  <span className="text-[10px] px-1.5 py-0.5 border border-current uppercase">
+                  <span className="text-[14px] px-2 py-0.5 border border-current uppercase">
                     {status === 'locked' ? '확정' : '갱신'}
                   </span>
                 )}
@@ -151,14 +151,14 @@ export default function ExportSpecPage({
         </div>
 
         {/* File Subheader */}
-        <div className="px-5 py-3.5 bg-[#FFFFFF] flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs min-w-0">
-            <FileCode size={15} className="shrink-0 text-[#000000]" />
+        <div className="px-6 py-5 bg-[#FFFFFF] flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 text-[17px] min-w-0">
+            <FileCode size={18} className="shrink-0 text-[#000000]" />
             <span className="font-mono font-bold text-[#000000]">{activeDoc.relativePath}</span>
             <span className="text-[#CBC8BF]">|</span>
             <span className="text-[#52524E] truncate">{activeDoc.description}</span>
             {activeStatus !== 'idle' && (
-              <span className="px-2 py-0.5 bg-[#000000] text-[#FFE600] text-[10px] font-bold">
+              <span className="px-2.5 py-0.5 bg-[#000000] text-[#FFE600] text-[14px] font-bold">
                 {activeStatus === 'locked' ? '확정됨' : '최신 반영'}
               </span>
             )}
@@ -167,16 +167,16 @@ export default function ExportSpecPage({
           <button
             type="button"
             onClick={handleCopyCurrentDoc}
-            className="px-3.5 py-1.5 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-5 py-2.5 rounded-none border border-[#000000] bg-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626] text-[#000000] text-[16px] font-bold flex items-center gap-2 transition-colors cursor-pointer"
           >
-            {copiedDoc ? <Check size={13} /> : <Copy size={13} />}
+            {copiedDoc ? <Check size={16} /> : <Copy size={16} />}
             <span>{copiedDoc ? '복사 완료' : `${activeDoc.filename} 복사`}</span>
           </button>
         </div>
 
         {/* Playbook Orientation Callout */}
         {activeDoc.id === '00_EXECUTION_PLAYBOOK' && (
-          <div className="px-5 py-3 bg-[#F6F5F1] flex flex-wrap items-center justify-between gap-2 text-xs text-[#2B2B29]">
+          <div className="px-6 py-4 bg-[#F6F5F1] flex flex-wrap items-center justify-between gap-2 text-[17px] text-[#2B2B29]">
             <span>
               <strong className="text-[#000000]">4단계 실행 가이드:</strong> Phase 1 (확정 제약) → Phase 2 (핵심 워크플로우) → Phase 3 (예외 상태) → Phase 4 (도메인 검수)
             </span>
@@ -184,8 +184,8 @@ export default function ExportSpecPage({
         )}
 
         {/* Document Content */}
-        <div className="p-6 sm:p-8 bg-[#FFFFFF] max-h-[65vh] overflow-y-auto custom-scroll">
-          <pre className="whitespace-pre-wrap font-mono text-xs sm:text-[13px] leading-[1.8] text-[#111111] select-text">
+        <div className="p-8 sm:p-10 bg-[#FFFFFF] max-h-[65vh] overflow-y-auto custom-scroll">
+          <pre className="whitespace-pre-wrap font-mono text-[17px] sm:text-[18px] leading-[1.85] text-[#111111] select-text">
             {activeDoc.content}
           </pre>
         </div>

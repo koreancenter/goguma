@@ -29,15 +29,15 @@ export default function DevNotesPage() {
         <button
           type="button"
           onClick={() => navigate('/workspace')}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-xs font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap"
+          className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-[17px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap"
         >
           <span>작업실 입장</span>
-          <ArrowRight size={14} />
+          <ArrowRight size={17} />
         </button>
       }
     >
       <EditorialSection chapter="v2.1 · 에디토리얼 내비게이션 및 풀페이지 아키텍처 통합">
-        <ul className="list-disc pl-5 space-y-1.5">
+        <ul className="list-disc pl-6 space-y-3">
           <li>
             <strong>페이지 전용 상단 메뉴 최적화:</strong> 작업실 외 페이지 경로에서는 [블로그], [환경 설정], [도움말], [작업실 입장] 4개 핵심 내비게이션을 우측 정렬로 배치하고, [도움말] 메뉴에서 모든 정책 문서와 개발자 노트에 즉시 접근할 수 있도록 개편했습니다.
           </li>
@@ -51,7 +51,7 @@ export default function DevNotesPage() {
       </EditorialSection>
 
       <EditorialSection chapter="v2.0 · 11종 사양서 컴파일러 및 샌드박스 프로토타입 엔진">
-        <ul className="list-disc pl-5 space-y-1.5">
+        <ul className="list-disc pl-6 space-y-3">
           <li>
             <strong>8-Chapter 17-Section 통합 엔진:</strong> 서비스 개요부터 산출물 검수까지 입력된 원고를 단일 <code>SitePlan</code> 상태로 정규화하여 실시간 미리보기와 사양서 문서를 동기화합니다.
           </li>

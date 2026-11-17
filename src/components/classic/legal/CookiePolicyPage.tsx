@@ -15,11 +15,11 @@ export default function CookiePolicyPage() {
       tabs={LEGAL_NAV_TABS}
       activeTabId="cookies"
     >
-      <div className="p-5 bg-[#F6F5F1] border-l-4 border-l-[#000000] border border-[#E4E2DC] space-y-1.5">
-        <div className="text-xs font-extrabold uppercase tracking-[0.08em] text-[#000000]">
+      <div className="p-7 sm:p-9 bg-[#F6F5F1] border-l-4 border-l-[#000000] border border-[#E4E2DC] space-y-2.5">
+        <div className="text-[17px] sm:text-[18px] font-extrabold uppercase tracking-[0.08em] text-[#000000]">
           NO COOKIES · ZERO HTTP TRACKING
         </div>
-        <p className="text-[13px] text-[#2B2B29] leading-relaxed">
+        <p className="text-[19px] sm:text-[20px] text-[#2B2B29] leading-[1.8]">
           고구마(GOGUMA)는 필수 쿠키, 방문자 분석(Google Analytics 등) 쿠키, 광고·마케팅 추적 쿠키를 일체 사용하지 않습니다. 서비스 동작에 필요한 모든 상태는 서버 쿠키가 아닌 사용자 기기 내부의 브라우저 로컬 저장소에만 유지됩니다.
         </p>
       </div>

@@ -75,21 +75,21 @@ export default function OpenSourceLicensePage() {
       </EditorialSection>
 
       <EditorialSection chapter="제2조 (GOGUMA MIT License 공식 전문)">
-        <div className="flex items-center justify-between gap-4 pb-2">
-          <p className="text-xs text-[#52524E]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3">
+          <p className="text-[18px] sm:text-[19px] text-[#52524E]">
             누구나 자유롭게 복제, 수정, 배포 및 상업적 프로젝트에 활용할 수 있는 표준 MIT 라이선스 전문입니다.
           </p>
           <button
             type="button"
             onClick={handleCopy}
-            className="px-3.5 py-2 bg-[#000000] text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] text-xs font-bold rounded-none transition-colors inline-flex items-center gap-1.5 cursor-pointer shrink-0"
+            className="px-5 py-3 bg-[#000000] text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] text-[17px] font-bold rounded-none transition-colors inline-flex items-center gap-2 cursor-pointer shrink-0"
           >
-            {copied ? <Check size={13} /> : <Copy size={13} />}
+            {copied ? <Check size={16} /> : <Copy size={16} />}
             <span>{copied ? '복사 완료' : '라이선스 전문 복사'}</span>
           </button>
         </div>
 
-        <pre className="p-6 bg-[#F6F5F1] border border-[#E4E2DC] text-[12px] font-mono leading-[1.75] text-[#111111] overflow-x-auto select-text">
+        <pre className="p-8 sm:p-10 bg-[#F6F5F1] border border-[#E4E2DC] text-[17px] sm:text-[18px] font-mono leading-[1.85] text-[#111111] overflow-x-auto select-text">
           {MIT_LICENSE_TEXT}
         </pre>
       </EditorialSection>

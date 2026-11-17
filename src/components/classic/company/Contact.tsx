@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Mail, Clock, MapPin, Send, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
-import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, serverTimestamp, db, handleFirestoreError, OperationType } from '../../../lib/localDb';
 import { toast } from 'react-toastify';
+import {
+  EditorialPageLayout,
+  EditorialSection,
+  EditorialTabItem,
+} from '../layout/EditorialPageLayout';
 
 export default function Contact() {
   const { t, region } = useLanguage();
-  const navigate = useNavigate();
   const [agreement, setAgreement] = useState<'agree' | 'disagree' | null>(null);
-  
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const tabs: EditorialTabItem[] = [
+    { id: 'contact', label: '문의 및 피드백', to: '/contact' },
+    { id: 'support', label: '도움말 및 가이드', to: '/support' },
+    { id: 'about', label: 'GOGUMA 소개', to: '/about' },
+    { id: 'community', label: '오픈 아키텍처', to: '/community' },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +44,7 @@ export default function Contact() {
         message: message.trim(),
         status: 'pending',
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       });
 
       const mailtoUrl = `mailto:master@goguma.app?subject=${encodeURIComponent(`[Feedback] ${name.trim()}`)}&body=${encodeURIComponent(`From: ${name.trim()} (${email.trim()})\n\nMessage:\n${message.trim()}`)}`;
@@ -55,147 +64,134 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-[#111827] pt-28 pb-24 font-sans selection:bg-[#1E3A8A]/15 selection:text-[#111827]">
-      <div className="max-w-5xl mx-auto px-6">
-        <button 
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-xs font-sans font-medium uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-8 cursor-pointer"
-        >
-          <ArrowLeft size={14} className="text-[#1E3A8A]" />
-          <span>{t('back')}</span>
-        </button>
-
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-          <motion.div 
-            initial={{ opacity: 0, x: -15 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-2 space-y-10"
-          >
-            <div>
-              <span className="text-[10px] font-sans uppercase tracking-widest text-[#1E3A8A] font-semibold">DISPATCH CHANNEL</span>
-              <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827] tracking-tight uppercase mt-0.5 mb-2">{t('contact_us')}</h1>
-              <p className="text-[#4B5563] font-sans text-xs sm:text-sm">{t('contact_subtitle')}</p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl shadow-xs">
-                <div className="w-9 h-9 bg-[#EFF6FF] rounded-lg flex items-center justify-center text-[#1E3A8A] border border-[#1E3A8A]/15 shrink-0">
-                  <Mail size={16} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('support_email')}</p>
-                  <p className="font-sans text-xs text-[#111827] truncate font-medium">master@goguma.app</p>
-                </div>
+    <EditorialPageLayout
+      category="DISPATCH CHANNEL · CONTACT"
+      title={t('contact_us')}
+      subtitle={t('contact_subtitle')}
+      tabs={tabs}
+      activeTabId="contact"
+    >
+      <EditorialSection chapter="제1장 연락처 및 문의 접수">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pt-2">
+          {/* Left Contact Metadata */}
+          <div className="lg:col-span-5 divide-y divide-[#E4E2DC] border-t border-b border-[#000000] h-fit">
+            <div className="py-6 space-y-1.5">
+              <div className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#52524E]">
+                {t('support_email')}
               </div>
-
-              <div className="flex items-center gap-4 p-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl shadow-xs">
-                <div className="w-9 h-9 bg-[#EFF6FF] rounded-lg flex items-center justify-center text-[#1E3A8A] border border-[#1E3A8A]/15 shrink-0">
-                  <Clock size={16} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('consultation_hours')}</p>
-                  <p className="text-xs text-[#111827] font-medium">{t('consultation_hours_desc')}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 p-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl shadow-xs">
-                <div className="w-9 h-9 bg-[#EFF6FF] rounded-lg flex items-center justify-center text-[#1E3A8A] border border-[#1E3A8A]/15 shrink-0">
-                  <MapPin size={16} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('global_hq')}</p>
-                  <p className="text-xs text-[#111827] font-medium">
-                    {region === 'korea' ? '대한민국' : 'Seoul / Global Edge'}
-                  </p>
-                </div>
+              <div className="text-[20px] font-extrabold text-[#000000]">
+                master@goguma.app
               </div>
             </div>
-          </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 15 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-3 bg-[#FFFFFF] rounded-2xl p-6 sm:p-10 border border-[#E5E7EB] shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)]"
-          >
-            <form className="space-y-5" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('name')}</label>
-                  <input 
-                    type="text" 
+            <div className="py-6 space-y-1.5">
+              <div className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#52524E]">
+                {t('consultation_hours')}
+              </div>
+              <div className="text-[19px] font-semibold text-[#111111]">
+                {t('consultation_hours_desc')}
+              </div>
+            </div>
+
+            <div className="py-6 space-y-1.5">
+              <div className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#52524E]">
+                {t('global_hq')}
+              </div>
+              <div className="text-[19px] font-semibold text-[#111111]">
+                {region === 'korea' ? '대한민국 경기도 부천시' : 'Seoul / Global Edge'}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Form */}
+          <div className="lg:col-span-7 bg-[#FFFFFF] border border-[#000000] rounded-none p-7 sm:p-10">
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-[17px] font-extrabold text-[#000000]">
+                    {t('name')}
+                  </label>
+                  <input
+                    type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     disabled={isSubmitting}
-                    className="w-full px-3.5 py-2.5 bg-[#F7F8FA] focus:bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-medium text-[#111827] placeholder-[#9CA3AF] focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10 transition-all outline-none" 
-                    placeholder="John Doe" 
+                    className="w-full px-4 py-3.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#000000] placeholder-[#8C8B85] outline-none transition-colors"
+                    placeholder="John Doe"
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('email')}</label>
-                  <input 
-                    type="email" 
+                <div className="space-y-2">
+                  <label className="block text-[17px] font-extrabold text-[#000000]">
+                    {t('email')}
+                  </label>
+                  <input
+                    type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isSubmitting}
-                    className="w-full px-3.5 py-2.5 bg-[#F7F8FA] focus:bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#111827] placeholder-[#9CA3AF] focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10 transition-all outline-none" 
-                    placeholder="john@example.com" 
+                    className="w-full px-4 py-3.5 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#000000] placeholder-[#8C8B85] outline-none transition-colors"
+                    placeholder="john@example.com"
                   />
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('message')}</label>
-                <textarea 
-                  rows={5} 
+
+              <div className="space-y-2">
+                <label className="block text-[17px] font-extrabold text-[#000000]">
+                  {t('message')}
+                </label>
+                <textarea
+                  rows={5}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   disabled={isSubmitting}
-                  className="w-full p-3.5 bg-[#F7F8FA] focus:bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs text-[#111827] placeholder-[#9CA3AF] focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10 transition-all outline-none resize-none leading-relaxed" 
+                  className="w-full p-4 bg-[#FFFFFF] border border-[#CBC8BF] focus:border-[#000000] rounded-none text-[18px] text-[#000000] placeholder-[#8C8B85] outline-none resize-none leading-[1.7] transition-colors"
                   placeholder={t('tell_us_about')}
                 />
               </div>
 
               {/* 개인정보 수집·이용 동의서 */}
-              <div className="bg-[#F7F8FA] border border-[#E5E7EB] rounded-xl p-4 space-y-3">
-                <div className="flex items-center gap-2 text-[#111827]">
-                  <ShieldCheck size={16} className="text-[#1E3A8A] shrink-0" />
-                  <span className="font-semibold text-xs uppercase tracking-wide">{t('privacy_agreement_title')}</span>
+              <div className="bg-[#F6F5F1] border-l-4 border-l-[#000000] border border-[#E4E2DC] rounded-none p-6 space-y-4">
+                <div className="text-[18px] font-extrabold text-[#000000]">
+                  {t('privacy_agreement_title')}
                 </div>
-                
-                <ul className="space-y-1 text-[11px] text-[#4B5563] font-sans list-disc list-inside">
+
+                <ul className="space-y-1.5 text-[17px] text-[#3F3F3C] list-disc list-inside leading-[1.7]">
                   <li>{t('privacy_agreement_purpose')}</li>
                   <li>{t('privacy_agreement_items')}</li>
                   <li>{t('privacy_agreement_period')}</li>
                   <li>{t('privacy_agreement_rejection')}</li>
                 </ul>
 
-                <div className="pt-2.5 border-t border-[#E5E7EB]">
-                  <p className="text-[11px] font-medium text-[#374151] mb-2">{t('privacy_agreement_question')}</p>
-                  
-                  <div className="flex flex-wrap items-center gap-5 text-xs">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="privacy_agreement" 
+                <div className="pt-4 border-t border-[#E4E2DC] space-y-3">
+                  <p className="text-[17px] font-bold text-[#111111]">
+                    {t('privacy_agreement_question')}
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-6 text-[18px]">
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="privacy_agreement"
                         value="agree"
                         checked={agreement === 'agree'}
                         onChange={() => setAgreement('agree')}
-                        className="w-3.5 h-3.5 accent-[#1E3A8A] cursor-pointer"
+                        className="w-4 h-4 accent-[#000000] cursor-pointer"
                       />
-                      <span className="text-[#111827]">
+                      <span className="font-semibold text-[#000000]">
                         {t('privacy_agreement_agree')}
                       </span>
                     </label>
 
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="privacy_agreement" 
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="privacy_agreement"
                         value="disagree"
                         checked={agreement === 'disagree'}
                         onChange={() => setAgreement('disagree')}
-                        className="w-3.5 h-3.5 accent-[#1E3A8A] cursor-pointer"
+                        className="w-4 h-4 accent-[#000000] cursor-pointer"
                       />
-                      <span className="text-[#6B7280]">
+                      <span className="text-[#52524E]">
                         {t('privacy_agreement_disagree')}
                       </span>
                     </label>
@@ -203,18 +199,18 @@ export default function Contact() {
                 </div>
               </div>
 
-              <button 
+              <button
                 type="submit"
                 disabled={agreement !== 'agree'}
-                className="w-full py-3 bg-[#1E3A8A] hover:bg-[#1E40AF] text-white rounded-lg text-xs font-semibold uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                className="w-full py-4 px-6 bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] rounded-none text-[18px] font-bold uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2.5 cursor-pointer"
               >
-                <Send size={14} />
+                <Send size={17} />
                 <span>{t('send_message')}</span>
               </button>
             </form>
-          </motion.div>
+          </div>
         </div>
-      </div>
-    </div>
+      </EditorialSection>
+    </EditorialPageLayout>
   );
 }

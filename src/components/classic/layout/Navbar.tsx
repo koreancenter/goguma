@@ -288,18 +288,22 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
             </span>
           </button>
 
-          <span className="text-white/25 select-none shrink-0" aria-hidden="true">|</span>
+          {isWorkspaceRoute && (
+            <>
+              <span className="text-white/25 select-none shrink-0" aria-hidden="true">|</span>
 
-          <div className="min-w-0 max-w-[140px] sm:max-w-[240px] lg:max-w-[320px] flex items-center">
-            <input
-              type="text"
-              value={projectName}
-              onChange={(e) => onUpdateProjectName(e.target.value)}
-              className="w-full bg-transparent hover:bg-white/10 focus:bg-[#1A1A18] rounded-none px-2 py-1 text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] truncate border-b border-transparent focus:border-white/60 outline-none transition-colors leading-normal"
-              title="프로젝트 이름 수정"
-              aria-label="프로젝트 이름"
-            />
-          </div>
+              <div className="min-w-0 max-w-[140px] sm:max-w-[240px] lg:max-w-[320px] flex items-center">
+                <input
+                  type="text"
+                  value={projectName}
+                  onChange={(e) => onUpdateProjectName(e.target.value)}
+                  className="w-full bg-transparent hover:bg-white/10 focus:bg-[#1A1A18] rounded-none px-2 py-1 text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] truncate border-b border-transparent focus:border-white/60 outline-none transition-colors leading-normal"
+                  title="프로젝트 이름 수정"
+                  aria-label="프로젝트 이름"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Tier 1 Right: Rectangular Editorial Utility Strip */}

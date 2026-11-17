@@ -80,7 +80,7 @@ export default function TermsOfService() {
       </EditorialSection>
 
       <EditorialSection chapter="부칙">
-        <p className="text-xs text-[#52524E]">
+        <p className="text-[18px] sm:text-[19px] text-[#52524E]">
           1. 본 약관은 2026년 1월 1일부터 시행합니다. (최근 개정: 2026년 11월 17일)
         </p>
       </EditorialSection>

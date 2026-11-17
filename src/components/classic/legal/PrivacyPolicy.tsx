@@ -16,11 +16,11 @@ export default function PrivacyPolicy() {
       activeTabId="privacy"
     >
       {/* Core Local-First Declaration */}
-      <div className="p-5 bg-[#F6F5F1] border-l-4 border-l-[#000000] border border-[#E4E2DC] space-y-1.5">
-        <div className="text-xs font-extrabold uppercase tracking-[0.08em] text-[#000000]">
+      <div className="p-7 sm:p-9 bg-[#F6F5F1] border-l-4 border-l-[#000000] border border-[#E4E2DC] space-y-2.5">
+        <div className="text-[17px] sm:text-[18px] font-extrabold uppercase tracking-[0.08em] text-[#000000]">
           NO DATA COLLECTION · 100% LOCAL-FIRST GUARANTEE
         </div>
-        <p className="text-[13px] text-[#2B2B29] leading-relaxed">
+        <p className="text-[19px] sm:text-[20px] text-[#2B2B29] leading-[1.8]">
           고구마(GOGUMA)는 무료 오픈소스 소프트웨어로서 중앙 데이터베이스에 사용자의 개인정보, 결제 및 금융 내역, 기획 데이터를 일체 수집·저장하지 않습니다. 모든 작성 데이터와 설정값은 오직 사용자 기기의 브라우저 로컬 저장소(IndexedDB / LocalStorage)에만 보관됩니다.
         </p>
       </div>

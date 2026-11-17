@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export interface EditorialTabItem {
   id: string;
@@ -35,49 +34,36 @@ export function EditorialPageLayout({
   category,
   title,
   subtitle,
-  backTo = '/workspace',
-  backLabel = '작업실로 돌아가기',
   tabs,
   activeTabId,
   headerActions,
-  maxWidthClass = 'max-w-5xl',
+  maxWidthClass = 'max-w-6xl',
   children,
 }: EditorialPageLayoutProps) {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-[calc(100vh-14rem)] bg-[#FFFFFF] text-[#111111] font-sans selection:bg-[#000000] selection:text-[#FFFFFF]">
-      <div className={`${maxWidthClass} mx-auto px-5 sm:px-8 pt-10 pb-20`}>
-        {/* Top Back Breadcrumb */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <button
-            type="button"
-            onClick={() => navigate(backTo)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 -ml-3 text-[13px] font-bold text-[#3F3F3C] hover:bg-[#000000] hover:text-[#FFE600] rounded-none transition-colors cursor-pointer"
-          >
-            <ArrowLeft size={14} />
-            <span>{backLabel}</span>
-          </button>
-
-          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#52524E]">
+      <div className={`${maxWidthClass} mx-auto px-6 sm:px-10 lg:px-12 pt-14 sm:pt-16 pb-24 sm:pb-32`}>
+        {/* Top Editorial Category Rule */}
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <span className="text-[15px] sm:text-[16px] font-bold uppercase tracking-[0.16em] text-[#52524E]">
             {category}
           </span>
         </div>
 
         {/* Sejong Editorial Document Title Header */}
-        <div className="border-t-2 border-t-[#000000] border-b border-b-[#E4E2DC] pt-7 pb-7 flex flex-col md:flex-row md:items-end justify-between gap-5">
-          <div className="space-y-2">
+        <div className="border-t-2 border-t-[#000000] border-b border-b-[#E4E2DC] pt-9 pb-9 sm:pt-11 sm:pb-11 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-[-0.03em] text-[#000000] leading-tight">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-xs sm:text-sm text-[#52524E] leading-relaxed max-w-3xl">
+              <p className="text-[18px] sm:text-[21px] text-[#52524E] leading-[1.65] max-w-4xl">
                 {subtitle}
               </p>
             )}
           </div>
           {headerActions && (
-            <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
               {headerActions}
             </div>
           )}
@@ -99,7 +85,7 @@ export function EditorialPageLayout({
           >
             {tabs.map((tab) => {
               const isActive = tab.id === activeTabId;
-              const className = `px-3 py-3.5 text-center text-[13px] font-bold tracking-tight transition-colors rounded-none cursor-pointer flex items-center justify-center whitespace-nowrap ${
+              const className = `px-4 py-4 sm:py-5 text-center text-[17px] sm:text-[19px] font-bold tracking-tight transition-colors rounded-none cursor-pointer flex items-center justify-center whitespace-nowrap ${
                 isActive
                   ? 'bg-[#000000] text-[#FFE600]'
                   : 'bg-[#F6F5F1] text-[#111111] hover:bg-[#DC2626] hover:text-[#FFE600]'
@@ -127,7 +113,7 @@ export function EditorialPageLayout({
         )}
 
         {/* Document / Page Body */}
-        <div className="pt-10 space-y-10 text-[13px] sm:text-[14px] leading-[1.8] text-[#2B2B29]">
+        <div className="pt-12 sm:pt-16 space-y-14 sm:space-y-16 text-[19px] sm:text-[21px] leading-[1.85] text-[#2B2B29]">
           {children}
         </div>
       </div>
@@ -145,18 +131,18 @@ export function EditorialSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-5 sm:space-y-6">
       {chapter && (
-        <h2 className="text-lg sm:text-xl font-extrabold text-[#000000] tracking-[-0.02em] pb-2.5 border-b border-[#000000]">
+        <h2 className="text-[26px] sm:text-[30px] font-extrabold text-[#000000] tracking-[-0.02em] pb-3.5 border-b border-[#000000] leading-snug">
           {chapter}
         </h2>
       )}
       {title && (
-        <h3 className="text-sm sm:text-base font-extrabold text-[#000000] tracking-[-0.01em] pt-2">
+        <h3 className="text-[21px] sm:text-[24px] font-extrabold text-[#000000] tracking-[-0.01em] pt-2 leading-snug">
           {title}
         </h3>
       )}
-      <div className="space-y-2.5">{children}</div>
+      <div className="space-y-4">{children}</div>
     </section>
   );
 }
@@ -169,14 +155,14 @@ export function EditorialTable({
   rows: (string | React.ReactNode)[][];
 }) {
   return (
-    <div className="overflow-x-auto border-t-2 border-t-[#000000] border-b border-b-[#000000] my-4">
-      <table className="w-full text-left border-collapse min-w-[540px]">
+    <div className="overflow-x-auto border-t-2 border-t-[#000000] border-b border-b-[#000000] my-6">
+      <table className="w-full text-left border-collapse min-w-[600px]">
         <thead>
           <tr className="bg-[#000000] text-[#FFFFFF]">
             {headers.map((header, idx) => (
               <th
                 key={idx}
-                className="px-4 py-3 text-xs sm:text-[13px] font-bold tracking-tight border-r border-white/15 last:border-r-0"
+                className="px-6 py-4 text-[17px] sm:text-[19px] font-bold tracking-tight border-r border-white/15 last:border-r-0"
               >
                 {header}
               </th>
@@ -189,7 +175,7 @@ export function EditorialTable({
               {row.map((cell, cIdx) => (
                 <td
                   key={cIdx}
-                  className={`px-4 py-3 text-xs sm:text-[13px] leading-relaxed border-r border-[#E4E2DC] last:border-r-0 align-top ${
+                  className={`px-6 py-4 text-[17px] sm:text-[19px] leading-[1.7] border-r border-[#E4E2DC] last:border-r-0 align-top ${
                     cIdx === 0 ? 'font-bold text-[#000000] bg-[#F6F5F1]/50' : 'text-[#3F3F3C]'
                   }`}
                 >

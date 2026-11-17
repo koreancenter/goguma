@@ -1,84 +1,82 @@
 import React from 'react';
-import { motion } from 'motion/react';
-import { Target, Users, Zap, ArrowLeft, Box } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
-import { useNavigate } from 'react-router-dom';
+import {
+  EditorialPageLayout,
+  EditorialSection,
+  EditorialTabItem,
+} from '../layout/EditorialPageLayout';
 
 export default function About() {
   const { t } = useLanguage();
-  const navigate = useNavigate();
+
+  const tabs: EditorialTabItem[] = [
+    { id: 'about', label: 'GOGUMA 소개', to: '/about' },
+    { id: 'community', label: '오픈 아키텍처', to: '/community' },
+    { id: 'support', label: '도움말 및 가이드', to: '/support' },
+    { id: 'contact', label: '문의 및 피드백', to: '/contact' },
+  ];
 
   const values = [
     {
-      icon: Target,
+      index: '01',
       title: 'Precision Architecture',
-      description: 'We believe in building digital foundations that are both robust, minimal, and uncompromisingly elegant.'
+      description:
+        'We believe in building digital foundations that are robust, minimal, and uncompromisingly clear.',
     },
     {
-      icon: Users,
+      index: '02',
       title: 'Global Collaboration',
-      description: 'Empowering teams and solo builders worldwide to sync their architectural vision with zero friction.'
+      description:
+        'Empowering teams and solo builders worldwide to sync their architectural vision with zero friction.',
     },
     {
-      icon: Zap,
+      index: '03',
       title: 'Autonomous Local Execution',
-      description: 'Leveraging offline-first principles and edge AI to automate the entire technical specification cycle.'
-    }
+      description:
+        'Leveraging offline-first principles and edge AI to automate the entire technical specification cycle.',
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-[#111827] pt-28 pb-24 font-sans selection:bg-[#1E3A8A]/15 selection:text-[#111827]">
-      <div className="max-w-5xl mx-auto px-6">
-        <button 
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-xs font-sans font-medium uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-8 cursor-pointer"
-        >
-          <ArrowLeft size={14} className="text-[#1E3A8A]" />
-          <span>{t('back')}</span>
-        </button>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-[#FFFFFF] rounded-2xl p-8 sm:p-14 lg:p-16 border border-[#E5E7EB] mb-12 shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)] space-y-12"
-        >
-          <div className="flex items-center gap-4 border-b border-[#E5E7EB] pb-8">
-            <div className="w-10 h-10 bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] rounded-xl flex items-center justify-center font-bold">
-              <Box size={20} />
-            </div>
-            <div>
-              <span className="text-[10px] font-sans uppercase tracking-widest text-[#1E3A8A] font-semibold">ARCHITECTURAL STATEMENT</span>
-              <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827] tracking-tight uppercase mt-0.5">{t('about_us')}</h1>
-            </div>
+    <EditorialPageLayout
+      category="ARCHITECTURAL STATEMENT"
+      title={t('about_us')}
+      subtitle="GOGUMA는 기획의 직관성과 소프트웨어 엔지니어링의 엄밀함을 하나의 로컬 우선 스튜디오로 결합합니다."
+      tabs={tabs}
+      activeTabId="about"
+    >
+      <EditorialSection chapter="The Vision">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 pt-2">
+          <div className="lg:col-span-6 space-y-6">
+            <p className="text-[20px] sm:text-[22px] text-[#000000] font-semibold leading-[1.8]">
+              Technical architecture should be as intuitive as a sketch and as rigorous as an engineering blueprint.
+              We provide the bridge between conceptual design, business requirements, and high-level agentic development.
+            </p>
+            <p className="text-[19px] sm:text-[20px] text-[#3F3F3C] leading-[1.85]">
+              Our platform generates 11 core software specification documents alongside an interactive local runtime,
+              eliminating AI hallucinations before a single line of production code is written.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            <div className="space-y-5">
-              <h2 className="text-xl font-semibold text-[#111827] uppercase tracking-wider">The Vision</h2>
-              <p className="text-[#374151] font-sans leading-relaxed text-base">
-                Technical architecture should be as intuitive as a sketch and as rigorous as an engineering blueprint. 
-                We provide the bridge between conceptual design, business requirements, and high-level agentic development.
-              </p>
-              <p className="text-[#4B5563] font-sans leading-relaxed text-sm">
-                Our platform generates 11 core software specification documents alongside an interactive local runtime, 
-                eliminating AI hallucinations before a single line of production code is written.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              {values.map((v) => (
-                <div key={v.title} className="p-5 bg-[#F7F8FA] rounded-xl border border-[#E5E7EB] space-y-2">
-                  <div className="flex items-center gap-2.5">
-                    <v.icon size={16} className="text-[#1E3A8A]" />
-                    <h3 className="font-semibold text-sm text-[#111827] uppercase tracking-wider">{v.title}</h3>
-                  </div>
-                  <p className="text-xs text-[#4B5563] leading-relaxed font-sans">{v.description}</p>
+          <div className="lg:col-span-6 border-t lg:border-t-0 border-[#000000] divide-y divide-[#E4E2DC]">
+            {values.map((v) => (
+              <div key={v.title} className="py-6 first:pt-0 space-y-2.5">
+                <div className="flex items-baseline gap-4">
+                  <span className="text-[16px] font-bold tracking-[0.14em] text-[#52524E] tabular-nums">
+                    {v.index}
+                  </span>
+                  <h3 className="text-[22px] sm:text-[24px] font-extrabold text-[#000000] tracking-tight">
+                    {v.title}
+                  </h3>
                 </div>
-              ))}
-            </div>
+                <p className="text-[18px] sm:text-[19px] text-[#3F3F3C] leading-[1.75] pl-10">
+                  {v.description}
+                </p>
+              </div>
+            ))}
           </div>
-        </motion.div>
-      </div>
-    </div>
+        </div>
+      </EditorialSection>
+    </EditorialPageLayout>
   );
 }
