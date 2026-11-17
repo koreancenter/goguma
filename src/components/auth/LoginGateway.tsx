@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { auth, LocalUser } from '../../lib/localAuth';
+import Footer from '../classic/layout/Footer';
 
 export default function LoginGateway() {
   const navigate = useNavigate();
@@ -390,11 +391,8 @@ export default function LoginGateway() {
         </section>
       </main>
 
-      {/* Quiet Bottom Line */}
-      <footer className="py-4 px-6 sm:px-10 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-[#8C8B85] border-t border-[#E4E2DC] bg-[#FFFFFF] font-sans">
-        <span>GOGUMA Free Software (MIT)</span>
-        <span className="uppercase tracking-[0.12em]">Zero Server Telemetry · Local IndexedDB</span>
-      </footer>
+      {/* Common Global Editorial Footer */}
+      <Footer />
     </div>
   );
 }

@@ -10,6 +10,10 @@ const RELATED_SITES = [
   { label: 'eerum.goguma.app', url: 'https://eerum.goguma.app' },
   { label: 'vibevault.goguma.app', url: 'https://vibevault.goguma.app' },
   { label: 'vibecalendar.goguma.app', url: 'https://vibecalendar.goguma.app' },
+  { label: 'koreancenter.net', url: 'https://koreancenter.net' },
+  { label: 'slide.koreancenter.net', url: 'https://slide.koreancenter.net' },
+  { label: 'projects.koreancenter.net', url: 'https://projects.koreancenter.net' },
+  { label: 'aipodium.net', url: 'https://aipodium.net' },
 ];
 
 export default function Footer() {
@@ -47,21 +51,7 @@ export default function Footer() {
     <footer className="w-full bg-[#FFFFFF] text-[#111111] font-sans border-t border-[#E4E2DC]">
       {/* Top Black Utility Menu Strip — Same Font & Sharp Editorial Scale as Top Bar */}
       <div className="w-full bg-[#000000] text-[#FFFFFF]">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 min-h-14 py-2.5 flex flex-wrap items-center gap-x-6 gap-y-2">
-          {/* Left Social Media Icon: GitHub */}
-          <div className="flex items-center pr-5 border-r border-white/25">
-            <a
-              href="https://github.com/koreancenter/goguma.git"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub Repository"
-              title="GitHub: https://github.com/koreancenter/goguma.git"
-              className="p-1.5 -ml-1.5 text-[#FFFFFF] hover:text-[#FFE600] rounded-none transition-colors inline-flex items-center justify-center"
-            >
-              <Github size={17} />
-            </a>
-          </div>
-
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 min-h-14 py-2.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
           {/* 6 Editorial Policy Menu Items */}
           <nav className="flex flex-wrap items-center gap-x-6 sm:gap-x-8 gap-y-2" aria-label="푸터 정책 메뉴">
             <button
@@ -116,6 +106,20 @@ export default function Footer() {
               쿠키 정책
             </button>
           </nav>
+
+          {/* Right Social Media Icon: GitHub (Matches Sejong SNS Position) */}
+          <div className="flex items-center shrink-0">
+            <a
+              href="https://github.com/koreancenter/goguma.git"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub Repository"
+              title="GitHub: https://github.com/koreancenter/goguma.git"
+              className="p-1.5 -mr-1.5 text-[#FFFFFF] hover:text-[#FFE600] rounded-none transition-colors inline-flex items-center justify-center"
+            >
+              <Github size={18} />
+            </a>
+          </div>
         </div>
       </div>
 
@@ -197,7 +201,7 @@ export default function Footer() {
               <button
                 type="button"
                 onClick={() => setIsSiteMenuOpen(prev => !prev)}
-                className="min-w-[180px] sm:min-w-[200px] px-4 flex items-center justify-between gap-3 text-[13px] font-bold text-[#111111] hover:bg-[#F6F5F1] transition-colors cursor-pointer rounded-none"
+                className="min-w-[205px] sm:min-w-[225px] px-4 flex items-center justify-between gap-3 text-[13px] font-bold text-[#111111] hover:bg-[#F6F5F1] transition-colors cursor-pointer rounded-none"
                 aria-haspopup="listbox"
                 aria-expanded={isSiteMenuOpen}
               >
@@ -231,7 +235,7 @@ export default function Footer() {
                 <div
                   role="listbox"
                   aria-label="관련 사이트 목록"
-                  className="absolute left-0 right-0 bottom-full mb-1 bg-[#FFFFFF] border border-[#000000] shadow-xl z-50 rounded-none divide-y divide-[#E4E2DC]"
+                  className="absolute left-0 right-0 bottom-full mb-1 bg-[#FFFFFF] border border-[#000000] shadow-xl z-50 rounded-none divide-y divide-[#E4E2DC] max-h-72 overflow-y-auto"
                 >
                   {RELATED_SITES.map((site) => (
                     <button

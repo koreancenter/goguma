@@ -13,6 +13,7 @@ import type { PreferencesTab } from '../guide/PreferencesModal';
 import { WritingCanvas } from '../classic/WritingCanvas';
 import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
 import { WorkspaceDropZoneOverlay } from '../classic/WorkspaceDropZoneOverlay';
+import Footer from '../classic/layout/Footer';
 
 const LocalBackupModal = lazy(() =>
   import('../classic/LocalBackupModal').then(m => ({ default: m.LocalBackupModal }))
@@ -339,12 +340,12 @@ export default function WorkspaceView({
   ];
 
   return (
-    <div className="flex flex-col h-screen w-full overflow-hidden bg-[#FFFFFF] text-[#000000] font-sans selection:bg-[#000000] selection:text-[#FFFFFF]">
-      {/* Sejong Architectural Two-Tier Header + Full-Width 9-Column Mega Menu */}
+    <div className="flex flex-col min-h-screen w-full bg-[#FFFFFF] text-[#000000] font-sans selection:bg-[#000000] selection:text-[#FFFFFF]">
+      {/* Sejong Architectural Two-Tier Header + Full-Width 10-Column Mega Menu */}
       <div
         ref={headerWrapperRef}
         onMouseLeave={() => setIsMegaMenuOpen(false)}
-        className="relative shrink-0 z-40 select-none bg-[#FFFFFF]"
+        className="sticky top-0 shrink-0 z-40 select-none bg-[#FFFFFF]"
       >
         {/* Tier 1: Editorial Black Utility Strip (#000000) — Unified Editorial Scale + Sharp Rectangular Actions */}
         <div className="relative z-[60] h-14 bg-[#000000] text-[#FFFFFF] border-b border-white/20 pl-4 sm:pl-6 pr-0 flex items-center justify-between gap-3">
@@ -891,8 +892,8 @@ export default function WorkspaceView({
         )}
       </div>
 
-      {/* Main Workspace Shell: Fluid Remaining Height */}
-      <div className={`flex-1 min-h-0 flex overflow-hidden bg-[#FFFFFF] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
+      {/* Main Workspace Shell: Full Remaining Viewport Height with Independent Pane Scrolling */}
+      <div className={`h-[calc(100vh-136px)] min-h-[580px] shrink-0 flex overflow-hidden bg-[#FFFFFF] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
         <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">
           {/* 50% Left Editor Pane (#FFFFFF) */}
           <div
@@ -965,6 +966,9 @@ export default function WorkspaceView({
           </div>
         </div>
       </div>
+
+      {/* Common Global Editorial Footer */}
+      <Footer />
 
       {isTemplateModalOpen && (
         <Suspense fallback={null}>
