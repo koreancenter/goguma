@@ -142,39 +142,39 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
   const isLightPreview = activePreset.id === 'porcelain-sapphire-clean';
 
   return (
-    <div className="pt-8 border-t border-[#E5E7EB] space-y-8 text-[#111827] font-sans">
+    <div className="space-y-10 text-[#111111] font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-lg bg-[#EFF6FF] text-[#1E3A8A]">
-              <Palette size={17} />
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[#000000]">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[#52524E] tracking-[0.08em]">
+              03
             </span>
-            <h3 className="font-sans font-semibold text-[#111827] text-[18px] tracking-tight">
+            <h3 className="font-extrabold text-[#000000] text-[22px] sm:text-[26px] tracking-[-0.02em]">
               비주얼 테마 및 디자인 규약 조율
             </h3>
-            <span className="text-xs text-[#6B7280] font-sans">
+            <span className="text-[15px] font-bold font-mono text-[#52524E]">
               05_design_system.md
             </span>
           </div>
-          <p className="text-sm text-[#4B5563] mt-1.5 font-sans leading-relaxed">
+          <p className="text-[17px] sm:text-[19px] text-[#52524E] leading-[1.7] pl-8">
             원하는 테마 프리셋을 선택하면 11종 사양서와 프로토타입에 디자인 규약이 즉시 동기화됩니다.
           </p>
         </div>
 
-        <div className="shrink-0 flex items-center gap-2 text-xs font-sans text-[#4B5563] bg-[#F7F8FA] px-3 py-1.5 rounded-lg">
-          <span className="w-2.5 h-2.5 rounded-sm border border-black/10" style={{ backgroundColor: activePreset.primaryColor }} />
-          <span className="text-[#111827] font-medium">{activePreset.name}</span>
+        <div className="shrink-0 flex items-center gap-2.5 text-[15px] text-[#111111] bg-[#F6F5F1] border border-[#E4E2DC] px-4 py-2.5 rounded-none">
+          <span className="w-3.5 h-3.5 border border-black/20 shrink-0" style={{ backgroundColor: activePreset.primaryColor }} />
+          <span className="font-bold whitespace-nowrap">{activePreset.name}</span>
         </div>
       </div>
 
       {/* 1. 4 Signature Theme Preset Cards */}
-      <div className="space-y-3">
-        <label className="text-xs font-sans font-semibold text-[#111827] block">
+      <div className="space-y-4">
+        <label className="text-[17px] sm:text-[18px] font-extrabold text-[#000000] block">
           4종 감성 미니멀리즘 테마 프리셋
         </label>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {THEME_PRESETS.map((preset) => {
             const isSelected = activePreset.id === preset.id;
             return (
@@ -182,61 +182,61 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 key={preset.id}
                 type="button"
                 onClick={() => handleSelectPreset(preset)}
-                className={`p-5 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between space-y-3.5 ${
+                className={`p-6 rounded-none text-left transition-colors cursor-pointer flex flex-col justify-between space-y-4 border ${
                   isSelected
-                    ? 'bg-[#EFF6FF] ring-2 ring-[#1E3A8A]/25'
-                    : 'bg-[#F7F8FA] hover:bg-[#F1F5F9]'
+                    ? 'bg-[#FFFFFF] border-2 border-[#000000]'
+                    : 'bg-[#F6F5F1] border-[#E4E2DC] hover:border-[#000000]'
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <span className="font-sans font-semibold text-sm text-[#111827]">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-extrabold text-[18px] text-[#000000]">
                         {preset.name}
                       </span>
-                      <span className="text-[#D1D5DB]">·</span>
-                      <span className="text-[#1E3A8A] font-sans text-[11px] font-semibold">
+                      <span className="text-[#787772]">·</span>
+                      <span className="text-[#52524E] text-[15px] font-bold">
                         {preset.tag}
                       </span>
                     </div>
-                    <p className="text-xs text-[#4B5563] mt-1.5 leading-relaxed font-sans">
+                    <p className="text-[15px] sm:text-[16px] text-[#52524E] mt-2 leading-[1.65]">
                       {preset.description}
                     </p>
                   </div>
                   <div className="shrink-0 pt-0.5">
                     {isSelected ? (
-                      <span className="w-5 h-5 rounded-md bg-[#1E3A8A] text-white flex items-center justify-center font-bold">
-                        <Check size={12} strokeWidth={3} />
+                      <span className="w-6 h-6 rounded-none bg-[#000000] text-[#FFE600] flex items-center justify-center font-bold">
+                        <Check size={14} strokeWidth={3} />
                       </span>
                     ) : (
-                      <span className="w-5 h-5 rounded-md border border-[#D1D5DB] bg-[#FFFFFF] block" />
+                      <span className="w-6 h-6 rounded-none border border-[#CBC8BF] bg-[#FFFFFF] block" />
                     )}
                   </div>
                 </div>
 
                 {/* Color Swatch Bar */}
-                <div className="flex items-center gap-2 pt-2.5 border-t border-[#E5E7EB]/80">
+                <div className="flex items-center gap-2.5 pt-3 border-t border-[#E4E2DC]">
                   <div 
-                    className="w-4 h-4 rounded-sm border border-black/15 shrink-0"
+                    className="w-5 h-5 rounded-none border border-black/20 shrink-0"
                     style={{ backgroundColor: preset.paperBg }}
                     title={`배경: ${preset.paperBg}`}
                   />
                   <div 
-                    className="w-4 h-4 rounded-sm border border-black/15 shrink-0"
+                    className="w-5 h-5 rounded-none border border-black/20 shrink-0"
                     style={{ backgroundColor: preset.primaryColor }}
                     title={`주조색: ${preset.primaryColor}`}
                   />
                   <div 
-                    className="w-4 h-4 rounded-sm border border-black/15 shrink-0"
+                    className="w-5 h-5 rounded-none border border-black/20 shrink-0"
                     style={{ backgroundColor: preset.accentColor }}
                     title={`악센트: ${preset.accentColor}`}
                   />
                   <div 
-                    className="w-4 h-4 rounded-sm border border-black/15 shrink-0"
+                    className="w-5 h-5 rounded-none border border-black/20 shrink-0"
                     style={{ backgroundColor: preset.textColor }}
                     title={`본문색: ${preset.textColor}`}
                   />
-                  <span className="text-[11px] font-sans tabular-nums text-[#6B7280] ml-auto">
+                  <span className="text-[14px] font-mono font-bold tabular-nums text-[#52524E] ml-auto">
                     {preset.primaryColor}
                   </span>
                 </div>
@@ -247,21 +247,21 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
       </div>
 
       {/* 2. Typography & Input Style Customizer */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-[#E5E7EB]">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-6 border-t border-[#E4E2DC]">
         {/* Sans Weight Selector */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-[#111827] flex items-center gap-1.5">
-            <Type size={14} className="text-[#1E3A8A]" />
-            <span>DM Sans &amp; SUIT Variable 위계</span>
+        <div className="space-y-3">
+          <label className="text-[16px] font-extrabold text-[#000000] flex items-center gap-2">
+            <Type size={16} className="text-[#000000]" />
+            <span>타이포그래피 위계</span>
           </label>
-          <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => handleFontWeightChange('bold')}
-              className={`py-2.5 px-2.5 rounded-lg text-center transition-colors cursor-pointer font-medium ${
+              className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 headingWeight === 'bold'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
+                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
+                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
               }`}
             >
               Bold (700)
@@ -269,10 +269,10 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
             <button
               type="button"
               onClick={() => handleFontWeightChange('semibold')}
-              className={`py-2.5 px-2.5 rounded-lg text-center transition-colors cursor-pointer font-medium ${
+              className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 headingWeight === 'semibold'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
+                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
+                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
               }`}
             >
               SemiBold (600)
@@ -281,19 +281,19 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
         </div>
 
         {/* Input Field Style */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-[#111827] flex items-center gap-1.5">
-            <Sliders size={14} className="text-[#1E3A8A]" />
+        <div className="space-y-3">
+          <label className="text-[16px] font-extrabold text-[#000000] flex items-center gap-2">
+            <Sliders size={16} className="text-[#000000]" />
             <span>필기 입력창 스타일</span>
           </label>
-          <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => handleInputStyleChange('underline')}
-              className={`py-2.5 px-2.5 rounded-lg text-center transition-colors cursor-pointer font-medium ${
+              className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 inputStyle === 'underline'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
+                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
+                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
               }`}
             >
               하단 밑줄형
@@ -301,10 +301,10 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
             <button
               type="button"
               onClick={() => handleInputStyleChange('box')}
-              className={`py-2.5 px-2.5 rounded-lg text-center transition-colors cursor-pointer font-medium ${
+              className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 inputStyle === 'box'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
+                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
+                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
               }`}
             >
               미니멀 박스
@@ -313,18 +313,18 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
         </div>
 
         {/* Layout Structure */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-[#111827] block">
+        <div className="space-y-3">
+          <label className="text-[16px] font-extrabold text-[#000000] block">
             화면 분할 구조
           </label>
-          <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => handleLayoutChange('standard')}
-              className={`py-2.5 px-2.5 rounded-lg text-center transition-colors cursor-pointer font-medium ${
+              className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 currentLayout === 'standard'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
+                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
+                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
               }`}
             >
               2-Track 비대칭
@@ -332,10 +332,10 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
             <button
               type="button"
               onClick={() => handleLayoutChange('dashboard')}
-              className={`py-2.5 px-2.5 rounded-lg text-center transition-colors cursor-pointer font-medium ${
+              className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 currentLayout === 'dashboard'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
+                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
+                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
               }`}
             >
               와이드 뷰
@@ -345,21 +345,21 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
       </div>
 
       {/* 3. Live UI Component Preview Card */}
-      <div className="pt-4 border-t border-[#E5E7EB]">
-        <div className="flex items-center justify-between mb-3 text-xs">
-          <span className="font-sans font-semibold text-[#111827]">
+      <div className="pt-6 border-t border-[#E4E2DC]">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4 text-[16px]">
+          <span className="font-extrabold text-[#000000]">
             선택된 테마 토큰 프리뷰
           </span>
-          <span className="font-sans text-[#6B7280]">
+          <span className="font-mono text-[15px] text-[#52524E]">
             {activePreset.engName} · {activePreset.primaryColor}
           </span>
         </div>
 
         <div 
-          className="p-5 sm:p-6 rounded-xl border transition-colors space-y-4"
+          className="p-6 sm:p-7 rounded-none border transition-colors space-y-5"
           style={{ 
             backgroundColor: activePreset.paperBg,
-            borderColor: isLightPreview ? '#E5E7EB' : activePreset.borderColor,
+            borderColor: isLightPreview ? '#E4E2DC' : activePreset.borderColor,
             color: activePreset.textColor
           }}
         >
@@ -367,14 +367,14 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <span
-                className="text-[10px] font-sans font-semibold uppercase tracking-widest block"
-                style={{ color: isLightPreview ? '#6B7280' : '#94A3B8' }}
+                className="text-[13px] font-bold uppercase tracking-widest block"
+                style={{ color: isLightPreview ? '#52524E' : '#94A3B8' }}
               >
-                Sample Output Preview · DM Sans &amp; SUIT Variable
+                Sample Output Preview
               </span>
               <h4 
-                className={`text-base tracking-tight mt-0.5 font-sans ${
-                  headingWeight === 'bold' ? 'font-bold' : 'font-semibold'
+                className={`text-[20px] tracking-tight mt-1 font-sans ${
+                  headingWeight === 'bold' ? 'font-extrabold' : 'font-semibold'
                 }`}
                 style={{ color: activePreset.textColor }}
               >
@@ -383,11 +383,11 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
             </div>
 
             {/* Unboxed Metadata Indicators */}
-            <div className="flex items-center gap-3 text-xs font-sans">
+            <div className="flex items-center gap-3 text-[15px] font-bold">
               <span style={{ color: activePreset.primaryColor }}>
                 활성 인스턴스 3건
               </span>
-              <span style={{ color: isLightPreview ? '#9CA3AF' : '#7A889B' }}>·</span>
+              <span style={{ color: isLightPreview ? '#8C8B85' : '#7A889B' }}>·</span>
               <span style={{ color: activePreset.accentColor }}>
                 정상 배포 12건
               </span>
@@ -402,7 +402,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                   type="text"
                   readOnly
                   value="서비스 도메인: api.platform.service/v1"
-                  className="w-full bg-transparent border-0 border-b-2 px-2 py-2 text-xs sm:text-sm font-sans outline-none"
+                  className="w-full bg-transparent border-0 border-b-2 px-2 py-2.5 text-[16px] font-sans outline-none"
                   style={{ borderColor: activePreset.accentColor, color: activePreset.textColor }}
                 />
               ) : (
@@ -410,10 +410,10 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                   type="text"
                   readOnly
                   value="서비스 도메인: api.platform.service/v1"
-                  className="w-full border px-3.5 py-2.5 text-xs sm:text-sm font-sans rounded-lg outline-none"
+                  className="w-full border px-4 py-3 text-[16px] font-sans rounded-none outline-none"
                   style={{
                     backgroundColor: isLightPreview ? '#FFFFFF' : '#13181F',
-                    borderColor: isLightPreview ? '#E5E7EB' : activePreset.borderColor,
+                    borderColor: isLightPreview ? '#E4E2DC' : activePreset.borderColor,
                     color: activePreset.textColor,
                   }}
                 />
@@ -422,7 +422,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
 
             <button
               type="button"
-              className="px-4 py-2.5 rounded-lg font-semibold text-xs shadow-none shrink-0 cursor-default"
+              className="px-5 py-3 rounded-none font-bold text-[15px] shadow-none shrink-0 cursor-default"
               style={{ 
                 backgroundColor: activePreset.primaryColor, 
                 color: '#FFFFFF'
@@ -434,55 +434,55 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
 
           {/* Color Tokens Hex Chips */}
           <div
-            className="flex flex-wrap items-center gap-2 pt-3 border-t text-xs font-sans"
-            style={{ borderColor: isLightPreview ? '#E5E7EB' : 'rgba(255,255,255,0.08)' }}
+            className="flex flex-wrap items-center gap-2.5 pt-4 border-t text-[15px] font-mono"
+            style={{ borderColor: isLightPreview ? '#E4E2DC' : 'rgba(255,255,255,0.08)' }}
           >
             <button
               type="button"
               onClick={() => handleCopyHex(activePreset.paperBg)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border cursor-pointer transition-colors"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-none border cursor-pointer transition-colors"
               style={{
                 backgroundColor: isLightPreview ? '#FFFFFF' : '#13181F',
-                borderColor: isLightPreview ? '#E5E7EB' : 'rgba(255,255,255,0.08)',
+                borderColor: isLightPreview ? '#E4E2DC' : 'rgba(255,255,255,0.12)',
                 color: activePreset.textColor,
               }}
               title="배경색 복사"
             >
-              <span className="w-3 h-3 rounded-sm border border-black/15" style={{ backgroundColor: activePreset.paperBg }} />
+              <span className="w-3.5 h-3.5 border border-black/15" style={{ backgroundColor: activePreset.paperBg }} />
               <span>배경: {activePreset.paperBg}</span>
-              {copiedHex === activePreset.paperBg && <Check size={12} style={{ color: activePreset.accentColor }} />}
+              {copiedHex === activePreset.paperBg && <Check size={14} style={{ color: activePreset.accentColor }} />}
             </button>
 
             <button
               type="button"
               onClick={() => handleCopyHex(activePreset.primaryColor)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border cursor-pointer transition-colors"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-none border cursor-pointer transition-colors"
               style={{
                 backgroundColor: isLightPreview ? '#FFFFFF' : '#13181F',
-                borderColor: isLightPreview ? '#E5E7EB' : 'rgba(255,255,255,0.08)',
+                borderColor: isLightPreview ? '#E4E2DC' : 'rgba(255,255,255,0.12)',
                 color: activePreset.textColor,
               }}
               title="주조색 복사"
             >
-              <span className="w-3 h-3 rounded-sm border border-black/15" style={{ backgroundColor: activePreset.primaryColor }} />
+              <span className="w-3.5 h-3.5 border border-black/15" style={{ backgroundColor: activePreset.primaryColor }} />
               <span>주조색: {activePreset.primaryColor}</span>
-              {copiedHex === activePreset.primaryColor && <Check size={12} style={{ color: activePreset.accentColor }} />}
+              {copiedHex === activePreset.primaryColor && <Check size={14} style={{ color: activePreset.accentColor }} />}
             </button>
 
             <button
               type="button"
               onClick={() => handleCopyHex(activePreset.accentColor)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border cursor-pointer transition-colors"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-none border cursor-pointer transition-colors"
               style={{
                 backgroundColor: isLightPreview ? '#FFFFFF' : '#13181F',
-                borderColor: isLightPreview ? '#E5E7EB' : 'rgba(255,255,255,0.08)',
+                borderColor: isLightPreview ? '#E4E2DC' : 'rgba(255,255,255,0.12)',
                 color: activePreset.textColor,
               }}
               title="악센트색 복사"
             >
-              <span className="w-3 h-3 rounded-sm border border-black/15" style={{ backgroundColor: activePreset.accentColor }} />
+              <span className="w-3.5 h-3.5 border border-black/15" style={{ backgroundColor: activePreset.accentColor }} />
               <span>악센트: {activePreset.accentColor}</span>
-              {copiedHex === activePreset.accentColor && <Check size={12} style={{ color: activePreset.accentColor }} />}
+              {copiedHex === activePreset.accentColor && <Check size={14} style={{ color: activePreset.accentColor }} />}
             </button>
           </div>
         </div>

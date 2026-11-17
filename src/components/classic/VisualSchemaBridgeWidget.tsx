@@ -216,57 +216,59 @@ export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> =
   };
 
   return (
-    <div className="pt-8 border-t border-[#E5E7EB] space-y-8 font-sans text-[#111827]">
+    <div className="space-y-10 font-sans text-[#111111]">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-[#EFF6FF] text-[#1E3A8A]">
-              <Table size={15} />
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[#000000]">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[#52524E] tracking-[0.08em]">
+              03
             </span>
-            <h3 className="font-sans font-semibold text-[18px] text-[#111827] tracking-[-0.015em]">
-              엑셀 장부 형태의 1:1 자동 매핑 미리보기 (Visual Schema Bridge)
+            <h3 className="font-extrabold text-[22px] sm:text-[26px] text-[#000000] tracking-[-0.02em]">
+              엑셀 장부 1:1 자동 매핑 미리보기
             </h3>
           </div>
-          <p className="text-sm text-[#4B5563] leading-[1.7]">
-            비전공자도 친숙한 엑셀 장부 표 형태로, 서술하신 업무 단어가 실제 소프트웨어의 입력창과 데이터베이스로 어떻게 변환되는지 실시간으로 보여줍니다.
+          <p className="text-[17px] sm:text-[19px] text-[#52524E] leading-[1.7] pl-8">
+            서술하신 업무 단어가 실제 소프트웨어의 입력창과 데이터베이스로 어떻게 변환되는지 실시간으로 보여줍니다.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
+            type="button"
             onClick={handleCopySqlDdl}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] text-xs font-medium text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-none bg-[#F6F5F1] border border-[#E4E2DC] hover:bg-[#000000] hover:text-[#FFE600] hover:border-[#000000] text-[15px] font-bold text-[#111111] transition-colors cursor-pointer whitespace-nowrap"
             title="PostgreSQL / D1 SQL DDL 쿼리 복사"
           >
-            <Table size={12} className="text-[#1E3A8A]" />
+            <Table size={15} />
             <span>SQL DDL 복사</span>
           </button>
           <button
+            type="button"
             onClick={handleCopySchemaDefinition}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] text-xs font-medium text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[15px] font-bold text-[#FFFFFF] transition-colors cursor-pointer whitespace-nowrap"
             title="TypeScript 인터페이스 규격 복사"
           >
-            <Sparkles size={12} className="text-[#1E3A8A]" />
+            <Sparkles size={15} />
             <span>TS 타입 복사</span>
           </button>
         </div>
       </div>
 
       {/* Preset Suggestion Callout */}
-      <div className="bg-[#F7F8FA] rounded-xl p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-[#1E3A8A]">업무 도메인 템플릿 빠른 적용</span>
-          <span className="text-[11px] text-[#9CA3AF]">클릭 시 데이터 스키마 즉시 채움</span>
+      <div className="bg-[#F6F5F1] border border-[#E4E2DC] rounded-none p-6 sm:p-7 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-[16px] font-extrabold text-[#000000]">업무 도메인 템플릿 빠른 적용</span>
+          <span className="text-[15px] text-[#787772]">클릭 시 데이터 스키마 즉시 채움</span>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
           {PRESET_DOMAIN_TEMPLATES.map((tmpl) => (
             <button
               key={tmpl.name}
+              type="button"
               onClick={() => handleApplyPreset(tmpl.rawText)}
-              className="px-3 py-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#EFF6FF] text-[#4B5563] hover:text-[#1E3A8A] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-none bg-[#FFFFFF] border border-[#E4E2DC] hover:bg-[#000000] text-[#111111] hover:text-[#FFE600] hover:border-[#000000] text-[15px] font-bold transition-colors cursor-pointer flex items-center gap-2"
             >
-              <span className="text-[#1E3A8A] font-bold">·</span>
               <span>{tmpl.name}</span>
             </button>
           ))}
@@ -274,111 +276,100 @@ export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> =
       </div>
 
       {copiedNotification && (
-        <div className="px-4 py-2.5 rounded-xl bg-[#EFF6FF] text-[#1E3A8A] text-xs font-medium flex items-center gap-2">
-          <Check size={13} className="stroke-[2.5] shrink-0" />
+        <div className="px-5 py-3.5 rounded-none bg-[#F6F5F1] border border-[#000000] text-[#000000] text-[17px] font-bold flex items-center gap-2.5">
+          <Check size={17} className="stroke-[2.5] shrink-0" />
           <span>{copiedNotification}</span>
         </div>
       )}
 
       {/* 1:1 Spreadsheet Live Mapping Table */}
-      <div className="overflow-hidden bg-[#FFFFFF] border-t border-b border-[#E5E7EB]">
-        {/* Table Column Headers */}
-        <div className="bg-[#F7F8FA] border-b border-[#E5E7EB] px-4 py-3 grid grid-cols-12 text-[11px] font-sans font-semibold text-[#4B5563] select-none">
-          <div className="col-span-3 flex items-center gap-1">
-            <span>도메인 필드 (일상 용어)</span>
+      <div className="overflow-x-auto bg-[#FFFFFF] border-t-2 border-t-[#000000] border-b border-b-[#000000]">
+        <div className="min-w-[600px]">
+          {/* Table Column Headers */}
+          <div className="bg-[#000000] px-5 py-3.5 grid grid-cols-12 text-[15px] font-bold text-[#FFFFFF] select-none">
+            <div className="col-span-3">도메인 필드</div>
+            <div className="col-span-4">화면 입력 UI</div>
+            <div className="col-span-3">데이터 규격</div>
+            <div className="col-span-2 text-right">장부 예시</div>
           </div>
-          <div className="col-span-4 flex items-center gap-1">
-            <span>실제 화면 입력 UI (Component)</span>
+
+          {/* Dynamic Mapping Rows */}
+          <div className="divide-y divide-[#E4E2DC]">
+            {detectedFields.map((field) => {
+              const Icon = field.uiIcon;
+              const isSelected = selectedFieldId === field.id;
+
+              return (
+                <div 
+                  key={field.id}
+                  onClick={() => setSelectedFieldId(isSelected ? null : field.id)}
+                  className={`px-5 py-4 grid grid-cols-12 items-center text-[16px] transition-colors cursor-pointer ${
+                    isSelected ? 'bg-[#F6F5F1]' : 'hover:bg-[#F6F5F1]/60'
+                  }`}
+                >
+                  {/* 1. Domain Term */}
+                  <div className="col-span-3 flex items-center gap-2 truncate pr-2">
+                    <span className="font-bold text-[#000000] truncate">
+                      {field.domainName}
+                    </span>
+                    <span className="text-[14px] text-[#787772] hidden md:inline truncate">
+                      ({field.fieldName})
+                    </span>
+                  </div>
+
+                  {/* 2. UI Component Representation */}
+                  <div className="col-span-4 flex items-center gap-2.5 truncate pr-2">
+                    <Icon size={15} className="text-[#000000] shrink-0" />
+                    <span className="text-[#2B2B29] truncate text-[15px] font-medium">
+                      {field.uiComponent}
+                    </span>
+                  </div>
+
+                  {/* 3. Software Type */}
+                  <div className="col-span-3 flex items-center gap-2 truncate pr-2">
+                    <span className="font-mono text-[14px] px-2.5 py-1 rounded-none bg-[#F6F5F1] border border-[#E4E2DC] text-[#000000] font-bold truncate">
+                      {field.tsType}
+                    </span>
+                    <span className="text-[14px] text-[#52524E] font-medium hidden sm:inline">
+                      {field.isRequired ? '필수' : '선택'}
+                    </span>
+                  </div>
+
+                  {/* 4. Realistic Spreadsheet Cell Preview */}
+                  <div className="col-span-2 text-right truncate">
+                    <span className="text-[15px] font-bold tabular-nums text-[#000000] inline-block truncate max-w-full">
+                      {field.sampleValue}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <div className="col-span-3 flex items-center gap-1">
-            <span>소프트웨어 데이터 규격</span>
-          </div>
-          <div className="col-span-2 text-right">
-            <span>장부 데이터 예시</span>
-          </div>
-        </div>
-
-        {/* Dynamic Mapping Rows */}
-        <div className="divide-y divide-[#E5E7EB]">
-          {detectedFields.map((field) => {
-            const Icon = field.uiIcon;
-            const isSelected = selectedFieldId === field.id;
-
-            return (
-              <div 
-                key={field.id}
-                onClick={() => setSelectedFieldId(isSelected ? null : field.id)}
-                className={`px-4 py-3.5 grid grid-cols-12 items-center text-xs transition-colors cursor-pointer ${
-                  isSelected ? 'bg-[#EFF6FF]' : 'hover:bg-[#F7F8FA]'
-                }`}
-              >
-                {/* 1. Domain Term */}
-                <div className="col-span-3 flex items-center gap-2 truncate pr-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] shrink-0" />
-                  <span className="font-sans font-semibold text-[#111827] truncate">
-                    {field.domainName}
-                  </span>
-                  <span className="font-sans text-[10px] text-[#9CA3AF] hidden md:inline truncate">
-                    ({field.fieldName})
-                  </span>
-                </div>
-
-                {/* 2. UI Component Representation */}
-                <div className="col-span-4 flex items-center gap-2 truncate pr-2">
-                  <span className="p-1.5 rounded-md bg-[#EFF6FF] text-[#1E3A8A] shrink-0">
-                    <Icon size={12} />
-                  </span>
-                  <span className="text-[#4B5563] truncate text-[11px] font-medium">
-                    {field.uiComponent}
-                  </span>
-                </div>
-
-                {/* 3. Software Type */}
-                <div className="col-span-3 flex items-center gap-1.5 truncate pr-2">
-                  <span className="font-sans text-[10px] px-2 py-0.5 rounded bg-[#F7F8FA] text-[#1E3A8A] font-semibold truncate">
-                    {field.tsType}
-                  </span>
-                  {field.isRequired ? (
-                    <span className="text-[10px] text-[#4B5563] font-sans hidden sm:inline">필수</span>
-                  ) : (
-                    <span className="text-[10px] text-[#9CA3AF] font-sans hidden sm:inline">선택</span>
-                  )}
-                </div>
-
-                {/* 4. Realistic Spreadsheet Cell Preview */}
-                <div className="col-span-2 text-right truncate">
-                  <span className="font-sans text-[11px] tabular-nums text-[#111827] bg-[#F7F8FA] px-2 py-0.5 rounded inline-block truncate max-w-full">
-                    {field.sampleValue}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
 
       {/* Interactive Live Row Preview (Soft Tonal Callout) */}
-      <div className="bg-[#F7F8FA] rounded-xl p-5 space-y-3.5">
-        <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <Eye size={14} className="text-[#1E3A8A]" />
-            <span className="font-semibold text-[#111827]">실제 서비스 화면 생성 시 시뮬레이션</span>
+      <div className="bg-[#F6F5F1] border border-[#E4E2DC] rounded-none p-6 sm:p-7 space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[16px]">
+          <div className="flex items-center gap-2.5">
+            <Eye size={17} className="text-[#000000]" />
+            <span className="font-extrabold text-[#000000]">실제 서비스 화면 생성 시 시뮬레이션</span>
           </div>
-          <span className="text-[11px] font-sans font-medium text-[#1E3A8A]">
+          <span className="text-[15px] font-bold text-[#52524E]">
             {detectedFields.length}개 필드 자동 반영 중
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 pt-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 pt-1">
           {detectedFields.map((field) => (
-            <div key={field.id} className="bg-[#FFFFFF] p-3 rounded-lg space-y-1">
-              <span className="text-[11px] font-sans text-[#9CA3AF] block truncate">
+            <div key={field.id} className="bg-[#FFFFFF] border border-[#E4E2DC] p-4 rounded-none space-y-1.5">
+              <span className="text-[14px] text-[#787772] block truncate">
                 {field.domainName}
               </span>
-              <span className="font-sans font-semibold text-xs text-[#111827] block truncate">
+              <span className="font-bold text-[16px] text-[#000000] block truncate">
                 {field.sampleValue}
               </span>
-              <span className="text-[10px] font-sans text-[#1E3A8A] block truncate font-medium">
+              <span className="text-[14px] text-[#52524E] block truncate font-medium">
                 {field.uiComponent.split('(')[0].trim()}
               </span>
             </div>

@@ -91,29 +91,29 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
         codeBlock: {
           HTMLAttributes: {
-            class: 'bg-[#F6F5F1] p-3.5 rounded-[2px] font-mono text-xs text-[#111111] border border-[#E4E2DC] my-3',
+            class: 'bg-[#F6F5F1] p-4 rounded-none font-mono text-[16px] text-[#000000] border border-[#E4E2DC] my-4',
           },
         },
         blockquote: {
           HTMLAttributes: {
-            class: 'border-y border-[#E4E2DC] py-3 px-2 my-4 font-sans text-[#52524E] not-italic',
+            class: 'border-y border-[#E4E2DC] py-4 px-3 my-5 font-sans text-[#52524E] not-italic',
           },
         },
         bulletList: {
           HTMLAttributes: {
-            class: 'list-disc pl-5 my-2 space-y-1',
+            class: 'list-disc pl-6 my-3 space-y-2',
           },
         },
         orderedList: {
           HTMLAttributes: {
-            class: 'list-decimal pl-5 my-2 space-y-1',
+            class: 'list-decimal pl-6 my-3 space-y-2',
           },
         },
       }),
       Placeholder.configure({
         placeholder,
         emptyEditorClass:
-          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#8C8B85] before:float-left before:pointer-events-none before:h-0',
+          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#787772] before:float-left before:pointer-events-none before:h-0',
       }),
       Underline,
       ImageExtension.configure({
@@ -126,18 +126,18 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       StyledTiptapTable.configure({
         resizable: true,
         HTMLAttributes: {
-          class: 'tiptap-table-root w-full my-3 border-collapse',
+          class: 'tiptap-table-root w-full my-4 border-collapse',
         },
       }),
       TableRow,
       TableHeader.configure({
         HTMLAttributes: {
-          class: 'tiptap-th bg-[#F6F5F1] text-[#111111] font-semibold text-xs text-left p-2.5 border border-[#E4E2DC]',
+          class: 'tiptap-th bg-[#000000] text-[#FFFFFF] font-bold text-[16px] text-left p-3 border border-[#E4E2DC]',
         },
       }),
       TableCell.configure({
         HTMLAttributes: {
-          class: 'tiptap-td p-2.5 text-xs text-[#1C1C1A] border border-[#E4E2DC] bg-[#FFFFFF] align-top',
+          class: 'tiptap-td p-3 text-[17px] text-[#2B2B29] border border-[#E4E2DC] bg-[#FFFFFF] align-top',
         },
       }),
     ],
@@ -146,11 +146,11 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     editorProps: {
       attributes: {
         class: `w-full bg-transparent py-1 outline-none font-sans transition-all duration-200 focus:outline-none ${
-          readOnly ? 'text-[#52524E] cursor-not-allowed select-text' : 'text-[#1C1C1A]'
+          readOnly ? 'text-[#52524E] cursor-not-allowed select-text' : 'text-[#2B2B29]'
         } ${
           largeTextMode
-            ? 'text-lg sm:text-xl leading-[1.8] tracking-[-0.01em] min-h-[200px]'
-            : 'text-[15.5px] font-normal leading-[1.8] tracking-[-0.01em] min-h-[160px]'
+            ? 'text-[21px] sm:text-[23px] leading-[1.85] tracking-[-0.01em] min-h-[240px]'
+            : 'text-[19px] sm:text-[20px] font-normal leading-[1.85] tracking-[-0.01em] min-h-[200px]'
         }`,
       },
       handlePaste: (view, event) => {
@@ -459,27 +459,27 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   if (!editor) {
     return (
-      <div className="w-full min-h-[160px] bg-transparent p-2 animate-pulse text-[#9CA3AF] text-sm font-sans">
+      <div className="w-full min-h-[200px] bg-transparent p-2 animate-pulse text-[#787772] text-[18px] font-sans">
         에디터 초기화 중...
       </div>
     );
   }
 
-  // Minimal unobtrusive formatting toolbar button helpers
+  // Minimal unobtrusive formatting toolbar button helpers (Sejong Sharp Ink)
   const topBtnClass = (active: boolean) =>
-    `p-1.5 rounded-md transition-colors cursor-pointer ${
+    `p-2 rounded-none transition-colors cursor-pointer ${
       active
-        ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
-        : 'text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#111827]'
+        ? 'bg-[#000000] text-[#FFE600] font-bold'
+        : 'text-[#52524E] hover:bg-[#F6F5F1] hover:text-[#000000]'
     }`;
 
   const bubbleBtnClass = (active = false, destructive = false) =>
-    `p-1.5 rounded-md transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
+    `p-2 rounded-none transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
       destructive
-        ? 'text-[#6B7280] hover:bg-[#FEF2F2] hover:text-[#B91C1C]'
+        ? 'text-[#52524E] hover:bg-[#DC2626] hover:text-[#FFE600]'
         : active
-        ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
-        : 'text-[#4B5563] hover:bg-[#F7F8FA] hover:text-[#111827]'
+        ? 'bg-[#000000] text-[#FFE600] font-bold'
+        : 'text-[#52524E] hover:bg-[#F6F5F1] hover:text-[#000000]'
     }`;
 
   return (
@@ -492,7 +492,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             e.preventDefault();
           }
         }}
-        className="flex items-center gap-0.5 pb-2.5 mb-3 border-b border-[#E5E7EB]/80 flex-wrap select-none animate-in fade-in duration-150"
+        className="flex items-center gap-1 pb-3 mb-4 border-b border-[#E4E2DC] flex-wrap select-none animate-in fade-in duration-150"
       >
         {/* Text Formatting */}
         <button
@@ -656,52 +656,52 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           />
 
           {isImageModalOpen && (
-            <div className="absolute left-0 top-full mt-1.5 z-50 w-72 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-3.5 shadow-[0_12px_32px_-4px_rgba(15,23,42,0.12)] flex flex-col gap-2.5 text-xs text-[#111827]">
-              <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
-                <span className="font-sans text-xs tracking-tight text-[#4B5563] font-semibold flex items-center gap-1.5">
-                  <ImageIcon size={12} className="text-[#1E3A8A]" />
+            <div className="absolute left-0 top-full mt-2 z-50 w-80 bg-[#FFFFFF] border border-[#000000] rounded-none p-5 shadow-none flex flex-col gap-3.5 text-[16px] text-[#111111]">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#E4E2DC]">
+                <span className="font-sans text-[16px] tracking-tight text-[#000000] font-bold flex items-center gap-2">
+                  <ImageIcon size={15} className="text-[#000000]" />
                   이미지 삽입
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsImageModalOpen(false)}
-                  className="p-1 text-[#9CA3AF] hover:text-[#111827] rounded-md cursor-pointer"
+                  className="p-1.5 text-[#52524E] hover:text-[#000000] rounded-none cursor-pointer"
                   aria-label="닫기"
                 >
-                  <X size={12} />
+                  <X size={15} />
                 </button>
               </div>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] text-[#111827] hover:text-[#1E3A8A] font-medium text-xs transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-none bg-[#F6F5F1] border border-[#E4E2DC] hover:bg-[#000000] text-[#111111] hover:text-[#FFE600] hover:border-[#000000] font-bold text-[15px] transition-colors cursor-pointer"
               >
-                <Upload size={13} className="text-[#1E3A8A]" />
+                <Upload size={15} />
                 <span>파일 선택</span>
               </button>
 
-              <form onSubmit={handleImageUrlSubmit} className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-1.5">
+              <form onSubmit={handleImageUrlSubmit} className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
                   <input
                     type="url"
                     value={imageUrlInput}
                     onChange={(e) => setImageUrlInput(e.target.value)}
                     placeholder="https:// 이미지 URL"
-                    className="flex-1 bg-[#F7F8FA] focus:bg-[#FFFFFF] border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/15 focus:outline-none px-3 py-1.5 rounded-lg text-xs text-[#111827] placeholder-[#9CA3AF] transition-all"
+                    className="flex-1 bg-[#FFFFFF] border border-[#E4E2DC] focus:border-[#000000] focus:outline-none px-3.5 py-2.5 rounded-none text-[15px] text-[#111111] placeholder-[#787772] transition-colors"
                   />
                   <button
                     type="submit"
                     disabled={!imageUrlInput.trim()}
-                    className="px-3 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] disabled:opacity-35 disabled:cursor-not-allowed text-white text-xs font-medium cursor-pointer transition-colors"
+                    className="px-4 py-2.5 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] disabled:opacity-35 disabled:cursor-not-allowed text-white text-[15px] font-bold cursor-pointer transition-colors"
                   >
                     삽입
                   </button>
                 </div>
               </form>
 
-              <p className="text-[11px] text-[#4B5563] leading-relaxed">
-                캔버스 내 <kbd className="px-1.5 py-0.5 bg-[#F7F8FA] border border-[#E5E7EB] rounded text-[#111827] font-mono">Ctrl+V</kbd> 또는 드래그로도 삽입됩니다.
+              <p className="text-[14px] text-[#52524E] leading-relaxed">
+                캔버스 내 <kbd className="px-2 py-0.5 bg-[#F6F5F1] border border-[#E4E2DC] rounded-none text-[#000000] font-mono">Ctrl+V</kbd> 또는 드래그로도 삽입됩니다.
               </p>
             </div>
           )}
@@ -721,30 +721,30 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           title={isTableActive ? '표 편집 중 (플로팅 메뉴 사용)' : '표 삽입 (3×3)'}
           aria-label="표 삽입"
         >
-          <TableIcon size={13} />
+          <TableIcon size={15} />
         </button>
 
         {/* History: Undo / Redo */}
-        <div className="ml-auto flex items-center gap-0.5">
+        <div className="ml-auto flex items-center gap-1">
           <button
             type="button"
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
-            className="p-1.5 rounded-md text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#111827] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="p-2 rounded-none text-[#52524E] hover:bg-[#F6F5F1] hover:text-[#000000] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
             title="실행 취소 (Ctrl+Z)"
             aria-label="실행 취소"
           >
-            <Undo size={13} />
+            <Undo size={15} />
           </button>
           <button
             type="button"
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            className="p-1.5 rounded-md text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#111827] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="p-2 rounded-none text-[#52524E] hover:bg-[#F6F5F1] hover:text-[#000000] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
             title="다시 실행 (Ctrl+Y)"
             aria-label="다시 실행"
           >
-            <Redo size={13} />
+            <Redo size={15} />
           </button>
         </div>
       </div>
@@ -762,7 +762,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             // Keep active editor selection when clicking floating controls
             e.preventDefault();
           }}
-          className="absolute z-40 flex items-center gap-0.5 p-1 bg-[#FFFFFF]/95 border border-[#E5E7EB] rounded-lg backdrop-blur-md select-none transition-all duration-150 tiptap-table-bubble-menu max-w-full overflow-x-auto no-scrollbar"
+          className="absolute z-40 flex items-center gap-0.5 p-1.5 bg-[#FFFFFF] border border-[#000000] rounded-none select-none transition-all duration-150 tiptap-table-bubble-menu max-w-full overflow-x-auto no-scrollbar"
         >
           {/* Context 1: Selected Image Actions */}
           {isImageActive && (

@@ -158,22 +158,22 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
   };
 
   return (
-    <div className="pt-8 border-t border-[#E5E7EB] space-y-10 text-[#111827] font-sans">
+    <div className="space-y-12 text-[#111111] font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="p-1.5 rounded-lg bg-[#EFF6FF] text-[#1E3A8A]">
-              <Workflow size={16} />
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[#000000]">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[#52524E] tracking-[0.08em]">
+              03
             </span>
-            <h3 className="font-sans font-semibold text-[#111827] text-[18px] tracking-[-0.015em]">
-              핵심 기능 ↔ 화면 매핑 및 성공 여정 (Happy Path)
+            <h3 className="font-extrabold text-[#000000] text-[22px] sm:text-[26px] tracking-[-0.02em]">
+              핵심 기능 ↔ 화면 매핑 및 성공 여정
             </h3>
-            <span className="text-xs font-sans font-medium text-[#1E3A8A] bg-[#EFF6FF] px-2 py-0.5 rounded-md">
+            <span className="text-[15px] font-bold font-mono text-[#52524E]">
               02_roadmap.md
             </span>
           </div>
-          <p className="text-sm text-[#4B5563] font-sans leading-[1.7]">
+          <p className="text-[17px] sm:text-[19px] text-[#52524E] leading-[1.7] pl-8">
             소프트웨어가 제공할 필수 기능을 정의하고, 대상 화면과 사용자의 가장 이상적인 이용 동선을 매핑합니다.
           </p>
         </div>
@@ -181,34 +181,34 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
         <button
           type="button"
           onClick={handleAddFeature}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white text-xs font-medium transition-colors cursor-pointer self-start shrink-0 shadow-xs"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-[16px] font-bold transition-colors cursor-pointer self-start shrink-0 whitespace-nowrap"
         >
-          <Plus size={14} />
+          <Plus size={16} />
           <span>기능 추가</span>
         </button>
       </div>
 
       {/* 1. Feature to Screen Mapping */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#111827]">
-            <Layers size={15} className="text-[#1E3A8A]" />
-            <span>3대 필수 핵심 기능 ↔ 대상 화면 매핑</span>
+      <div className="space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 text-[18px] sm:text-[20px] font-extrabold text-[#000000]">
+            <Layers size={18} className="text-[#000000]" />
+            <span>필수 핵심 기능 ↔ 대상 화면 매핑</span>
           </div>
-          <span className="text-xs text-[#9CA3AF]">
+          <span className="text-[15px] text-[#787772] font-medium">
             각 기능이 어느 화면에서 동작하는지 지정
           </span>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           {features.map((f, idx) => (
             <div
               key={f.id}
-              className="p-5 rounded-xl bg-[#F7F8FA] space-y-3 transition-all"
+              className="p-6 sm:p-7 rounded-none bg-[#F6F5F1] border border-[#E4E2DC] space-y-4 transition-colors"
             >
-              {/* Top Row: Index Badge, Feature Title, Priority Selector, Delete Button */}
-              <div className="flex items-center gap-2.5">
-                <span className="font-sans tabular-nums text-xs font-semibold text-[#1E3A8A] bg-[#EFF6FF] px-2.5 py-1.5 rounded-lg shrink-0">
+              {/* Top Row: Index, Feature Title, Priority Selector, Delete Button */}
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                <span className="font-bold tabular-nums text-[16px] text-[#000000] bg-[#FFFFFF] border border-[#E4E2DC] px-3 py-2.5 rounded-none shrink-0">
                   #0{idx + 1}
                 </span>
 
@@ -216,14 +216,14 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                   type="text"
                   value={f.title}
                   onChange={(e) => handleUpdateFeature(f.id, 'title', e.target.value)}
-                  className="flex-1 bg-[#FFFFFF] rounded-lg px-4 py-2.5 text-sm font-semibold text-[#111827] placeholder-[#9CA3AF] outline-none border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/15 transition-all"
+                  className="flex-1 min-w-[200px] bg-[#FFFFFF] rounded-none px-4 py-3 text-[17px] sm:text-[18px] font-bold text-[#000000] placeholder-[#8C8B85] outline-none border border-[#E4E2DC] focus:border-[#000000] transition-colors"
                   placeholder="기능 명칭 (예: 원클릭 리소스 생성 및 필터링)"
                 />
 
                 <select
                   value={f.priority}
                   onChange={(e) => handleUpdateFeature(f.id, 'priority', e.target.value as any)}
-                  className="bg-[#FFFFFF] rounded-lg px-3 py-2.5 text-xs font-sans font-semibold text-[#1E3A8A] outline-none border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer transition-all shrink-0"
+                  className="bg-[#FFFFFF] rounded-none px-3.5 py-3 text-[16px] font-bold text-[#000000] outline-none border border-[#E4E2DC] focus:border-[#000000] cursor-pointer transition-colors shrink-0"
                 >
                   <option value="P0 필수">P0 필수</option>
                   <option value="P1 중요">P1 중요</option>
@@ -233,21 +233,21 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                 <button
                   type="button"
                   onClick={() => handleDeleteFeature(f.id)}
-                  className="p-2 text-[#9CA3AF] hover:text-[#B91C1C] hover:bg-[#FEF2F2] rounded-lg transition-colors cursor-pointer shrink-0"
+                  className="inline-flex items-center justify-center h-11 w-11 text-[#52524E] bg-[#FFFFFF] border border-[#E4E2DC] hover:text-[#FFE600] hover:bg-[#DC2626] hover:border-[#DC2626] rounded-none transition-colors cursor-pointer shrink-0"
                   title="기능 삭제"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                 </button>
               </div>
 
               {/* Bottom Row: Detailed Description & Target Screen Mapping */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="sm:col-span-2">
                   <input
                     type="text"
                     value={f.description}
                     onChange={(e) => handleUpdateFeature(f.id, 'description', e.target.value)}
-                    className="w-full bg-[#FFFFFF] rounded-lg px-4 py-2.5 text-xs sm:text-sm text-[#4B5563] focus:text-[#111827] placeholder-[#9CA3AF] outline-none border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/15 transition-all"
+                    className="w-full bg-[#FFFFFF] rounded-none px-4 py-3 text-[16px] sm:text-[17px] text-[#2B2B29] focus:text-[#000000] placeholder-[#8C8B85] outline-none border border-[#E4E2DC] focus:border-[#000000] transition-colors"
                     placeholder="기능에 대한 상세 동작 설명 (예: 3초 안에 빠르게 입력)"
                   />
                 </div>
@@ -255,7 +255,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                   <select
                     value={f.targetScreen}
                     onChange={(e) => handleUpdateFeature(f.id, 'targetScreen', e.target.value)}
-                    className="w-full bg-[#FFFFFF] rounded-lg px-3 py-2.5 text-xs text-[#4B5563] focus:text-[#111827] outline-none border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/15 truncate cursor-pointer transition-all"
+                    className="w-full bg-[#FFFFFF] rounded-none px-3.5 py-3 text-[16px] text-[#2B2B29] focus:text-[#000000] outline-none border border-[#E4E2DC] focus:border-[#000000] truncate cursor-pointer transition-colors"
                   >
                     {availableScreens.map((s, i) => (
                       <option key={i} value={s}>{s}</option>
@@ -269,23 +269,23 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
       </div>
 
       {/* 2. State Machine / Lifecycle Cycler */}
-      <div className="space-y-4 pt-6 border-t border-[#E5E7EB]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="text-sm font-semibold text-[#111827] flex items-center gap-2">
-            <RefreshCw size={15} className="text-[#1E3A8A]" />
+      <div className="space-y-5 pt-8 border-t border-[#E4E2DC]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="text-[18px] sm:text-[20px] font-extrabold text-[#000000] flex items-center gap-2.5">
+            <RefreshCw size={18} className="text-[#000000]" />
             <span>리소스 상태 전이 수명주기 (State Machine)</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <div className="flex flex-wrap items-center gap-2">
             {STATUS_TEMPLATES.map((tpl, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => handleSelectStatusTemplate(idx)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                className={`px-4 py-2 rounded-none text-[15px] font-bold transition-colors cursor-pointer border ${
                   selectedStatusTpl === idx
-                    ? 'bg-[#1E3A8A] text-white font-semibold'
-                    : 'bg-[#F7F8FA] text-[#4B5563] hover:bg-[#EFF6FF] hover:text-[#1E3A8A]'
+                    ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
+                    : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:bg-[#DC2626] hover:text-[#FFE600] hover:border-[#DC2626]'
                 }`}
               >
                 {tpl.name}
@@ -294,37 +294,36 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
           </div>
         </div>
 
-        <div className="p-5 rounded-xl bg-[#F7F8FA] space-y-3">
-          <div className="flex items-center justify-between text-xs text-[#4B5563]">
+        <div className="p-6 sm:p-7 rounded-none bg-[#F6F5F1] border border-[#E4E2DC] space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[16px] text-[#52524E]">
             <span>순환 상태 파이프라인 (클릭하여 전이 시뮬레이션)</span>
-            <span className="font-sans text-[#1E3A8A] font-semibold">
+            <span className="font-bold text-[#000000]">
               현재 활성: {customStatuses[activeSimulationStatus] || customStatuses[0]}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             {customStatuses.map((st, i) => {
               const isSelected = activeSimulationStatus === i;
 
               return (
-                <div key={i} className="flex items-center gap-2">
+                <div key={i} className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => {
                       setActiveSimulationStatus(i);
                     }}
-                    className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 ${
+                    className={`px-4 py-2.5 rounded-none text-[16px] font-bold transition-colors cursor-pointer flex items-center gap-2 border ${
                       isSelected
-                        ? 'bg-[#EFF6FF] text-[#1E3A8A] ring-2 ring-[#1E3A8A]/20'
-                        : 'bg-[#FFFFFF] text-[#4B5563] hover:text-[#111827]'
+                        ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
+                        : 'bg-[#FFFFFF] text-[#52524E] border-[#E4E2DC] hover:text-[#000000] hover:border-[#000000]'
                     }`}
                     title="클릭하여 상태 전이 확인"
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#1E3A8A]' : 'bg-[#D1D5DB]'}`} />
                     <span>{st}</span>
                   </button>
                   {i < customStatuses.length - 1 && (
-                    <span className="text-xs text-[#9CA3AF] font-sans select-none">➔</span>
+                    <span className="text-[16px] text-[#787772] font-bold select-none">➔</span>
                   )}
                 </div>
               );
@@ -334,42 +333,42 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
       </div>
 
       {/* 3. Happy Path Step Builder */}
-      <div className="space-y-4 pt-6 border-t border-[#E5E7EB]">
-        <div className="flex items-center justify-between gap-2">
-          <div className="text-sm font-semibold text-[#111827] flex items-center gap-2">
-            <ArrowRightCircle size={15} className="text-[#1E3A8A]" />
+      <div className="space-y-5 pt-8 border-t border-[#E4E2DC]">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="text-[18px] sm:text-[20px] font-extrabold text-[#000000] flex items-center gap-2.5">
+            <ArrowRightCircle size={18} className="text-[#000000]" />
             <span>사용자 성공 여정 (Happy Path 4단계)</span>
           </div>
-          <span className="text-xs text-[#9CA3AF]">
+          <span className="text-[15px] text-[#787772] font-medium">
             목적 달성까지의 최단 무장애 경로
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {happyPathSteps.map((s) => (
             <div
               key={s.step}
-              className="p-5 rounded-xl bg-[#F7F8FA] space-y-2.5"
+              className="p-6 rounded-none bg-[#F6F5F1] border border-[#E4E2DC] space-y-3"
             >
-              <div className="flex items-center gap-2">
-                <span className="font-sans text-xs text-[#1E3A8A] font-semibold tabular-nums shrink-0">
+              <div className="flex items-center gap-2.5">
+                <span className="text-[16px] text-[#000000] font-extrabold tabular-nums shrink-0">
                   0{s.step}.
                 </span>
                 <input
                   type="text"
                   value={s.action}
                   onChange={(e) => handleUpdateHappyPath(s.step, 'action', e.target.value)}
-                  className="flex-1 text-sm font-semibold text-[#111827] bg-transparent focus:bg-[#FFFFFF] rounded-lg px-2.5 py-1.5 outline-none focus:ring-2 focus:ring-[#1E3A8A]/15 transition-all"
+                  className="flex-1 text-[17px] font-bold text-[#000000] bg-transparent focus:bg-[#FFFFFF] rounded-none border border-transparent focus:border-[#000000] px-3 py-2 outline-none transition-colors"
                   placeholder={`Step ${s.step} 사용자 행동`}
                 />
               </div>
 
-              <div className="pl-6">
+              <div className="pl-7">
                 <input
                   type="text"
                   value={s.result}
                   onChange={(e) => handleUpdateHappyPath(s.step, 'result', e.target.value)}
-                  className="w-full text-xs text-[#4B5563] focus:text-[#111827] bg-transparent focus:bg-[#FFFFFF] rounded-lg px-2.5 py-1.5 outline-none focus:ring-2 focus:ring-[#1E3A8A]/15 transition-all"
+                  className="w-full text-[16px] text-[#52524E] focus:text-[#000000] bg-transparent focus:bg-[#FFFFFF] rounded-none border border-transparent focus:border-[#000000] px-3 py-2 outline-none transition-colors"
                   placeholder="시스템의 즉각 반응 결과"
                 />
               </div>
