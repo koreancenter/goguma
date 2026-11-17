@@ -346,19 +346,19 @@ export default function WorkspaceView({
         onMouseLeave={() => setIsMegaMenuOpen(false)}
         className="relative shrink-0 z-40 select-none bg-[#FFFFFF]"
       >
-        {/* Tier 1: Editorial Black Utility Strip (#000000) — 2x '고구마' Standard Brand + Sharp Rectangular Right Actions */}
+        {/* Tier 1: Editorial Black Utility Strip (#000000) — Unified Editorial Scale + Sharp Rectangular Actions */}
         <div className="relative z-[60] h-14 bg-[#000000] text-[#FFFFFF] border-b border-white/20 pl-4 sm:pl-6 pr-0 flex items-center justify-between gap-3">
-          {/* Left: 2x '고구마' Brand Mark + Editable Project Title */}
+          {/* Left: '고구마' Brand Mark + Editable Project Title */}
           <div className="flex items-center gap-3 sm:gap-4 h-full min-w-0">
             <button
               type="button"
               onClick={() => navigate('/landing')}
-              className="h-full px-2.5 -ml-2.5 flex items-center gap-2.5 text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="h-full px-3 sm:px-4 -ml-3 sm:-ml-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap shrink-0"
               title="고구마 스튜디오 홈으로 이동"
             >
               <svg
-                width="26"
-                height="26"
+                width="15"
+                height="15"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -372,7 +372,7 @@ export default function WorkspaceView({
                 />
                 <path d="M14.5 7.5C15.2 6.3 16.3 5.6 17.5 5.5" stroke="#FFE600" strokeWidth="1.75" strokeLinecap="round" />
               </svg>
-              <span className="font-display font-extrabold text-[26px] sm:text-[28px] tracking-[-0.04em] leading-none">
+              <span className="leading-none">
                 고구마
               </span>
             </button>
@@ -389,7 +389,7 @@ export default function WorkspaceView({
                   setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
                   schedulePersistence();
                 }}
-                className="w-full bg-transparent hover:bg-white/10 focus:bg-[#1A1A18] rounded-none px-2 py-1 text-[14px] sm:text-[15px] font-bold text-[#FFFFFF] truncate border-b border-transparent focus:border-white/60 outline-none transition-colors leading-normal"
+                className="w-full bg-transparent hover:bg-white/10 focus:bg-[#1A1A18] rounded-none px-2 py-1 text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] truncate border-b border-transparent focus:border-white/60 outline-none transition-colors leading-normal"
                 title="프로젝트 이름 수정"
                 aria-label="프로젝트 이름"
               />
