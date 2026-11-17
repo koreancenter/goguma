@@ -5,6 +5,7 @@ interface Translations {
   [key: string]: {
     en: string;
     ko: string;
+    ja?: string;
     id?: string;
   };
 }
@@ -1183,6 +1184,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLanguage('ko');
         setRegion('korea');
         setCurrency('KRW');
+        return;
+      }
+      if (browserLang.startsWith('ja') || timeZone.includes('Tokyo')) {
+        setLanguage('ja');
+        setRegion('asiapacific');
+        setCurrency('JPY');
         return;
       }
       if (browserLang.startsWith('id') || timeZone.includes('Jakarta')) {

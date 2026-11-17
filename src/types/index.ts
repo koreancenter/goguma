@@ -1,6 +1,6 @@
 export * from './schema';
 
-export type Language = 'en' | 'ko' | 'id';
+export type Language = 'en' | 'ko' | 'ja' | 'id';
 
 export type UserRole = 'USER' | 'ADMIN';
 

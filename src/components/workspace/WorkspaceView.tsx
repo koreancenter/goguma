@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ChevronDown, Check, Menu, X, ChevronRight
+  ChevronDown, Check, Menu, X, ChevronRight, User, LayoutGrid
 } from 'lucide-react';
 
-import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from '../../types';
-import { LocalUser } from '../../lib/localAuth';
+import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan, Language } from '../../types';
+import { auth, LocalUser } from '../../lib/localAuth';
 import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
+import { useLanguage } from '../../contexts/LanguageContext';
 import type { PreferencesTab } from '../guide/PreferencesModal';
 
 import { WritingCanvas } from '../classic/WritingCanvas';
@@ -72,6 +73,7 @@ export default function WorkspaceView({
   onOpenLogoutModal,
 }: WorkspaceViewProps) {
   const navigate = useNavigate();
+  const { language, setLanguage } = useLanguage();
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [backupModalTab, setBackupModalTab] = useState<'export' | 'import' | 'storage'>('export');
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
@@ -79,6 +81,15 @@ export default function WorkspaceView({
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [preferencesTab, setPreferencesTab] = useState<PreferencesTab>('engine');
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [isAppsMenuOpen, setIsAppsMenuOpen] = useState(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false);
+  const [newAccountName, setNewAccountName] = useState('');
+  const [newAccountEmail, setNewAccountEmail] = useState('');
+  const [newAccountTeam, setNewAccountTeam] = useState('');
+  const [newAccountPin, setNewAccountPin] = useState('');
+  const [createAccountError, setCreateAccountError] = useState('');
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [hoveredMenuId, setHoveredMenuId] = useState<number | 'settings' | 'help'>(project.currentChapter);
   const [isMobileChapterDrawerOpen, setIsMobileChapterDrawerOpen] = useState(false);
   const [mobilePane, setMobilePane] = useState<'editor' | 'preview'>('editor');
@@ -93,20 +104,32 @@ export default function WorkspaceView({
     setPreferencesTab(tab);
     setIsPreferencesOpen(true);
     setIsMegaMenuOpen(false);
+    setIsAppsMenuOpen(false);
+    setIsLangMenuOpen(false);
     setIsMobileChapterDrawerOpen(false);
   };
 
+  const handleOpenMegaMenu = (menuId: number | 'settings' | 'help') => {
+    if (isAppsMenuOpen || isLangMenuOpen) return;
+    setHoveredMenuId(menuId);
+    setIsMegaMenuOpen(true);
+  };
+
   useEffect(() => {
-    if (!isMegaMenuOpen && !isMobileChapterDrawerOpen) return;
+    if (!isMegaMenuOpen && !isMobileChapterDrawerOpen && !isAppsMenuOpen && !isLangMenuOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (headerWrapperRef.current && !headerWrapperRef.current.contains(e.target as Node)) {
         setIsMegaMenuOpen(false);
+        setIsAppsMenuOpen(false);
+        setIsLangMenuOpen(false);
         setIsMobileChapterDrawerOpen(false);
       }
     };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsMegaMenuOpen(false);
+        setIsAppsMenuOpen(false);
+        setIsLangMenuOpen(false);
         setIsMobileChapterDrawerOpen(false);
       }
     };
@@ -116,7 +139,7 @@ export default function WorkspaceView({
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isMegaMenuOpen, isMobileChapterDrawerOpen]);
+  }, [isMegaMenuOpen, isMobileChapterDrawerOpen, isAppsMenuOpen, isLangMenuOpen]);
 
   const [splitPercent, setSplitPercent] = useState<number>(() => {
     const saved = localStorage.getItem('goguma_split_percent');
@@ -323,40 +346,40 @@ export default function WorkspaceView({
         onMouseLeave={() => setIsMegaMenuOpen(false)}
         className="relative shrink-0 z-40 select-none bg-[#FFFFFF]"
       >
-        {/* Tier 1: Slim Black Utility Strip (#000000) — App Brand Mark + Project Title + Save Status */}
-        <div className="h-10 bg-[#000000] text-[#FFFFFF] border-b border-white/20 px-4 sm:px-6 flex items-center justify-between gap-3 text-[13px] font-bold">
-          {/* Left: Custom Brand Icon & App Title ("고구마") + Editable Project Title + Quiet Save Indicator */}
-          <div className="flex items-center gap-3 min-w-0">
+        {/* Tier 1: Editorial Black Utility Strip (#000000) — 2x '고구마' Standard Brand + Sharp Rectangular Right Actions */}
+        <div className="relative z-[60] h-14 bg-[#000000] text-[#FFFFFF] border-b border-white/20 pl-4 sm:pl-6 pr-0 flex items-center justify-between gap-3">
+          {/* Left: 2x '고구마' Brand Mark + Editable Project Title */}
+          <div className="flex items-center gap-3 sm:gap-4 h-full min-w-0">
             <button
               type="button"
               onClick={() => navigate('/landing')}
-              className="flex items-center gap-2 text-[#FFFFFF] hover:opacity-80 transition-opacity cursor-pointer whitespace-nowrap shrink-0"
+              className="h-full px-2.5 -ml-2.5 flex items-center gap-2.5 text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap shrink-0"
               title="고구마 스튜디오 홈으로 이동"
             >
               <svg
-                width="18"
-                height="18"
+                width="26"
+                height="26"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 className="shrink-0"
                 aria-hidden="true"
               >
-                <rect x="2" y="2" width="20" height="20" rx="2" stroke="currentColor" strokeWidth="1.75" />
+                <rect x="2" y="2" width="20" height="20" stroke="currentColor" strokeWidth="1.75" />
                 <path
                   d="M7.5 14.5C7.5 11.2 10.6 7.5 14.8 7.5C16.2 7.5 17 8.4 17 9.8C17 13.4 13.7 16.5 9.8 16.5C8.3 16.5 7.5 15.7 7.5 14.5Z"
                   fill="currentColor"
                 />
-                <path d="M14.5 7.5C15.2 6.3 16.3 5.6 17.5 5.5" stroke="#C5A880" strokeWidth="1.75" strokeLinecap="round" />
+                <path d="M14.5 7.5C15.2 6.3 16.3 5.6 17.5 5.5" stroke="#FFE600" strokeWidth="1.75" strokeLinecap="round" />
               </svg>
-              <span className="font-display font-extrabold text-[15px] tracking-[-0.03em] leading-none">
+              <span className="font-display font-extrabold text-[26px] sm:text-[28px] tracking-[-0.04em] leading-none">
                 고구마
               </span>
             </button>
 
             <span className="text-white/25 select-none shrink-0" aria-hidden="true">|</span>
 
-            <div className="min-w-0 max-w-[180px] sm:max-w-[280px] lg:max-w-[360px] flex items-center">
+            <div className="min-w-0 max-w-[140px] sm:max-w-[240px] lg:max-w-[320px] flex items-center">
               <input
                 type="text"
                 value={project.name}
@@ -366,23 +389,187 @@ export default function WorkspaceView({
                   setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
                   schedulePersistence();
                 }}
-                className="w-full bg-transparent hover:bg-white/10 focus:bg-[#1A1A18] rounded-[2px] px-2 py-0.5 text-[13px] font-bold text-[#FFFFFF] truncate border-b border-transparent focus:border-white/60 outline-none transition-colors leading-normal"
+                className="w-full bg-transparent hover:bg-white/10 focus:bg-[#1A1A18] rounded-none px-2 py-1 text-[14px] sm:text-[15px] font-bold text-[#FFFFFF] truncate border-b border-transparent focus:border-white/60 outline-none transition-colors leading-normal"
                 title="프로젝트 이름 수정"
                 aria-label="프로젝트 이름"
               />
             </div>
-
-            <span className="hidden md:inline-block text-[12px] font-semibold text-white/85 whitespace-nowrap shrink-0">
-              {saveStatus === 'saving' ? '보존 중...' : '로컬 보존됨'}
-            </span>
           </div>
 
-          {/* Tier 1 Right: Minimalist Editorial Empty Strip */}
-          <div className="shrink-0" />
+          {/* Tier 1 Right: Rectangular Editorial Utility Strip (Red Bg / Yellow Text Hover) */}
+          <div className="flex items-stretch h-full shrink-0 border-l border-white/20 divide-x divide-white/20">
+            {/* 1. [고구마 앱스] */}
+            <div className="relative flex items-stretch">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsAppsMenuOpen(prev => !prev);
+                  setIsLangMenuOpen(false);
+                  setIsMegaMenuOpen(false);
+                }}
+                className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
+                  isAppsMenuOpen
+                    ? 'bg-[#DC2626] text-[#FFE600]'
+                    : 'bg-[#000000] text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600]'
+                }`}
+              >
+                <LayoutGrid size={15} className="shrink-0" />
+                <span>고구마 앱스</span>
+              </button>
+
+              {isAppsMenuOpen && (
+                <div className="absolute right-0 top-full w-56 bg-[#000000] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAppsMenuOpen(false);
+                      navigate('/workspace');
+                    }}
+                    className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
+                  >
+                    고구마 사양서 스튜디오
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAppsMenuOpen(false);
+                      setIsTemplateModalOpen(true);
+                    }}
+                    className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
+                  >
+                    표준 기획서 템플릿
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAppsMenuOpen(false);
+                      setBackupModalTab('storage');
+                      setIsBackupModalOpen(true);
+                    }}
+                    className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
+                  >
+                    로컬 데이터 보관함
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAppsMenuOpen(false);
+                      navigate('/landing');
+                    }}
+                    className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
+                  >
+                    스튜디오 안내 홈
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 2. 언어 선택 버튼 (한/영/일/인니) */}
+            <div className="relative flex items-stretch">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLangMenuOpen(prev => !prev);
+                  setIsAppsMenuOpen(false);
+                  setIsMegaMenuOpen(false);
+                }}
+                className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
+                  isLangMenuOpen
+                    ? 'bg-[#DC2626] text-[#FFE600]'
+                    : 'bg-[#000000] text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600]'
+                }`}
+                aria-label="언어 선택"
+              >
+                <span className="tracking-tight">
+                  {language === 'ko' ? '한' : language === 'en' ? '영' : language === 'ja' ? '일' : '인니'}
+                </span>
+                <ChevronDown size={13} className="shrink-0" />
+              </button>
+
+              {isLangMenuOpen && (
+                <div className="absolute right-0 top-full w-40 bg-[#000000] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
+                  {(
+                    [
+                      { code: 'ko', label: '한국어' },
+                      { code: 'en', label: 'English' },
+                      { code: 'ja', label: '日本語' },
+                      { code: 'id', label: 'Indonesia' },
+                    ] as { code: Language; label: string }[]
+                  ).map((opt) => (
+                    <button
+                      key={opt.code}
+                      type="button"
+                      onClick={() => {
+                        setLanguage(opt.code);
+                        setIsLangMenuOpen(false);
+                      }}
+                      className={`w-full px-4 py-3 text-left text-[13px] font-bold rounded-none flex items-center justify-between transition-colors cursor-pointer ${
+                        language === opt.code
+                          ? 'bg-[#1A1A18] text-[#FFE600] hover:bg-[#DC2626] hover:text-[#FFE600]'
+                          : 'text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600]'
+                      }`}
+                    >
+                      <span>{opt.label}</span>
+                      {language === opt.code && <Check size={13} className="shrink-0" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 3. 로컬 계정 만들기 */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsAppsMenuOpen(false);
+                setIsLangMenuOpen(false);
+                setIsMegaMenuOpen(false);
+                setCreateAccountError('');
+                setIsCreateAccountModalOpen(true);
+              }}
+              className="hidden sm:flex h-full px-3 sm:px-4 items-center text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] bg-[#000000] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              로컬 계정 만들기
+            </button>
+
+            {/* 4. 로그인 / 로그아웃 */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsAppsMenuOpen(false);
+                setIsLangMenuOpen(false);
+                setIsMegaMenuOpen(false);
+                if (currentUser) {
+                  onOpenLogoutModal();
+                } else {
+                  navigate('/login');
+                }
+              }}
+              className="h-full px-3 sm:px-4 flex items-center text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] bg-[#000000] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              {currentUser ? '로그아웃' : '로그인'}
+            </button>
+
+            {/* 5. 내 계정 아이콘 */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsAppsMenuOpen(false);
+                setIsLangMenuOpen(false);
+                setIsMegaMenuOpen(false);
+                navigate('/profile');
+              }}
+              className="h-full px-3.5 sm:px-4 flex items-center justify-center text-[#FFFFFF] bg-[#000000] rounded-none hover:text-[#FFE600] transition-colors cursor-pointer shrink-0"
+              aria-label="내 계정"
+              title={currentUser?.displayName ? `${currentUser.displayName} (내 계정)` : '내 계정'}
+            >
+              <User size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Tier 2: Unified 10-Column Main Editorial Menu Bar (#FFFFFF) */}
-        <header className="bg-[#FFFFFF] border-b border-[#E4E2DC]">
+        <header className="relative z-30 bg-[#FFFFFF] border-b border-[#E4E2DC]">
           {/* Desktop Unified 10-Column Menu Bar (lg+) — Preserves Primary 1st-Level Font Size */}
           <nav
             className="hidden lg:grid grid-cols-10 divide-x divide-[#E4E2DC] h-20 w-full"
@@ -396,15 +583,11 @@ export default function WorkspaceView({
                 <button
                   key={ch.id}
                   type="button"
-                  onMouseEnter={() => {
-                    setHoveredMenuId(ch.id);
-                    setIsMegaMenuOpen(true);
-                  }}
-                  onFocus={() => {
-                    setHoveredMenuId(ch.id);
-                    setIsMegaMenuOpen(true);
-                  }}
+                  onMouseEnter={() => handleOpenMegaMenu(ch.id)}
+                  onFocus={() => handleOpenMegaMenu(ch.id)}
                   onClick={() => {
+                    setIsAppsMenuOpen(false);
+                    setIsLangMenuOpen(false);
                     handleSelectChapter(ch.id);
                     setIsMegaMenuOpen(false);
                   }}
@@ -425,14 +608,8 @@ export default function WorkspaceView({
             {/* 9th Unified Column: [환경 설정] */}
             <button
               type="button"
-              onMouseEnter={() => {
-                setHoveredMenuId('settings');
-                setIsMegaMenuOpen(true);
-              }}
-              onFocus={() => {
-                setHoveredMenuId('settings');
-                setIsMegaMenuOpen(true);
-              }}
+              onMouseEnter={() => handleOpenMegaMenu('settings')}
+              onFocus={() => handleOpenMegaMenu('settings')}
               onClick={() => openPreferences('engine')}
               className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                 isMegaMenuOpen && hoveredMenuId === 'settings'
@@ -449,15 +626,11 @@ export default function WorkspaceView({
             {/* 10th Unified Column: [도움말] */}
             <button
               type="button"
-              onMouseEnter={() => {
-                setHoveredMenuId('help');
-                setIsMegaMenuOpen(true);
-              }}
-              onFocus={() => {
-                setHoveredMenuId('help');
-                setIsMegaMenuOpen(true);
-              }}
+              onMouseEnter={() => handleOpenMegaMenu('help')}
+              onFocus={() => handleOpenMegaMenu('help')}
               onClick={() => {
+                setIsAppsMenuOpen(false);
+                setIsLangMenuOpen(false);
                 setIsMegaMenuOpen(false);
                 navigate('/support');
               }}
@@ -527,7 +700,7 @@ export default function WorkspaceView({
         {/* Full-Width 10-Column Sub-Menu Panel (No Duplicate Header Row) */}
         {isMegaMenuOpen && (
           <div
-            className="hidden lg:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-50"
+            className="hidden lg:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40"
             role="region"
             aria-label="전체 하위 메뉴, 환경 설정 및 도움말"
           >
@@ -850,6 +1023,130 @@ export default function WorkspaceView({
             onOpenLogout={onOpenLogoutModal}
           />
         </Suspense>
+      )}
+
+      {isCreateAccountModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#FFFFFF] border border-[#000000] rounded-none shadow-2xl">
+            <div className="px-6 py-4 bg-[#000000] text-[#FFFFFF] flex items-center justify-between">
+              <h2 className="text-base font-extrabold tracking-tight">로컬 계정 만들기</h2>
+              <button
+                type="button"
+                onClick={() => setIsCreateAccountModalOpen(false)}
+                className="p-1.5 rounded-none text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
+                aria-label="닫기"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!newAccountName.trim()) {
+                  setCreateAccountError('계정 이름(작업자명)을 입력해 주세요.');
+                  return;
+                }
+                setIsCreatingAccount(true);
+                setCreateAccountError('');
+                try {
+                  await auth.signInLocal({
+                    displayName: newAccountName.trim(),
+                    email: newAccountEmail.trim() || undefined,
+                    companyName: newAccountTeam.trim() || undefined,
+                    pin: newAccountPin.trim() || undefined,
+                    rememberMe: true,
+                    role: 'ADMIN',
+                  });
+                  setNewAccountName('');
+                  setNewAccountEmail('');
+                  setNewAccountTeam('');
+                  setNewAccountPin('');
+                  setIsCreateAccountModalOpen(false);
+                } catch (err: any) {
+                  setCreateAccountError(err?.message || '로컬 계정 생성에 실패했습니다.');
+                } finally {
+                  setIsCreatingAccount(false);
+                }
+              }}
+              className="p-6 space-y-4"
+            >
+              <p className="text-xs text-[#52524E] leading-relaxed">
+                브라우저 로컬 저장소에만 보관되는 독립 계정을 생성하고 즉시 전환합니다.
+              </p>
+
+              {createAccountError && (
+                <div className="p-3 bg-[#FEF2F2] border border-[#DC2626] text-xs font-bold text-[#DC2626] rounded-none">
+                  {createAccountError}
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#000000]">이름 / 닉네임 *</label>
+                <input
+                  type="text"
+                  value={newAccountName}
+                  onChange={(e) => setNewAccountName(e.target.value)}
+                  placeholder="예: 홍길동 디렉터"
+                  className="w-full px-3 py-2 border border-[#CBC8BF] focus:border-[#000000] rounded-none text-sm outline-none"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-[#000000]">이메일 (선택)</label>
+                <input
+                  type="email"
+                  value={newAccountEmail}
+                  onChange={(e) => setNewAccountEmail(e.target.value)}
+                  placeholder="director@studio.local"
+                  className="w-full px-3 py-2 border border-[#CBC8BF] focus:border-[#000000] rounded-none text-sm outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#000000]">소속 / 팀명 (선택)</label>
+                  <input
+                    type="text"
+                    value={newAccountTeam}
+                    onChange={(e) => setNewAccountTeam(e.target.value)}
+                    placeholder="Goguma Studio"
+                    className="w-full px-3 py-2 border border-[#CBC8BF] focus:border-[#000000] rounded-none text-sm outline-none"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#000000]">보안 PIN (선택)</label>
+                  <input
+                    type="password"
+                    value={newAccountPin}
+                    onChange={(e) => setNewAccountPin(e.target.value)}
+                    placeholder="4자리 숫자"
+                    maxLength={8}
+                    className="w-full px-3 py-2 border border-[#CBC8BF] focus:border-[#000000] rounded-none text-sm outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateAccountModalOpen(false)}
+                  className="px-4 py-2 border border-[#CBC8BF] text-xs font-bold text-[#000000] rounded-none hover:bg-[#F6F5F1] cursor-pointer"
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreatingAccount}
+                  className="px-5 py-2 bg-[#000000] text-[#FFFFFF] text-xs font-bold rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {isCreatingAccount ? '생성 중...' : '로컬 계정 생성'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
       <WorkspaceDropZoneOverlay
