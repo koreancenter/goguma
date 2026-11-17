@@ -76,6 +76,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
   const isInternalUpdateRef = useRef(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [imageUrlInput, setImageUrlInput] = useState('');
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imagePopoverRef = useRef<HTMLDivElement>(null);
@@ -145,11 +146,11 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     editorProps: {
       attributes: {
         class: `w-full bg-transparent py-1 outline-none font-sans transition-all duration-200 focus:outline-none ${
-          readOnly ? 'text-[#4B5563] cursor-not-allowed select-text' : 'text-[#111827]'
+          readOnly ? 'text-[#4B5563] cursor-not-allowed select-text' : 'text-[#1E293B]'
         } ${
           largeTextMode
-            ? 'text-lg sm:text-xl leading-[1.8] tracking-normal min-h-[200px]'
-            : 'text-[15px] sm:text-base leading-[1.75] min-h-[160px]'
+            ? 'text-lg sm:text-xl leading-[1.8] tracking-[-0.01em] min-h-[200px]'
+            : 'text-[15.5px] font-normal leading-[1.75] tracking-[-0.01em] min-h-[160px]'
         }`,
       },
       handlePaste: (view, event) => {
@@ -210,6 +211,17 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         }
         return false;
       },
+    },
+    onFocus: () => {
+      setIsEditorFocused(true);
+    },
+    onBlur: () => {
+      requestAnimationFrame(() => {
+        if (containerRef.current && containerRef.current.contains(document.activeElement)) {
+          return;
+        }
+        setIsEditorFocused(false);
+      });
     },
     onUpdate: ({ editor }) => {
       isInternalUpdateRef.current = true;
@@ -292,6 +304,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   // Suppress floating bubble menu while readOnly or image insertion popover is open
   const isMenuVisible = !readOnly && !isImageModalOpen && (isTableActive || hasTextSelection || isImageActive);
+  // Show top formatting toolbar only when editor is focused or a selection/popover is active
+  const isToolbarVisible = !readOnly && (isEditorFocused || hasTextSelection || isTableActive || isImageActive || isImageModalOpen);
 
   // Read active table visual style attributes
   const tableAttrs = editor && isTableActive ? editor.getAttributes('table') : {};
@@ -470,9 +484,16 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   return (
     <div ref={containerRef} className="relative flex flex-col w-full">
-      {/* Top Minimal Unobtrusive Formatting Toolbar (Hidden when spec is locked) */}
-      {!readOnly && (
-      <div className="flex items-center gap-0.5 pb-2.5 mb-3 border-b border-[#E5E7EB]/80 flex-wrap select-none">
+      {/* Contextual Minimal Formatting Toolbar (Hidden by default; reveals on focus or selection) */}
+      {isToolbarVisible && (
+      <div
+        onMouseDown={(e) => {
+          if (!imagePopoverRef.current?.contains(e.target as Node)) {
+            e.preventDefault();
+          }
+        }}
+        className="flex items-center gap-0.5 pb-2.5 mb-3 border-b border-[#E5E7EB]/80 flex-wrap select-none animate-in fade-in duration-150"
+      >
         {/* Text Formatting */}
         <button
           type="button"
@@ -637,7 +658,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           {isImageModalOpen && (
             <div className="absolute left-0 top-full mt-1.5 z-50 w-72 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-3.5 shadow-[0_12px_32px_-4px_rgba(15,23,42,0.12)] flex flex-col gap-2.5 text-xs text-[#111827]">
               <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
-                <span className="font-mono text-[11px] uppercase tracking-wider text-[#4B5563] font-semibold flex items-center gap-1.5">
+                <span className="font-sans text-xs tracking-tight text-[#4B5563] font-semibold flex items-center gap-1.5">
                   <ImageIcon size={12} className="text-[#1E3A8A]" />
                   이미지 삽입
                 </span>

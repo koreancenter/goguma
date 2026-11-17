@@ -29,10 +29,10 @@
 }
 
 @theme {
-  --font-sans: "Pretendard Variable", "Plus Jakarta Sans", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
-  --font-serif: "Pretendard Variable", "Plus Jakarta Sans", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Pretendard Variable", "Plus Jakarta Sans", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Gallery White & Editorial Navy Surface Tokens */
   --color-canvas: #FFFFFF;
@@ -99,17 +99,19 @@
 @layer base {
   html {
     background-color: #FFFFFF;
-    color: #111827;
+    color: #1E293B;
     color-scheme: light;
-    line-height: 1.7;
+    line-height: 1.75;
   }
 
   body {
     background-color: #FFFFFF;
-    color: #111827;
+    color: #1E293B;
     font-family: var(--font-sans);
-    line-height: 1.7;
-    letter-spacing: -0.015em;
+    font-size: 15.5px;
+    font-weight: 400;
+    line-height: 1.75;
+    letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -123,18 +125,18 @@
   h1, h2, h3, h4, h5, h6 {
     color: #111827;
     font-family: var(--font-sans);
-    letter-spacing: -0.025em;
+    letter-spacing: -0.015em;
     font-weight: 600;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   p {
-    color: #4B5563;
-    line-height: 1.7;
+    color: #1E293B;
+    line-height: 1.75;
+    letter-spacing: -0.01em;
   }
 }
 
-/* Primary Editorial Font Stack: Pretendard Variable + Plus Jakarta Sans */
+/* Primary Editorial Font Stack: DM Sans + SUIT Variable */
 html,
 body,
 h1, h2, h3, h4, h5, h6,
@@ -149,26 +151,31 @@ a,
 td,
 th,
 li,
-div:not(.font-mono) {
-  font-family: "Pretendard Variable", "Plus Jakarta Sans", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif !important;
+div:not(.font-mono):not(.cm-editor):not(.cm-scroller):not(.cm-content):not(.cm-line):not(.cm-gutters) {
+  font-family: 'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* Explicitly preserve monospaced tabular numerals and code blocks */
+/* Strictly preserve monospace inside code-viewer blocks only */
 .font-mono,
 .font-mono *,
+.cm-editor,
+.cm-editor *,
 code,
 pre,
 kbd,
 samp {
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
   font-variant-numeric: tabular-nums;
 }
 
 /* Tiptap Editor Typography & ProseMirror Styling (Editorial Light) */
 .tiptap-editor-wrap .tiptap {
   outline: none !important;
-  color: #111827;
+  color: #1E293B;
+  font-size: 15.5px;
+  font-weight: 400;
   line-height: 1.75;
+  letter-spacing: -0.01em;
 }
 
 .tiptap-editor-wrap .tiptap p.is-editor-empty:first-child::before {
@@ -180,30 +187,36 @@ samp {
 }
 
 .tiptap-editor-wrap .tiptap p {
-  color: #111827;
+  color: #1E293B;
+  font-weight: 400;
   margin-bottom: 0.55em;
   line-height: 1.75;
+  letter-spacing: -0.01em;
 }
 
 .tiptap-editor-wrap .tiptap h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
   color: #111827;
   margin-top: 0.9rem;
   margin-bottom: 0.45rem;
 }
 
 .tiptap-editor-wrap .tiptap h2 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
+  letter-spacing: -0.015em;
   color: #111827;
   margin-top: 0.7rem;
   margin-bottom: 0.35rem;
 }
 
 .tiptap-editor-wrap .tiptap h3 {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
+  letter-spacing: -0.015em;
   color: #1F2937;
   margin-top: 0.55rem;
   margin-bottom: 0.25rem;
@@ -216,7 +229,7 @@ samp {
   padding: 0.15rem 0.35rem;
   border-radius: 4px;
   font-size: 0.85em;
-  font-family: "JetBrains Mono", monospace !important;
+  font-family: 'JetBrains Mono', monospace !important;
 }
 
 .tiptap-editor-wrap .tiptap hr {

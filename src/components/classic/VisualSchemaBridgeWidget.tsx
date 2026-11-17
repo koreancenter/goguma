@@ -283,7 +283,7 @@ export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> =
       {/* 1:1 Spreadsheet Live Mapping Table */}
       <div className="overflow-hidden bg-[#FFFFFF] border-t border-b border-[#E5E7EB]">
         {/* Table Column Headers */}
-        <div className="bg-[#F7F8FA] border-b border-[#E5E7EB] px-4 py-3 grid grid-cols-12 text-[11px] font-mono font-medium text-[#4B5563] select-none">
+        <div className="bg-[#F7F8FA] border-b border-[#E5E7EB] px-4 py-3 grid grid-cols-12 text-[11px] font-sans font-semibold text-[#4B5563] select-none">
           <div className="col-span-3 flex items-center gap-1">
             <span>도메인 필드 (일상 용어)</span>
           </div>
@@ -318,7 +318,7 @@ export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> =
                   <span className="font-sans font-semibold text-[#111827] truncate">
                     {field.domainName}
                   </span>
-                  <span className="font-mono text-[10px] text-[#9CA3AF] hidden md:inline truncate">
+                  <span className="font-sans text-[10px] text-[#9CA3AF] hidden md:inline truncate">
                     ({field.fieldName})
                   </span>
                 </div>
@@ -335,19 +335,19 @@ export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> =
 
                 {/* 3. Software Type */}
                 <div className="col-span-3 flex items-center gap-1.5 truncate pr-2">
-                  <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-[#F7F8FA] text-[#1E3A8A] font-semibold truncate">
+                  <span className="font-sans text-[10px] px-2 py-0.5 rounded bg-[#F7F8FA] text-[#1E3A8A] font-semibold truncate">
                     {field.tsType}
                   </span>
                   {field.isRequired ? (
-                    <span className="text-[10px] text-[#4B5563] font-mono hidden sm:inline">필수</span>
+                    <span className="text-[10px] text-[#4B5563] font-sans hidden sm:inline">필수</span>
                   ) : (
-                    <span className="text-[10px] text-[#9CA3AF] font-mono hidden sm:inline">선택</span>
+                    <span className="text-[10px] text-[#9CA3AF] font-sans hidden sm:inline">선택</span>
                   )}
                 </div>
 
                 {/* 4. Realistic Spreadsheet Cell Preview */}
                 <div className="col-span-2 text-right truncate">
-                  <span className="font-mono text-[11px] text-[#111827] bg-[#F7F8FA] px-2 py-0.5 rounded inline-block truncate max-w-full">
+                  <span className="font-sans text-[11px] tabular-nums text-[#111827] bg-[#F7F8FA] px-2 py-0.5 rounded inline-block truncate max-w-full">
                     {field.sampleValue}
                   </span>
                 </div>
@@ -364,7 +364,7 @@ export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> =
             <Eye size={14} className="text-[#1E3A8A]" />
             <span className="font-semibold text-[#111827]">실제 서비스 화면 생성 시 시뮬레이션</span>
           </div>
-          <span className="text-[11px] font-mono text-[#1E3A8A]">
+          <span className="text-[11px] font-sans font-medium text-[#1E3A8A]">
             {detectedFields.length}개 필드 자동 반영 중
           </span>
         </div>
@@ -372,13 +372,13 @@ export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> =
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 pt-1">
           {detectedFields.map((field) => (
             <div key={field.id} className="bg-[#FFFFFF] p-3 rounded-lg space-y-1">
-              <span className="text-[11px] font-mono text-[#9CA3AF] block truncate">
+              <span className="text-[11px] font-sans text-[#9CA3AF] block truncate">
                 {field.domainName}
               </span>
               <span className="font-sans font-semibold text-xs text-[#111827] block truncate">
                 {field.sampleValue}
               </span>
-              <span className="text-[10px] font-mono text-[#1E3A8A] block truncate font-medium">
+              <span className="text-[10px] font-sans text-[#1E3A8A] block truncate font-medium">
                 {field.uiComponent.split('(')[0].trim()}
               </span>
             </div>

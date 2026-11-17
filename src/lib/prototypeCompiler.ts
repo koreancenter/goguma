@@ -74,7 +74,7 @@ export function generatePrototypePrompt(
 1. **타깃 플랫폼 & 디자인 규약**:
    - 대상 플랫폼: ${platform}
    - 브랜드 색상 & 톤앤매너: 럭셔리 미니멀리즘 (Sumi Black 바탕 #0B0C10, 카드/표면 #0E1217 / #13181F, 헤어라인 보더 border-white/[0.08], Warm White 텍스트 #F0F3F6 / #9AA5B5, 럭셔리 사파이어 블루 포인트 #2563EB 및 일렉트릭 애저 #38BDF8)
-   - 타이포그래피: Plus Jakarta Sans / Pretendard Variable 산스 세리프 폰트 전면 적용 (세리프 배제, 가독성과 절제미 극대화)
+   - 타이포그래피: DM Sans / SUIT Variable 산스 세리프 폰트 전면 적용 (세리프 배제, 가독성과 절제미 극대화)
    - 모바일 뷰포트 지원 (상단 뒤로가기 및 하단 탭 내비게이션 바 포함)
 
 2. **반드시 1:1 분할 구현할 화면 컴포넌트 (${pages.length}종)**:
@@ -247,28 +247,28 @@ export function compileStandalonePrototypeHtml(
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', '"Pretendard Variable"', 'Pretendard', '-apple-system', 'sans-serif'],
+            sans: ['"DM Sans"', '"SUIT Variable"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace']
           },
           colors: {
             brand: '${themeColor}',
-            canvas: '#0A0A0C',
-            surface: '#0E1217',
-            card: '#13181F',
-            subtle: '#18202A',
-            ink: '#F0F3F6',
-            inkMuted: '#9AA5B5',
-            hairline: 'rgba(255, 255, 255, 0.08)',
-            sapphire: '#2563EB',
-            azure: '#38BDF8',
+            canvas: '#FFFFFF',
+            surface: '#F8FAFC',
+            card: '#FFFFFF',
+            subtle: '#F8FAFC',
+            ink: '#0F172A',
+            inkMuted: '#64748B',
+            hairline: '#E2E8F0',
+            sapphire: '#1E3A8A',
+            azure: '#2563EB',
           }
         }
       }
@@ -276,13 +276,17 @@ export function compileStandalonePrototypeHtml(
   </script>
   <style>
     body { 
-      font-family: "Plus Jakarta Sans", "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      letter-spacing: -0.018em;
+      font-family: "DM Sans", "SUIT Variable", -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.75;
+      letter-spacing: -0.01em;
+      color: #1E293B;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
     .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 2px; }
-    .modal-backdrop { background: rgba(11, 12, 16, 0.75); backdrop-filter: blur(6px); }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(15, 23, 42, 0.14); border-radius: 9999px; }
+    .modal-backdrop { background: rgba(15, 23, 42, 0.35); backdrop-filter: blur(4px); }
     @keyframes slideInRight {
       from { transform: translateX(100%); }
       to { transform: translateX(0); }
@@ -291,17 +295,16 @@ export function compileStandalonePrototypeHtml(
       animation: slideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes pulseSync {
-      0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
-      45% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.15); }
-      100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.28); }
+      45% { box-shadow: 0 0 0 5px rgba(30, 58, 138, 0.08); }
+      100% { box-shadow: 0 0 0 0 rgba(30, 58, 138, 0); }
     }
     .pulse-glow {
-      animation: pulseSync 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-      border-color: #38BDF8 !important;
+      animation: pulseSync 1.1s cubic-bezier(0.16, 1, 0.3, 1);
     }
   </style>
 </head>
-<body class="bg-[#0B0C10] text-[#F0F3F6] min-h-screen flex flex-col relative font-sans antialiased m-0 p-0 selection:bg-blue-600/30 selection:text-[#F0F3F6]">
+<body class="bg-[#FFFFFF] text-[#0F172A] min-h-screen flex flex-col relative font-sans antialiased m-0 p-0 selection:bg-[#EFF6FF] selection:text-[#1E3A8A]">
 
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
@@ -309,47 +312,47 @@ export function compileStandalonePrototypeHtml(
   <!-- Main Prototype Shell Container -->
   <div 
     id="prototypeContainer" 
-    class="w-full flex-1 bg-[#0B0C10] flex flex-col relative min-h-screen"
+    class="w-full flex-1 bg-[#FFFFFF] flex flex-col relative min-h-screen"
   >
     
     <!-- Mobile Status Bar (Visible only in phone frame) -->
-    <div id="mobileStatusBar" class="${platform === 'APP' ? 'flex' : 'hidden'} items-center justify-between px-6 pt-3 pb-1 bg-[#0E1217] text-xs font-mono font-semibold text-neutral-400 select-none border-b border-white/[0.08]">
+    <div id="mobileStatusBar" class="${platform === 'APP' ? 'flex' : 'hidden'} items-center justify-between px-6 pt-3 pb-1.5 bg-[#F8FAFC] text-xs font-sans tabular-nums font-semibold text-[#64748B] select-none border-b border-[#E2E8F0]">
       <span>09:41</span>
-      <div class="w-16 h-4 bg-white/20 rounded-full mx-auto -mt-1"></div>
+      <div class="w-16 h-4 bg-[#E2E8F0] rounded-full mx-auto -mt-1"></div>
       <div class="flex items-center gap-1">
         <span>5G</span>
         <span>100%</span>
       </div>
     </div>
 
-    <!-- App / Web Header with Navigation Controls -->
-    <header class="px-4 py-3 bg-[#0E1217] border-b border-white/[0.08] flex items-center justify-between sticky top-0 z-20">
-      <div class="flex items-center gap-2.5">
+    <!-- App / Web Header with Truncated Project Title -->
+    <header class="px-5 py-3.5 bg-[#FFFFFF] border-b border-[#E2E8F0] flex items-center justify-between gap-3 sticky top-0 z-20">
+      <div class="flex items-center gap-2.5 min-w-0 flex-1">
         <!-- Back Navigation Button -->
         <button 
           id="navBackBtn" 
           onclick="navigateBack()" 
-          class="hidden p-1 rounded-[2px] border border-white/[0.1] bg-[#13181F] hover:bg-[#18202A] text-neutral-300 hover:text-white text-xs transition-all cursor-pointer"
+          class="hidden px-2 py-1 rounded-md border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#EFF6FF] text-[#475569] hover:text-[#1E3A8A] text-xs transition-all cursor-pointer shrink-0 whitespace-nowrap"
           title="이전 화면으로 돌아가기"
         >
           ← 뒤로
         </button>
 
-        <div class="w-7 h-7 rounded-[2px] flex items-center justify-center text-white font-bold text-sm bg-[#2563EB] shrink-0 font-sans shadow-xs">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center text-[#FFFFFF] font-bold text-xs bg-[#1E3A8A] shrink-0 font-sans">
           ${projectName.charAt(0)}
         </div>
-        <div class="min-w-0">
-          <h1 class="text-sm sm:text-base font-bold tracking-tight text-[#F0F3F6] leading-tight truncate">${projectName}</h1>
-          <p class="text-[10px] text-neutral-400 truncate max-w-[180px] sm:max-w-xs">${purpose}</p>
+        <div class="min-w-0 flex-1">
+          <h1 class="text-sm sm:text-[15px] font-bold tracking-tight text-[#0F172A] leading-tight truncate" title="${projectName}">${projectName}</h1>
+          <p class="text-[11px] text-[#64748B] truncate">${purpose}</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
-        <span id="headerRoleBadge" class="hidden px-2 py-1 rounded-[2px] text-[10px] font-mono font-semibold border"></span>
+        <span id="headerRoleBadge" class="hidden px-2 py-1 rounded-md text-[10px] font-sans font-semibold border whitespace-nowrap"></span>
         <button 
           id="headerAddBtn"
           onclick="openAddModal()" 
-          class="px-3 py-1.5 rounded-[2px] text-xs font-semibold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-[0_0_12px_rgba(37,99,235,0.25)] transition-all flex items-center gap-1 cursor-pointer"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium text-[#FFFFFF] bg-[#1E3A8A] hover:bg-[#172554] transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
         >
           <span>+</span>
           <span>신규 등록</span>
@@ -358,15 +361,15 @@ export function compileStandalonePrototypeHtml(
     </header>
 
     <!-- Desktop / Top Navigation Tab Bar -->
-    <nav id="topNavTabs" class="bg-[#0E1217] px-4 border-b border-white/[0.08] flex items-center gap-1.5 overflow-x-auto custom-scroll py-2">
+    <nav id="topNavTabs" class="bg-[#FFFFFF] px-5 border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto custom-scroll py-2">
       ${pages.map((p, idx) => `
         <button 
           onclick="switchPage(${idx})" 
           id="navTab-${idx}" 
-          class="px-3 py-1.5 rounded-[2px] text-xs font-medium whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+          class="px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
             idx === 0 
-              ? 'bg-[#2563EB] text-white font-semibold shadow-xs' 
-              : 'text-neutral-400 hover:text-[#F0F3F6] hover:bg-white/[0.06]'
+              ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold' 
+              : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] font-medium'
           }"
         >
           <span>${escapeHtml(p.name)}</span>
@@ -375,42 +378,42 @@ export function compileStandalonePrototypeHtml(
     </nav>
 
     <!-- Dynamic Content Area -->
-    <main class="flex-1 p-3 sm:p-4 overflow-y-auto custom-scroll space-y-3 pb-16 sm:pb-4 bg-[#0B0C10]">
+    <main class="flex-1 p-4 sm:p-5 overflow-y-auto custom-scroll space-y-4 pb-16 sm:pb-5 bg-[#FFFFFF]">
       
       <!-- Preview State Simulation Banner (Blocked/Error or Role Mode) -->
       <div id="previewStateBanner" class="hidden"></div>
 
       <!-- Screen Context Header Card -->
-      <div id="screenHeaderCard" class="bg-[#13181F] p-3.5 rounded-[4px] border border-white/[0.08] flex items-center justify-between shadow-xs">
-        <div>
-          <div class="flex items-center gap-2">
-            <span id="screenRouteBadge" class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-[2px] bg-blue-950/60 text-[#38BDF8] border border-blue-800/60">ROUTE: ${escapeHtml(pages[0].route || '/')}</span>
-            <span id="screenTypeBadge" class="text-[10px] font-mono font-medium px-2 py-0.5 rounded-[2px] bg-white/[0.06] text-neutral-400">화면</span>
+      <div id="screenHeaderCard" class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] flex items-center justify-between gap-4">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="screenRouteBadge" class="text-[10px] font-sans font-semibold px-2 py-0.5 rounded-md bg-[#EFF6FF] text-[#1E3A8A]">ROUTE: ${escapeHtml(pages[0].route || '/')}</span>
+            <span id="screenTypeBadge" class="text-[10px] font-sans font-medium px-2 py-0.5 rounded-md bg-[#FFFFFF] text-[#64748B] border border-[#E2E8F0]">화면</span>
           </div>
-          <h2 id="screenTitle" class="text-xs sm:text-sm font-bold text-[#F0F3F6] mt-1.5">${escapeHtml(pages[0].name)}</h2>
-          <p id="screenDesc" class="text-[11px] text-neutral-400 mt-0.5">${escapeHtml(pages[0].purpose || '')}</p>
+          <h2 id="screenTitle" class="text-sm font-bold text-[#0F172A] mt-2 truncate">${escapeHtml(pages[0].name)}</h2>
+          <p id="screenDesc" class="text-xs text-[#64748B] mt-0.5 line-clamp-2">${escapeHtml(pages[0].purpose || '')}</p>
         </div>
-        <div class="text-right hidden sm:block">
-          <span class="text-[10px] font-mono text-neutral-500">목표 KPI</span>
-          <p class="text-xs font-mono font-semibold text-[#38BDF8] mt-0.5">${kpi}</p>
+        <div class="text-right hidden sm:block shrink-0">
+          <span class="text-[10px] font-sans text-[#64748B]">목표 KPI</span>
+          <p class="text-xs font-sans font-semibold text-[#1E3A8A] mt-0.5">${kpi}</p>
         </div>
       </div>
 
       <!-- Synthesized Dynamic Screen View Slot -->
-      <div id="dynamicScreenView" class="space-y-3">
+      <div id="dynamicScreenView" class="space-y-4">
         <!-- Rendered dynamically by switchPage() in JavaScript -->
       </div>
 
     </main>
 
     <!-- Mobile Native Bottom Navigation Bar (Active in phone frame) -->
-    <div id="mobileBottomNav" class="${platform === 'APP' ? 'flex' : 'hidden'} items-center justify-around bg-[#0E1217]/95 backdrop-blur-md border-t border-white/[0.08] py-2 px-1 absolute bottom-0 left-0 right-0 z-20">
+    <div id="mobileBottomNav" class="${platform === 'APP' ? 'flex' : 'hidden'} items-center justify-around bg-[#FFFFFF]/95 backdrop-blur-md border-t border-[#E2E8F0] py-2 px-1 absolute bottom-0 left-0 right-0 z-20">
       ${pages.slice(0, 4).map((p, idx) => `
         <button 
           onclick="switchPage(${idx})" 
           id="bottomTab-${idx}" 
-          class="flex flex-col items-center justify-center flex-1 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${
-            idx === 0 ? 'text-[#38BDF8] font-semibold' : 'text-neutral-400 hover:text-white'
+          class="flex flex-col items-center justify-center flex-1 py-1 rounded-lg text-[10px] transition-all cursor-pointer ${
+            idx === 0 ? 'text-[#1E3A8A] font-semibold' : 'text-[#64748B] hover:text-[#0F172A]'
           }"
         >
           <span class="text-sm leading-none mb-0.5">${p.name.includes('대시') ? '📊' : p.name.includes('칸반') ? '📑' : p.name.includes('예약') ? '📅' : p.name.includes('견적') ? '💡' : p.name.includes('통계') ? '📈' : '📋'}</span>
@@ -418,66 +421,60 @@ export function compileStandalonePrototypeHtml(
         </button>
       `).join('')}
     </div>
-
-    <!-- Bottom Footer (Desktop) -->
-    <footer class="hidden sm:flex p-2.5 bg-[#0E1217] border-t border-white/[0.08] text-center text-[10px] font-mono text-neutral-400 items-center justify-between">
-      <span>${projectName} • Live Architecture Runtime</span>
-      <span>타깃: ${target}</span>
-    </footer>
   </div>
 
   <!-- Item Detail Drawer / Sheet (Slide-in) -->
   <div id="detailDrawerBackdrop" onclick="closeDetailDrawer()" class="fixed inset-0 modal-backdrop hidden z-40 transition-opacity"></div>
-  <div id="detailDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#0E1217] border-l border-white/[0.08] shadow-2xl z-50 p-5 flex flex-col justify-between hidden animate-slide-in-right overflow-y-auto custom-scroll text-[#F0F3F6]">
+  <div id="detailDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#FFFFFF] border-l border-[#E2E8F0] shadow-2xl z-50 p-5 flex flex-col justify-between hidden animate-slide-in-right overflow-y-auto custom-scroll text-[#0F172A]">
     <div class="space-y-4">
-      <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+      <div class="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
         <div class="flex items-center gap-2">
-          <span id="drawerStatusBadge" class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-medium bg-blue-950/60 text-[#38BDF8] border border-blue-800/60">대기</span>
-          <span class="text-xs font-mono text-neutral-400">엔지니어링 스펙 상세</span>
+          <span id="drawerStatusBadge" class="px-2 py-0.5 rounded-md text-[10px] font-sans font-semibold bg-[#EFF6FF] text-[#1E3A8A]">대기</span>
+          <span class="text-xs font-sans text-[#64748B]">엔지니어링 스펙 상세</span>
         </div>
-        <button onclick="closeDetailDrawer()" class="text-neutral-400 hover:text-white text-lg font-bold cursor-pointer">✕</button>
+        <button onclick="closeDetailDrawer()" class="text-[#64748B] hover:text-[#0F172A] text-lg font-bold cursor-pointer">✕</button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-medium text-neutral-400 mb-1">기능 명세 / 엔드포인트 명</label>
-          <input id="drawerTitle" type="text" class="w-full p-2.5 rounded-[2px] border border-white/[0.1] bg-[#13181F] text-[#F0F3F6] text-xs focus:outline-none focus:border-[#38BDF8]">
+          <label class="block font-medium text-[#475569] mb-1">기능 명세 / 엔드포인트 명</label>
+          <input id="drawerTitle" type="text" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A]">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-medium text-neutral-400 mb-1">진행 파이프라인</label>
-            <select id="drawerStatusSelect" onchange="updateDrawerStatus()" class="w-full p-2 rounded-[2px] border border-white/[0.1] bg-[#13181F] text-[#F0F3F6] font-medium text-xs focus:outline-none focus:border-[#38BDF8] cursor-pointer">
-              <option value="대기" class="bg-[#13181F] text-[#F0F3F6]">대기</option>
-              <option value="진행중" class="bg-[#13181F] text-[#F0F3F6]">진행중</option>
-              <option value="완료" class="bg-[#13181F] text-[#F0F3F6]">완료</option>
+            <label class="block font-medium text-[#475569] mb-1">진행 파이프라인</label>
+            <select id="drawerStatusSelect" onchange="updateDrawerStatus()" class="w-full p-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] font-medium text-xs focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+              <option value="대기">대기</option>
+              <option value="진행중">진행중</option>
+              <option value="완료">완료</option>
             </select>
           </div>
           <div>
-            <label class="block font-medium text-neutral-400 mb-1">버전 / 성능 지표</label>
-            <input id="drawerAmount" type="text" class="w-full p-2 rounded-[2px] border border-white/[0.1] bg-[#13181F] text-[#F0F3F6] text-xs focus:outline-none focus:border-[#38BDF8] font-mono">
+            <label class="block font-medium text-[#475569] mb-1">버전 / 성능 지표</label>
+            <input id="drawerAmount" type="text" class="w-full p-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A] font-sans tabular-nums">
           </div>
         </div>
 
         <div>
-          <label class="block font-medium text-neutral-400 mb-1">담당 엔지니어 / 서브시스템</label>
-          <input id="drawerContact" type="text" class="w-full p-2 rounded-[2px] border border-white/[0.1] bg-[#13181F] text-[#F0F3F6] text-xs focus:outline-none focus:border-[#38BDF8]">
+          <label class="block font-medium text-[#475569] mb-1">담당 엔지니어 / 서브시스템</label>
+          <input id="drawerContact" type="text" class="w-full p-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A]">
         </div>
 
         <div>
-          <label class="block font-medium text-neutral-400 mb-1">상세 구현 규격 & 메모</label>
-          <textarea id="drawerMemo" rows="4" class="w-full p-2.5 rounded-[2px] border border-white/[0.1] bg-[#13181F] text-[#F0F3F6] text-xs focus:outline-none focus:border-[#38BDF8] leading-relaxed"></textarea>
+          <label class="block font-medium text-[#475569] mb-1">상세 구현 규격 & 메모</label>
+          <textarea id="drawerMemo" rows="4" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A] leading-relaxed"></textarea>
         </div>
       </div>
     </div>
 
-    <div class="pt-4 border-t border-white/[0.08] flex items-center justify-between">
-      <button onclick="deleteDrawerItem()" class="px-3 py-2 rounded-[2px] text-xs font-semibold text-rose-400 hover:bg-rose-950/30 transition-colors cursor-pointer">
+    <div class="pt-4 border-t border-[#E2E8F0] flex items-center justify-between">
+      <button onclick="deleteDrawerItem()" class="px-3 py-2 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer">
         삭제하기
       </button>
       <div class="flex items-center gap-2">
-        <button onclick="closeDetailDrawer()" class="px-4 py-2 rounded-[2px] text-xs font-medium text-neutral-400 hover:text-white cursor-pointer">닫기</button>
-        <button onclick="saveDrawerChanges()" class="px-4 py-2 rounded-[2px] text-xs font-medium text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-xs cursor-pointer font-semibold">
+        <button onclick="closeDetailDrawer()" class="px-4 py-2 rounded-lg text-xs font-medium text-[#64748B] hover:text-[#0F172A] cursor-pointer">닫기</button>
+        <button onclick="saveDrawerChanges()" class="px-4 py-2 rounded-lg text-xs font-semibold text-[#FFFFFF] bg-[#1E3A8A] hover:bg-[#172554] cursor-pointer">
           저장하기
         </button>
       </div>
@@ -486,47 +483,47 @@ export function compileStandalonePrototypeHtml(
 
   <!-- Add Item Modal Dialog -->
   <div id="addModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-[#13181F] rounded-[4px] border border-white/[0.1] shadow-2xl w-full max-w-md p-5 space-y-4 animate-in fade-in zoom-in-95 text-[#F0F3F6]">
-      <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
-        <h3 class="text-sm font-bold text-[#F0F3F6] tracking-wider">신규 기능 스펙 & API 엔드포인트 등록</h3>
-        <button onclick="closeAddModal()" class="text-neutral-400 hover:text-white text-lg font-bold cursor-pointer">✕</button>
+    <div class="bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] shadow-2xl w-full max-w-md p-5 space-y-4 animate-in fade-in zoom-in-95 text-[#0F172A]">
+      <div class="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
+        <h3 class="text-sm font-bold text-[#0F172A] tracking-tight">신규 기능 스펙 & API 엔드포인트 등록</h3>
+        <button onclick="closeAddModal()" class="text-[#64748B] hover:text-[#0F172A] text-lg font-bold cursor-pointer">✕</button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-medium text-neutral-400 mb-1">기능명 / 엔드포인트 <span class="text-[#38BDF8]">*</span></label>
-          <input id="modalTitle" type="text" placeholder="예: [FEAT] 사용자 온보딩 퍼널 및 토큰 인증 플로우" class="w-full p-2.5 rounded-[2px] border border-white/[0.1] bg-[#0E1217] text-[#F0F3F6] placeholder-neutral-500 text-xs focus:outline-none focus:border-[#38BDF8]">
+          <label class="block font-medium text-[#475569] mb-1">기능명 / 엔드포인트 <span class="text-[#1E3A8A]">*</span></label>
+          <input id="modalTitle" type="text" placeholder="예: [FEAT] 사용자 온보딩 퍼널 및 토큰 인증 플로우" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] placeholder-[#94A3B8] text-xs focus:outline-none focus:border-[#1E3A8A]">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-medium text-neutral-400 mb-1">담당 엔지니어</label>
-            <input id="modalContact" type="text" placeholder="dev-lead@service.io" class="w-full p-2.5 rounded-[2px] border border-white/[0.1] bg-[#0E1217] text-[#F0F3F6] placeholder-neutral-500 text-xs focus:outline-none focus:border-[#38BDF8]">
+            <label class="block font-medium text-[#475569] mb-1">담당 엔지니어</label>
+            <input id="modalContact" type="text" placeholder="dev-lead@service.io" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] placeholder-[#94A3B8] text-xs focus:outline-none focus:border-[#1E3A8A]">
           </div>
           <div>
-            <label class="block font-medium text-neutral-400 mb-1">상태</label>
-            <select id="modalStatus" class="w-full p-2.5 rounded-[2px] border border-white/[0.1] bg-[#0E1217] text-[#F0F3F6] text-xs focus:outline-none focus:border-[#38BDF8] cursor-pointer">
-              <option value="대기" class="bg-[#0E1217] text-[#F0F3F6]">대기</option>
-              <option value="진행중" selected class="bg-[#0E1217] text-[#F0F3F6]">진행중</option>
-              <option value="완료" class="bg-[#0E1217] text-[#F0F3F6]">완료</option>
+            <label class="block font-medium text-[#475569] mb-1">상태</label>
+            <select id="modalStatus" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A] cursor-pointer">
+              <option value="대기">대기</option>
+              <option value="진행중" selected>진행중</option>
+              <option value="완료">완료</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="block font-medium text-neutral-400 mb-1">버전 / 스프린트 / 레이턴시 지표</label>
-          <input id="modalAmount" type="text" placeholder="예: Sprint 03 • v1.1.0 (P99 < 30ms)" class="w-full p-2.5 rounded-[2px] border border-white/[0.1] bg-[#0E1217] text-[#F0F3F6] placeholder-neutral-500 text-xs focus:outline-none focus:border-[#38BDF8]">
+          <label class="block font-medium text-[#475569] mb-1">버전 / 스프린트 / 레이턴시 지표</label>
+          <input id="modalAmount" type="text" placeholder="예: Sprint 03 • v1.1.0 (P99 < 30ms)" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] placeholder-[#94A3B8] text-xs focus:outline-none focus:border-[#1E3A8A]">
         </div>
 
         <div>
-          <label class="block font-medium text-neutral-400 mb-1">상세 사양 / 의존성 메모</label>
-          <textarea id="modalMemo" rows="3" placeholder="기능 상세 요구사항, 의존성 모듈, API 스키마 변경 사항을 작성하세요." class="w-full p-2.5 rounded-[2px] border border-white/[0.1] bg-[#0E1217] text-[#F0F3F6] placeholder-neutral-500 text-xs focus:outline-none focus:border-[#38BDF8] leading-relaxed"></textarea>
+          <label class="block font-medium text-[#475569] mb-1">상세 사양 / 의존성 메모</label>
+          <textarea id="modalMemo" rows="3" placeholder="기능 상세 요구사항, 의존성 모듈, API 스키마 변경 사항을 작성하세요." class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] focus:bg-[#FFFFFF] text-[#0F172A] placeholder-[#94A3B8] text-xs focus:outline-none focus:border-[#1E3A8A] leading-relaxed"></textarea>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/[0.08]">
-        <button onclick="closeAddModal()" class="px-4 py-2 rounded-[2px] text-xs font-medium text-neutral-400 hover:text-white cursor-pointer">취소</button>
-        <button onclick="submitNewItem()" class="px-4 py-2 rounded-[2px] text-xs font-medium text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-xs cursor-pointer font-semibold">스펙 등록하기</button>
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#E2E8F0]">
+        <button onclick="closeAddModal()" class="px-4 py-2 rounded-lg text-xs font-medium text-[#64748B] hover:text-[#0F172A] cursor-pointer">취소</button>
+        <button onclick="submitNewItem()" class="px-4 py-2 rounded-lg text-xs font-semibold text-[#FFFFFF] bg-[#1E3A8A] hover:bg-[#172554] cursor-pointer">스펙 등록하기</button>
       </div>
     </div>
   </div>
@@ -561,7 +558,7 @@ export function compileStandalonePrototypeHtml(
       const container = document.getElementById('toastContainer');
       if (!container) return;
       const toast = document.createElement('div');
-      toast.className = 'px-4 py-2.5 rounded-[2px] border border-[#E5E0D8] shadow-xl text-xs font-medium flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto bg-[#191816] text-[#FAF8F5]';
+      toast.className = 'px-4 py-2.5 rounded-lg border border-[#E2E8F0] shadow-lg text-xs font-medium flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto bg-[#0F172A] text-[#FFFFFF]';
       toast.innerHTML = (type === 'success' ? '✓ ' : type === 'delete' ? '✕ ' : 'ℹ ') + escapeHtml(message);
       container.appendChild(toast);
       setTimeout(() => {
@@ -624,21 +621,21 @@ export function compileStandalonePrototypeHtml(
       const icon = document.getElementById('deviceIcon');
 
       if (isPhoneView) {
-        container.className = 'w-full max-w-[420px] rounded-[36px] border-2 border-white/15 shadow-2xl overflow-hidden bg-[#080808] flex flex-col transition-all duration-300 min-h-[680px] relative';
+        container.className = 'w-full max-w-[420px] rounded-[36px] border-2 border-[#E2E8F0] shadow-xl overflow-hidden bg-[#FFFFFF] flex flex-col transition-all duration-300 min-h-[680px] relative';
         mobileStatus.classList.remove('hidden');
         mobileStatus.classList.add('flex');
         mobileBottom.classList.remove('hidden');
         mobileBottom.classList.add('flex');
-        label.innerText = '데스크톱 뷰로 전환';
-        icon.innerText = '💻';
+        if (label) label.innerText = '데스크톱 뷰로 전환';
+        if (icon) icon.innerText = '💻';
       } else {
-        container.className = 'w-full max-w-5xl rounded-[2px] border border-white/10 shadow-xl bg-[#080808] flex flex-col transition-all duration-300 min-h-[680px] relative';
+        container.className = 'w-full max-w-5xl rounded-xl border border-[#E2E8F0] shadow-lg bg-[#FFFFFF] flex flex-col transition-all duration-300 min-h-[680px] relative';
         mobileStatus.classList.add('hidden');
         mobileStatus.classList.remove('flex');
         mobileBottom.classList.add('hidden');
         mobileBottom.classList.remove('flex');
-        label.innerText = '스마트폰 뷰로 전환';
-        icon.innerText = '📱';
+        if (label) label.innerText = '스마트폰 뷰로 전환';
+        if (icon) icon.innerText = '📱';
       }
     }
 
@@ -667,9 +664,9 @@ export function compileStandalonePrototypeHtml(
         const tab = document.getElementById('navTab-' + i);
         if (tab) {
           if (i === idx) {
-            tab.className = 'px-3 py-1.5 rounded-[2px] text-xs font-semibold whitespace-nowrap bg-[#2563EB] text-white shadow-xs transition-all cursor-pointer flex items-center gap-1.5';
+            tab.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-[#EFF6FF] text-[#1E3A8A] transition-all cursor-pointer flex items-center gap-1.5';
           } else {
-            tab.className = 'px-3 py-1.5 rounded-[2px] text-xs font-medium whitespace-nowrap text-neutral-400 hover:text-[#F0F3F6] hover:bg-white/[0.06] transition-all cursor-pointer flex items-center gap-1.5';
+            tab.className = 'px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] transition-all cursor-pointer flex items-center gap-1.5';
           }
         }
 
@@ -677,9 +674,9 @@ export function compileStandalonePrototypeHtml(
         const bTab = document.getElementById('bottomTab-' + i);
         if (bTab) {
           if (i === idx) {
-            bTab.className = 'flex flex-col items-center justify-center flex-1 py-1 rounded-[2px] text-[10px] font-semibold text-[#38BDF8]';
+            bTab.className = 'flex flex-col items-center justify-center flex-1 py-1 rounded-lg text-[10px] font-semibold text-[#1E3A8A]';
           } else {
-            bTab.className = 'flex flex-col items-center justify-center flex-1 py-1 rounded-[2px] text-[10px] text-neutral-400';
+            bTab.className = 'flex flex-col items-center justify-center flex-1 py-1 rounded-lg text-[10px] text-[#64748B]';
           }
         }
       });
@@ -741,7 +738,7 @@ export function compileStandalonePrototypeHtml(
       const badge = document.getElementById('drawerStatusBadge');
       if (badge) {
         badge.innerText = item.status;
-        badge.className = 'px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-semibold bg-white/10 text-white border border-white/15';
+        badge.className = 'px-2 py-0.5 rounded-md text-[10px] font-sans font-semibold bg-[#EFF6FF] text-[#1E3A8A]';
       }
 
       document.getElementById('detailDrawerBackdrop').classList.remove('hidden');
@@ -759,7 +756,7 @@ export function compileStandalonePrototypeHtml(
       const badge = document.getElementById('drawerStatusBadge');
       if (badge) {
         badge.innerText = newStatus;
-        badge.className = 'px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-semibold bg-white/10 text-white border border-white/15';
+        badge.className = 'px-2 py-0.5 rounded-md text-[10px] font-sans font-semibold bg-[#EFF6FF] text-[#1E3A8A]';
       }
     }
 
@@ -877,11 +874,11 @@ export function compileStandalonePrototypeHtml(
         if (previewState === 'role') {
           roleBadge.classList.remove('hidden');
           if (previewRole === 'admin') {
-            roleBadge.className = 'px-2 py-1 rounded-[2px] text-[10px] font-mono font-semibold border border-emerald-500/40 bg-emerald-950/50 text-emerald-300';
-            roleBadge.innerText = 'ROLE: ADMIN / OPERATOR';
+            roleBadge.className = 'px-2 py-1 rounded-md text-[10px] font-sans font-semibold border border-emerald-200 bg-emerald-50 text-emerald-800 whitespace-nowrap';
+            roleBadge.innerText = 'ROLE: ADMIN';
           } else {
-            roleBadge.className = 'px-2 py-1 rounded-[2px] text-[10px] font-mono font-semibold border border-amber-500/40 bg-amber-950/40 text-amber-300';
-            roleBadge.innerText = 'ROLE: STANDARD USER';
+            roleBadge.className = 'px-2 py-1 rounded-md text-[10px] font-sans font-semibold border border-amber-200 bg-amber-50 text-amber-800 whitespace-nowrap';
+            roleBadge.innerText = 'ROLE: USER';
           }
         } else {
           roleBadge.classList.add('hidden');
@@ -890,10 +887,10 @@ export function compileStandalonePrototypeHtml(
 
       if (headerAddBtn) {
         if (previewState === 'error') {
-          headerAddBtn.className = 'px-3 py-1.5 rounded-[2px] text-xs font-semibold text-rose-200 bg-rose-950/80 border border-rose-500/50 cursor-not-allowed flex items-center gap-1 opacity-80';
+          headerAddBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 cursor-not-allowed flex items-center gap-1 whitespace-nowrap shrink-0';
           headerAddBtn.title = '도메인 규칙 위반으로 신규 등록 차단됨';
         } else {
-          headerAddBtn.className = 'px-3 py-1.5 rounded-[2px] text-xs font-semibold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-[0_0_12px_rgba(37,99,235,0.25)] transition-all flex items-center gap-1 cursor-pointer';
+          headerAddBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium text-[#FFFFFF] bg-[#1E3A8A] hover:bg-[#172554] transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0';
           headerAddBtn.title = '';
         }
       }
@@ -904,57 +901,57 @@ export function compileStandalonePrototypeHtml(
         const ruleLabel = ruleCount > 0 ? ('Rule ' + String((activeErrorRuleIdx % ruleCount) + 1).padStart(2, '0') + ' / ' + String(ruleCount).padStart(2, '0')) : 'Simulated Rule';
         const isUserDefined = ruleCount > 0;
 
-        banner.className = 'bg-rose-950/45 border border-rose-500/40 rounded-[4px] p-3.5 space-y-2.5';
+        banner.className = 'bg-rose-50 border border-rose-200 rounded-xl p-4 space-y-2';
         banner.innerHTML = \`
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">BLOCKED · ERROR STATE</span>
-              <span class="text-xs font-mono font-semibold text-rose-200">\${escapeHtml(ruleLabel)}</span>
-              \${isUserDefined ? '<span class="text-[11px] text-rose-300/80">(' + escapeHtml(rule.sectionTitle) + ')</span>' : '<span class="text-[11px] text-rose-300/80">(기본 시뮬레이션 · Domain Rules 작성 시 실시간 반영)</span>'}
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-sans font-bold bg-rose-100 text-rose-800">BLOCKED · ERROR STATE</span>
+              <span class="text-xs font-sans font-semibold text-rose-900 tabular-nums">\${escapeHtml(ruleLabel)}</span>
+              \${isUserDefined ? '<span class="text-[11px] text-rose-700">(' + escapeHtml(rule.sectionTitle) + ')</span>' : '<span class="text-[11px] text-rose-700">(기본 시뮬레이션 · Domain Rules 작성 시 실시간 반영)</span>'}
             </div>
             \${ruleCount > 1 ? \`
               <div class="flex items-center gap-1">
-                <button onclick="cycleSimulatedRule(-1)" class="px-2 py-0.5 rounded-[2px] bg-rose-900/50 hover:bg-rose-800/60 text-rose-100 text-[10px] font-mono cursor-pointer">◀ 이전 규칙</button>
-                <button onclick="cycleSimulatedRule(1)" class="px-2 py-0.5 rounded-[2px] bg-rose-900/50 hover:bg-rose-800/60 text-rose-100 text-[10px] font-mono cursor-pointer">다음 규칙 ▶</button>
+                <button onclick="cycleSimulatedRule(-1)" class="px-2 py-0.5 rounded-md bg-white hover:bg-rose-100 border border-rose-200 text-rose-800 text-[10px] font-sans cursor-pointer">◀ 이전 규칙</button>
+                <button onclick="cycleSimulatedRule(1)" class="px-2 py-0.5 rounded-md bg-white hover:bg-rose-100 border border-rose-200 text-rose-800 text-[10px] font-sans cursor-pointer">다음 규칙 ▶</button>
               </div>
             \` : ''}
           </div>
           <div class="space-y-1 text-xs">
-            <div class="text-rose-100"><span class="font-mono text-[10px] text-rose-300 font-bold mr-1.5">WHEN</span> \${escapeHtml(rule.when || '조건 트리거 발생')}</div>
-            <div class="text-white font-semibold"><span class="font-mono text-[10px] text-amber-300 font-bold mr-1.5">THEN</span> \${escapeHtml(rule.then || '요청이 차단되고 대체 경로가 표시됩니다')}</div>
-            \${rule.exception ? '<div class="text-neutral-300 text-[11px]"><span class="font-mono text-[10px] text-sky-300 font-bold mr-1.5">EXCEPT WHEN</span> ' + escapeHtml(rule.exception) + '</div>' : ''}
+            <div class="text-rose-800"><span class="font-sans text-[10px] text-rose-700 font-bold mr-1.5">WHEN</span> \${escapeHtml(rule.when || '조건 트리거 발생')}</div>
+            <div class="text-rose-950 font-semibold"><span class="font-sans text-[10px] text-rose-700 font-bold mr-1.5">THEN</span> \${escapeHtml(rule.then || '요청이 차단되고 대체 경로가 표시됩니다')}</div>
+            \${rule.exception ? '<div class="text-[#475569] text-[11px]"><span class="font-sans text-[10px] text-[#1E3A8A] font-bold mr-1.5">EXCEPT WHEN</span> ' + escapeHtml(rule.exception) + '</div>' : ''}
           </div>
         \`;
         banner.classList.remove('hidden');
       } else if (previewState === 'role') {
         const overrideRule = DOMAIN_RULES?.find(r => r.exception) || getSimulatedRule();
         if (previewRole === 'admin') {
-          banner.className = 'bg-emerald-950/35 border border-emerald-500/35 rounded-[4px] p-3.5 flex flex-wrap items-center justify-between gap-3';
+          banner.className = 'bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3';
           banner.innerHTML = \`
             <div class="space-y-1">
               <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">ADMIN / OPERATOR VIEW</span>
-                <span class="text-xs font-semibold text-[#F0F3F6]">관리자 전용 제어 및 예외 오버라이드 활성화</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-sans font-bold bg-emerald-100 text-emerald-800">ADMIN / OPERATOR VIEW</span>
+                <span class="text-xs font-semibold text-emerald-950">관리자 전용 제어 및 예외 오버라이드 활성화</span>
               </div>
-              <p class="text-[11px] text-neutral-300">
-                모든 삭제/승인 액션이 잠금 해제되었으며, <span class="text-emerald-300 font-mono">EXCEPT WHEN</span> 예외 정책("\${escapeHtml(overrideRule.exception || '관리자 긴급 승인')}")을 실행할 수 있습니다.
+              <p class="text-[11px] text-emerald-800">
+                모든 삭제/승인 액션이 잠금 해제되었으며, <span class="font-sans font-semibold">EXCEPT WHEN</span> 예외 정책("\${escapeHtml(overrideRule.exception || '관리자 긴급 승인')}")을 실행할 수 있습니다.
               </p>
             </div>
             <div class="flex items-center gap-1.5 shrink-0">
-              <button onclick="triggerAdminOverrideSimulation()" class="px-2.5 py-1.5 rounded-[2px] bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold cursor-pointer">
+              <button onclick="triggerAdminOverrideSimulation()" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-semibold cursor-pointer">
                 예외 오버라이드 실행
               </button>
             </div>
           \`;
         } else {
-          banner.className = 'bg-amber-950/30 border border-amber-500/35 rounded-[4px] p-3.5 flex flex-wrap items-center justify-between gap-3';
+          banner.className = 'bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3';
           banner.innerHTML = \`
             <div class="space-y-1">
               <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">STANDARD USER VIEW</span>
-                <span class="text-xs font-semibold text-[#F0F3F6]">일반 사용자 권한 스코프 (제한된 제어)</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-sans font-bold bg-amber-100 text-amber-800">STANDARD USER VIEW</span>
+                <span class="text-xs font-semibold text-amber-950">일반 사용자 권한 스코프 (제한된 제어)</span>
               </div>
-              <p class="text-[11px] text-neutral-300">
+              <p class="text-[11px] text-amber-800">
                 삭제·시스템 설정·예외 오버라이드("\${escapeHtml(overrideRule.exception || '관리자 승인 필요')}")가 보안 정책에 의해 숨김 또는 잠금 처리됩니다.
               </p>
             </div>
@@ -969,18 +966,18 @@ export function compileStandalonePrototypeHtml(
 
     function renderEmptyStatePanel(contextLabel) {
       const colPreview = DATA_COLUMNS && DATA_COLUMNS.length > 0
-        ? DATA_COLUMNS.slice(0, 4).map(c => '<span class="px-2 py-0.5 rounded-[2px] bg-white/[0.06] text-neutral-300 font-mono text-[10px]">' + escapeHtml(c) + '</span>').join(' ')
-        : '<span class="text-[11px] text-neutral-400 font-mono">기본 스키마 준비됨</span>';
+        ? DATA_COLUMNS.slice(0, 4).map(c => '<span class="px-2.5 py-0.5 rounded-md bg-[#FFFFFF] border border-[#E2E8F0] text-[#475569] font-sans text-[10px]">' + escapeHtml(c) + '</span>').join(' ')
+        : '<span class="text-[11px] text-[#64748B] font-sans">기본 스키마 준비됨</span>';
 
       return \`
-        <div class="bg-[#13181F] border border-dashed border-white/[0.16] rounded-[4px] p-6 sm:p-8 text-center space-y-4">
-          <div class="w-11 h-11 rounded-[4px] bg-blue-950/60 border border-blue-800/50 text-[#38BDF8] flex items-center justify-center mx-auto text-lg font-mono">
+        <div class="bg-[#F8FAFC] border border-dashed border-[#CBD5E1] rounded-xl p-8 text-center space-y-4">
+          <div class="w-11 h-11 rounded-xl bg-[#EFF6FF] text-[#1E3A8A] flex items-center justify-center mx-auto text-base font-sans tabular-nums font-bold">
             0
           </div>
           <div class="space-y-1.5 max-w-md mx-auto">
-            <div class="text-[11px] font-mono text-[#38BDF8] uppercase tracking-wider">Empty State · First Launch (0 Records)</div>
-            <h3 class="text-sm sm:text-base font-bold text-[#F0F3F6]">\${escapeHtml(contextLabel)}에 아직 등록된 데이터가 없습니다</h3>
-            <p class="text-xs text-neutral-400 leading-relaxed">
+            <div class="text-[11px] font-sans text-[#1E3A8A] uppercase tracking-wider font-semibold">Empty State · First Launch (0 Records)</div>
+            <h3 class="text-sm sm:text-base font-bold text-[#0F172A]">\${escapeHtml(contextLabel)}에 아직 등록된 데이터가 없습니다</h3>
+            <p class="text-xs text-[#64748B] leading-relaxed">
               최초 실행 시 사용자에게 빈 화면 대신 시작 가이드를 제공합니다. 아래 버튼을 눌러 첫 번째 레코드를 등록해 보세요.
             </p>
           </div>
@@ -988,7 +985,7 @@ export function compileStandalonePrototypeHtml(
             \${colPreview}
           </div>
           <div class="pt-2 flex items-center justify-center gap-2">
-            <button onclick="openAddModal()" class="px-4 py-2 rounded-[2px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-semibold cursor-pointer shadow-xs">
+            <button onclick="openAddModal()" class="px-4 py-2 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white text-xs font-semibold cursor-pointer">
               + 첫 번째 레코드 생성하기
             </button>
           </div>
@@ -1045,84 +1042,84 @@ export function compileStandalonePrototypeHtml(
 
       container.innerHTML = \`
         <!-- Interactive KPI Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          <div onclick="navigateToFilter('TABLE', 'ALL')" class="bg-[#171820] p-3.5 rounded-[4px] border border-white/[0.08] hover:border-white/20 cursor-pointer transition-all">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div onclick="navigateToFilter('TABLE', 'ALL')" class="bg-[#F8FAFC] p-3.5 rounded-xl border border-[#E2E8F0] hover:border-[#1E3A8A]/40 cursor-pointer transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-mono text-neutral-400">총 기능 스펙 & API</span>
-              <span class="text-[10px] text-neutral-500 font-mono">전체 ➔</span>
+              <span class="text-[11px] font-sans text-[#64748B]">총 기능 스펙</span>
+              <span class="text-[10px] text-[#94A3B8] font-sans">전체 ➔</span>
             </div>
-            <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">\${total} <span class="text-xs font-normal text-neutral-500">개</span></div>
+            <div class="text-2xl font-bold font-sans tabular-nums text-[#0F172A] mt-1">\${total} <span class="text-xs font-normal text-[#64748B]">개</span></div>
           </div>
 
-          <div onclick="navigateToFilter('TABLE', '대기')" class="bg-[#171820] p-3.5 rounded-[4px] border border-white/[0.08] hover:border-white/20 cursor-pointer transition-all">
+          <div onclick="navigateToFilter('TABLE', '대기')" class="bg-[#F8FAFC] p-3.5 rounded-xl border border-[#E2E8F0] hover:border-[#1E3A8A]/40 cursor-pointer transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-mono text-neutral-400">백로그 / 대기</span>
-              <span class="text-[10px] text-neutral-500 font-mono">필터 ➔</span>
+              <span class="text-[11px] font-sans text-[#64748B]">백로그 / 대기</span>
+              <span class="text-[10px] text-[#94A3B8] font-sans">필터 ➔</span>
             </div>
-            <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">\${pending} <span class="text-xs font-normal text-neutral-500">개</span></div>
+            <div class="text-2xl font-bold font-sans tabular-nums text-[#0F172A] mt-1">\${pending} <span class="text-xs font-normal text-[#64748B]">개</span></div>
           </div>
 
-          <div onclick="navigateToFilter('KANBAN', '진행중')" class="bg-[#171820] p-3.5 rounded-[4px] border border-white/[0.08] hover:border-white/20 cursor-pointer transition-all">
+          <div onclick="navigateToFilter('KANBAN', '진행중')" class="bg-[#F8FAFC] p-3.5 rounded-xl border border-[#E2E8F0] hover:border-[#1E3A8A]/40 cursor-pointer transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-mono text-neutral-400">스프린트 진행</span>
-              <span class="text-[10px] text-neutral-500 font-mono">칸반 ➔</span>
+              <span class="text-[11px] font-sans text-[#64748B]">스프린트 진행</span>
+              <span class="text-[10px] text-[#94A3B8] font-sans">칸반 ➔</span>
             </div>
-            <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">\${progress} <span class="text-xs font-normal text-neutral-500">개</span></div>
+            <div class="text-2xl font-bold font-sans tabular-nums text-[#0F172A] mt-1">\${progress} <span class="text-xs font-normal text-[#64748B]">개</span></div>
           </div>
 
-          <div onclick="navigateToFilter('ANALYTICS', '완료')" class="bg-[#171820] p-3.5 rounded-[4px] border border-white/[0.08] hover:border-white/20 cursor-pointer transition-all">
+          <div onclick="navigateToFilter('ANALYTICS', '완료')" class="bg-[#F8FAFC] p-3.5 rounded-xl border border-[#E2E8F0] hover:border-[#1E3A8A]/40 cursor-pointer transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-mono text-neutral-400">스펙 배포 완료율</span>
-              <span class="text-[10px] text-neutral-500 font-mono">통계 ➔</span>
+              <span class="text-[11px] font-sans text-[#64748B]">스펙 배포 완료율</span>
+              <span class="text-[10px] text-[#94A3B8] font-sans">통계 ➔</span>
             </div>
-            <div class="text-2xl font-bold font-mono text-[#E4DFD7] mt-1">\${doneRate}%</div>
+            <div class="text-2xl font-bold font-sans tabular-nums text-[#1E3A8A] mt-1">\${doneRate}%</div>
           </div>
         </div>
 
         \${total === 0 ? renderEmptyStatePanel('대시보드') : \`
           <!-- Progress Distribution Bar -->
-          <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-2">
-            <div class="flex items-center justify-between text-xs font-medium text-[#F1F1F4]">
+          <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] space-y-2">
+            <div class="flex items-center justify-between text-xs font-medium text-[#0F172A]">
               <span>스프린트 파이프라인 진척도</span>
-              <span class="text-[11px] font-mono text-neutral-400">배포 완료 \${done}건 / 전체 \${total}건</span>
+              <span class="text-[11px] font-sans tabular-nums text-[#64748B]">배포 완료 \${done}건 / 전체 \${total}건</span>
             </div>
-            <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden flex border border-white/[0.06]">
-              <div style="width: \${total > 0 ? (pending/total)*100 : 0}%; background-color: #525462;" title="대기: \${pending}건"></div>
-              <div style="width: \${total > 0 ? (progress/total)*100 : 0}%; background-color: #9B9DA8;" title="진행: \${progress}건"></div>
-              <div style="width: \${total > 0 ? (done/total)*100 : 0}%; background-color: #E4DFD7;" title="완료: \${done}건"></div>
+            <div class="w-full h-2 bg-[#E2E8F0] rounded-full overflow-hidden flex">
+              <div style="width: \${total > 0 ? (pending/total)*100 : 0}%; background-color: #94A3B8;" title="대기: \${pending}건"></div>
+              <div style="width: \${total > 0 ? (progress/total)*100 : 0}%; background-color: #3B82F6;" title="진행: \${progress}건"></div>
+              <div style="width: \${total > 0 ? (done/total)*100 : 0}%; background-color: #1E3A8A;" title="완료: \${done}건"></div>
             </div>
-            <div class="flex items-center gap-4 text-[11px] font-mono text-neutral-400 pt-1">
-              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#525462]"></span> 백로그 (\${pending})</span>
-              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#9B9DA8]"></span> 구현 중 (\${progress})</span>
-              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#E4DFD7]"></span> 배포 완료 (\${done})</span>
+            <div class="flex items-center gap-4 text-[11px] font-sans tabular-nums text-[#64748B] pt-1">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#94A3B8]"></span> 백로그 (\${pending})</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span> 구현 중 (\${progress})</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#1E3A8A]"></span> 배포 완료 (\${done})</span>
             </div>
           </div>
 
           <!-- Recent Priority Feed with Item Drawer Integration -->
-          <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-3">
+          <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] space-y-3">
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-xs sm:text-sm font-bold text-[#F1F1F4]">핵심 엔지니어링 스펙 & 백로그 피드</h3>
-                <p class="text-[11px] text-neutral-400">항목을 클릭하면 실시간 상세 수정 드로어가 열립니다.</p>
+                <h3 class="text-xs sm:text-sm font-bold text-[#0F172A]">핵심 엔지니어링 스펙 & 백로그 피드</h3>
+                <p class="text-[11px] text-[#64748B]">항목을 클릭하면 상세 수정 드로어가 열립니다.</p>
               </div>
-              <button onclick="openAddModal()" class="text-xs font-medium text-[#E4DFD7] hover:underline cursor-pointer">+ 스펙 추가</button>
+              <button onclick="openAddModal()" class="text-xs font-medium text-[#1E3A8A] hover:underline cursor-pointer">+ 스펙 추가</button>
             </div>
             <div class="space-y-2">
               \${data.slice(0, 4).map((item, idx) => {
                 const lockedForUser = isUserRole && item.isAdminRestricted;
                 const blockedInError = isErrorState && idx === 0;
                 return \`
-                <div onclick="openItemDetail('\${item.id}')" class="p-3 rounded-[4px] border transition-all flex items-center justify-between gap-2 cursor-pointer \${blockedInError ? 'bg-rose-950/35 border-rose-500/45' : lockedForUser ? 'bg-[#111218] border-white/[0.05] opacity-60' : 'bg-[#13141B] hover:bg-[#1A1B24] border-white/[0.06] hover:border-white/15'}">
+                <div onclick="openItemDetail('\${item.id}')" class="p-3 rounded-lg border transition-all flex items-center justify-between gap-2 cursor-pointer \${blockedInError ? 'bg-rose-50 border-rose-200' : lockedForUser ? 'bg-[#F8FAFC] border-[#E2E8F0] opacity-65' : 'bg-[#FFFFFF] hover:border-[#CBD5E1] border-[#E2E8F0]'}">
                   <div class="min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
-                      <span class="px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-medium \${blockedInError ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-white/[0.06] text-[#E4DFD7] border border-white/[0.08]'}">\${blockedInError ? '차단됨' : item.status}</span>
-                      <span class="text-xs font-semibold text-[#F1F1F4] truncate">\${escapeHtml(item.title)}</span>
-                      \${item.amount ? \`<span class="text-[11px] font-mono text-neutral-400">(\${escapeHtml(item.amount)})</span>\` : ''}
-                      \${lockedForUser ? '<span class="text-[10px] font-mono text-amber-300">🔒 Admin Only</span>' : ''}
+                      <span class="px-2 py-0.5 rounded-md text-[10px] font-sans font-medium \${blockedInError ? 'bg-rose-100 text-rose-800' : 'bg-[#EFF6FF] text-[#1E3A8A]'}">\${blockedInError ? '차단됨' : item.status}</span>
+                      <span class="text-xs font-semibold text-[#0F172A] truncate">\${escapeHtml(item.title)}</span>
+                      \${item.amount ? \`<span class="text-[11px] font-sans text-[#64748B]">(\${escapeHtml(item.amount)})</span>\` : ''}
+                      \${lockedForUser ? '<span class="text-[10px] font-sans text-amber-700">🔒 Admin Only</span>' : ''}
                     </div>
-                    <p class="text-[11px] text-neutral-400 mt-1 line-clamp-1">\${escapeHtml(item.memo)}</p>
+                    <p class="text-[11px] text-[#64748B] mt-1 line-clamp-1">\${escapeHtml(item.memo)}</p>
                   </div>
-                  <button onclick="toggleItemStatus('\${item.id}', event)" class="text-xs px-2.5 py-1 rounded-[3px] border \${blockedInError ? 'border-rose-500/40 bg-rose-950/60 text-rose-200 cursor-not-allowed' : lockedForUser ? 'border-amber-500/30 bg-[#171820] text-amber-300/80 cursor-not-allowed' : 'border-white/[0.08] bg-[#171820] text-neutral-300 hover:text-white hover:bg-[#20222D] cursor-pointer'} font-medium shrink-0">
+                  <button onclick="toggleItemStatus('\${item.id}', event)" class="text-xs px-2.5 py-1 rounded-md border \${blockedInError ? 'border-rose-200 bg-rose-100 text-rose-800 cursor-not-allowed' : lockedForUser ? 'border-amber-200 bg-amber-50 text-amber-800 cursor-not-allowed' : 'border-[#E2E8F0] bg-[#F8FAFC] text-[#475569] hover:text-[#0F172A] hover:bg-[#EFF6FF] cursor-pointer'} font-medium shrink-0">
                     \${blockedInError ? '차단됨' : lockedForUser ? '권한 필요' : '상태전환'}
                   </button>
                 </div>
@@ -1151,31 +1148,31 @@ export function compileStandalonePrototypeHtml(
           \${columns.map(col => {
             const colItems = data.filter(d => d.status === col.id);
             return \`
-              <div class="bg-[#171820] rounded-[4px] border border-white/[0.08] p-3 flex flex-col min-h-[420px]">
-                <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.08]">
-                  <span class="text-xs font-semibold text-[#F1F1F4] uppercase tracking-wide">\${col.title}</span>
-                  <span class="text-[11px] font-mono font-medium px-2 py-0.5 rounded-[3px] bg-white/[0.06] text-[#E4DFD7] border border-white/[0.08]">\${colItems.length}</span>
+              <div class="bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] p-3 flex flex-col min-h-[420px]">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#E2E8F0]">
+                  <span class="text-xs font-semibold text-[#0F172A] uppercase tracking-wide">\${col.title}</span>
+                  <span class="text-[11px] font-sans tabular-nums font-medium px-2 py-0.5 rounded-md bg-[#FFFFFF] text-[#1E3A8A] border border-[#E2E8F0]">\${colItems.length}</span>
                 </div>
                 <div class="flex-1 space-y-2 overflow-y-auto custom-scroll pr-1">
                   \${colItems.length === 0 ? \`
-                    <div class="py-8 text-center text-xs text-neutral-500 border border-dashed border-white/[0.08] rounded-[4px]">등록된 스펙이 없습니다</div>
+                    <div class="py-8 text-center text-xs text-[#94A3B8] border border-dashed border-[#CBD5E1] rounded-lg">등록된 스펙이 없습니다</div>
                   \` : colItems.map(item => \`
-                    <div onclick="openItemDetail('\${item.id}')" class="p-3 bg-[#13141B] rounded-[4px] border border-white/[0.06] hover:border-white/20 transition-all space-y-2 cursor-pointer">
+                    <div onclick="openItemDetail('\${item.id}')" class="p-3 bg-[#FFFFFF] rounded-lg border border-[#E2E8F0] hover:border-[#1E3A8A]/40 transition-all space-y-2 cursor-pointer">
                       <div class="flex items-start justify-between gap-1">
-                        <h4 class="text-xs font-semibold text-[#F1F1F4] leading-snug">\${escapeHtml(item.title)}</h4>
-                        \${isUserRole ? '' : \`<button onclick="deleteItem('\${item.id}', event)" class="text-neutral-500 hover:text-white text-xs">✕</button>\`}
+                        <h4 class="text-xs font-semibold text-[#0F172A] leading-snug">\${escapeHtml(item.title)}</h4>
+                        \${isUserRole ? '' : \`<button onclick="deleteItem('\${item.id}', event)" class="text-[#94A3B8] hover:text-rose-600 text-xs">✕</button>\`}
                       </div>
-                      <p class="text-[11px] text-neutral-400 leading-relaxed line-clamp-2">\${escapeHtml(item.memo)}</p>
-                      <div class="flex items-center justify-between pt-1 border-t border-white/[0.06] text-[10px] font-mono text-neutral-400">
+                      <p class="text-[11px] text-[#64748B] leading-relaxed line-clamp-2">\${escapeHtml(item.memo)}</p>
+                      <div class="flex items-center justify-between pt-1.5 border-t border-[#F1F5F9] text-[10px] font-sans text-[#64748B]">
                         <span>\${escapeHtml(item.amount || item.contact || '상세보기')}</span>
-                        <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-0.5 rounded-[3px] bg-[#171820] hover:bg-[#222430] text-neutral-300 hover:text-[#E4DFD7] border border-white/[0.08] cursor-pointer">
+                        <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-0.5 rounded-md bg-[#F8FAFC] hover:bg-[#EFF6FF] text-[#475569] hover:text-[#1E3A8A] border border-[#E2E8F0] cursor-pointer">
                           다음 ➔
                         </button>
                       </div>
                     </div>
                   \`).join('')}
                 </div>
-                <button onclick="openAddModal()" class="w-full mt-2 py-1.5 rounded-[4px] border border-dashed border-white/10 hover:border-white/30 text-xs font-medium text-neutral-400 hover:text-white transition-colors cursor-pointer">
+                <button onclick="openAddModal()" class="w-full mt-2 py-1.5 rounded-lg border border-dashed border-[#CBD5E1] hover:border-[#1E3A8A] text-xs font-medium text-[#64748B] hover:text-[#1E3A8A] transition-colors cursor-pointer">
                   + 스펙 카드 추가
                 </button>
               </div>
@@ -1207,7 +1204,7 @@ export function compileStandalonePrototypeHtml(
 
       container.innerHTML = \`
         <!-- Search & Status Filter Bar -->
-        <div class="flex flex-col sm:flex-row gap-2 items-center justify-between bg-[#171820] p-2.5 rounded-[4px] border border-white/[0.08]">
+        <div class="flex flex-col sm:flex-row gap-2 items-center justify-between bg-[#F8FAFC] p-2.5 rounded-xl border border-[#E2E8F0]">
           <div class="relative w-full sm:w-64">
             <input 
               id="searchInput" 
@@ -1215,25 +1212,25 @@ export function compileStandalonePrototypeHtml(
               value="\${escapeHtml(q)}"
               placeholder="스펙명, 엔지니어, 메모 검색..." 
               oninput="renderActiveScreen()"
-              class="w-full pl-7 pr-3 py-1.5 text-xs bg-[#0E0F14] rounded-[4px] border border-white/[0.08] text-[#F1F1F4] focus:outline-none focus:border-[#E4DFD7]/40"
+              class="w-full pl-7 pr-3 py-1.5 text-xs bg-[#FFFFFF] rounded-lg border border-[#E2E8F0] text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#1E3A8A]"
             />
-            <span class="absolute left-2.5 top-1.5 text-xs text-neutral-500">🔍</span>
+            <span class="absolute left-2.5 top-1.5 text-xs text-[#94A3B8]">🔍</span>
           </div>
 
           <div class="flex items-center gap-1 w-full sm:w-auto overflow-x-auto">
-            <button onclick="setFilter('ALL')" class="px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] \${currentFilter === 'ALL' ? 'bg-[#E4DFD7] text-[#090A0D] font-semibold' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}">전체 (\${data.length})</button>
-            <button onclick="setFilter('대기')" class="px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] \${currentFilter === '대기' ? 'bg-[#E4DFD7] text-[#090A0D] font-semibold' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}">대기</button>
-            <button onclick="setFilter('진행중')" class="px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] \${currentFilter === '진행중' ? 'bg-[#E4DFD7] text-[#090A0D] font-semibold' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}">진행중</button>
-            <button onclick="setFilter('완료')" class="px-2.5 py-1 text-xs font-mono font-medium rounded-[4px] \${currentFilter === '완료' ? 'bg-[#E4DFD7] text-[#090A0D] font-semibold' : 'text-neutral-400 hover:text-white hover:bg-white/[0.04]'}">완료</button>
+            <button onclick="setFilter('ALL')" class="px-2.5 py-1 text-xs font-sans tabular-nums font-medium rounded-lg \${currentFilter === 'ALL' ? 'bg-[#1E3A8A] text-[#FFFFFF] font-semibold' : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#FFFFFF]'}">전체 (\${data.length})</button>
+            <button onclick="setFilter('대기')" class="px-2.5 py-1 text-xs font-sans font-medium rounded-lg \${currentFilter === '대기' ? 'bg-[#1E3A8A] text-[#FFFFFF] font-semibold' : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#FFFFFF]'}">대기</button>
+            <button onclick="setFilter('진행중')" class="px-2.5 py-1 text-xs font-sans font-medium rounded-lg \${currentFilter === '진행중' ? 'bg-[#1E3A8A] text-[#FFFFFF] font-semibold' : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#FFFFFF]'}">진행중</button>
+            <button onclick="setFilter('완료')" class="px-2.5 py-1 text-xs font-sans font-medium rounded-lg \${currentFilter === '완료' ? 'bg-[#1E3A8A] text-[#FFFFFF] font-semibold' : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#FFFFFF]'}">완료</button>
           </div>
         </div>
 
         <!-- Table Grid -->
-        <div class="bg-[#171820] rounded-[4px] border border-white/[0.08] overflow-hidden">
+        <div class="bg-[#FFFFFF] rounded-xl border border-[#E2E8F0] overflow-hidden">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
-                <tr class="bg-[#13141B] border-b border-white/[0.08] text-neutral-400 font-mono uppercase text-[11px]">
+                <tr class="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#64748B] font-sans uppercase text-[11px]">
                   <th class="p-3">기능 명세 / 엔드포인트</th>
                   <th class="p-3">상태</th>
                   <th class="p-3">담당 엔지니어</th>
@@ -1242,23 +1239,23 @@ export function compileStandalonePrototypeHtml(
                   <th class="p-3 text-right">관리</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-white/[0.05]">
+              <tbody class="divide-y divide-[#F1F5F9]">
                 \${list.length === 0 ? \`
                   <tr>
-                    <td colspan="6" class="p-8 text-center text-xs text-neutral-500 font-mono">일치하는 기능 명세 데이터가 없습니다.</td>
+                    <td colspan="6" class="p-8 text-center text-xs text-[#64748B] font-sans">일치하는 기능 명세 데이터가 없습니다.</td>
                   </tr>
                 \` : list.map(item => \`
-                  <tr onclick="openItemDetail('\${item.id}')" class="hover:bg-white/[0.03] transition-colors cursor-pointer">
-                    <td class="p-3 font-medium text-[#F1F1F4]">\${escapeHtml(item.title)}</td>
+                  <tr onclick="openItemDetail('\${item.id}')" class="hover:bg-[#F8FAFC] transition-colors cursor-pointer">
+                    <td class="p-3 font-medium text-[#0F172A]">\${escapeHtml(item.title)}</td>
                     <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-medium bg-white/[0.06] text-[#E4DFD7] border border-white/[0.08]">\${item.status}</span>
+                      <span class="px-2 py-0.5 rounded-md text-[10px] font-sans font-medium bg-[#EFF6FF] text-[#1E3A8A]">\${item.status}</span>
                     </td>
-                    <td class="p-3 text-neutral-300 font-mono text-[11px]">\${escapeHtml(item.contact || '-')}</td>
-                    <td class="p-3 font-mono text-neutral-400 text-[11px]">\${escapeHtml(item.amount || '-')}</td>
-                    <td class="p-3 text-neutral-400 max-w-xs truncate text-[11px]">\${escapeHtml(item.memo)}</td>
+                    <td class="p-3 text-[#475569] font-sans text-[11px]">\${escapeHtml(item.contact || '-')}</td>
+                    <td class="p-3 font-sans tabular-nums text-[#64748B] text-[11px]">\${escapeHtml(item.amount || '-')}</td>
+                    <td class="p-3 text-[#64748B] max-w-xs truncate text-[11px]">\${escapeHtml(item.memo)}</td>
                     <td class="p-3 text-right space-x-1 whitespace-nowrap" onclick="event.stopPropagation()">
-                      <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-1 rounded-[3px] bg-[#171820] hover:bg-[#20222D] text-neutral-300 hover:text-white font-medium border border-white/[0.08] cursor-pointer">상태전환</button>
-                      \${isUserRole ? '<span class="px-2 py-1 text-[10px] font-mono text-amber-400/80">🔒 Admin</span>' : \`<button onclick="deleteItem('\${item.id}', event)" class="px-2 py-1 rounded-[3px] text-neutral-500 hover:text-rose-400 font-medium cursor-pointer">삭제</button>\`}
+                      <button onclick="toggleItemStatus('\${item.id}', event)" class="px-2 py-1 rounded-md bg-[#F8FAFC] hover:bg-[#EFF6FF] text-[#475569] hover:text-[#1E3A8A] font-medium border border-[#E2E8F0] cursor-pointer">상태전환</button>
+                      \${isUserRole ? '<span class="px-2 py-1 text-[10px] font-sans text-amber-700">🔒 Admin</span>' : \`<button onclick="deleteItem('\${item.id}', event)" class="px-2 py-1 rounded-md text-[#94A3B8] hover:text-rose-600 font-medium cursor-pointer">삭제</button>\`}
                     </td>
                   </tr>
                 \`).join('')}
@@ -1284,13 +1281,13 @@ export function compileStandalonePrototypeHtml(
       ];
 
       container.innerHTML = \`
-        <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-4">
-          <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] space-y-4">
+          <div class="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-bold text-[#F1F1F4] uppercase tracking-wider">🚀 스프린트 릴리스 & 엔지니어링 마일스톤</span>
-              <span class="text-xs px-2 py-0.5 rounded-[3px] bg-white/[0.06] text-[#E4DFD7] font-mono border border-white/[0.08]">Active Pipeline</span>
+              <span class="text-sm font-bold text-[#0F172A]">🚀 스프린트 릴리스 & 엔지니어링 마일스톤</span>
+              <span class="text-xs px-2 py-0.5 rounded-md bg-[#EFF6FF] text-[#1E3A8A] font-sans">Active Pipeline</span>
             </div>
-            <button onclick="openAddModal()" class="px-3 py-1.5 rounded-[4px] bg-[#E4DFD7] text-[#090A0D] text-xs font-medium cursor-pointer hover:bg-[#F2ECE3] shadow-xs">
+            <button onclick="openAddModal()" class="px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-[#FFFFFF] text-xs font-medium cursor-pointer hover:bg-[#172554]">
               + 마일스톤 추가
             </button>
           </div>
@@ -1299,17 +1296,17 @@ export function compileStandalonePrototypeHtml(
             \${milestones.map((ms, idx) => {
               const matchedItem = data[idx % data.length];
               return \`
-                <div onclick="openItemDetail('\${matchedItem.id}')" class="flex items-start gap-3 p-3 rounded-[4px] border border-white/[0.06] bg-[#13141B] hover:border-white/20 cursor-pointer transition-all">
-                  <div class="w-20 font-mono text-xs font-semibold text-[#E4DFD7] pt-1 shrink-0">\${ms.time}</div>
-                  <div class="flex-1 space-y-1">
-                    <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-medium bg-white/[0.06] text-neutral-300 border border-white/[0.08]">\${ms.label}</span>
-                      <h4 class="text-xs font-semibold text-[#F1F1F4]">\${escapeHtml(matchedItem.title)}</h4>
-                      <span class="text-[11px] text-neutral-400 font-mono">(\${escapeHtml(matchedItem.contact || '엔지니어')})</span>
+                <div onclick="openItemDetail('\${matchedItem.id}')" class="flex items-start gap-3 p-3 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] hover:border-[#1E3A8A]/40 cursor-pointer transition-all">
+                  <div class="w-16 font-sans tabular-nums text-xs font-semibold text-[#1E3A8A] pt-1 shrink-0">\${ms.time}</div>
+                  <div class="flex-1 space-y-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="px-2 py-0.5 rounded-md text-[10px] font-sans font-medium bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0]">\${ms.label}</span>
+                      <h4 class="text-xs font-semibold text-[#0F172A] truncate">\${escapeHtml(matchedItem.title)}</h4>
+                      <span class="text-[11px] text-[#64748B] font-sans">(\${escapeHtml(matchedItem.contact || '엔지니어')})</span>
                     </div>
-                    <p class="text-xs text-neutral-400">\${escapeHtml(ms.desc)} · \${escapeHtml(matchedItem.memo)}</p>
+                    <p class="text-xs text-[#64748B] truncate">\${escapeHtml(ms.desc)} · \${escapeHtml(matchedItem.memo)}</p>
                   </div>
-                  <button onclick="toggleItemStatus('\${matchedItem.id}', event)" class="text-xs px-2.5 py-1 rounded-[3px] border border-white/[0.08] bg-[#171820] hover:bg-[#20222D] text-neutral-300 hover:text-white font-medium cursor-pointer shrink-0">
+                  <button onclick="toggleItemStatus('\${matchedItem.id}', event)" class="text-xs px-2.5 py-1 rounded-md border border-[#E2E8F0] bg-[#F8FAFC] hover:bg-[#EFF6FF] text-[#475569] hover:text-[#1E3A8A] font-medium cursor-pointer shrink-0">
                     상태변경
                   </button>
                 </div>
@@ -1323,54 +1320,54 @@ export function compileStandalonePrototypeHtml(
     // 5. CALCULATOR / ARCHITECTURE ESTIMATE VIEW SYNTHESIS
     function renderCalculatorView(container, data) {
       container.innerHTML = \`
-        <div class="bg-[#171820] p-5 rounded-[4px] border border-white/[0.08] space-y-5">
-          <div class="border-b border-white/[0.08] pb-3">
-            <h3 class="text-sm font-bold text-[#F1F1F4] uppercase tracking-wider">💡 기술 스택 & 기능 명세 견적 시뮬레이터</h3>
-            <p class="text-xs text-neutral-400 mt-0.5">선택한 기능 모듈에 따라 개발 일정과 예상 리소스가 실시간 산출됩니다.</p>
+        <div class="bg-[#F8FAFC] p-5 rounded-xl border border-[#E2E8F0] space-y-5">
+          <div class="border-b border-[#E2E8F0] pb-3">
+            <h3 class="text-sm font-bold text-[#0F172A]">💡 기술 스택 & 기능 명세 견적 시뮬레이터</h3>
+            <p class="text-xs text-[#64748B] mt-0.5">선택한 기능 모듈에 따라 개발 일정과 예상 리소스가 실시간 산출됩니다.</p>
           </div>
 
           <div class="space-y-2.5 text-xs">
-            <label class="flex items-center justify-between p-3.5 rounded-[4px] border border-white/[0.06] bg-[#13141B] cursor-pointer hover:border-white/20">
+            <label class="flex items-center justify-between p-3.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] cursor-pointer hover:border-[#1E3A8A]/40">
               <div class="flex items-center gap-2.5">
-                <input type="checkbox" id="calcOpt1" checked onchange="recalculateQuote()" class="w-4 h-4 accent-[#E4DFD7]">
+                <input type="checkbox" id="calcOpt1" checked onchange="recalculateQuote()" class="w-4 h-4 accent-[#1E3A8A]">
                 <div>
-                  <div class="font-semibold text-[#F1F1F4]">코어 풀스택 아키텍처 (Next.js / Vite SPA + Edge Runtime)</div>
-                  <div class="text-[11px] text-neutral-400">TypeScript 타입 안정성, 레이아웃 반응형 및 로컬 캐시 엔진</div>
+                  <div class="font-semibold text-[#0F172A]">코어 풀스택 아키텍처 (Next.js / Vite SPA + Edge Runtime)</div>
+                  <div class="text-[11px] text-[#64748B]">TypeScript 타입 안정성, 레이아웃 반응형 및 로컬 캐시 엔진</div>
                 </div>
               </div>
-              <span class="font-mono font-medium text-[#E4DFD7]">2,500,000원 (2주)</span>
+              <span class="font-sans tabular-nums font-medium text-[#1E3A8A]">2,500,000원 (2주)</span>
             </label>
 
-            <label class="flex items-center justify-between p-3.5 rounded-[4px] border border-white/[0.06] bg-[#13141B] cursor-pointer hover:border-white/20">
+            <label class="flex items-center justify-between p-3.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] cursor-pointer hover:border-[#1E3A8A]/40">
               <div class="flex items-center gap-2.5">
-                <input type="checkbox" id="calcOpt2" checked onchange="recalculateQuote()" class="w-4 h-4 accent-[#E4DFD7]">
+                <input type="checkbox" id="calcOpt2" checked onchange="recalculateQuote()" class="w-4 h-4 accent-[#1E3A8A]">
                 <div>
-                  <div class="font-semibold text-[#F1F1F4]">실시간 WebSocket / SSE 데이터 스트리밍 & 상태 동기화</div>
-                  <div class="text-[11px] text-neutral-400">P99 < 35ms 저지연 양방향 메시징 및 재연결 백프레셔 제어</div>
+                  <div class="font-semibold text-[#0F172A]">실시간 WebSocket / SSE 데이터 스트리밍 & 상태 동기화</div>
+                  <div class="text-[11px] text-[#64748B]">P99 < 35ms 저지연 양방향 메시징 및 재연결 백프레셔 제어</div>
                 </div>
               </div>
-              <span class="font-mono font-medium text-[#E4DFD7]">1,200,000원 (1주)</span>
+              <span class="font-sans tabular-nums font-medium text-[#1E3A8A]">1,200,000원 (1주)</span>
             </label>
 
-            <label class="flex items-center justify-between p-3.5 rounded-[4px] border border-white/[0.06] bg-[#13141B] cursor-pointer hover:border-white/20">
+            <label class="flex items-center justify-between p-3.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] cursor-pointer hover:border-[#1E3A8A]/40">
               <div class="flex items-center gap-2.5">
-                <input type="checkbox" id="calcOpt3" onchange="recalculateQuote()" class="w-4 h-4 accent-[#E4DFD7]">
+                <input type="checkbox" id="calcOpt3" onchange="recalculateQuote()" class="w-4 h-4 accent-[#1E3A8A]">
                 <div>
-                  <div class="font-semibold text-[#F1F1F4]">엔터프라이즈 RBAC 보안 인증 및 규정 준수 감사 로깅</div>
-                  <div class="text-[11px] text-neutral-400">JWT 세션 무중단 로테이션, 변조 불가 감사 로그 스트림</div>
+                  <div class="font-semibold text-[#0F172A]">엔터프라이즈 RBAC 보안 인증 및 규정 준수 감사 로깅</div>
+                  <div class="text-[11px] text-[#64748B]">JWT 세션 무중단 로테이션, 변조 불가 감사 로그 스트림</div>
                 </div>
               </div>
-              <span class="font-mono font-medium text-[#E4DFD7]">800,000원 (3일)</span>
+              <span class="font-sans tabular-nums font-medium text-[#1E3A8A]">800,000원 (3일)</span>
             </label>
           </div>
 
           <!-- Total Calculation Bar -->
-          <div class="p-4 rounded-[4px] bg-[#13141B] border border-white/[0.08] flex items-center justify-between">
+          <div class="p-4 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] flex items-center justify-between">
             <div>
-              <span class="text-xs text-neutral-400 font-mono">예상 개발 예산 산출 (VAT 별도)</span>
-              <div id="quoteTotalDisplay" class="text-2xl font-bold text-[#E4DFD7] font-mono mt-0.5">3,700,000원</div>
+              <span class="text-xs text-[#64748B] font-sans">예상 개발 예산 산출 (VAT 별도)</span>
+              <div id="quoteTotalDisplay" class="text-2xl font-bold text-[#1E3A8A] font-sans tabular-nums mt-0.5">3,700,000원</div>
             </div>
-            <button onclick="submitQuoteOrder()" class="px-5 py-2.5 rounded-[4px] bg-[#E4DFD7] text-[#090A0D] text-xs font-medium hover:bg-[#F2ECE3] cursor-pointer shadow-xs">
+            <button onclick="submitQuoteOrder()" class="px-5 py-2.5 rounded-lg bg-[#1E3A8A] text-[#FFFFFF] text-xs font-semibold hover:bg-[#172554] cursor-pointer">
               기능 개발 명세 확정 ➔
             </button>
           </div>
@@ -1385,42 +1382,42 @@ export function compileStandalonePrototypeHtml(
       container.innerHTML = \`
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08]">
-              <span class="text-xs font-mono text-neutral-400">월간 API 처리량</span>
-              <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">\${(total * 460).toLocaleString()} k req</div>
-              <span class="text-[11px] font-mono text-[#E4DFD7]">↑ 전월 대비 24% 증가</span>
+            <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0]">
+              <span class="text-xs font-sans text-[#64748B]">월간 API 처리량</span>
+              <div class="text-2xl font-bold font-sans tabular-nums text-[#0F172A] mt-1">\${(total * 460).toLocaleString()} k req</div>
+              <span class="text-[11px] font-sans text-[#1E3A8A]">↑ 전월 대비 24% 증가</span>
             </div>
-            <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08]">
-              <span class="text-xs font-mono text-neutral-400">P99 응답 레이턴시</span>
-              <div class="text-2xl font-bold font-mono text-[#E4DFD7] mt-1">38 ms</div>
-              <span class="text-[11px] font-mono text-neutral-400">↓ 캐시 최적화로 65% 개선</span>
+            <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0]">
+              <span class="text-xs font-sans text-[#64748B]">P99 응답 레이턴시</span>
+              <div class="text-2xl font-bold font-sans tabular-nums text-[#1E3A8A] mt-1">38 ms</div>
+              <span class="text-[11px] font-sans text-[#64748B]">↓ 캐시 최적화로 65% 개선</span>
             </div>
-            <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08]">
-              <span class="text-xs font-mono text-neutral-400">서비스 가용성 (SLA)</span>
-              <div class="text-2xl font-bold font-mono text-[#F1F1F4] mt-1">99.98%</div>
-              <span class="text-[11px] font-mono text-neutral-400">★ 엔터프라이즈 SLA 충족</span>
+            <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0]">
+              <span class="text-xs font-sans text-[#64748B]">서비스 가용성 (SLA)</span>
+              <div class="text-2xl font-bold font-sans tabular-nums text-[#0F172A] mt-1">99.98%</div>
+              <span class="text-[11px] font-sans text-[#64748B]">★ 엔터프라이즈 SLA 충족</span>
             </div>
           </div>
 
           <!-- Bar Chart Simulation -->
-          <div class="bg-[#171820] p-4 rounded-[4px] border border-white/[0.08] space-y-3">
-            <h4 class="text-xs font-bold text-[#F1F1F4] uppercase tracking-wider">주간별 배포 파이프라인 통과율 & 테스트 커버리지</h4>
+          <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] space-y-3">
+            <h4 class="text-xs font-bold text-[#0F172A]">주간별 배포 파이프라인 통과율 & 테스트 커버리지</h4>
             <div class="space-y-2.5 text-xs">
               <div>
-                <div class="flex justify-between text-[11px] font-mono text-neutral-400 mb-1"><span>Sprint-01 (Core Schema)</span><span>94%</span></div>
-                <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden border border-white/[0.06]"><div class="h-full bg-[#E4DFD7]" style="width: 94%"></div></div>
+                <div class="flex justify-between text-[11px] font-sans tabular-nums text-[#64748B] mb-1"><span>Sprint-01 (Core Schema)</span><span>94%</span></div>
+                <div class="w-full h-2 bg-[#E2E8F0] rounded-full overflow-hidden"><div class="h-full bg-[#1E3A8A]" style="width: 94%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-[11px] font-mono text-neutral-400 mb-1"><span>Sprint-02 (API Gateway)</span><span>98%</span></div>
-                <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden border border-white/[0.06]"><div class="h-full bg-[#E4DFD7]" style="width: 98%"></div></div>
+                <div class="flex justify-between text-[11px] font-sans tabular-nums text-[#64748B] mb-1"><span>Sprint-02 (API Gateway)</span><span>98%</span></div>
+                <div class="w-full h-2 bg-[#E2E8F0] rounded-full overflow-hidden"><div class="h-full bg-[#1E3A8A]" style="width: 98%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-[11px] font-mono text-neutral-400 mb-1"><span>Sprint-03 (SSE Stream)</span><span>91%</span></div>
-                <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden border border-white/[0.06]"><div class="h-full bg-[#E4DFD7]" style="width: 91%"></div></div>
+                <div class="flex justify-between text-[11px] font-sans tabular-nums text-[#64748B] mb-1"><span>Sprint-03 (SSE Stream)</span><span>91%</span></div>
+                <div class="w-full h-2 bg-[#E2E8F0] rounded-full overflow-hidden"><div class="h-full bg-[#3B82F6]" style="width: 91%"></div></div>
               </div>
               <div>
-                <div class="flex justify-between text-[11px] font-mono text-neutral-400 mb-1"><span>Sprint-04 (Stripe Billing)</span><span>88%</span></div>
-                <div class="w-full h-2 bg-[#0E0F14] rounded-[2px] overflow-hidden border border-white/[0.06]"><div class="h-full bg-neutral-400" style="width: 88%"></div></div>
+                <div class="flex justify-between text-[11px] font-sans tabular-nums text-[#64748B] mb-1"><span>Sprint-04 (Stripe Billing)</span><span>88%</span></div>
+                <div class="w-full h-2 bg-[#E2E8F0] rounded-full overflow-hidden"><div class="h-full bg-[#64748B]" style="width: 88%"></div></div>
               </div>
             </div>
           </div>
@@ -1431,31 +1428,31 @@ export function compileStandalonePrototypeHtml(
     // 7. FORM VIEW SYNTHESIS
     function renderFormView(container) {
       container.innerHTML = \`
-        <div class="bg-[#171820] p-5 rounded-[4px] border border-white/[0.08] space-y-4 max-w-xl mx-auto">
-          <div class="border-b border-white/[0.08] pb-3">
-            <h3 class="text-sm font-bold text-[#F1F1F4] uppercase tracking-wider">📝 신규 기능 스펙 & 엔드포인트 명세 등록</h3>
-            <p class="text-xs text-neutral-400 mt-0.5">작성된 엔지니어링 항목은 실시간 대시보드와 칸반 파이프라인에 즉시 반영됩니다.</p>
+        <div class="bg-[#F8FAFC] p-5 rounded-xl border border-[#E2E8F0] space-y-4 max-w-xl mx-auto">
+          <div class="border-b border-[#E2E8F0] pb-3">
+            <h3 class="text-sm font-bold text-[#0F172A]">📝 신규 기능 스펙 & 엔드포인트 명세 등록</h3>
+            <p class="text-xs text-[#64748B] mt-0.5">작성된 엔지니어링 항목은 실시간 대시보드와 칸반 파이프라인에 즉시 반영됩니다.</p>
           </div>
           <div class="space-y-3 text-xs">
             <div>
-              <label class="block font-medium text-neutral-300 mb-1">기능명 / 엔드포인트 <span class="text-neutral-500">*</span></label>
-              <input id="inlineFormTitle" type="text" placeholder="예: [FEAT] 엔터프라이즈 SSO SAML 2.0 연동" class="w-full p-2.5 rounded-[4px] border border-white/[0.08] bg-[#0E0F14] text-[#F1F1F4] text-xs focus:outline-none focus:border-[#E4DFD7]/40">
+              <label class="block font-medium text-[#475569] mb-1">기능명 / 엔드포인트 <span class="text-[#1E3A8A]">*</span></label>
+              <input id="inlineFormTitle" type="text" placeholder="예: [FEAT] 엔터프라이즈 SSO SAML 2.0 연동" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A]">
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block font-medium text-neutral-300 mb-1">담당 엔지니어</label>
-                <input id="inlineFormContact" type="text" placeholder="auth-lead@service.io" class="w-full p-2.5 rounded-[4px] border border-white/[0.08] bg-[#0E0F14] text-[#F1F1F4] text-xs focus:outline-none focus:border-[#E4DFD7]/40">
+                <label class="block font-medium text-[#475569] mb-1">담당 엔지니어</label>
+                <input id="inlineFormContact" type="text" placeholder="auth-lead@service.io" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A]">
               </div>
               <div>
-                <label class="block font-medium text-neutral-300 mb-1">버전 / 스프린트</label>
-                <input id="inlineFormAmount" type="text" placeholder="v1.3.0 / Sprint-04" class="w-full p-2.5 rounded-[4px] border border-white/[0.08] bg-[#0E0F14] text-[#F1F1F4] text-xs focus:outline-none focus:border-[#E4DFD7]/40 font-mono">
+                <label class="block font-medium text-[#475569] mb-1">버전 / 스프린트</label>
+                <input id="inlineFormAmount" type="text" placeholder="v1.3.0 / Sprint-04" class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A] font-sans tabular-nums">
               </div>
             </div>
             <div>
-              <label class="block font-medium text-neutral-300 mb-1">상세 구현 요구사항 및 메모</label>
-              <textarea id="inlineFormMemo" rows="4" placeholder="의존성 패키지, 보안 고려사항, API 입력/출력 인터페이스 규격을 적어주세요." class="w-full p-2.5 rounded-[4px] border border-white/[0.08] bg-[#0E0F14] text-[#F1F1F4] text-xs focus:outline-none focus:border-[#E4DFD7]/40 leading-relaxed"></textarea>
+              <label class="block font-medium text-[#475569] mb-1">상세 구현 요구사항 및 메모</label>
+              <textarea id="inlineFormMemo" rows="4" placeholder="의존성 패키지, 보안 고려사항, API 입력/출력 인터페이스 규격을 적어주세요." class="w-full p-2.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-[#0F172A] text-xs focus:outline-none focus:border-[#1E3A8A] leading-relaxed"></textarea>
             </div>
-            <button onclick="submitInlineForm()" class="w-full py-2.5 rounded-[4px] bg-[#E4DFD7] text-[#090A0D] text-xs font-medium hover:bg-[#F2ECE3] cursor-pointer shadow-xs">
+            <button onclick="submitInlineForm()" class="w-full py-2.5 rounded-lg bg-[#1E3A8A] text-[#FFFFFF] text-xs font-semibold hover:bg-[#172554] cursor-pointer">
               스펙 등록 완료하기 ➔
             </button>
           </div>

@@ -105,22 +105,22 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
     setPlan(updatedPlan);
 
     // 2. Sync with natural language Chapter 5 inputs
-    const moodText = `${preset.engName}: ${preset.name} - 캔버스(${preset.paperBg})에 ${preset.primaryColor} 주조색과 ${preset.accentColor} 악센트 (${preset.description}) - Plus Jakarta Sans & Pretendard Variable 산세리프 전면 적용`;
+    const moodText = `${preset.engName}: ${preset.name} - 캔버스(${preset.paperBg})에 ${preset.primaryColor} 주조색과 ${preset.accentColor} 악센트 (${preset.description}) - DM Sans & SUIT Variable 산세리프 전면 적용`;
     onInputChange(5, 'brand_mood', moodText);
   };
 
   const handleFontWeightChange = (weight: 'bold' | 'semibold') => {
     setHeadingWeight(weight);
-    const weightDesc = weight === 'bold' ? 'Pretendard Bold 700 (강렬하고 정밀한 헤드라인 대비)' : 'Pretendard SemiBold 600 (단아하고 정제된 절제미)';
+    const weightDesc = weight === 'bold' ? 'DM Sans & SUIT Variable Bold 700 (강렬하고 정밀한 헤드라인 대비)' : 'DM Sans & SUIT Variable SemiBold 600 (단아하고 정제된 절제미)';
     const inputDesc = inputStyle === 'underline' ? '하단 1px 밑줄형 미니멀 인풋' : '정제된 미니멀 프레임 박스 인풋';
-    onInputChange(5, 'ui_tone', `Plus Jakarta Sans & Pretendard Variable (${weightDesc}) + ${inputDesc} + 수미 블랙 & 럭셔리 사파이어 블루 모노크롬`);
+    onInputChange(5, 'ui_tone', `DM Sans & SUIT Variable (${weightDesc}) + ${inputDesc} + 수미 블랙 & 럭셔리 사파이어 블루 모노크롬`);
   };
 
   const handleInputStyleChange = (style: 'underline' | 'box') => {
     setInputStyle(style);
-    const weightDesc = headingWeight === 'bold' ? 'Pretendard Bold 700' : 'Pretendard SemiBold 600';
+    const weightDesc = headingWeight === 'bold' ? 'DM Sans & SUIT Variable Bold 700' : 'DM Sans & SUIT Variable SemiBold 600';
     const inputDesc = style === 'underline' ? '하단 1px 밑줄형 미니멀 인풋' : '정제된 미니멀 프레임 박스 인풋';
-    onInputChange(5, 'ui_tone', `Plus Jakarta Sans & Pretendard Variable (${weightDesc}) + ${inputDesc} + 수미 블랙 & 럭셔리 사파이어 블루 모노크롬`);
+    onInputChange(5, 'ui_tone', `DM Sans & SUIT Variable (${weightDesc}) + ${inputDesc} + 수미 블랙 & 럭셔리 사파이어 블루 모노크롬`);
   };
 
   const handleLayoutChange = (layout: 'standard' | 'sidebar' | 'dashboard') => {
@@ -153,7 +153,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
             <h3 className="font-sans font-semibold text-[#111827] text-[18px] tracking-tight">
               비주얼 테마 및 디자인 규약 조율
             </h3>
-            <span className="text-xs text-[#6B7280] font-mono">
+            <span className="text-xs text-[#6B7280] font-sans">
               05_design_system.md
             </span>
           </div>
@@ -162,7 +162,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
           </p>
         </div>
 
-        <div className="shrink-0 flex items-center gap-2 text-xs font-mono text-[#4B5563] bg-[#F7F8FA] px-3 py-1.5 rounded-lg">
+        <div className="shrink-0 flex items-center gap-2 text-xs font-sans text-[#4B5563] bg-[#F7F8FA] px-3 py-1.5 rounded-lg">
           <span className="w-2.5 h-2.5 rounded-sm border border-black/10" style={{ backgroundColor: activePreset.primaryColor }} />
           <span className="text-[#111827] font-medium">{activePreset.name}</span>
         </div>
@@ -195,7 +195,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                         {preset.name}
                       </span>
                       <span className="text-[#D1D5DB]">·</span>
-                      <span className="text-[#1E3A8A] font-mono text-[11px] font-semibold">
+                      <span className="text-[#1E3A8A] font-sans text-[11px] font-semibold">
                         {preset.tag}
                       </span>
                     </div>
@@ -236,7 +236,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                     style={{ backgroundColor: preset.textColor }}
                     title={`본문색: ${preset.textColor}`}
                   />
-                  <span className="text-[11px] font-mono text-[#6B7280] ml-auto">
+                  <span className="text-[11px] font-sans tabular-nums text-[#6B7280] ml-auto">
                     {preset.primaryColor}
                   </span>
                 </div>
@@ -252,7 +252,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
         <div className="space-y-2">
           <label className="text-xs font-semibold text-[#111827] flex items-center gap-1.5">
             <Type size={14} className="text-[#1E3A8A]" />
-            <span>Pretendard Sans 위계</span>
+            <span>DM Sans &amp; SUIT Variable 위계</span>
           </label>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <button
@@ -350,7 +350,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
           <span className="font-sans font-semibold text-[#111827]">
             선택된 테마 토큰 프리뷰
           </span>
-          <span className="font-mono text-[#6B7280]">
+          <span className="font-sans text-[#6B7280]">
             {activePreset.engName} · {activePreset.primaryColor}
           </span>
         </div>
@@ -367,10 +367,10 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <span
-                className="text-[10px] font-mono uppercase tracking-widest block"
+                className="text-[10px] font-sans font-semibold uppercase tracking-widest block"
                 style={{ color: isLightPreview ? '#6B7280' : '#94A3B8' }}
               >
-                Sample Output Preview · Plus Jakarta Sans & Pretendard
+                Sample Output Preview · DM Sans &amp; SUIT Variable
               </span>
               <h4 
                 className={`text-base tracking-tight mt-0.5 font-sans ${
@@ -383,7 +383,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
             </div>
 
             {/* Unboxed Metadata Indicators */}
-            <div className="flex items-center gap-3 text-xs font-mono">
+            <div className="flex items-center gap-3 text-xs font-sans">
               <span style={{ color: activePreset.primaryColor }}>
                 활성 인스턴스 3건
               </span>
@@ -434,7 +434,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
 
           {/* Color Tokens Hex Chips */}
           <div
-            className="flex flex-wrap items-center gap-2 pt-3 border-t text-xs font-mono"
+            className="flex flex-wrap items-center gap-2 pt-3 border-t text-xs font-sans"
             style={{ borderColor: isLightPreview ? '#E5E7EB' : 'rgba(255,255,255,0.08)' }}
           >
             <button

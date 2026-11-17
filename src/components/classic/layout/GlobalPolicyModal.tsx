@@ -110,11 +110,11 @@ export default function GlobalPolicyModal({ isOpen, onClose }: GlobalPolicyModal
                       <h3 className="text-xs font-semibold uppercase tracking-widest">1. Strategy & Identity</h3>
                     </div>
                     <div className="space-y-3 p-5 bg-[#F7F8FA] rounded-xl border border-[#E5E7EB]">
-                      <p className="text-[10px] font-mono text-[#6B7280] uppercase tracking-widest">Operator Information</p>
+                      <p className="text-[10px] font-sans text-[#6B7280] uppercase tracking-widest">Operator Information</p>
                       <p className="text-xs leading-relaxed text-[#111827] font-semibold">
                         {t('company_display_name')}
                       </p>
-                      <p className="text-[10px] leading-relaxed text-[#6B7280] whitespace-pre-line pt-2 border-t border-[#E5E7EB] italic font-mono">
+                      <p className="text-[10px] leading-relaxed text-[#6B7280] whitespace-pre-line pt-2 border-t border-[#E5E7EB] italic font-sans">
                         {t('company_footer_id')}
                       </p>
                       <p className="text-xs leading-relaxed text-[#374151] pt-2">
@@ -134,7 +134,7 @@ export default function GlobalPolicyModal({ isOpen, onClose }: GlobalPolicyModal
                       </p>
                       <div className="flex items-center gap-2 px-3 py-1.5 bg-[#EFF6FF] rounded-lg border border-[#1E3A8A]/20 w-fit">
                         <div className="w-1.5 h-1.5 bg-[#1E3A8A] rounded-full animate-pulse" />
-                        <span className="text-[9px] font-mono text-[#1E3A8A] uppercase tracking-widest">100% FREE & ZERO FINANCIAL DATA</span>
+                        <span className="text-[9px] font-sans text-[#1E3A8A] uppercase tracking-widest">100% FREE & ZERO FINANCIAL DATA</span>
                       </div>
                     </div>
                   </section>
@@ -146,13 +146,13 @@ export default function GlobalPolicyModal({ isOpen, onClose }: GlobalPolicyModal
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="p-5 bg-[#F7F8FA] rounded-xl border border-[#E5E7EB] space-y-3">
-                        <h4 className="text-[10px] font-mono text-[#111827] uppercase tracking-widest">{t('europe_residents')}</h4>
+                        <h4 className="text-[10px] font-sans font-semibold text-[#111827] uppercase tracking-widest">{t('europe_residents')}</h4>
                         <p className="text-[10px] leading-relaxed text-[#4B5563] font-sans">
                           We comply with the GDPR for our European users, ensuring transparency in automated processing and the "Right to be Forgotten".
                         </p>
                       </div>
                       <div className="p-5 bg-[#F7F8FA] rounded-xl border border-[#E5E7EB] space-y-3">
-                        <h4 className="text-[10px] font-mono text-[#111827] uppercase tracking-widest">{t('california_residents')}</h4>
+                        <h4 className="text-[10px] font-sans font-semibold text-[#111827] uppercase tracking-widest">{t('california_residents')}</h4>
                         <p className="text-[10px] leading-relaxed text-[#4B5563] font-sans">
                           Pursuant to the CCPA, California residents have the right to request disclosure of personal information collected.
                         </p>
@@ -179,26 +179,26 @@ export default function GlobalPolicyModal({ isOpen, onClose }: GlobalPolicyModal
                     </div>
                     <div className="p-6 bg-[#F7F8FA] border border-[#E5E7EB] rounded-xl text-[#374151] space-y-6">
                       <div className="space-y-2">
-                        <h4 className="text-[10px] font-mono text-[#1E3A8A] uppercase tracking-widest">{t('policy_google_ai_sharing_title')}</h4>
+                        <h4 className="text-[10px] font-sans font-semibold text-[#1E3A8A] uppercase tracking-widest">{t('policy_google_ai_sharing_title')}</h4>
                         <p className="text-xs leading-relaxed text-[#374151]">
                           {t('policy_google_ai_sharing_desc')}
                         </p>
                       </div>
                       <div className="space-y-2">
-                        <h4 className="text-[10px] font-mono text-[#1E3A8A] uppercase tracking-widest">{t('policy_ai_training_title')}</h4>
+                        <h4 className="text-[10px] font-sans font-semibold text-[#1E3A8A] uppercase tracking-widest">{t('policy_ai_training_title')}</h4>
                         <p className="text-xs leading-relaxed text-[#374151]">
                           {t('policy_ai_training_desc')}
                         </p>
                       </div>
                       <div className="space-y-2">
-                        <h4 className="text-[10px] font-mono text-[#1E3A8A] uppercase tracking-widest">{t('policy_transfer_title')}</h4>
+                        <h4 className="text-[10px] font-sans font-semibold text-[#1E3A8A] uppercase tracking-widest">{t('policy_transfer_title')}</h4>
                         <p className="text-xs leading-relaxed text-[#374151]">
                           {t('policy_transfer_desc')}
                         </p>
                       </div>
                       <div className="pt-2 flex items-center gap-2">
-                        <div className="px-2 py-0.5 bg-[#FFFFFF] rounded text-[8px] font-mono uppercase tracking-widest border border-[#E5E7EB] text-[#4B5563]">Google Cloud Partner</div>
-                        <div className="px-2 py-0.5 bg-[#FFFFFF] rounded text-[8px] font-mono uppercase tracking-widest border border-[#E5E7EB] text-[#4B5563]">AI Safety Verified</div>
+                        <div className="px-2 py-0.5 bg-[#FFFFFF] rounded text-[8px] font-sans uppercase tracking-widest border border-[#E5E7EB] text-[#4B5563]">Google Cloud Partner</div>
+                        <div className="px-2 py-0.5 bg-[#FFFFFF] rounded text-[8px] font-sans uppercase tracking-widest border border-[#E5E7EB] text-[#4B5563]">AI Safety Verified</div>
                       </div>
                     </div>
                   </section>

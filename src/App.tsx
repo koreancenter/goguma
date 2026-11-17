@@ -38,7 +38,7 @@ const OnboardingTutorial = lazy(() =>
 const PageLoader = () => (
   <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-center gap-3">
     <div className="w-7 h-7 border-2 border-[#E5E7EB] border-t-[#1E3A8A] rounded-full animate-spin" />
-    <span className="text-[11px] font-mono tracking-widest text-[#1E3A8A] uppercase font-semibold">GOGUMA ARCHITECT</span>
+    <span className="text-[11px] font-sans tracking-widest text-[#1E3A8A] uppercase font-semibold">GOGUMA ARCHITECT</span>
   </div>
 );
 
@@ -97,11 +97,7 @@ export default function App() {
   // --------------------------------------------------------------------------
   // 2. UI Layout & Viewport Ergonomics State
   // --------------------------------------------------------------------------
-  const [isCol1Collapsed, setIsCol1Collapsed] = useState<boolean>(() => {
-    const saved = localStorage.getItem('goguma_nav_collapsed');
-    // Default to true (Ubuntu Icon Dock mode) to maximize editing canvas space
-    return saved !== null ? saved === 'true' : true;
-  });
+  const [isCol1Collapsed, setIsCol1Collapsed] = useState<boolean>(true);
   const [isCol2Collapsed, setIsCol2Collapsed] = useState(false);
   const [isPreviewCollapsed, setIsPreviewCollapsed] = useState(false);
 

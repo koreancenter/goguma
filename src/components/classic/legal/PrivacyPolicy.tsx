@@ -13,7 +13,7 @@ export default function PrivacyPolicy() {
       <div className="max-w-4xl mx-auto">
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-10 cursor-pointer"
+          className="flex items-center gap-2 text-xs font-sans font-medium uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-10 cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#1E3A8A]" />
           <span>{language === 'ko' ? '돌아가기' : 'Back'}</span>
@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
               <Shield size={20} />
             </div>
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#1E3A8A] font-semibold">PRIVACY ASSURANCE</span>
+              <span className="text-[10px] font-sans uppercase tracking-widest text-[#1E3A8A] font-semibold">PRIVACY ASSURANCE</span>
               <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827] tracking-tight uppercase mt-0.5">
                 {language === 'ko' ? '개인정보처리방침' : 'Privacy Policy'}
               </h1>
@@ -72,7 +72,7 @@ export default function PrivacyPolicy() {
               </p>
               <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-[#FFFFFF]">
                 <table className="w-full text-xs text-left">
-                  <thead className="bg-[#F7F8FA] text-[#111827] font-mono text-[11px] uppercase border-b border-[#E5E7EB]">
+                  <thead className="bg-[#F7F8FA] text-[#111827] font-sans font-semibold text-[11px] uppercase border-b border-[#E5E7EB]">
                     <tr>
                       <th className="p-3">{language === 'ko' ? '구분' : 'Category'}</th>
                       <th className="p-3">{language === 'ko' ? '처리 항목' : 'Items'}</th>
@@ -93,7 +93,7 @@ export default function PrivacyPolicy() {
                     <tr className="bg-[#EFF6FF]">
                       <td className="p-3 font-semibold text-[#1E3A8A]">{language === 'ko' ? '결제 및 금융 정보' : 'Payment & Financial'}</td>
                       <td className="p-3 text-[#4B5563]">{language === 'ko' ? '카드번호, 계좌정보, 수입·정산 내역' : 'Credit cards, bank accounts, income'}</td>
-                      <td className="p-3 text-[#1E3A8A] font-mono font-semibold">{language === 'ko' ? '★ 일체 수집하지 않음 (비영리 무료 원칙)' : '★ Never collected (Zero Financial Data)'}</td>
+                      <td className="p-3 text-[#1E3A8A] font-sans font-semibold">{language === 'ko' ? '★ 일체 수집하지 않음 (비영리 무료 원칙)' : '★ Never collected (Zero Financial Data)'}</td>
                     </tr>
                   </tbody>
                 </table>

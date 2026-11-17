@@ -142,7 +142,7 @@ export const OnboardingTutorial: React.FC = () => {
                   <div className="w-6 h-6 bg-[#EFF6FF] border border-[#1E3A8A]/20 text-[#1E3A8A] flex items-center justify-center rounded-md font-bold text-xs">
                     ✦
                   </div>
-                  <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-widest">ONBOARDING GUIDE</span>
+                  <span className="text-[10px] font-sans font-semibold text-[#6B7280] uppercase tracking-widest">ONBOARDING GUIDE</span>
                 </div>
                 <button 
                   onClick={stopTutorial}

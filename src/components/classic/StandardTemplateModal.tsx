@@ -123,7 +123,7 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               {/* Left Column: Template Cards */}
               <div className="md:col-span-5 space-y-2.5">
-                <span className="text-xs font-mono text-[#6B7280] block mb-1 uppercase tracking-wider">비즈니스 유형 선택</span>
+                <span className="text-xs font-sans text-[#6B7280] block mb-1 uppercase tracking-wider">비즈니스 유형 선택</span>
                 {STANDARD_PRD_TEMPLATES.map((tmpl) => {
                   const isSelected = tmpl.id === selectedTemplateId;
                   return (
@@ -137,10 +137,10 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FFFFFF] text-[#1E3A8A] border border-[#1E3A8A]/20 font-semibold">
+                        <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-[#FFFFFF] text-[#1E3A8A] border border-[#1E3A8A]/20 font-semibold">
                           {tmpl.badge}
                         </span>
-                        <div className="flex items-center gap-1 text-[11px] font-mono text-[#6B7280]">
+                        <div className="flex items-center gap-1 text-[11px] font-sans text-[#6B7280]">
                           {tmpl.platform === 'APP' ? <Smartphone size={12} /> : <Monitor size={12} />}
                           <span>{tmpl.platform}</span>
                         </div>
@@ -157,11 +157,11 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
                     <div>
-                      <span className="text-xs font-mono text-[#6B7280] uppercase tracking-wider">기획서 상세 스펙 미리보기</span>
+                      <span className="text-xs font-sans text-[#6B7280] uppercase tracking-wider">기획서 상세 스펙 미리보기</span>
                       <h3 className="text-base font-sans font-bold text-[#111827] mt-0.5">{currentTemplate.name}</h3>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-[#4B5563]">{currentTemplate.platform} 플랫폼</span>
+                      <span className="text-xs font-sans text-[#4B5563]">{currentTemplate.platform} 플랫폼</span>
                     </div>
                   </div>
 
@@ -184,7 +184,7 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
                         <div key={idx} className="p-2.5 bg-[#FFFFFF] rounded-lg border border-[#E5E7EB] text-xs">
                           <div className="flex items-center justify-between">
                             <span className="font-semibold text-[#111827]">{sc.name}</span>
-                            <span className="text-[10px] font-mono text-[#1E3A8A] font-semibold">{sc.route}</span>
+                            <span className="text-[10px] font-sans text-[#1E3A8A] font-semibold">{sc.route}</span>
                           </div>
                           <p className="text-[11px] text-[#4B5563] mt-0.5 line-clamp-1">{sc.purpose}</p>
                         </div>
@@ -206,7 +206,7 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
                 </div>
 
                 <div className="pt-3 border-t border-[#E5E7EB] flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs text-[#6B7280] font-mono">
+                  <span className="text-xs text-[#6B7280] font-sans">
                     적용 시 11종 사양서와 프로토타입이 즉시 동기화됩니다.
                   </span>
                   <button
@@ -227,7 +227,7 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
                     <Zap size={15} className="text-[#1E3A8A]" />
                     <span>자유 메모 또는 아이디어 붙여넣기</span>
                   </h4>
-                  <span className="text-xs text-[#6B7280] font-mono">단어 몇 개만 적어도 표준 기획서로 자동 구조화</span>
+                  <span className="text-xs text-[#6B7280] font-sans">단어 몇 개만 적어도 표준 기획서로 자동 구조화</span>
                 </div>
 
                 <textarea
@@ -258,9 +258,9 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
                 <div className="bg-[#F7F8FA] p-5 rounded-xl border border-[#E5E7EB] space-y-3 animate-in fade-in">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-semibold text-[#111827]">추천 표준 템플릿 매핑 결과</span>
+                      <span className="text-xs font-sans font-semibold text-[#111827]">추천 표준 템플릿 매핑 결과</span>
                     </div>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 font-semibold">
+                    <span className="text-xs font-sans px-2 py-0.5 rounded bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 font-semibold">
                       {parsedPreview.badge}
                     </span>
                   </div>
@@ -284,7 +284,7 @@ export const StandardTemplateModal: React.FC<StandardTemplateModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3.5 bg-[#F7F8FA] border-t border-[#E5E7EB] flex items-center justify-between gap-2 text-xs text-[#6B7280] shrink-0 font-mono">
+        <div className="px-6 py-3.5 bg-[#F7F8FA] border-t border-[#E5E7EB] flex items-center justify-between gap-2 text-xs text-[#6B7280] shrink-0 font-sans">
           <span className="truncate">팁: 템플릿을 적용한 후에도 개별 문항과 화면을 언제든지 자유롭게 수정할 수 있습니다.</span>
           <button
             onClick={onClose}

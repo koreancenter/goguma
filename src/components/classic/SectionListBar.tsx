@@ -37,7 +37,7 @@ export const SectionListBar: React.FC<SectionListBarProps> = ({
       <div className="h-14 px-3 flex items-center justify-between border-b border-[#E5E7EB]">
         {!isCollapsed && (
           <div className="min-w-0 flex-1">
-            <span className="text-[10px] font-mono text-[#6B7280] block leading-tight uppercase">
+            <span className="text-[10px] font-sans text-[#6B7280] block leading-tight uppercase">
               CHAPTER 0{chapter.id}
             </span>
             <h2 className="font-sans font-semibold text-xs sm:text-sm text-[#111827] truncate mt-0.5">
@@ -88,11 +88,11 @@ export const SectionListBar: React.FC<SectionListBarProps> = ({
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
-                    <span className={`font-mono text-xs tabular-nums ${isActive ? 'text-[#1E3A8A]' : 'text-[#6B7280]'}`}>
+                    <span className={`font-sans text-xs tabular-nums ${isActive ? 'text-[#1E3A8A]' : 'text-[#6B7280]'}`}>
                       0{index + 1}.
                     </span>
                     {isFilled && (
-                      <span className="text-[10px] font-mono text-[#1E3A8A] font-medium">
+                      <span className="text-[10px] font-sans text-[#1E3A8A] font-medium">
                         작성됨
                       </span>
                     )}

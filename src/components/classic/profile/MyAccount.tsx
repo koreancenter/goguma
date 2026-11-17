@@ -116,7 +116,7 @@ export default function MyAccount() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="mb-10 border-b border-[#E5E7EB] pb-6">
           <div className="flex items-center gap-2 mb-2">
-            <span className="font-mono text-[11px] uppercase tracking-widest text-[#1E3A8A] font-semibold">SETTINGS & IDENTITY</span>
+            <span className="font-sans text-[11px] uppercase tracking-widest text-[#1E3A8A] font-semibold">SETTINGS & IDENTITY</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827] tracking-tight">{t('my_account')}</h1>
           <p className="text-[#4B5563] font-sans text-sm mt-1">
@@ -143,7 +143,7 @@ export default function MyAccount() {
 
               <form onSubmit={handleSave} className="space-y-5">
                 <div>
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#6B7280] mb-1.5">
+                  <label className="block text-[11px] font-sans font-medium uppercase tracking-wider text-[#6B7280] mb-1.5">
                     {t('company_name')} <span className="text-[#6B7280] font-normal">({t('optional')})</span>
                   </label>
                   <div className="relative">
@@ -159,7 +159,7 @@ export default function MyAccount() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#6B7280] mb-1.5">
+                  <label className="block text-[11px] font-sans font-medium uppercase tracking-wider text-[#6B7280] mb-1.5">
                     {t('full_name')}
                   </label>
                   <div className="relative">
@@ -176,7 +176,7 @@ export default function MyAccount() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#6B7280] mb-1.5">
+                  <label className="block text-[11px] font-sans font-medium uppercase tracking-wider text-[#6B7280] mb-1.5">
                     {t('email')}
                   </label>
                   <div className="relative">
@@ -185,14 +185,14 @@ export default function MyAccount() {
                       type="email"
                       value={auth.currentUser?.email || ''}
                       disabled
-                      className="w-full pl-10 pr-4 py-2.5 bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#6B7280] cursor-not-allowed outline-none"
+                      className="w-full pl-10 pr-4 py-2.5 bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#6B7280] cursor-not-allowed outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E5E7EB]">
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#EFF6FF] rounded-lg border border-[#1E3A8A]/15 font-mono text-xs text-[#1E3A8A] font-medium">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#EFF6FF] rounded-lg border border-[#1E3A8A]/15 font-sans text-xs text-[#1E3A8A] font-medium">
                       <Shield size={13} />
                       <span>{role === 'ADMIN' ? '디렉터 (관리자)' : '게스트/멤버'}</span>
                     </div>
@@ -264,7 +264,7 @@ export default function MyAccount() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] text-[10px] font-mono uppercase tracking-wider shrink-0 font-semibold">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] text-[10px] font-sans uppercase tracking-wider shrink-0 font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] animate-pulse" />
                   <span>OFFLINE FIRST</span>
                 </div>
@@ -273,21 +273,21 @@ export default function MyAccount() {
               {/* Storage metrics */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 my-5">
                 <div className="p-3.5 rounded-xl bg-[#F7F8FA] border border-[#E5E7EB]">
-                  <div className="text-[10px] font-mono uppercase text-[#6B7280]">Storage Used</div>
-                  <div className="text-base font-mono font-bold text-[#111827] mt-1">{storageStats.formattedSize}</div>
-                  <div className="text-[10px] text-[#6B7280] font-mono mt-0.5">Local sandbox</div>
+                  <div className="text-[10px] font-sans font-medium uppercase text-[#6B7280]">Storage Used</div>
+                  <div className="text-base font-sans tabular-nums font-bold text-[#111827] mt-1">{storageStats.formattedSize}</div>
+                  <div className="text-[10px] text-[#6B7280] font-sans mt-0.5">Local sandbox</div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-[#F7F8FA] border border-[#E5E7EB]">
-                  <div className="text-[10px] font-mono uppercase text-[#6B7280]">Saved Projects</div>
-                  <div className="text-base font-mono font-bold text-[#111827] mt-1">{storageStats.projectCount}</div>
-                  <div className="text-[10px] text-[#6B7280] font-mono mt-0.5">Active records</div>
+                  <div className="text-[10px] font-sans font-medium uppercase text-[#6B7280]">Saved Projects</div>
+                  <div className="text-base font-sans tabular-nums font-bold text-[#111827] mt-1">{storageStats.projectCount}</div>
+                  <div className="text-[10px] text-[#6B7280] font-sans mt-0.5">Active records</div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-[#F7F8FA] border border-[#E5E7EB]">
-                  <div className="text-[10px] font-mono uppercase text-[#6B7280]">Autosave Drafts</div>
-                  <div className="text-base font-mono font-bold text-[#111827] mt-1">{storageStats.autosaveCount}</div>
-                  <div className="text-[10px] text-[#6B7280] font-mono mt-0.5">Auto recovery</div>
+                  <div className="text-[10px] font-sans font-medium uppercase text-[#6B7280]">Autosave Drafts</div>
+                  <div className="text-base font-sans tabular-nums font-bold text-[#111827] mt-1">{storageStats.autosaveCount}</div>
+                  <div className="text-[10px] text-[#6B7280] font-sans mt-0.5">Auto recovery</div>
                 </div>
               </div>
 
@@ -343,16 +343,16 @@ export default function MyAccount() {
 
               <div className="space-y-6">
                 <div>
-                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#6B7280] mb-1">{t('total_api_calls')}</div>
-                  <div className="text-3xl font-mono font-bold text-[#111827] flex items-baseline gap-2">
+                  <div className="text-[10px] font-sans font-medium uppercase tracking-widest text-[#6B7280] mb-1">{t('total_api_calls')}</div>
+                  <div className="text-3xl font-sans tabular-nums font-bold text-[#111827] flex items-baseline gap-2">
                     {userStats.totalApiCalls}
-                    <span className="text-xs font-mono text-[#6B7280]">Calls</span>
+                    <span className="text-xs font-sans font-medium text-[#6B7280]">Calls</span>
                   </div>
                 </div>
 
                 <div className="pt-6 border-t border-[#E5E7EB]">
-                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#6B7280] mb-1">Architecture Model</div>
-                  <div className="text-xl font-mono font-bold text-[#1E3A8A] flex items-center gap-1.5">
+                  <div className="text-[10px] font-sans font-medium uppercase tracking-widest text-[#6B7280] mb-1">Architecture Model</div>
+                  <div className="text-xl font-sans font-bold text-[#1E3A8A] flex items-center gap-1.5">
                     100% Free
                   </div>
                   <div className="mt-2 text-[11px] text-[#4B5563] leading-relaxed font-sans">

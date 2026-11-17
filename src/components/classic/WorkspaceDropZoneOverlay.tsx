@@ -270,7 +270,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                   {t('dropzone_subtitle')}
                 </p>
 
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#374151]">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#374151]">
                   <FileJson size={14} className="text-[#1E3A8A]" />
                   <span>{t('dropzone_formats')}</span>
                 </div>
@@ -327,11 +327,11 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                   <div className="flex items-center gap-2 min-w-0">
                     <FileText size={14} className="text-[#1E3A8A] shrink-0" />
                     <span className="font-semibold text-[#111827] truncate">{stagedProject.fileName}</span>
-                    <span className="px-1.5 py-0.5 bg-[#EFF6FF] rounded text-[10px] font-mono text-[#1E3A8A] border border-[#1E3A8A]/20">
+                    <span className="px-1.5 py-0.5 bg-[#EFF6FF] rounded text-[10px] font-sans text-[#1E3A8A] border border-[#1E3A8A]/20">
                       {summary.version === '2.0' ? 'v2.0 Spec' : 'SitePlan Spec'}
                     </span>
                   </div>
-                  <span className="text-[#6B7280] font-mono text-xs shrink-0 ml-3">
+                  <span className="text-[#6B7280] font-sans tabular-nums text-xs shrink-0 ml-3">
                     {formatFileSize(stagedProject.fileSize)}
                   </span>
                 </div>
@@ -341,7 +341,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                   {/* Title & Platform Row */}
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-[#6B7280]">
+                      <span className="text-[10px] font-sans uppercase tracking-widest text-[#6B7280]">
                         {language === 'ko' ? '프로젝트 명칭' : 'Project Name'}
                       </span>
                       <h4 className="text-lg sm:text-xl font-sans font-bold text-[#111827] mt-0.5 tracking-tight truncate">
@@ -349,7 +349,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                       </h4>
                     </div>
 
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 shrink-0 font-semibold">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-sans bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 shrink-0 font-semibold">
                       {summary.platform === 'APP' ? (
                         <>
                           <Smartphone size={13} />
@@ -370,7 +370,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                     <div className="p-3 bg-[#FFFFFF] rounded-lg border border-[#E5E7EB]">
                       <div className="flex items-center gap-1.5 text-[#6B7280] mb-1">
                         <Layers size={13} className="text-[#1E3A8A]" />
-                        <span className="text-[10px] font-mono uppercase tracking-wider">{t('number_of_pages')}</span>
+                        <span className="text-[10px] font-sans uppercase tracking-wider">{t('number_of_pages')}</span>
                       </div>
                       <p className="text-base font-sans font-bold text-[#111827]">
                         {summary.pageCount}
@@ -384,7 +384,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                     <div className="p-3 bg-[#FFFFFF] rounded-lg border border-[#E5E7EB]">
                       <div className="flex items-center gap-1.5 text-[#6B7280] mb-1">
                         <Palette size={13} className="text-[#1E3A8A]" />
-                        <span className="text-[10px] font-mono uppercase tracking-wider">
+                        <span className="text-[10px] font-sans uppercase tracking-wider">
                           {language === 'ko' ? '테마 색상' : 'Theme Color'}
                         </span>
                       </div>
@@ -399,7 +399,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                           style={{ backgroundColor: accentColor }}
                           title={`Accent: ${accentColor}`}
                         />
-                        <span className="text-xs font-mono text-[#374151] uppercase">
+                        <span className="text-xs font-sans tabular-nums text-[#374151] uppercase">
                           {themeColor}
                         </span>
                       </div>
@@ -409,7 +409,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                     <div className="p-3 bg-[#FFFFFF] rounded-lg border border-[#E5E7EB] col-span-2 sm:col-span-1">
                       <div className="flex items-center gap-1.5 text-[#6B7280] mb-1">
                         <Target size={13} className="text-[#1E3A8A]" />
-                        <span className="text-[10px] font-mono uppercase tracking-wider">
+                        <span className="text-[10px] font-sans uppercase tracking-wider">
                           {language === 'ko' ? '타겟 대상' : 'Target'}
                         </span>
                       </div>
@@ -422,7 +422,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                   {/* Project Overview / Purpose */}
                   {summary.purpose && (
                     <div className="pt-1">
-                      <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-widest block mb-1">
+                      <span className="text-[10px] font-sans text-[#6B7280] uppercase tracking-widest block mb-1">
                         {language === 'ko' ? '기획 의도 및 목적' : 'Project Purpose & Intent'}
                       </span>
                       <p className="text-xs text-[#374151] leading-relaxed bg-[#FFFFFF] p-3 rounded-lg border border-[#E5E7EB] font-sans">
@@ -442,7 +442,7 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                         <button
                           type="button"
                           onClick={() => setShowAllPages(!showAllPages)}
-                          className="text-xs font-mono text-[#1E3A8A] hover:underline cursor-pointer"
+                          className="text-xs font-sans text-[#1E3A8A] hover:underline cursor-pointer"
                         >
                           {showAllPages 
                             ? (language === 'ko' ? '간략히 보기' : 'Show less') 
@@ -460,12 +460,12 @@ export const WorkspaceDropZoneOverlay: React.FC<WorkspaceDropZoneOverlayProps> =
                           <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A]" />
                           <span className="font-medium">{page.name || 'Untitled'}</span>
                           {page.slug && (
-                            <span className="text-[10px] text-[#6B7280] font-mono">({page.slug})</span>
+                            <span className="text-[10px] text-[#6B7280] font-sans">({page.slug})</span>
                           )}
                         </div>
                       ))}
                       {!showAllPages && pageStructure.length > 6 && (
-                        <span className="px-2 py-1 bg-[#F7F8FA] rounded-md text-xs font-mono text-[#4B5563] border border-[#E5E7EB]">
+                        <span className="px-2 py-1 bg-[#F7F8FA] rounded-md text-xs font-sans tabular-nums text-[#4B5563] border border-[#E5E7EB]">
                           +{pageStructure.length - 6} {language === 'ko' ? '더보기' : 'more'}
                         </span>
                       )}

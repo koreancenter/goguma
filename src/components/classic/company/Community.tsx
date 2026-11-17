@@ -35,7 +35,7 @@ export default function Community() {
       <div className="max-w-5xl mx-auto space-y-12">
         {/* Hero Section */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] text-[11px] font-mono uppercase tracking-wider font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] text-[11px] font-sans uppercase tracking-wider font-semibold">
             <Heart size={13} className="text-[#1E3A8A] fill-[#1E3A8A]" />
             <span>{language === 'ko' ? '100% 무료 & 오픈 아키텍처 소프트웨어' : '100% Free & Open Architecture Software'}</span>
           </div>

@@ -135,10 +135,10 @@ SOFTWARE.`;
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between pb-1">
-                      <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-wider">LICENSE.md (MIT)</span>
+                      <span className="text-[10px] font-sans text-[#6B7280] uppercase tracking-wider">LICENSE.md (MIT)</span>
                       <button
                         onClick={copyLicense}
-                        className="flex items-center gap-1.5 text-xs font-mono text-[#374151] hover:text-[#1E3A8A] transition-colors px-2 py-1 rounded-md hover:bg-[#F7F8FA] cursor-pointer"
+                        className="flex items-center gap-1.5 text-xs font-sans text-[#374151] hover:text-[#1E3A8A] transition-colors px-2 py-1 rounded-md hover:bg-[#F7F8FA] cursor-pointer"
                       >
                         {copied ? <Check size={12} className="text-[#1E3A8A]" /> : <Copy size={12} />}
                         <span>{copied ? (language === 'ko' ? '복사 완료' : 'Copied') : (language === 'ko' ? '라이선스 복사' : 'Copy License')}</span>
@@ -198,7 +198,7 @@ SOFTWARE.`;
 
             {/* Footer */}
             <div className="px-6 py-3.5 border-t border-[#E5E7EB] bg-[#F7F8FA] flex items-center justify-between shrink-0">
-              <span className="text-[10px] font-mono text-[#6B7280]">
+              <span className="text-[10px] font-sans text-[#6B7280]">
                 GOGUMA • Free & Open Architecture
               </span>
               <button

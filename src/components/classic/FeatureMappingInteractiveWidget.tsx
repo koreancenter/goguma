@@ -169,7 +169,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
             <h3 className="font-sans font-semibold text-[#111827] text-[18px] tracking-[-0.015em]">
               핵심 기능 ↔ 화면 매핑 및 성공 여정 (Happy Path)
             </h3>
-            <span className="text-xs font-mono text-[#1E3A8A] bg-[#EFF6FF] px-2 py-0.5 rounded-md">
+            <span className="text-xs font-sans font-medium text-[#1E3A8A] bg-[#EFF6FF] px-2 py-0.5 rounded-md">
               02_roadmap.md
             </span>
           </div>
@@ -208,7 +208,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
             >
               {/* Top Row: Index Badge, Feature Title, Priority Selector, Delete Button */}
               <div className="flex items-center gap-2.5">
-                <span className="font-mono text-xs font-semibold text-[#1E3A8A] bg-[#EFF6FF] px-2.5 py-1.5 rounded-lg shrink-0">
+                <span className="font-sans tabular-nums text-xs font-semibold text-[#1E3A8A] bg-[#EFF6FF] px-2.5 py-1.5 rounded-lg shrink-0">
                   #0{idx + 1}
                 </span>
 
@@ -223,7 +223,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                 <select
                   value={f.priority}
                   onChange={(e) => handleUpdateFeature(f.id, 'priority', e.target.value as any)}
-                  className="bg-[#FFFFFF] rounded-lg px-3 py-2.5 text-xs font-mono font-semibold text-[#1E3A8A] outline-none border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer transition-all shrink-0"
+                  className="bg-[#FFFFFF] rounded-lg px-3 py-2.5 text-xs font-sans font-semibold text-[#1E3A8A] outline-none border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer transition-all shrink-0"
                 >
                   <option value="P0 필수">P0 필수</option>
                   <option value="P1 중요">P1 중요</option>
@@ -297,7 +297,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
         <div className="p-5 rounded-xl bg-[#F7F8FA] space-y-3">
           <div className="flex items-center justify-between text-xs text-[#4B5563]">
             <span>순환 상태 파이프라인 (클릭하여 전이 시뮬레이션)</span>
-            <span className="font-mono text-[#1E3A8A] font-semibold">
+            <span className="font-sans text-[#1E3A8A] font-semibold">
               현재 활성: {customStatuses[activeSimulationStatus] || customStatuses[0]}
             </span>
           </div>
@@ -324,7 +324,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                     <span>{st}</span>
                   </button>
                   {i < customStatuses.length - 1 && (
-                    <span className="text-xs text-[#9CA3AF] font-mono select-none">➔</span>
+                    <span className="text-xs text-[#9CA3AF] font-sans select-none">➔</span>
                   )}
                 </div>
               );
@@ -352,7 +352,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
               className="p-5 rounded-xl bg-[#F7F8FA] space-y-2.5"
             >
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs text-[#1E3A8A] font-semibold tabular-nums shrink-0">
+                <span className="font-sans text-xs text-[#1E3A8A] font-semibold tabular-nums shrink-0">
                   0{s.step}.
                 </span>
                 <input

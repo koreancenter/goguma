@@ -46,7 +46,7 @@ export const ChapterNavBar: React.FC<ChapterNavBarProps> = ({
               Chapters
             </span>
             <span aria-hidden="true" className="text-[#9CA3AF] text-xs">·</span>
-            <span className="text-xs font-mono tabular-nums text-[#6B7280]">
+            <span className="text-xs font-sans tabular-nums text-[#6B7280]">
               08
             </span>
           </div>
@@ -103,14 +103,14 @@ export const ChapterNavBar: React.FC<ChapterNavBarProps> = ({
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 leading-tight">
-                    <span className={`font-mono text-xs font-semibold ${isActive ? 'text-[#1E3A8A]' : 'text-[#6B7280]'}`}>
+                    <span className={`font-sans tabular-nums text-xs font-semibold ${isActive ? 'text-[#1E3A8A]' : 'text-[#6B7280]'}`}>
                       0{ch.id}
                     </span>
                     <span className={`truncate text-xs ${isActive ? 'text-[#1E3A8A] font-semibold' : 'text-[#374151]'}`}>
                       {ch.title}
                     </span>
                   </div>
-                  <p className="text-[10px] text-[#6B7280] truncate mt-0.5 font-mono">
+                  <p className="text-[10px] text-[#6B7280] truncate mt-0.5 font-sans">
                     {ch.engTitle}
                   </p>
                 </div>
@@ -125,7 +125,7 @@ export const ChapterNavBar: React.FC<ChapterNavBarProps> = ({
         <div className="p-3 border-t border-[#E5E7EB] bg-[#FFFFFF] text-xs text-[#4B5563]">
           <div className="flex justify-between items-center mb-1 font-medium">
             <span className="font-semibold text-xs text-[#111827]">기획 진행도</span>
-            <span className="font-mono text-xs text-[#1E3A8A] font-semibold">
+            <span className="font-sans tabular-nums text-xs text-[#1E3A8A] font-semibold">
               {currentChapter} / 8
             </span>
           </div>

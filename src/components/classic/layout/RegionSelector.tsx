@@ -68,11 +68,11 @@ export default function RegionSelector() {
         <div className="flex items-center gap-2">
           <Globe size={14} className="text-[#1E3A8A] flex-shrink-0" />
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#111827] truncate max-w-[80px]">
+            <span className="text-[10px] font-sans uppercase tracking-widest text-[#111827] truncate max-w-[80px]">
               {selectedRegion.name[language as 'en' | 'ko' | 'id']}
             </span>
             <span className="text-[10px] text-[#D1D5DB]">|</span>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#1E3A8A] font-semibold">
+            <span className="text-[10px] font-sans uppercase tracking-widest text-[#1E3A8A] font-semibold">
               {language.toUpperCase()}
             </span>
           </div>
@@ -90,7 +90,7 @@ export default function RegionSelector() {
           >
             {/* Region Selection */}
             <div className="space-y-2.5">
-              <h4 className="text-[10px] font-mono text-[#6B7280] uppercase tracking-[0.2em]">{t('select_region')}</h4>
+              <h4 className="text-[10px] font-sans text-[#6B7280] uppercase tracking-[0.2em]">{t('select_region')}</h4>
               <div className="grid grid-cols-2 gap-2">
                 {regions.map((r) => (
                   <button
@@ -110,7 +110,7 @@ export default function RegionSelector() {
 
             {/* Language Selection */}
             <div className="space-y-2.5">
-              <h4 className="text-[10px] font-mono text-[#6B7280] uppercase tracking-[0.2em]">{t('select_language')}</h4>
+              <h4 className="text-[10px] font-sans text-[#6B7280] uppercase tracking-[0.2em]">{t('select_language')}</h4>
               <div className="grid grid-cols-1 gap-2">
                 {languages.map((l) => (
                   <button

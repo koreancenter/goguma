@@ -32,7 +32,7 @@ export default function LandingPage() {
             </div>
             
             {/* Unboxed Status Metadata */}
-            <div className="flex items-center gap-2 text-xs font-mono text-[#6B7280]">
+            <div className="flex items-center gap-2 text-xs font-sans text-[#6B7280]">
               <span className="text-[#6B7280]">SYSTEM</span>
               <span className="text-[#D1D5DB]">/</span>
               <span className="text-[#1E3A8A] uppercase tracking-widest font-semibold">100% LOCAL FIRST</span>
@@ -40,7 +40,7 @@ export default function LandingPage() {
           </div>
 
           <div className="my-auto space-y-8 relative z-10 py-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#EFF6FF] border border-[#1E3A8A]/15 text-xs font-mono text-[#1E3A8A] font-medium">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#EFF6FF] border border-[#1E3A8A]/15 text-xs font-sans text-[#1E3A8A] font-medium">
               <HardDrive size={13} className="text-[#1E3A8A]" />
               <span className="tracking-wider">SECURITY FIRST: CLIENT-SANDBOXED STORAGE</span>
             </div>
@@ -62,17 +62,17 @@ export default function LandingPage() {
             {/* Architecture Metrics Grid */}
             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#E5E7EB]">
               <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] space-y-1 shadow-xs">
-                <div className="flex items-center gap-2 text-[#4B5563] text-xs font-mono uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#4B5563] text-xs font-sans uppercase tracking-wider">
                   <ShieldCheck size={14} className="text-[#1E3A8A]" /> Local Isolation
                 </div>
-                <div className="text-2xl font-bold text-[#111827] tracking-tight font-mono">100% Private</div>
+                <div className="text-2xl font-bold text-[#111827] tracking-tight font-sans tabular-nums">100% Private</div>
                 <p className="text-xs text-[#6B7280]">No remote auth database or tracking</p>
               </div>
               <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] space-y-1 shadow-xs">
-                <div className="flex items-center gap-2 text-[#4B5563] text-xs font-mono uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#4B5563] text-xs font-sans uppercase tracking-wider">
                   <Cpu size={14} className="text-[#1E3A8A]" /> Zero Latency
                 </div>
-                <div className="text-2xl font-bold text-[#111827] tracking-tight font-mono">0ms Lag</div>
+                <div className="text-2xl font-bold text-[#111827] tracking-tight font-sans tabular-nums">0ms Lag</div>
                 <p className="text-xs text-[#6B7280]">Instant offline startup</p>
               </div>
             </div>
@@ -95,7 +95,7 @@ export default function LandingPage() {
           </div>
 
           {/* Footer Rail */}
-          <div className="pt-8 flex items-center justify-between border-t border-[#E5E7EB] relative z-10 text-xs text-[#6B7280] font-mono">
+          <div className="pt-8 flex items-center justify-between border-t border-[#E5E7EB] relative z-10 text-xs text-[#6B7280] font-sans">
             <span className="flex items-center gap-2 text-[#4B5563]">
               <Cpu size={14} className="text-[#1E3A8A]" /> GOGUMA Engine Local
             </span>
@@ -110,7 +110,7 @@ export default function LandingPage() {
         <div className="lg:w-1/2 p-8 sm:p-14 lg:p-20 flex flex-col justify-center bg-[#FFFFFF]">
           <div className="w-full max-w-md mx-auto space-y-8">
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#1E3A8A] uppercase tracking-widest font-semibold">
+              <div className="flex items-center gap-2 text-xs font-sans text-[#1E3A8A] uppercase tracking-widest font-semibold">
                 <ShieldCheck size={14} className="text-[#1E3A8A]" />
                 <span>Local-First Workspace</span>
               </div>
@@ -171,7 +171,7 @@ export default function LandingPage() {
 
             {/* Quiet Unboxed Enforced Notice */}
             <div className="text-center pt-2">
-              <span className="text-[11px] font-mono text-[#6B7280] uppercase tracking-wider">
+              <span className="text-[11px] font-sans text-[#6B7280] uppercase tracking-wider">
                 Local Isolated Environment Enforced · Zero Telemetry
               </span>
             </div>

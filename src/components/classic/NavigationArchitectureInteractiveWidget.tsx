@@ -178,11 +178,11 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
   const getTypeBadge = (type: 'page' | 'modal' | 'drawer') => {
     switch (type) {
       case 'page':
-        return <span className="text-[10px] font-mono text-[#4B5563] px-2 py-0.5 rounded-md bg-[#FFFFFF] border border-[#E5E7EB]">PAGE</span>;
+        return <span className="text-[10px] font-sans font-semibold text-[#4B5563] px-2 py-0.5 rounded-md bg-[#FFFFFF] border border-[#E5E7EB]">PAGE</span>;
       case 'modal':
-        return <span className="text-[10px] font-mono text-[#1E3A8A] px-2 py-0.5 rounded-md bg-[#EFF6FF] font-semibold">MODAL</span>;
+        return <span className="text-[10px] font-sans text-[#1E3A8A] px-2 py-0.5 rounded-md bg-[#EFF6FF] font-semibold">MODAL</span>;
       case 'drawer':
-        return <span className="text-[10px] font-mono text-[#1E40AF] px-2 py-0.5 rounded-md bg-[#EEF2FF] font-semibold">DRAWER</span>;
+        return <span className="text-[10px] font-sans text-[#1E40AF] px-2 py-0.5 rounded-md bg-[#EEF2FF] font-semibold">DRAWER</span>;
     }
   };
 
@@ -198,7 +198,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
             <h3 className="font-sans font-semibold text-[#111827] text-[18px] tracking-tight">
               화면 구조 및 내비게이션 아키텍처 (IA)
             </h3>
-            <span className="text-xs font-mono text-[#6B7280]">
+            <span className="text-xs font-sans text-[#6B7280] tabular-nums">
               {pages.length}개 화면 연동
             </span>
           </div>
@@ -261,7 +261,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                           type="text"
                           value={editSlug}
                           onChange={(e) => setEditSlug(e.target.value)}
-                          className="w-full bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg px-3.5 py-2.5 text-sm font-mono text-[#111827] outline-none transition-all focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15"
+                          className="w-full bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg px-3.5 py-2.5 text-sm font-sans text-[#111827] outline-none transition-all focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15"
                           placeholder="/records"
                         />
                       </div>
@@ -312,11 +312,11 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                   <div className="flex items-start sm:items-center justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2 text-xs">
-                        <span className="font-mono text-[#6B7280]">
+                        <span className="font-sans tabular-nums text-[#6B7280]">
                           0{idx + 1}.
                         </span>
                         <span className="font-sans font-semibold text-sm text-[#111827]">{p.name}</span>
-                        <span className="font-mono text-xs text-[#1E3A8A] font-semibold">
+                        <span className="font-sans text-xs text-[#1E3A8A] font-semibold">
                           {p.slug}
                         </span>
                         <span className="text-[#D1D5DB]">·</span>
@@ -362,7 +362,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
               onClick={() => handleAddPage(s)}
               className="px-3 py-1.5 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] text-xs text-[#4B5563] hover:text-[#1E3A8A] transition-colors cursor-pointer flex items-center gap-1.5 font-medium"
             >
-              <span className="text-[#1E3A8A] font-mono font-bold">+</span>
+              <span className="text-[#1E3A8A] font-sans font-bold">+</span>
               <span>{s.name}</span>
             </button>
           ))}
@@ -437,7 +437,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
       <div className="p-5 bg-[#F7F8FA] rounded-xl space-y-3">
         <div className="flex items-center justify-between text-xs">
           <span className="font-sans font-semibold text-[#111827]">실시간 화면 동선 시각화</span>
-          <span className="font-mono text-[#6B7280]">
+          <span className="font-sans text-[#6B7280]">
             04_SPEC.md 자동 동기화
           </span>
         </div>
@@ -446,9 +446,9 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
           {pages.map((p, idx) => (
             <React.Fragment key={p.id}>
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFFFFF] border border-[#E5E7EB]/80 text-xs font-sans">
-                <span className="font-mono text-[#6B7280]">0{idx + 1}.</span>
+                <span className="font-sans tabular-nums text-[#6B7280]">0{idx + 1}.</span>
                 <span className="text-[#111827] font-medium">{p.name}</span>
-                <span className="font-mono text-[11px] text-[#1E3A8A] font-semibold">
+                <span className="font-sans text-[11px] text-[#1E3A8A] font-semibold">
                   {p.slug}
                 </span>
               </div>

@@ -59,7 +59,7 @@ export default function Contact() {
       <div className="max-w-5xl mx-auto px-6">
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-8 cursor-pointer"
+          className="flex items-center gap-2 text-xs font-sans font-medium uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-8 cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#1E3A8A]" />
           <span>{t('back')}</span>
@@ -72,7 +72,7 @@ export default function Contact() {
             className="lg:col-span-2 space-y-10"
           >
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#1E3A8A] font-semibold">DISPATCH CHANNEL</span>
+              <span className="text-[10px] font-sans uppercase tracking-widest text-[#1E3A8A] font-semibold">DISPATCH CHANNEL</span>
               <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827] tracking-tight uppercase mt-0.5 mb-2">{t('contact_us')}</h1>
               <p className="text-[#4B5563] font-sans text-xs sm:text-sm">{t('contact_subtitle')}</p>
             </div>
@@ -83,8 +83,8 @@ export default function Contact() {
                   <Mail size={16} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">{t('support_email')}</p>
-                  <p className="font-mono text-xs text-[#111827] truncate font-medium">master@goguma.app</p>
+                  <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('support_email')}</p>
+                  <p className="font-sans text-xs text-[#111827] truncate font-medium">master@goguma.app</p>
                 </div>
               </div>
 
@@ -93,7 +93,7 @@ export default function Contact() {
                   <Clock size={16} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">{t('consultation_hours')}</p>
+                  <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('consultation_hours')}</p>
                   <p className="text-xs text-[#111827] font-medium">{t('consultation_hours_desc')}</p>
                 </div>
               </div>
@@ -103,7 +103,7 @@ export default function Contact() {
                   <MapPin size={16} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">{t('global_hq')}</p>
+                  <p className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('global_hq')}</p>
                   <p className="text-xs text-[#111827] font-medium">
                     {region === 'korea' ? '대한민국' : 'Seoul / Global Edge'}
                   </p>
@@ -120,7 +120,7 @@ export default function Contact() {
             <form className="space-y-5" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">{t('name')}</label>
+                  <label className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('name')}</label>
                   <input 
                     type="text" 
                     value={name}
@@ -131,19 +131,19 @@ export default function Contact() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">{t('email')}</label>
+                  <label className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('email')}</label>
                   <input 
                     type="email" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isSubmitting}
-                    className="w-full px-3.5 py-2.5 bg-[#F7F8FA] focus:bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#111827] placeholder-[#9CA3AF] focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10 transition-all outline-none" 
+                    className="w-full px-3.5 py-2.5 bg-[#F7F8FA] focus:bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#111827] placeholder-[#9CA3AF] focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10 transition-all outline-none" 
                     placeholder="john@example.com" 
                   />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">{t('message')}</label>
+                <label className="text-[10px] font-sans font-medium uppercase tracking-wider text-[#6B7280]">{t('message')}</label>
                 <textarea 
                   rows={5} 
                   value={message}

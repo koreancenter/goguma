@@ -174,7 +174,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
           <div className="flex-1 p-6 space-y-5 bg-[#FFFFFF] overflow-y-auto custom-scroll">
             {/* Provider Selection */}
             <div>
-              <label className="block text-[10px] font-mono uppercase tracking-widest text-[#6B7280] mb-2">
+              <label className="block text-[10px] font-sans uppercase tracking-widest text-[#6B7280] mb-2">
                 ACTIVE AI INFERENCE TIER
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -191,7 +191,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                     <div className="p-1 rounded-md bg-[#FFFFFF] text-[#1E3A8A] border border-[#E5E7EB]">
                       <Cpu size={14} />
                     </div>
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] uppercase">
+                    <span className="text-[9px] font-sans px-1.5 py-0.5 rounded bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] uppercase">
                       Cloud
                     </span>
                   </div>
@@ -214,7 +214,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                     <div className="p-1 rounded-md bg-[#FFFFFF] text-[#1E3A8A] border border-[#E5E7EB]">
                       <HardDrive size={14} />
                     </div>
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] uppercase">
+                    <span className="text-[9px] font-sans px-1.5 py-0.5 rounded bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] uppercase">
                       Local
                     </span>
                   </div>
@@ -237,7 +237,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                     <div className="p-1 rounded-md bg-[#FFFFFF] text-[#1E3A8A] border border-[#E5E7EB]">
                       <Server size={14} />
                     </div>
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] uppercase">
+                    <span className="text-[9px] font-sans px-1.5 py-0.5 rounded bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] uppercase">
                       In-Browser
                     </span>
                   </div>
@@ -261,7 +261,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                     href="https://aistudio.google.com/app/apikey"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] text-[#1E3A8A] hover:underline font-mono font-medium"
+                    className="text-[11px] text-[#1E3A8A] hover:underline font-sans font-medium"
                   >
                     Get Free Key ↗
                   </a>
@@ -276,7 +276,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       gemini: { ...s.gemini, apiKey: e.target.value }
                     }))}
-                    className="w-full pl-3 pr-9 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15"
+                    className="w-full pl-3 pr-9 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15"
                   />
                   <button
                     type="button"
@@ -300,7 +300,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       gemini: { ...s.gemini, model: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#111827] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#111827] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer"
                   >
                     <option value="gemini-3.8-flash">gemini-3.8-flash (Recommended, Fast & Smart)</option>
                     <option value="gemini-2.5-flash">gemini-2.5-flash (Ultra Fast)</option>
@@ -322,7 +322,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                     type="button"
                     onClick={handleFetchOllamaModels}
                     disabled={fetchingOllama}
-                    className="inline-flex items-center gap-1 text-[11px] font-mono text-[#1E3A8A] hover:text-[#172554] font-medium cursor-pointer disabled:opacity-50"
+                    className="inline-flex items-center gap-1 text-[11px] font-sans text-[#1E3A8A] hover:text-[#172554] font-medium cursor-pointer disabled:opacity-50"
                   >
                     <RefreshCw size={11} className={fetchingOllama ? 'animate-spin' : ''} />
                     <span>Scan Models</span>
@@ -338,7 +338,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       ollama: { ...s.ollama, endpoint: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15"
+                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15"
                   />
                   <p className="text-[11px] text-[#4B5563] mt-1.5">
                     기본 로컬 엔드포인트: <code className="font-mono text-[#1E3A8A] bg-[#EFF6FF] px-1.5 py-0.5 rounded border border-[#1E3A8A]/15">http://localhost:11434</code>
@@ -356,7 +356,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                         ...s,
                         ollama: { ...s.ollama, model: e.target.value }
                       }))}
-                      className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#111827] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer"
+                      className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#111827] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer"
                     >
                       {availableOllamaModels.map(m => (
                         <option key={m} value={m}>{m}</option>
@@ -371,11 +371,11 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                         ...s,
                         ollama: { ...s.ollama, model: e.target.value }
                       }))}
-                      className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15"
+                      className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15"
                     />
                   )}
                   <p className="text-[11px] text-[#4B5563] mt-1">
-                    권장 모델: <span className="font-mono text-[#111827] font-semibold">llama3.2</span>, <span className="font-mono text-[#111827] font-semibold">qwen2.5:7b</span>, <span className="font-mono text-[#111827] font-semibold">mistral</span>
+                    권장 모델: <span className="font-sans text-[#111827] font-semibold">llama3.2</span>, <span className="font-sans text-[#111827] font-semibold">qwen2.5:7b</span>, <span className="font-sans text-[#111827] font-semibold">mistral</span>
                   </p>
                 </div>
               </div>
@@ -389,7 +389,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                     <Shield size={13} className="text-[#1E3A8A]" />
                     <span>In-Browser WebGPU Local LLM</span>
                   </span>
-                  <span className="text-[10px] font-mono text-[#4B5563] bg-[#FFFFFF] px-2 py-0.5 rounded border border-[#E5E7EB]">
+                  <span className="text-[10px] font-sans text-[#4B5563] bg-[#FFFFFF] px-2 py-0.5 rounded border border-[#E5E7EB]">
                     Zero-Server
                   </span>
                 </div>
@@ -404,7 +404,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                       ...s,
                       webllm: { ...s.webllm, model: e.target.value }
                     }))}
-                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-mono text-[#111827] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer"
+                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg text-xs font-sans text-[#111827] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/15 cursor-pointer"
                   >
                     <option value="Qwen2.5-Coder-1.5B">Qwen2.5-Coder-1.5B (Fast, Code-Optimized)</option>
                     <option value="Llama-3.2-1B-Instruct">Llama-3.2-1B-Instruct (Lightweight General)</option>
@@ -431,7 +431,7 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClos
                 ) : (
                   <AlertCircle size={15} className="text-[#DC2626] shrink-0 mt-0.5" />
                 )}
-                <span className="leading-relaxed break-words flex-1 font-mono">{testResult.message}</span>
+                <span className="leading-relaxed break-words flex-1 font-sans">{testResult.message}</span>
               </div>
             )}
           </div>

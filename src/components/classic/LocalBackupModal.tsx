@@ -355,7 +355,7 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
                         {language === 'ko' ? '현재 열려있는 기획안 단독 내보내기' : 'Export Active Project Plan'}
                       </h4>
                     </div>
-                    <span className="text-[10px] font-mono text-[#1E3A8A] bg-[#EFF6FF] px-2 py-0.5 rounded border border-[#1E3A8A]/20 font-semibold">
+                    <span className="text-[10px] font-sans text-[#1E3A8A] bg-[#EFF6FF] px-2 py-0.5 rounded border border-[#1E3A8A]/20 font-semibold">
                       {currentPlan?.metadata?.projectName || 'Untitled'}
                     </span>
                   </div>
@@ -446,7 +446,7 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
                     <p className="text-xs font-semibold text-[#111827] mb-1">
                       {language === 'ko' ? '백업 JSON 파일을 이곳에 업로드하세요' : 'Select or drop your backup JSON file'}
                     </p>
-                    <p className="text-[11px] font-mono text-[#6B7280] mb-4">
+                    <p className="text-[11px] font-sans text-[#6B7280] mb-4">
                       *.json (Full Backup or Single Plan JSON)
                     </p>
 
@@ -491,29 +491,29 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
                         <CheckCircle2 size={15} className="text-[#1E3A8A]" />
                         <span>{language === 'ko' ? '백업 파일 검증 완료' : 'Backup File Verified'}</span>
                       </span>
-                      <span className="text-[10px] font-mono text-[#1E3A8A] bg-[#EFF6FF] px-2 py-0.5 rounded border border-[#1E3A8A]/20 font-semibold">
+                      <span className="text-[10px] font-sans tabular-nums text-[#1E3A8A] bg-[#EFF6FF] px-2 py-0.5 rounded border border-[#1E3A8A]/20 font-semibold">
                         Version: {parsedBackup.version || '2.0'}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
                       <div className="bg-[#FFFFFF] p-2.5 rounded-lg border border-[#E5E7EB]">
-                        <div className="text-[10px] font-mono text-[#6B7280] uppercase">Projects</div>
-                        <div className="font-mono font-bold text-[#111827] mt-0.5">
+                        <div className="text-[10px] font-sans text-[#6B7280] uppercase">Projects</div>
+                        <div className="font-sans tabular-nums font-bold text-[#111827] mt-0.5">
                           {Object.keys(parsedBackup.collections?.projects || {}).length} saved
                         </div>
                       </div>
 
                       <div className="bg-[#FFFFFF] p-2.5 rounded-lg border border-[#E5E7EB]">
-                        <div className="text-[10px] font-mono text-[#6B7280] uppercase">Export Date</div>
-                        <div className="font-mono font-bold text-[#111827] mt-0.5 truncate">
+                        <div className="text-[10px] font-sans text-[#6B7280] uppercase">Export Date</div>
+                        <div className="font-sans tabular-nums font-bold text-[#111827] mt-0.5 truncate">
                           {parsedBackup.exportedAt ? new Date(parsedBackup.exportedAt).toLocaleDateString() : 'N/A'}
                         </div>
                       </div>
 
                       <div className="bg-[#FFFFFF] p-2.5 rounded-lg border border-[#E5E7EB] col-span-2 sm:col-span-1">
-                        <div className="text-[10px] font-mono text-[#6B7280] uppercase">AI Settings</div>
-                        <div className="font-mono font-bold text-[#111827] mt-0.5">
+                        <div className="text-[10px] font-sans text-[#6B7280] uppercase">AI Settings</div>
+                        <div className="font-sans font-bold text-[#111827] mt-0.5">
                           {parsedBackup.aiSettings ? 'Included' : 'None'}
                         </div>
                       </div>
@@ -597,21 +597,21 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
                 {/* Stats cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   <div className="p-3.5 rounded-xl border border-[#E5E7EB] bg-[#F7F8FA]">
-                    <div className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">Storage Used</div>
-                    <div className="text-lg font-mono font-bold text-[#111827] mt-1">{stats.formattedSize}</div>
-                    <div className="text-[10px] text-[#6B7280] font-mono mt-0.5">Local storage</div>
+                    <div className="text-[10px] font-sans uppercase tracking-wider text-[#6B7280]">Storage Used</div>
+                    <div className="text-lg font-sans tabular-nums font-bold text-[#111827] mt-1">{stats.formattedSize}</div>
+                    <div className="text-[10px] text-[#6B7280] font-sans mt-0.5">Local storage</div>
                   </div>
 
                   <div className="p-3.5 rounded-xl border border-[#E5E7EB] bg-[#F7F8FA]">
-                    <div className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">Saved Projects</div>
-                    <div className="text-lg font-mono font-bold text-[#111827] mt-1">{stats.projectCount}</div>
-                    <div className="text-[10px] text-[#6B7280] font-mono mt-0.5">Active records</div>
+                    <div className="text-[10px] font-sans uppercase tracking-wider text-[#6B7280]">Saved Projects</div>
+                    <div className="text-lg font-sans tabular-nums font-bold text-[#111827] mt-1">{stats.projectCount}</div>
+                    <div className="text-[10px] text-[#6B7280] font-sans mt-0.5">Active records</div>
                   </div>
 
                   <div className="p-3.5 rounded-xl border border-[#E5E7EB] bg-[#F7F8FA] col-span-2 sm:col-span-1">
-                    <div className="text-[10px] font-mono uppercase tracking-wider text-[#6B7280]">Autosave Drafts</div>
-                    <div className="text-lg font-mono font-bold text-[#111827] mt-1">{stats.autosaveCount}</div>
-                    <div className="text-[10px] text-[#6B7280] font-mono mt-0.5">Recovery states</div>
+                    <div className="text-[10px] font-sans uppercase tracking-wider text-[#6B7280]">Autosave Drafts</div>
+                    <div className="text-lg font-sans tabular-nums font-bold text-[#111827] mt-1">{stats.autosaveCount}</div>
+                    <div className="text-[10px] text-[#6B7280] font-sans mt-0.5">Recovery states</div>
                   </div>
                 </div>
 
@@ -636,7 +636,7 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
                       placeholder='Type "RESET" to confirm'
                       value={resetConfirmInput}
                       onChange={(e) => setResetConfirmInput(e.target.value)}
-                      className="px-3 py-1.5 bg-[#FFFFFF] border border-[#FECACA] rounded-lg text-xs font-mono text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#DC2626]"
+                      className="px-3 py-1.5 bg-[#FFFFFF] border border-[#FECACA] rounded-lg text-xs font-sans text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#DC2626]"
                     />
 
                     <button
@@ -663,7 +663,7 @@ export const LocalBackupModal: React.FC<LocalBackupModalProps> = ({
 
           {/* Footer */}
           <div className="px-6 py-3.5 border-t border-[#E5E7EB] bg-[#F7F8FA] flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#6B7280]">
+            <div className="flex items-center gap-1.5 text-[11px] font-sans text-[#6B7280]">
               <Info size={12} className="text-[#6B7280]" />
               <span>OFFLINE STORAGE ENGINE</span>
             </div>

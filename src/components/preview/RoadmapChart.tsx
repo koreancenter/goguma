@@ -61,7 +61,7 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
           <Calendar size={16} className="text-[#1E3A8A]" />
           <span>월별 개발 마일스톤 및 로드맵 타임라인</span>
         </h4>
-        <div className="px-2.5 py-1 bg-white border border-[#E5E7EB] text-[#4B5563] rounded-lg text-xs font-mono uppercase tracking-wider">
+        <div className="px-2.5 py-1 bg-white border border-[#E5E7EB] text-[#4B5563] rounded-lg text-xs font-sans font-medium uppercase tracking-wider">
           {new Date().getFullYear()} TIMELINE
         </div>
       </div>
@@ -70,11 +70,11 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
         <table className="w-full border-collapse text-left">
           <thead>
             <tr className="bg-[#F7F8FA]">
-              <th className="px-4 py-3 border-b border-r border-[#E5E7EB] min-w-[180px] text-xs font-mono uppercase tracking-wider text-[#6B7280]">
+              <th className="px-4 py-3 border-b border-r border-[#E5E7EB] min-w-[180px] text-xs font-sans font-semibold uppercase tracking-wider text-[#6B7280]">
                 CATEGORY & TASK
               </th>
               {months.map((m, i) => (
-                <th key={i} className="px-2 py-3 border-b border-r border-[#E5E7EB] text-[10px] font-mono uppercase tracking-widest text-[#6B7280] text-center">
+                <th key={i} className="px-2 py-3 border-b border-r border-[#E5E7EB] text-[10px] font-sans font-semibold uppercase tracking-widest text-[#6B7280] text-center">
                   {m.trim()}
                 </th>
               ))}
@@ -83,7 +83,7 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
           <tbody>
             {categoryNames.length === 0 ? (
               <tr>
-                <td colSpan={months.length + 1} className="p-8 text-center text-xs text-[#6B7280] font-mono">
+                <td colSpan={months.length + 1} className="p-8 text-center text-xs text-[#6B7280] font-sans">
                   기획서에 등록된 월별 일정 데이터가 없습니다.
                 </td>
               </tr>
@@ -94,7 +94,7 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
                   <tr key={`${catIdx}-${taskIdx}`} className="border-b border-[#E5E7EB] hover:bg-[#F7F8FA]/60 transition-colors">
                     <td className="px-4 py-2.5 border-r border-[#E5E7EB]">
                       <div className="font-sans font-semibold text-xs text-[#111827] truncate max-w-[180px]">{task.name}</div>
-                      <div className="text-[10px] font-mono text-[#6B7280] mt-0.5 truncate">{cat} · {task.owner}</div>
+                      <div className="text-[10px] font-sans text-[#6B7280] mt-0.5 truncate">{cat} · {task.owner}</div>
                     </td>
                     {months.map((_, mIdx) => {
                       const isActive = mIdx >= task.startMonth && mIdx <= task.endMonth;
@@ -104,7 +104,7 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
                         <td key={mIdx} className="p-1 border-r border-[#E5E7EB]/60 text-center relative">
                           {isActive && (
                             <div 
-                              className={`h-5 flex items-center justify-center text-[10px] font-mono font-medium transition-all ${
+                              className={`h-5 flex items-center justify-center text-[10px] font-sans font-medium transition-all ${
                                 isStart ? 'rounded-l-md' : ''
                               } ${isEnd ? 'rounded-r-md' : ''} ${
                                 catIdx % 2 === 0 

@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { 
-  Play, FileCode, Network, RefreshCw, ExternalLink, 
-  Copy, Check, ChevronLeft, ChevronRight,
+  FileCode, RefreshCw, ExternalLink, 
+  Copy, Check, ChevronLeft, ChevronRight, ChevronDown,
   Monitor, Tablet, Smartphone, Search, FileDown, X,
-  Code, Terminal, Database, Layers, CheckCheck, Bot, RotateCcw
+  Code, Database, Layers, CheckCheck, Bot, RotateCcw, Network
 } from 'lucide-react';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
@@ -18,9 +18,7 @@ import {
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
 import { generatePlaybookVibePrompt } from '../../lib/executionPlaybook';
 import { getDocImpactStatus } from '../../lib/specImpact';
-import { copyProjectJsonToClipboard } from '../../lib/projectFileIO';
 import VisualSitemap from './VisualSitemap';
-import { Tooltip } from '../guide/Tooltip';
 
 interface SpecPreviewPanelProps {
   plan: SitePlan;
@@ -104,19 +102,29 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const [copiedDoc, setCopiedDoc] = useState(false);
   const [copiedVibePrompt, setCopiedVibePrompt] = useState(false);
-  const [copiedJson, setCopiedJson] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
-  const [isDownloadingZip, setIsDownloadingZip] = useState(false);
-  const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
   const [previewState, setPreviewState] = useState<PreviewStateMode>('default');
   const [previewRole, setPreviewRole] = useState<PreviewRoleMode>('user');
+  const [isStateMenuOpen, setIsStateMenuOpen] = useState(false);
+  const stateMenuRef = useRef<HTMLDivElement>(null);
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
   const previewStateRef = React.useRef<PreviewStateMode>(previewState);
   previewStateRef.current = previewState;
   const previewRoleRef = React.useRef<PreviewRoleMode>(previewRole);
   previewRoleRef.current = previewRole;
+
+  useEffect(() => {
+    if (!isStateMenuOpen) return;
+    const handleOutside = (e: MouseEvent) => {
+      if (stateMenuRef.current && !stateMenuRef.current.contains(e.target as Node)) {
+        setIsStateMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [isStateMenuOpen]);
 
   // Trigger pulse glow animation inside the prototype when plan updates
   React.useEffect(() => {
@@ -349,31 +357,6 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
-  // Copy project backup JSON
-  const handleCopyJson = async () => {
-    const success = await copyProjectJsonToClipboard(plan);
-    if (success) {
-      setCopiedJson(true);
-      setTimeout(() => setCopiedJson(false), 2000);
-    }
-  };
-
-  // Download complete 11-markdown blueprint ZIP
-  const handleDownloadZip = async () => {
-    if (isDownloadingZip) return;
-    setIsDownloadingZip(true);
-    try {
-      const { downloadBlueprintZip } = await import('../../lib/bundleZipDownloader');
-      await downloadBlueprintZip(plan, formInputs, lockedChapters);
-      setDownloadSuccess(true);
-      setTimeout(() => setDownloadSuccess(false), 2500);
-    } catch (e: any) {
-      console.error('ZIP 다운로드 실패:', e);
-    } finally {
-      setIsDownloadingZip(false);
-    }
-  };
-
   const activePromptText = useMemo(
     () => generatePrototypePrompt(plan, formInputs, lockedChapters),
     [plan, formInputs, lockedChapters]
@@ -447,248 +430,102 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
           >
             <ChevronLeft size={16} />
           </button>
-
-          <div className="w-6 h-px bg-[#E5E7EB]" />
-
-          {/* Quick tab shortcuts that open panel directly to that tab */}
-          <button
-            onClick={() => { setActiveTab('prototype'); onToggleCollapse?.(); }}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] transition-all cursor-pointer"
-            title="프로토타입 보기 (펼치기)"
-          >
-            <Play size={14} className="fill-current text-[#1E3A8A]" />
-          </button>
-          <button
-            onClick={() => { setActiveTab('docs'); onToggleCollapse?.(); }}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] transition-all cursor-pointer"
-            title="11종 사양서 보기 (펼치기)"
-          >
-            <FileCode size={15} />
-          </button>
-          <button
-            onClick={() => { setActiveTab('devhub'); onToggleCollapse?.(); }}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] transition-all cursor-pointer"
-            title="개발자 허브 (코드 & DDL)"
-          >
-            <Terminal size={15} />
-          </button>
-          <button
-            onClick={() => { setActiveTab('sitemap'); onToggleCollapse?.(); }}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] transition-all cursor-pointer"
-            title="사이트맵 보기 (펼치기)"
-          >
-            <Network size={15} />
-          </button>
         </div>
 
-        <div className="flex flex-col items-center gap-2">
-          <div className="[writing-mode:vertical-lr] text-[10px] font-mono uppercase tracking-widest text-[#9CA3AF] py-4 select-none">
-            SPEC & PROTOTYPE
-          </div>
-          <button
-            onClick={onToggleCollapse}
-            className="p-2 rounded-lg hover:bg-[#FFFFFF] text-[#4B5563] hover:text-[#1E3A8A] text-xs font-medium cursor-pointer"
-            title="패널 펼치기"
-          >
-            열기
-          </button>
-        </div>
+        <button
+          onClick={onToggleCollapse}
+          className="p-2 rounded-lg hover:bg-[#FFFFFF] text-[#4B5563] hover:text-[#1E3A8A] text-xs font-medium cursor-pointer"
+          title="패널 펼치기"
+        >
+          열기
+        </button>
       </aside>
     );
   }
 
+  const activeStateShortLabel =
+    previewState === 'empty'
+      ? 'Empty'
+      : previewState === 'error'
+      ? 'Error'
+      : previewState === 'role'
+      ? previewRole === 'admin'
+        ? 'Admin'
+        : 'User'
+      : null;
+
   return (
     <aside 
       style={width ? { width: `${width}px` } : undefined}
-      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[#F7F8FA] p-4 sm:p-8 gap-5 shrink-0 select-none text-[#111827] font-sans overflow-hidden`}
+      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[#F7F8FA] p-5 sm:p-8 gap-5 shrink-0 select-none text-[#111827] font-sans overflow-hidden`}
       aria-label="실시간 프로토타입 및 11종 사양서 프리뷰"
     >
-      {/* Single Floating Minimal Control Pill */}
-      <div className="flex justify-center shrink-0 z-20">
-        <div className="inline-flex items-center flex-wrap justify-center gap-1 bg-[#FFFFFF]/95 backdrop-blur-md rounded-full px-2 py-1.5 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.07)] border border-[#E5E7EB]/80 max-w-full">
-          {/* Primary Stage Mode Switcher */}
+      {/* Minimal Borderless Tab Switcher (프리뷰 | 사양서 | 상태 ▾) */}
+      <div className="flex items-center justify-center shrink-0 z-30" ref={stateMenuRef}>
+        <div className="relative inline-flex items-center gap-6">
           <button
             type="button"
             onClick={() => setActiveTab('prototype')}
-            className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            className={`relative pb-1.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'prototype'
-                ? 'bg-[#1E3A8A] text-white font-semibold shadow-2xs'
-                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] font-medium'
+                ? 'text-[#111827] font-semibold'
+                : 'text-[#6B7280] hover:text-[#111827] font-medium'
             }`}
           >
-            <span>라이브 프리뷰</span>
+            <span>프리뷰</span>
             {isSyncing && (
-              <span
-                className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                  activeTab === 'prototype' ? 'bg-white animate-ping' : 'bg-[#1E3A8A] animate-ping'
-                }`}
-              />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] animate-ping shrink-0" />
+            )}
+            {activeTab === 'prototype' && (
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A] rounded-full" />
             )}
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('docs')}
-            className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            className={`relative pb-1.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'docs'
-                ? 'bg-[#1E3A8A] text-white font-semibold shadow-2xs'
-                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] font-medium'
+                ? 'text-[#111827] font-semibold'
+                : 'text-[#6B7280] hover:text-[#111827] font-medium'
             }`}
           >
-            <span>사양서 보기</span>
-            <span
-              className={`font-mono text-[10px] px-1.5 py-0.5 rounded-full tabular-nums leading-none ${
-                activeTab === 'docs'
-                  ? 'bg-white/20 text-white'
-                  : 'bg-[#EFF6FF] text-[#1E3A8A]'
-              }`}
-            >
-              11
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('devhub')}
-            className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-              activeTab === 'devhub'
-                ? 'bg-[#1E3A8A] text-white font-semibold shadow-2xs'
-                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] font-medium'
-            }`}
-          >
-            <Code size={12} />
-            <span>코드 뷰</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('sitemap')}
-            className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-              activeTab === 'sitemap'
-                ? 'bg-[#1E3A8A] text-white font-semibold shadow-2xs'
-                : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] font-medium'
-            }`}
-          >
-            <Network size={12} />
-            <span>사이트맵</span>
-          </button>
-
-          <span className="w-px h-4 bg-[#E5E7EB] mx-1 hidden sm:block" aria-hidden="true" />
-
-          {/* Contextual Stage Actions */}
-          <div className="flex items-center gap-1">
-            {activeTab === 'prototype' && (
-              <>
-                <div className="hidden sm:flex items-center bg-[#F7F8FA] rounded-full p-0.5">
-                  <Tooltip content="데스크톱 뷰" position="bottom">
-                    <button
-                      type="button"
-                      onClick={() => setViewportMode('desktop')}
-                      className={`p-1.5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                        viewportMode === 'desktop'
-                          ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs'
-                          : 'text-[#6B7280] hover:text-[#111827]'
-                      }`}
-                      aria-label="데스크톱 뷰"
-                    >
-                      <Monitor size={13} />
-                    </button>
-                  </Tooltip>
-                  <Tooltip content="태블릿 뷰" position="bottom">
-                    <button
-                      type="button"
-                      onClick={() => setViewportMode('tablet')}
-                      className={`p-1.5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                        viewportMode === 'tablet'
-                          ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs'
-                          : 'text-[#6B7280] hover:text-[#111827]'
-                      }`}
-                      aria-label="태블릿 뷰"
-                    >
-                      <Tablet size={13} />
-                    </button>
-                  </Tooltip>
-                  <Tooltip content="스마트폰 뷰" position="bottom">
-                    <button
-                      type="button"
-                      onClick={() => setViewportMode('mobile')}
-                      className={`p-1.5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                        viewportMode === 'mobile'
-                          ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs'
-                          : 'text-[#6B7280] hover:text-[#111827]'
-                      }`}
-                      aria-label="스마트폰 뷰"
-                    >
-                      <Smartphone size={13} />
-                    </button>
-                  </Tooltip>
-                </div>
-
-                <Tooltip content={copiedPrompt ? '복사 완료' : '개발용 프롬프트 복사'} position="bottom">
-                  <button
-                    type="button"
-                    onClick={handleCopyAgentPrompt}
-                    className={`p-1.5 rounded-full transition-all flex items-center justify-center cursor-pointer ${
-                      copiedPrompt
-                        ? 'bg-[#F0FDF4] text-[#15803D]'
-                        : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF]'
-                    }`}
-                    aria-label="개발용 프롬프트 복사"
-                  >
-                    {copiedPrompt ? <Check size={13} className="stroke-[2.5]" /> : <Copy size={13} />}
-                  </button>
-                </Tooltip>
-
-                <Tooltip content="프롬프트 전문 확인" position="bottom">
-                  <button
-                    type="button"
-                    onClick={() => setIsPromptModalOpen(true)}
-                    className="p-1.5 rounded-full flex items-center justify-center text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer"
-                    aria-label="프롬프트 전문 확인"
-                  >
-                    <Bot size={13} />
-                  </button>
-                </Tooltip>
-              </>
+            <span>사양서</span>
+            {activeTab === 'docs' && (
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A] rounded-full" />
             )}
+          </button>
 
-            <Tooltip content="새로고침" position="bottom">
-              <button
-                type="button"
-                onClick={() => setReloadKey(k => k + 1)}
-                className="p-1.5 rounded-full flex items-center justify-center text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] transition-colors cursor-pointer"
-                aria-label="새로고침"
-              >
-                <RefreshCw size={13} />
-              </button>
-            </Tooltip>
+          <button
+            type="button"
+            onClick={() => setIsStateMenuOpen(prev => !prev)}
+            className={`relative pb-1.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+              isStateMenuOpen || activeTab === 'devhub' || activeTab === 'sitemap' || activeStateShortLabel
+                ? 'text-[#1E3A8A] font-semibold'
+                : 'text-[#6B7280] hover:text-[#111827] font-medium'
+            }`}
+            aria-expanded={isStateMenuOpen}
+            aria-label="프리뷰 상태 및 도구 선택"
+          >
+            <span>상태</span>
+            {activeStateShortLabel && (
+              <span className="text-[11px] font-sans text-[#1E3A8A] font-medium">
+                · {activeStateShortLabel}
+              </span>
+            )}
+            <ChevronDown size={13} className={`transition-transform duration-150 ${isStateMenuOpen ? 'rotate-180' : ''}`} />
+            {(activeTab === 'devhub' || activeTab === 'sitemap') && (
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A] rounded-full" />
+            )}
+          </button>
 
-            <Tooltip content="새 창에서 실행" position="bottom">
-              <button
-                type="button"
-                onClick={handleOpenStandalone}
-                className="p-1.5 rounded-full flex items-center justify-center text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] transition-colors cursor-pointer"
-                aria-label="새 창에서 실행"
-              >
-                <ExternalLink size={13} />
-              </button>
-            </Tooltip>
-          </div>
-        </div>
-      </div>
-
-      {/* Exhibition Piece Surface (bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)]) */}
-      <div className="flex-1 min-h-0 w-full bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)] overflow-hidden relative flex flex-col">
-        {/* TAB 1: Live Interactive Prototype */}
-        {activeTab === 'prototype' && (
-          <div className="w-full h-full flex flex-col">
-            {/* Preview State Switcher — Clean, Borderless Segmented Pill Bar */}
-            <div className="px-4 sm:px-6 pt-3.5 pb-3 bg-white flex flex-wrap items-center justify-between gap-2.5 shrink-0">
-              <div
-                role="tablist"
-                aria-label="Preview State Switcher"
-                className="inline-flex items-center flex-wrap gap-1 bg-[#F7F8FA] p-1 rounded-full"
-              >
+          {/* Clean Dropdown Menu for Preview State Switcher & Extra Views */}
+          {isStateMenuOpen && (
+            <div className="absolute right-0 top-full mt-2.5 w-64 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.12)] p-2 z-50 text-xs">
+              <div className="px-2 py-1 text-[10px] font-sans font-semibold uppercase tracking-wider text-[#9CA3AF]">
+                Preview State Switcher
+              </div>
+              <div className="space-y-0.5 mt-1">
                 {(
                   [
                     { id: 'default', label: 'Default (Populated)' },
@@ -702,95 +539,190 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     <button
                       key={mode.id}
                       type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      onClick={() => setPreviewState(mode.id)}
-                      className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                      onClick={() => {
+                        setPreviewState(mode.id);
+                        setActiveTab('prototype');
+                        if (mode.id !== 'role') {
+                          setIsStateMenuOpen(false);
+                        }
+                      }}
+                      className={`w-full px-2.5 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors cursor-pointer ${
                         isActive
-                          ? 'bg-[#1E3A8A] text-white font-semibold'
-                          : 'text-[#4B5563] hover:text-[#111827] font-medium'
+                          ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+                          : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
                       }`}
                     >
-                      {mode.label}
+                      <span>{mode.label}</span>
+                      {isActive && <Check size={12} className="text-[#1E3A8A]" />}
                     </button>
                   );
                 })}
               </div>
 
               {previewState === 'role' && (
-                <div
-                  role="group"
-                  aria-label="Role Preview Sub-toggle"
-                  className="inline-flex items-center gap-1 bg-[#F7F8FA] p-1 rounded-full"
-                >
+                <div className="mt-1.5 mx-1 p-1 bg-[#F7F8FA] rounded-lg flex items-center gap-1">
                   <button
                     type="button"
-                    onClick={() => setPreviewRole('user')}
-                    className={`px-3 py-1 rounded-full text-[11px] transition-all cursor-pointer whitespace-nowrap ${
+                    onClick={() => {
+                      setPreviewRole('user');
+                      setActiveTab('prototype');
+                      setIsStateMenuOpen(false);
+                    }}
+                    className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
                       previewRole === 'user'
                         ? 'bg-[#FFFFFF] text-[#1E3A8A] font-semibold shadow-2xs'
-                        : 'text-[#4B5563] hover:text-[#111827] font-medium'
+                        : 'text-[#6B7280] hover:text-[#111827]'
                     }`}
                   >
                     Standard User
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPreviewRole('admin')}
-                    className={`px-3 py-1 rounded-full text-[11px] transition-all cursor-pointer whitespace-nowrap ${
+                    onClick={() => {
+                      setPreviewRole('admin');
+                      setActiveTab('prototype');
+                      setIsStateMenuOpen(false);
+                    }}
+                    className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
                       previewRole === 'admin'
                         ? 'bg-[#FFFFFF] text-[#1E3A8A] font-semibold shadow-2xs'
-                        : 'text-[#4B5563] hover:text-[#111827] font-medium'
+                        : 'text-[#6B7280] hover:text-[#111827]'
                     }`}
                   >
                     Admin / Operator
                   </button>
                 </div>
               )}
-            </div>
 
+              <div className="my-2 border-t border-[#E5E7EB]" />
+
+              <div className="px-2 py-1 text-[10px] font-sans font-semibold uppercase tracking-wider text-[#9CA3AF]">
+                Views &amp; Viewport
+              </div>
+              <div className="space-y-0.5 mt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab('devhub');
+                    setIsStateMenuOpen(false);
+                  }}
+                  className={`w-full px-2.5 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors cursor-pointer ${
+                    activeTab === 'devhub'
+                      ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                  }`}
+                >
+                  <span className="flex items-center gap-2"><Code size={12} /> 코드 뷰</span>
+                  {activeTab === 'devhub' && <Check size={12} />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab('sitemap');
+                    setIsStateMenuOpen(false);
+                  }}
+                  className={`w-full px-2.5 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors cursor-pointer ${
+                    activeTab === 'sitemap'
+                      ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
+                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                  }`}
+                >
+                  <span className="flex items-center gap-2"><Network size={12} /> 사이트맵</span>
+                  {activeTab === 'sitemap' && <Check size={12} />}
+                </button>
+              </div>
+
+              <div className="mt-2 px-1 flex items-center gap-1 bg-[#F7F8FA] p-1 rounded-lg">
+                {(
+                  [
+                    { id: 'desktop', label: 'Desktop', Icon: Monitor },
+                    { id: 'tablet', label: 'Tablet', Icon: Tablet },
+                    { id: 'mobile', label: 'Mobile', Icon: Smartphone },
+                  ] as const
+                ).map(({ id, label, Icon }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => {
+                      setViewportMode(id);
+                      setActiveTab('prototype');
+                      setIsStateMenuOpen(false);
+                    }}
+                    className={`flex-1 py-1 rounded-md text-[11px] flex items-center justify-center gap-1 transition-colors cursor-pointer ${
+                      viewportMode === id
+                        ? 'bg-[#FFFFFF] text-[#1E3A8A] font-semibold shadow-2xs'
+                        : 'text-[#6B7280] hover:text-[#111827]'
+                    }`}
+                  >
+                    <Icon size={11} />
+                    <span>{label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="my-2 border-t border-[#E5E7EB]" />
+
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setReloadKey(k => k + 1);
+                    setIsStateMenuOpen(false);
+                  }}
+                  className="flex-1 px-2 py-1.5 rounded-lg text-[11px] text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <RefreshCw size={11} />
+                  <span>새로고침</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleOpenStandalone();
+                    setIsStateMenuOpen(false);
+                  }}
+                  className="flex-1 px-2 py-1.5 rounded-lg text-[11px] text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <ExternalLink size={11} />
+                  <span>새 창</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPromptModalOpen(true);
+                    setIsStateMenuOpen(false);
+                  }}
+                  className="flex-1 px-2 py-1.5 rounded-lg text-[11px] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <Bot size={11} />
+                  <span>프롬프트</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Exhibition Piece Surface (bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)]) */}
+      <div className="flex-1 min-h-0 w-full bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)] overflow-hidden relative flex flex-col">
+        {/* TAB 1: Live Interactive Prototype */}
+        {activeTab === 'prototype' && (
+          <div className="w-full h-full flex flex-col">
             <div className={`flex-1 overflow-auto flex items-center justify-center ${
               viewportMode === 'desktop' ? 'bg-white' : 'bg-[#F7F8FA]/55 p-4 sm:p-6'
             }`}>
               {viewportMode === 'desktop' ? (
-                <div className="w-full h-full flex flex-col bg-white">
-                  {/* Minimal Light Browser Chrome */}
-                  <div className="h-9 px-4 bg-[#F7F8FA]/70 border-y border-[#E5E7EB]/70 flex items-center justify-between text-xs text-[#6B7280] select-none shrink-0 gap-3">
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#E5E7EB]" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#E5E7EB]" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#E5E7EB]" />
-                    </div>
-
-                    <div className="flex-1 max-w-xs md:max-w-sm mx-auto h-6 bg-white border border-[#E5E7EB]/80 rounded-md px-2.5 flex items-center gap-1.5 text-[11px] font-mono text-[#4B5563] truncate">
-                      <span className="text-[#9CA3AF]">https://</span>
-                      <span className="text-[#111827] font-medium">local.goguma.dev</span>
-                      <span className="text-[#1E3A8A]">{plan.navigation?.pageStructure?.[0]?.route || '/dashboard'}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-mono text-[#6B7280]">
-                      <span className="hidden sm:inline">1440 × 900</span>
-                      <span className="px-1.5 py-0.5 rounded bg-[#EFF6FF] text-[#1E3A8A] font-semibold">WEB</span>
-                    </div>
-                  </div>
-
-                  <iframe
-                    ref={iframeRef}
-                    key={reloadKey}
-                    onLoad={handleIframeLoad}
-                    srcDoc={effectivePrototypeHtml}
-                    title="Interactive Prototype Preview"
-                    sandbox="allow-scripts allow-forms allow-modals"
-                    className="w-full flex-1 border-0 bg-white"
-                  />
-                </div>
+                <iframe
+                  ref={iframeRef}
+                  key={reloadKey}
+                  onLoad={handleIframeLoad}
+                  srcDoc={effectivePrototypeHtml}
+                  title="Interactive Prototype Preview"
+                  sandbox="allow-scripts allow-forms allow-modals"
+                  className="w-full h-full border-0 bg-white"
+                />
               ) : viewportMode === 'tablet' ? (
                 <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-2xl border border-[#E5E7EB] shadow-[0_12px_32px_-4px_rgba(15,23,42,0.08)] overflow-hidden bg-white flex flex-col">
-                  <div className="h-7 bg-[#F7F8FA] border-b border-[#E5E7EB] px-4 flex items-center justify-between text-[10px] font-mono text-[#6B7280] select-none">
-                    <span>iPad Pro 11″</span>
-                    <span className="w-8 h-1 rounded-full bg-[#D1D5DB]" />
-                    <span>768 × 1024</span>
-                  </div>
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
@@ -831,14 +763,14 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     value={docFilterQuery}
                     onChange={(e) => setDocFilterQuery(e.target.value)}
                     placeholder="사양서 검색..."
-                    className="w-full pl-8 pr-2.5 py-1.5 text-xs font-mono bg-white border border-[#E5E7EB] rounded-lg text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10"
+                    className="w-full pl-8 pr-2.5 py-1.5 text-xs font-sans bg-white border border-[#E5E7EB] rounded-lg text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10"
                   />
                 </div>
 
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
-                  className="flex-1 min-h-[32px] text-xs font-mono bg-white border border-[#E5E7EB] rounded-lg px-3 py-1.5 text-[#111827] focus:outline-none focus:border-[#1E3A8A] truncate cursor-pointer"
+                  className="flex-1 min-h-[32px] text-xs font-sans bg-white border border-[#E5E7EB] rounded-lg px-3 py-1.5 text-[#111827] focus:outline-none focus:border-[#1E3A8A] truncate cursor-pointer"
                 >
                   {filteredDocs.map((doc) => {
                     const status = docImpactMap[doc.id] || 'idle';
@@ -864,7 +796,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   >
                     <ChevronLeft size={13} />
                   </button>
-                  <span className="text-[11px] font-mono text-[#6B7280] px-1 tabular-nums">
+                  <span className="text-[11px] font-sans text-[#6B7280] px-1 tabular-nums">
                     {activeDocIndex + 1}/{docsList.length}
                   </span>
                   <button
@@ -891,7 +823,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={handleCopyVibeCodingPrompt}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-xs text-white font-semibold transition-colors cursor-pointer whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-xs text-[#1E3A8A] font-medium transition-colors cursor-pointer whitespace-nowrap"
                 >
                   {copiedVibePrompt ? (
                     <>
@@ -937,7 +869,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     key={doc.id}
                     type="button"
                     onClick={() => setSelectedDocId(doc.id)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                       isActive
                         ? 'bg-[#1E3A8A] text-white font-semibold'
                         : isPlaybook
@@ -991,7 +923,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               <div className="max-w-3xl mx-auto space-y-4">
                 <div className="flex items-center justify-between gap-2 text-xs pb-3 border-b border-[#E5E7EB]">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-mono text-[#1E3A8A] font-semibold shrink-0">{activeDoc.relativePath}</span>
+                    <span className="font-sans text-[#1E3A8A] font-semibold shrink-0">{activeDoc.relativePath}</span>
                     <span className="text-[#D1D5DB] shrink-0">·</span>
                     <span className="text-[#4B5563] truncate">{activeDoc.description}</span>
                   </div>
@@ -1047,7 +979,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               </div>
 
               <div className="px-5 py-3.5 border-t border-[#E5E7EB] bg-[#F7F8FA] flex items-center justify-between gap-3">
-                <span className="text-[11px] text-[#4B5563] font-mono">
+                <span className="text-[11px] text-[#4B5563] font-sans">
                   Cursor 또는 Claude Code 창에 붙여넣으면 프로토타입 기반으로 개발을 시작합니다.
                 </span>
                 <button
@@ -1075,7 +1007,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('typescript')}
-                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'typescript'
                       ? 'bg-[#1E3A8A] text-white font-semibold'
                       : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
@@ -1088,7 +1020,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('html')}
-                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'html'
                       ? 'bg-[#1E3A8A] text-white font-semibold'
                       : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
@@ -1101,7 +1033,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('sql')}
-                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'sql'
                       ? 'bg-[#1E3A8A] text-white font-semibold'
                       : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
@@ -1114,7 +1046,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('api')}
-                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'api'
                       ? 'bg-[#1E3A8A] text-white font-semibold'
                       : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
@@ -1127,7 +1059,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('prompt')}
-                  className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'prompt'
                       ? 'bg-[#1E3A8A] text-white font-semibold'
                       : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
@@ -1183,15 +1115,15 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               {devHubSubTab === 'api' ? (
                 <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scroll">
                   <div className="flex items-center justify-between text-[#4B5563] text-xs pb-2 border-b border-[#E5E7EB]">
-                    <span className="font-mono font-semibold text-[#111827]">API Endpoint Contracts</span>
-                    <span className="font-mono">RESTful / JSON Payload</span>
+                    <span className="font-sans font-semibold text-[#111827]">API Endpoint Contracts</span>
+                    <span className="font-sans">RESTful / JSON Payload</span>
                   </div>
                   <div className="space-y-3">
                     {generatedApiRoutes.map((api, idx) => (
                       <div key={idx} className="p-4 bg-[#F7F8FA] rounded-xl space-y-2">
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold shrink-0 ${
+                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-sans font-bold shrink-0 ${
                               api.method === 'GET' ? 'bg-[#EFF6FF] text-[#1E3A8A]' :
                               api.method === 'POST' ? 'bg-[#ECFDF5] text-[#047857]' :
                               api.method === 'PATCH' ? 'bg-[#FFFBEB] text-[#B45309]' :
@@ -1199,12 +1131,12 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                             }`}>
                               {api.method}
                             </span>
-                            <span className="font-mono text-xs font-semibold text-[#111827] truncate">{api.path}</span>
+                            <span className="font-sans text-xs font-semibold text-[#111827] truncate">{api.path}</span>
                           </div>
-                          <span className="text-[11px] font-mono text-[#6B7280] shrink-0">{api.status}</span>
+                          <span className="text-[11px] font-sans text-[#6B7280] shrink-0">{api.status}</span>
                         </div>
                         <p className="text-xs text-[#4B5563] leading-relaxed">{api.summary}</p>
-                        <div className="flex items-center gap-2 text-[11px] font-mono text-[#6B7280] pt-1">
+                        <div className="flex items-center gap-2 text-[11px] font-sans text-[#6B7280] pt-1">
                           <span>인증: {api.auth}</span>
                         </div>
                       </div>
@@ -1213,7 +1145,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </div>
               ) : (
                 <div className="flex-1 min-h-0 flex flex-col">
-                  <div className="px-5 py-2 bg-white border-b border-[#E5E7EB]/60 flex items-center justify-between text-[11px] font-mono text-[#6B7280] shrink-0">
+                  <div className="px-5 py-2 bg-white border-b border-[#E5E7EB]/60 flex items-center justify-between text-[11px] font-sans text-[#6B7280] shrink-0">
                     <span>
                       {devHubSubTab === 'typescript'
                         ? 'src/types/schema.ts'

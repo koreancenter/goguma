@@ -103,12 +103,12 @@ export default function LoginGateway() {
           <span className="font-bold text-base tracking-tight text-[#111827] uppercase">
             GOGUMA
           </span>
-          <span className="text-[10px] px-2 py-0.5 rounded bg-[#EFF6FF] text-[#1E3A8A] font-mono border border-[#1E3A8A]/20 font-semibold">
+          <span className="text-[10px] px-2 py-0.5 rounded bg-[#EFF6FF] text-[#1E3A8A] font-sans border border-[#1E3A8A]/20 font-semibold">
             LOCAL STUDIO
           </span>
         </Link>
 
-        <div className="flex items-center gap-4 text-xs font-mono text-[#6B7280]">
+        <div className="flex items-center gap-4 text-xs font-sans text-[#6B7280]">
           <span className="hidden sm:inline">ZERO SERVER · LOCAL ISOLATION</span>
           <Link 
             to="/" 
@@ -125,7 +125,7 @@ export default function LoginGateway() {
           
           {/* Header Title Section */}
           <div className="space-y-2 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] text-xs font-mono font-medium">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] text-xs font-sans font-medium">
               <ShieldCheck size={14} className="text-[#1E3A8A]" />
               <span>LOCAL-FIRST WORKSPACE GATEWAY</span>
             </div>
@@ -189,9 +189,9 @@ export default function LoginGateway() {
           {/* Tab 1: Quick Resume (Saved Profiles) */}
           {activeTab === 'quick' && (
             <div className="space-y-4">
-              <div className="text-xs text-[#6B7280] flex items-center justify-between font-mono">
+              <div className="text-xs text-[#6B7280] flex items-center justify-between font-sans">
                 <span>저장된 작업자 프로필</span>
-                <span className="text-[#1E3A8A] font-semibold">{savedProfiles.length}개 발견됨</span>
+                <span className="text-[#1E3A8A] font-semibold tabular-nums">{savedProfiles.length}개 발견됨</span>
               </div>
 
               <div className="space-y-2.5">
@@ -209,11 +209,11 @@ export default function LoginGateway() {
                           <span className="font-semibold text-sm text-[#111827]">
                             {p.displayName}
                           </span>
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#FFFFFF] text-[#1E3A8A] border border-[#E5E7EB]">
+                          <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-[#FFFFFF] text-[#1E3A8A] border border-[#E5E7EB]">
                             {p.role === 'ADMIN' ? '디렉터' : '멤버'}
                           </span>
                         </div>
-                        <div className="text-xs text-[#6B7280] font-mono mt-0.5">
+                        <div className="text-xs text-[#6B7280] font-sans mt-0.5">
                           {p.email || '로컬 독립 프로필'} · {p.companyName || '독립 스튜디오'}
                         </div>
                       </div>
@@ -294,7 +294,7 @@ export default function LoginGateway() {
                   <label className="block text-xs font-medium text-[#374151]">
                     로컬 작업실 잠금 PIN (선택)
                   </label>
-                  <span className="text-[11px] text-[#6B7280] font-mono">브라우저 잠금용 (4~8자리)</span>
+                  <span className="text-[11px] text-[#6B7280] font-sans">브라우저 잠금용 (4~8자리)</span>
                 </div>
                 <input
                   type="password"
@@ -364,7 +364,7 @@ export default function LoginGateway() {
               <HardDrive size={14} className="text-[#1E3A8A]" />
               <span>GOGUMA 무서버 독립 아키텍처 보증</span>
             </div>
-            <p className="text-[11px] text-[#374151] leading-relaxed font-mono">
+            <p className="text-[11px] text-[#374151] leading-relaxed font-sans">
               본 애플리케이션은 계정 정보와 기획 문서가 외부 클라우드로 전송되지 않는 100% 로컬 샌드박스입니다. 
               상단 헤더의 [작업실 잠금] 버튼을 통해 언제든지 세션을 종료할 수 있습니다.
             </p>
@@ -374,7 +374,7 @@ export default function LoginGateway() {
       </main>
 
       {/* Subtle Footer */}
-      <footer className="py-4 text-center text-xs text-[#6B7280] border-t border-[#E5E7EB] bg-[#FFFFFF] font-mono">
+      <footer className="py-4 text-center text-xs text-[#6B7280] border-t border-[#E5E7EB] bg-[#FFFFFF] font-sans">
         <span>GOGUMA Free Software (MIT) · Zero Server Telemetry · Local IndexedDB Encrypted</span>
       </footer>
     </div>

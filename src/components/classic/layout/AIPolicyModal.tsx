@@ -71,7 +71,7 @@ export default function AIPolicyModal({ isOpen, onClose }: AIPolicyModalProps) {
                 </div>
                 <div>
                   <h2 className="text-sm sm:text-base font-semibold text-[#111827] uppercase tracking-wide">{t('ai_policy')}</h2>
-                  <p className="text-[11px] text-[#6B7280] font-mono mt-0.5">Ethical Intelligence & Privacy Protocol</p>
+                  <p className="text-[11px] text-[#6B7280] font-sans mt-0.5">Ethical Intelligence & Privacy Protocol</p>
                 </div>
               </div>
               <button 
@@ -92,7 +92,7 @@ export default function AIPolicyModal({ isOpen, onClose }: AIPolicyModalProps) {
                     </div>
                     <h3 className="text-xs font-semibold uppercase tracking-wider text-[#111827]">{section.title}</h3>
                     {section.highlight && (
-                      <span className="px-1.5 py-0.5 bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 text-[9px] font-mono uppercase tracking-wider rounded">Verified</span>
+                      <span className="px-1.5 py-0.5 bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 text-[9px] font-sans uppercase tracking-wider rounded">Verified</span>
                     )}
                   </div>
                   
@@ -103,15 +103,15 @@ export default function AIPolicyModal({ isOpen, onClose }: AIPolicyModalProps) {
                     
                     {section.id === 'security' && (
                       <div className="mt-2 flex flex-wrap gap-2 pt-2 border-t border-[#E5E7EB]">
-                        <span className="px-2 py-0.5 bg-[#FFFFFF] border border-[#E5E7EB] rounded text-[10px] font-mono text-[#374151]">TLS 1.3 Encryption</span>
-                        <span className="px-2 py-0.5 bg-[#FFFFFF] border border-[#E5E7EB] rounded text-[10px] font-mono text-[#374151]">AES-256 at Rest</span>
+                        <span className="px-2 py-0.5 bg-[#FFFFFF] border border-[#E5E7EB] rounded text-[10px] font-sans text-[#374151]">TLS 1.3 Encryption</span>
+                        <span className="px-2 py-0.5 bg-[#FFFFFF] border border-[#E5E7EB] rounded text-[10px] font-sans text-[#374151]">AES-256 at Rest</span>
                       </div>
                     )}
 
                     {section.id === 'training' && (
                       <div className="mt-2 flex items-center gap-2 pt-2 border-t border-[#E5E7EB]">
                         <div className="w-1.5 h-1.5 bg-[#1E3A8A] rounded-full animate-pulse" />
-                        <span className="text-[10px] font-mono text-[#1E3A8A] uppercase tracking-wider">Zero-Training Verified (No Model Retraining)</span>
+                        <span className="text-[10px] font-sans text-[#1E3A8A] uppercase tracking-wider">Zero-Training Verified (No Model Retraining)</span>
                       </div>
                     )}
                   </div>

@@ -42,7 +42,7 @@ SOFTWARE.`;
       <div className="max-w-4xl mx-auto px-6">
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-10 cursor-pointer"
+          className="flex items-center gap-2 text-xs font-sans font-medium uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-10 cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#1E3A8A]" />
           <span>{language === 'ko' ? '돌아가기' : 'Back'}</span>
@@ -58,7 +58,7 @@ SOFTWARE.`;
               <Code2 size={20} />
             </div>
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#1E3A8A] font-semibold">LEGAL & OPEN SOURCE</span>
+              <span className="text-[10px] font-sans uppercase tracking-widest text-[#1E3A8A] font-semibold">LEGAL & OPEN SOURCE</span>
               <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827] tracking-tight uppercase mt-0.5">
                 {language === 'ko' ? '오픈소스 라이선스 & 커뮤니티 정책' : 'Open Source License & Community Terms'}
               </h1>
@@ -86,7 +86,7 @@ SOFTWARE.`;
                 </h2>
                 <button
                   onClick={copyLicense}
-                  className="flex items-center gap-1.5 text-xs font-mono text-[#374151] hover:text-[#1E3A8A] transition-colors px-3 py-1.5 rounded-lg border border-[#E5E7EB] bg-[#F7F8FA] hover:bg-[#EFF6FF] cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs font-sans font-medium text-[#374151] hover:text-[#1E3A8A] transition-colors px-3 py-1.5 rounded-lg border border-[#E5E7EB] bg-[#F7F8FA] hover:bg-[#EFF6FF] cursor-pointer"
                 >
                   {copied ? <Check size={13} className="text-[#1E3A8A]" /> : <Copy size={13} className="text-[#1E3A8A]" />}
                   <span>{copied ? (language === 'ko' ? '복사 완료' : 'Copied') : (language === 'ko' ? '라이선스 복사' : 'Copy')}</span>

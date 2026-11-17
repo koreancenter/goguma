@@ -135,7 +135,7 @@ export const ExportSpecModal: React.FC<ExportSpecModalProps> = ({
                 <h2 className="text-base sm:text-lg font-bold text-[#111827] tracking-tight truncate">
                   {projectName} — Export &amp; Playbook
                 </h2>
-                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#1E3A8A] text-[11px] font-mono font-semibold whitespace-nowrap">
+                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#1E3A8A] text-[11px] font-sans font-semibold whitespace-nowrap">
                   00_EXECUTION_PLAYBOOK + 11 Specs
                 </span>
               </div>
@@ -214,10 +214,10 @@ export const ExportSpecModal: React.FC<ExportSpecModalProps> = ({
                     : 'bg-[#FFFFFF] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] font-medium'
                 }`}
               >
-                <span className={`font-mono text-[11px] ${isActive ? 'text-white/85' : 'text-[#1E3A8A]'}`}>
+                <span className={`font-sans tabular-nums text-[11px] ${isActive ? 'text-white/85' : 'text-[#1E3A8A]'}`}>
                   {doc.docNumber === 0 ? '00' : doc.docNumber <= 11 ? String(doc.docNumber).padStart(2, '0') : '★'}
                 </span>
-                <span className={isPlaybook ? 'font-mono font-semibold' : 'font-sans'}>{doc.filename}</span>
+                <span className={isPlaybook ? 'font-sans font-semibold' : 'font-sans'}>{doc.filename}</span>
 
                 {isPlaybook && (
                   <span
@@ -264,7 +264,7 @@ export const ExportSpecModal: React.FC<ExportSpecModalProps> = ({
           <div className="px-5 sm:px-6 py-3 border-b border-[#E5E7EB]/80 bg-[#FFFFFF] flex flex-wrap items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-2 min-w-0 text-xs">
               <FileCode size={14} className="text-[#1E3A8A] shrink-0" />
-              <span className="font-mono font-semibold text-[#1E3A8A] shrink-0">{activeDoc.relativePath}</span>
+              <span className="font-sans font-semibold text-[#1E3A8A] shrink-0">{activeDoc.relativePath}</span>
               <span className="text-[#D1D5DB] shrink-0">·</span>
               <span className="text-[#4B5563] truncate">{activeDoc.description}</span>
 

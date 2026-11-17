@@ -827,7 +827,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         .attr('fill', colors.text)
         .attr('font-size', '11px')
         .attr('font-weight', data.type === 'root' || data.type === 'category' ? 'bold' : '600')
-        .attr('font-family', 'Pretendard Variable, -apple-system, BlinkMacSystemFont, system-ui, sans-serif')
+        .attr('font-family', "'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif")
         .attr('dominant-baseline', 'middle')
         .text(() => {
           const maxLen = 17;
@@ -842,7 +842,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         .attr('y', 8)
         .attr('fill', data.type === 'root' ? '#1E3A8A' : '#6B7280')
         .attr('font-size', '9.5px')
-        .attr('font-family', 'JetBrains Mono, monospace')
+        .attr('font-family', "'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif")
         .attr('dominant-baseline', 'middle')
         .text(() => {
           if (data.route) return data.route;
@@ -873,8 +873,8 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           .attr('dominant-baseline', 'middle')
           .attr('fill', colors.badgeText)
           .attr('font-size', '8.5px')
-          .attr('font-family', 'JetBrains Mono, monospace')
-          .attr('font-weight', 'bold')
+          .attr('font-family', "'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif")
+          .attr('font-weight', '600')
           .text(badgeText);
       }
 
@@ -1038,7 +1038,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-[#EFF6FF] rounded-lg text-[10px] font-mono text-[#1E3A8A]">
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-[#EFF6FF] rounded-lg text-[10px] font-sans text-[#1E3A8A]">
             <span className={`w-1.5 h-1.5 rounded-full ${isLivePulse ? 'bg-[#1E3A8A] animate-ping' : 'bg-[#1E3A8A]'}`} />
             <span className="font-medium">실시간 연동</span>
           </div>
@@ -1054,10 +1054,10 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="노드 / 라우트 검색..."
-              className="w-full pl-7 pr-2 py-1 text-xs font-mono bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:bg-white"
+              className="w-full pl-7 pr-2 py-1 text-xs font-sans bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:bg-white"
             />
             {searchQuery && (
-              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-mono text-[#1E3A8A] font-semibold">
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-sans tabular-nums text-[#1E3A8A] font-semibold">
                 {matchedCount}개
               </span>
             )}
@@ -1130,7 +1130,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         />
 
         {/* Floating Mini Legend */}
-        <div className="absolute bottom-3 left-3 pointer-events-none bg-white/95 backdrop-blur-xs border border-[#E5E7EB] rounded-xl px-3 py-2 text-[10px] font-mono text-[#4B5563] flex flex-wrap gap-3 shadow-xs">
+        <div className="absolute bottom-3 left-3 pointer-events-none bg-white/95 backdrop-blur-xs border border-[#E5E7EB] rounded-xl px-3 py-2 text-[10px] font-sans text-[#4B5563] flex flex-wrap gap-3 shadow-xs">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#EFF6FF] border border-[#1E3A8A]" />
             <span>화면 및 사이트맵</span>
@@ -1166,18 +1166,18 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
                     {selectedNode.name}
                   </h4>
                   {selectedNode.badge && (
-                    <span className="text-[10px] font-mono bg-[#EFF6FF] px-2 py-0.5 rounded-md text-[#1E3A8A] font-semibold">
+                    <span className="text-[10px] font-sans bg-[#EFF6FF] px-2 py-0.5 rounded-md text-[#1E3A8A] font-semibold">
                       {selectedNode.badge}
                     </span>
                   )}
                   {selectedNode.route && (
-                    <span className="text-[10px] font-mono text-[#1E3A8A] bg-white border border-[#E5E7EB] px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-sans text-[#1E3A8A] bg-white border border-[#E5E7EB] px-2 py-0.5 rounded-md">
                       경로: {selectedNode.route}
                     </span>
                   )}
                 </div>
                 {selectedNode.chapterTitle && (
-                  <p className="text-[11px] text-[#6B7280] mt-0.5 font-mono">
+                  <p className="text-[11px] text-[#6B7280] mt-0.5 font-sans">
                     연동 출처: {selectedNode.chapterTitle}
                   </p>
                 )}
@@ -1207,13 +1207,13 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
 
           {/* User Input or Source Text */}
           {selectedNode.sourceText && (
-            <div className="bg-white p-3 rounded-xl border border-[#E5E7EB] text-[11px] font-mono text-[#111827] leading-relaxed max-h-24 overflow-y-auto select-text">
+            <div className="bg-white p-3 rounded-xl border border-[#E5E7EB] text-[11px] font-sans text-[#111827] leading-relaxed max-h-24 overflow-y-auto select-text">
               <span className="text-[#6B7280] block mb-1 text-[10px]">기획 사양 내용:</span>
               {selectedNode.sourceText}
             </div>
           )}
 
-          <div className="flex items-center justify-between text-[10px] font-mono text-[#6B7280]">
+          <div className="flex items-center justify-between text-[10px] font-sans text-[#6B7280]">
             <span>
               {selectedNode.isUserInput ? '✓ 사용자가 입력한 기획과 실시간 동기화 완료' : '표준 템플릿 기본 정의'}
             </span>

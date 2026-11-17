@@ -31,7 +31,7 @@ export default function About() {
       <div className="max-w-5xl mx-auto px-6">
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-8 cursor-pointer"
+          className="flex items-center gap-2 text-xs font-sans font-medium uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-8 cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#1E3A8A]" />
           <span>{t('back')}</span>
@@ -47,7 +47,7 @@ export default function About() {
               <Box size={20} />
             </div>
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#1E3A8A] font-semibold">ARCHITECTURAL STATEMENT</span>
+              <span className="text-[10px] font-sans uppercase tracking-widest text-[#1E3A8A] font-semibold">ARCHITECTURAL STATEMENT</span>
               <h1 className="text-2xl sm:text-3xl font-semibold text-[#111827] tracking-tight uppercase mt-0.5">{t('about_us')}</h1>
             </div>
           </div>

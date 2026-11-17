@@ -265,10 +265,9 @@ export default function WorkspaceView({
 
           <button
             onClick={() => navigate('/')}
-            className="font-sans font-bold text-sm sm:text-[15px] tracking-tight text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer whitespace-nowrap shrink-0 leading-none flex items-center gap-2"
+            className="font-sans font-bold text-sm sm:text-[15px] tracking-tight text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer whitespace-nowrap shrink-0 leading-none"
           >
-            <span className="w-6 h-6 rounded-md bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs">G</span>
-            <span>GOGUMA</span>
+            GOGUMA
           </button>
 
           <span className="text-[#D1D5DB] select-none leading-none shrink-0 hidden xs:inline" aria-hidden="true">/</span>
@@ -302,17 +301,17 @@ export default function WorkspaceView({
           </Tooltip>
         </div>
 
-        {/* Center Zone: Compact Active Chapter Indicator / Quick Switcher */}
+        {/* Center Zone: Compact Active Chapter Selector & Sidebar Toggle */}
         <div className="hidden md:flex items-center justify-center flex-1 min-w-0" ref={chapterMenuRef}>
           <div className="relative">
             <button
               type="button"
               onClick={() => setIsChapterMenuOpen(prev => !prev)}
-              className="h-8 px-3 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-xs font-medium text-[#111827] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[280px]"
+              className="h-8 px-3 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-transparent hover:border-[#E5E7EB] text-xs font-medium text-[#111827] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[280px]"
               aria-expanded={isChapterMenuOpen}
-              aria-label="챕터 빠른 전환"
+              aria-label="챕터 빠른 전환 및 목차 사이드바 토글"
             >
-              <span className="font-mono text-[11px] font-semibold text-[#1E3A8A] tabular-nums shrink-0">
+              <span className="font-sans text-[11px] font-semibold text-[#1E3A8A] tabular-nums shrink-0">
                 0{currentChapterObj.id}
               </span>
               <span className="text-[#D1D5DB] shrink-0" aria-hidden="true">·</span>
@@ -323,8 +322,18 @@ export default function WorkspaceView({
             {isChapterMenuOpen && (
               <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.1)] p-1.5 z-50">
                 <div className="px-2.5 py-1.5 text-[11px] font-medium text-[#4B5563] border-b border-[#E5E7EB] mb-1 flex items-center justify-between">
-                  <span>챕터 빠른 이동</span>
-                  <span className="font-mono tabular-nums text-[#9CA3AF]">{project.currentChapter} / {GOGUMA_CHAPTERS.length}</span>
+                  <span>챕터 이동</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleToggleSidebar();
+                      setIsChapterMenuOpen(false);
+                    }}
+                    className="inline-flex items-center gap-1 text-[11px] font-medium text-[#1E3A8A] hover:underline cursor-pointer whitespace-nowrap"
+                  >
+                    <PanelLeft size={11} />
+                    <span>{isCol1Collapsed ? '목차 사이드바 열기' : '목차 사이드바 닫기'}</span>
+                  </button>
                 </div>
                 <div className="space-y-0.5 max-h-[340px] overflow-y-auto custom-scroll">
                   {GOGUMA_CHAPTERS.map((ch) => {
@@ -345,7 +354,7 @@ export default function WorkspaceView({
                         }`}
                       >
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className={`font-mono text-[11px] tabular-nums shrink-0 ${
+                          <span className={`font-sans text-[11px] tabular-nums shrink-0 ${
                             isActive ? 'text-[#1E3A8A] font-bold' : 'text-[#9CA3AF]'
                           }`}>
                             0{ch.id}
@@ -374,7 +383,7 @@ export default function WorkspaceView({
               aria-label="인공지능 모델 설정"
             >
               <Cpu size={13} className="text-[#1E3A8A] shrink-0" />
-              <span className="font-mono text-[11px] font-medium text-[#111827]">{activeTierLabel}</span>
+              <span className="font-sans text-[11px] font-medium text-[#111827]">{activeTierLabel}</span>
             </button>
           </Tooltip>
 
@@ -497,18 +506,20 @@ export default function WorkspaceView({
 
       {/* Main Workspace Shell: h-[calc(100vh-56px)] (Collapsible Rail + 50:50 Fluid Split) */}
       <div className={`h-[calc(100vh-56px)] flex overflow-hidden bg-[#FFFFFF] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
-        {/* Left Collapsible Chapter Rail / Drawer (52px collapsed / 240px expanded) */}
-        <IntegratedNavigator
-          currentChapter={project.currentChapter}
-          currentSection={project.currentSection}
-          onSelectChapter={handleSelectChapter}
-          onSelectSection={handleSelectSection}
-          formInputs={formInputs}
-          isCollapsed={isCol1Collapsed}
-          onToggleCollapse={handleToggleSidebar}
-          completedChapters={completedChapters}
-          lockedChapters={project.lockedChapters}
-        />
+        {/* Left Collapsible Chapter Sidebar (Hidden by default for maximum breathing room) */}
+        {!isCol1Collapsed && (
+          <IntegratedNavigator
+            currentChapter={project.currentChapter}
+            currentSection={project.currentSection}
+            onSelectChapter={handleSelectChapter}
+            onSelectSection={handleSelectSection}
+            formInputs={formInputs}
+            isCollapsed={false}
+            onToggleCollapse={handleToggleSidebar}
+            completedChapters={completedChapters}
+            lockedChapters={project.lockedChapters}
+          />
+        )}
 
         {/* 50:50 Fluid Split Workspace Area (Stacked/Toggled on < lg, 50:50 split on lg+) */}
         <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">

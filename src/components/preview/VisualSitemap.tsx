@@ -108,7 +108,7 @@ export default function VisualSitemap({
                 <h4 className="text-xs font-sans font-semibold text-[#111827] tracking-tight truncate max-w-[160px]">
                   {node.name || t('untitled_page')}
                 </h4>
-                <p className="text-[10px] font-mono text-[#6B7280] mt-0.5 truncate max-w-[220px]">
+                <p className="text-[10px] font-sans text-[#6B7280] mt-0.5 truncate max-w-[220px]">
                   {targetUrl ? (
                     `${targetUrl.replace(/\/$/, '')}${typeof node.slug === 'string' ? (node.slug.startsWith('/') ? node.slug : `/${node.slug}`) : '/'}`
                   ) : (
@@ -159,7 +159,7 @@ export default function VisualSitemap({
           <span className="text-xs font-sans font-semibold text-[#111827] tracking-tight">
             사이트 구조도 (SitePlan Tree)
           </span>
-          <span className="hidden sm:inline text-[11px] font-mono text-[#6B7280]">
+          <span className="hidden sm:inline text-[11px] font-sans text-[#6B7280]">
             · 실시간 기획 연계 시각화
           </span>
         </div>
@@ -225,7 +225,7 @@ export default function VisualSitemap({
           {plan.metadata.platform === 'APP' && plan.design.mobileConfig?.bottomNav && plan.design.mobileConfig.bottomTabItems && (
             <div className="mt-8 pt-6 border-t border-[#E5E7EB]">
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-[10px] font-mono tracking-widest text-[#6B7280]">{t('bottom_tab_config')}</span>
+                <span className="text-[10px] font-sans font-semibold tracking-widest text-[#6B7280]">{t('bottom_tab_config')}</span>
               </div>
               
               <div className="flex items-center gap-2.5 overflow-x-auto pb-2">
@@ -240,7 +240,7 @@ export default function VisualSitemap({
                     <div className="w-8 h-8 bg-[#EFF6FF] text-[#1E3A8A] rounded-lg flex items-center justify-center">
                       <BottomTabIcon label={item.label} index={i} />
                     </div>
-                    <span className="text-[10px] font-mono text-[#111827] truncate max-w-[70px]">{item.label || `Tab ${i+1}`}</span>
+                    <span className="text-[10px] font-sans text-[#111827] truncate max-w-[70px]">{item.label || `Tab ${i+1}`}</span>
                   </motion.div>
                 ))}
               </div>

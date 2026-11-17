@@ -40,7 +40,7 @@ export default function CookiePolicyModal({ isOpen, onClose }: CookiePolicyModal
                 </div>
                 <div>
                   <h2 className="text-sm sm:text-base font-semibold text-[#111827] uppercase tracking-wide">{t('cookie_policy')}</h2>
-                  <p className="text-[11px] text-[#6B7280] font-mono mt-0.5">Privacy & Local Storage Transparency</p>
+                  <p className="text-[11px] text-[#6B7280] font-sans mt-0.5">Privacy & Local Storage Transparency</p>
                 </div>
               </div>
               <button 
@@ -61,7 +61,7 @@ export default function CookiePolicyModal({ isOpen, onClose }: CookiePolicyModal
                 <div className="flex-1 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-semibold text-[#111827] uppercase tracking-wider">{t('essential_cookies_title')}</h3>
-                    <span className="px-2 py-0.5 bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 rounded text-[9px] font-mono uppercase tracking-wider">
+                    <span className="px-2 py-0.5 bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 rounded text-[9px] font-sans uppercase tracking-wider">
                       {t('always_on')}
                     </span>
                   </div>
@@ -100,7 +100,7 @@ export default function CookiePolicyModal({ isOpen, onClose }: CookiePolicyModal
                 <div className="flex-1 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-semibold text-[#111827] uppercase tracking-wider">{t('marketing_cookies_title')}</h3>
-                    <div className="flex items-center gap-1 px-2 py-0.5 bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] rounded text-[9px] font-mono uppercase tracking-wider">
+                    <div className="flex items-center gap-1 px-2 py-0.5 bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] rounded text-[9px] font-sans uppercase tracking-wider">
                       <X size={9} />
                       <span>{t('not_collected')}</span>
                     </div>
@@ -112,7 +112,7 @@ export default function CookiePolicyModal({ isOpen, onClose }: CookiePolicyModal
               </div>
 
               <div className="pt-2 border-t border-[#E5E7EB]">
-                <p className="text-[11px] text-[#6B7280] font-mono text-center">
+                <p className="text-[11px] text-[#6B7280] font-sans text-center">
                   Zero telemetry & zero third-party commercial trackers guarantee.
                 </p>
               </div>

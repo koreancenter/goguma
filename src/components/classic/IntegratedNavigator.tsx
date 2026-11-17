@@ -156,7 +156,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                 <span className="font-sans font-semibold text-xs text-[#111827] tracking-tight truncate block">
                   기획서 목차
                 </span>
-                <span className="text-[11px] font-mono text-[#4B5563] tabular-nums block truncate">
+                <span className="text-[11px] font-sans text-[#4B5563] tabular-nums block truncate">
                   {completedSectionsCount}/{totalSections} 작성 완료
                 </span>
               </div>
@@ -233,7 +233,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                   />
 
                   {/* Micro Index Number */}
-                  <span className={`text-[9px] font-mono leading-none mt-0.5 tabular-nums ${
+                  <span className={`text-[9px] font-sans leading-none mt-0.5 tabular-nums ${
                     isCurrent ? 'text-[#1E3A8A] font-bold' : 'text-[#9CA3AF] group-hover:text-[#4B5563]'
                   }`}>
                     {item.numStr}
@@ -274,7 +274,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0 truncate">
-                  <span className={`font-mono text-[11px] tabular-nums shrink-0 ${
+                  <span className={`font-sans text-[11px] tabular-nums shrink-0 ${
                     isCurrent ? 'text-[#1E3A8A] font-bold' : 'text-[#9CA3AF]'
                   }`}>
                     {item.numStr}
@@ -359,7 +359,7 @@ export const IntegratedNavigator: React.FC<IntegratedNavigatorProps> = ({
               className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#FFFFFF] border-l border-b border-[#E5E7EB] rotate-45"
             />
 
-            <span className="font-mono text-xs font-bold text-[#1E3A8A] tabular-nums shrink-0">
+            <span className="font-sans text-xs font-bold text-[#1E3A8A] tabular-nums shrink-0">
               {tooltipState.item.numStr}.
             </span>
             <span className="font-sans font-semibold text-xs text-[#111827] tracking-tight">

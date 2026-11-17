@@ -60,14 +60,14 @@ export default function CustomerService() {
       <div className="max-w-5xl mx-auto px-6">
         <button 
           onClick={() => navigate('/workspace')}
-          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-10 cursor-pointer"
+          className="flex items-center gap-2 text-xs font-sans font-medium uppercase tracking-widest text-[#6B7280] hover:text-[#111827] transition-colors mb-10 cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#1E3A8A]" />
           <span>{language === 'ko' ? '워크스페이스로 돌아가기' : 'Back to Workspace'}</span>
         </button>
 
         <div className="text-center mb-14 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFF6FF] text-[#1E3A8A] text-xs font-mono border border-[#1E3A8A]/15 uppercase tracking-wider font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFF6FF] text-[#1E3A8A] text-xs font-sans border border-[#1E3A8A]/15 uppercase tracking-wider font-semibold">
             <ShieldCheck size={14} />
             <span>{language === 'ko' ? '공개 소프트웨어 안내 & 가이드' : 'Open Software & Privacy Guide'}</span>
           </div>
@@ -95,7 +95,7 @@ export default function CustomerService() {
                   <div className="w-10 h-10 bg-[#EFF6FF] border border-[#1E3A8A]/15 text-[#1E3A8A] rounded-xl flex items-center justify-center font-bold">
                     <guide.icon size={18} />
                   </div>
-                  <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-widest">
+                  <span className="text-[10px] font-sans tabular-nums font-medium text-[#6B7280] uppercase tracking-widest">
                     STEP 0{index + 1}
                   </span>
                 </div>

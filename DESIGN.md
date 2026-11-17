@@ -47,20 +47,19 @@ GOGUMA v2.0 transitions away from a dense, dark-mode developer IDE (`Sumi Black`
 ## 3. Typography System
 
 ### 3.1 Font Families
-- **Primary Sans (UI & Editorial):** `'Pretendard Variable', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif`
-- **Monospace (Code & Spec Raw View):** `'JetBrains Mono', 'Fira Code', monospace`
+- **Primary Sans (UI & Editorial):** `'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif`
+- **Monospace (Strictly Inside Code-Viewer Blocks Only):** `'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`
 
 ### 3.2 Type Scale & Rhythm
-- **Base Document Line-Height:** `1.7` on `html`, `body`, prose paragraphs, and TipTap editorial flow for generous gallery readability.
-- **Chapter Display Title:** `1.75rem` (`28px`), `font-bold` (`700`), `tracking-[-0.025em]`, `leading-[1.3]`
-- **Section Heading:** `1.125rem` (`18px`), `font-semibold` (`600`), `tracking-[-0.015em]`, `leading-[1.4]`
-- **Editorial Body / TipTap Prose:** `0.9375rem` (`15px`), `font-normal` (`400`), `leading-[1.7]`
-- **UI Control / Label:** `0.8125rem` (`13px`), `font-medium` (`500`), `leading-[1.4]`
-- **Micro Metadata / Badge:** `0.75rem` (`12px`), `font-medium` (`500`), `tracking-[0.02em]`
+- **Base Document Flow:** `font-size: 15.5px`, `font-weight: 400`, `line-height: 1.75`, `letter-spacing: -0.01em`, color `#1E293B` with `-webkit-font-smoothing: antialiased` and `-moz-osx-font-smoothing: grayscale`.
+- **Main Chapter Title:** `2rem` (`32px`), `font-weight: 600` (SemiBold), `letter-spacing: -0.025em`, `line-height: 1.3`
+- **Section Heading:** `1.125rem` (`18px`), `font-weight: 600` (SemiBold), `letter-spacing: -0.015em`, `leading-[1.4]`
+- **Body & Editor Text:** `15.5px`, `font-weight: 400`, `line-height: 1.75`, `letter-spacing: -0.01em`, color `#1E293B`
+- **UI Control / Label / Badge:** Unified in `'DM Sans', 'SUIT Variable'` sans-serif (`tabular-nums` where alignment is needed). Monospace is reserved strictly for code-viewer blocks (`CodeMirror`, `<pre>`, `<code>`, TipTap code blocks).
 
 ### 3.3 Global CSS & Tailwind v4 Theme Foundation (`index.html` & `src/index.css`)
-- **Single Light Foundation:** Root `<html>` (`color-scheme: light`) and `<body>` are unified on `#FFFFFF` canvas with `#111827` primary ink and `#EFF6FF` / `#1E3A8A` text selection. No `.dark` variant overrides or `#0B0C10` / `#0E1217` dark surfaces remain in global styles.
-- **Token Availability:** All surface, ink, accent, hairline, and semantic tokens are defined in `:root` and mirrored in Tailwind v4 `@theme` (`--color-canvas`, `--color-stage`, `--color-subtle`, `--color-ink-primary`, `--color-ink-secondary`, `--color-accent-primary`, `--color-hairline`), alongside `--font-sans` (`Pretendard Variable`, `Plus Jakarta Sans`) and `--font-mono` (`JetBrains Mono`).
+- **Single Light Foundation:** Root `<html>` (`color-scheme: light`) and `<body>` are unified on `#FFFFFF` canvas with `#1E293B` body ink, `#111827` heading ink, and `#EFF6FF` / `#1E3A8A` text selection. No `.dark` variant overrides or `#0B0C10` / `#0E1217` dark surfaces remain in global styles.
+- **Token Availability:** All surface, ink, accent, hairline, and semantic tokens are defined in `:root` and mirrored in Tailwind v4 `@theme` (`--color-canvas`, `--color-stage`, `--color-subtle`, `--color-ink-primary`, `--color-ink-secondary`, `--color-accent-primary`, `--color-hairline`), alongside `--font-sans` (`DM Sans`, `SUIT Variable`) and `--font-mono` (`JetBrains Mono`).
 
 ---
 

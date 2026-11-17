@@ -153,9 +153,9 @@ export default function PromptExtractionHub({
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2 text-xs text-[#6B7280]">
-              <span className="font-mono text-[#1E3A8A] font-semibold">08. ARTIFACTS HUB</span>
+              <span className="font-sans text-[#1E3A8A] font-semibold">08. ARTIFACTS HUB</span>
               <span aria-hidden="true" className="text-[#D1D5DB]">·</span>
-              <span className="font-mono text-[#4B5563]">
+              <span className="font-sans text-[#4B5563]">
                 11종 사양서 및 골든 프롬프트 준비 완료
               </span>
             </div>
@@ -198,25 +198,25 @@ export default function PromptExtractionHub({
           <div className="bg-[#F7F8FA] p-4 rounded-xl">
             <div className="text-xs text-[#6B7280]">마크다운 사양서</div>
             <div className="text-lg font-sans font-semibold tabular-nums text-[#111827] mt-1">11개 문서</div>
-            <div className="text-[11px] text-[#6B7280] font-mono mt-0.5">01_proposal ~ 11_sys</div>
+            <div className="text-[11px] text-[#6B7280] font-sans mt-0.5">01_proposal ~ 11_sys</div>
           </div>
 
           <div className="bg-[#F7F8FA] p-4 rounded-xl">
             <div className="text-xs text-[#6B7280]">에이전트 규칙</div>
-            <div className="text-lg font-mono font-semibold text-[#1E3A8A] mt-1">.cursorrules</div>
-            <div className="text-[11px] text-[#6B7280] font-mono mt-0.5">.clinerules & CLAUDE.md</div>
+            <div className="text-lg font-sans font-semibold text-[#1E3A8A] mt-1">.cursorrules</div>
+            <div className="text-[11px] text-[#6B7280] font-sans mt-0.5">.clinerules & CLAUDE.md</div>
           </div>
 
           <div className="bg-[#F7F8FA] p-4 rounded-xl">
             <div className="text-xs text-[#6B7280]">실행 프로토타입</div>
             <div className="text-lg font-sans font-semibold text-[#111827] mt-1">prototype.html</div>
-            <div className="text-[11px] text-[#6B7280] font-mono mt-0.5">단일 파일 브라우저 즉시 구동</div>
+            <div className="text-[11px] text-[#6B7280] font-sans mt-0.5">단일 파일 브라우저 즉시 구동</div>
           </div>
 
           <div className="bg-[#F7F8FA] p-4 rounded-xl">
             <div className="text-xs text-[#6B7280]">아키텍처 규약</div>
-            <div className="text-lg font-mono font-semibold text-[#1E3A8A] mt-1">Local-First</div>
-            <div className="text-[11px] text-[#6B7280] font-mono mt-0.5">IndexedDB 영속성</div>
+            <div className="text-lg font-sans font-semibold text-[#1E3A8A] mt-1">Local-First</div>
+            <div className="text-[11px] text-[#6B7280] font-sans mt-0.5">IndexedDB 영속성</div>
           </div>
         </div>
       </div>
@@ -255,16 +255,16 @@ export default function PromptExtractionHub({
 
         {/* Feature Badges */}
         <div className="flex flex-wrap gap-2">
-          <span className="text-[11px] font-mono text-[#1E3A8A] bg-[#EFF6FF] px-2.5 py-1 rounded-md font-medium">
+          <span className="text-[11px] font-sans text-[#1E3A8A] bg-[#EFF6FF] px-2.5 py-1 rounded-md font-medium">
             ✓ Prototype-as-Spec
           </span>
-          <span className="text-[11px] font-mono text-[#4B5563] bg-[#FFFFFF] px-2.5 py-1 rounded-md">
+          <span className="text-[11px] font-sans text-[#4B5563] bg-[#FFFFFF] px-2.5 py-1 rounded-md">
             ✓ React 19 + TypeScript + Tailwind
           </span>
-          <span className="text-[11px] font-mono text-[#4B5563] bg-[#FFFFFF] px-2.5 py-1 rounded-md">
+          <span className="text-[11px] font-sans text-[#4B5563] bg-[#FFFFFF] px-2.5 py-1 rounded-md">
             ✓ Zero-Slop Rule
           </span>
-          <span className="text-[11px] font-mono text-[#1E3A8A] bg-[#EFF6FF] px-2.5 py-1 rounded-md font-medium">
+          <span className="text-[11px] font-sans text-[#1E3A8A] bg-[#EFF6FF] px-2.5 py-1 rounded-md font-medium">
             ✓ 환각 방지 불변 규약
           </span>
         </div>
@@ -287,7 +287,7 @@ export default function PromptExtractionHub({
           {/* STEP 1 */}
           <div className="bg-[#F7F8FA] p-5 rounded-xl flex flex-col justify-between space-y-4">
             <div className="space-y-2">
-              <span className="font-mono text-xs text-[#1E3A8A] tabular-nums font-semibold">01.</span>
+              <span className="font-sans text-xs text-[#1E3A8A] tabular-nums font-semibold">01.</span>
               <h3 className="font-sans font-semibold text-[#111827] text-sm">
                 ZIP 패키지 다운로드
               </h3>
@@ -307,7 +307,7 @@ export default function PromptExtractionHub({
           {/* STEP 2 */}
           <div className="bg-[#F7F8FA] p-5 rounded-xl flex flex-col justify-between space-y-4">
             <div className="space-y-2">
-              <span className="font-mono text-xs text-[#1E3A8A] tabular-nums font-semibold">02.</span>
+              <span className="font-sans text-xs text-[#1E3A8A] tabular-nums font-semibold">02.</span>
               <h3 className="font-sans font-semibold text-[#111827] text-sm">
                 새 폴더에 압축 해제
               </h3>
@@ -327,7 +327,7 @@ export default function PromptExtractionHub({
           {/* STEP 3 */}
           <div className="bg-[#F7F8FA] p-5 rounded-xl flex flex-col justify-between space-y-4">
             <div className="space-y-2">
-              <span className="font-mono text-xs text-[#1E3A8A] tabular-nums font-semibold">03.</span>
+              <span className="font-sans text-xs text-[#1E3A8A] tabular-nums font-semibold">03.</span>
               <h3 className="font-sans font-semibold text-[#111827] text-sm">
                 에이전트에 명령 전달
               </h3>
@@ -388,7 +388,7 @@ export default function PromptExtractionHub({
               11종 사양서 개별 열람 및 복사
             </h2>
           </div>
-          <span className="text-xs text-[#6B7280] font-mono">문서 탭을 선택하여 내용을 확인하세요.</span>
+          <span className="text-xs text-[#6B7280] font-sans">문서 탭을 선택하여 내용을 확인하세요.</span>
         </div>
 
         {/* Document Tabs Strip - Clean Segmented Buttons with Featured Playbook & Spec Impact Indicator */}
@@ -401,7 +401,7 @@ export default function PromptExtractionHub({
               <button
                 key={doc.id}
                 onClick={() => setActiveDocId(doc.id)}
-                className={`px-3 py-1.5 min-h-[34px] rounded-lg text-xs font-mono transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-3 py-1.5 min-h-[34px] rounded-lg text-xs font-sans transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   isActive
                     ? 'bg-[#1E3A8A] text-white font-semibold'
                     : isPlaybook
@@ -455,7 +455,7 @@ export default function PromptExtractionHub({
         <div className="bg-[#FFFFFF] rounded-xl border border-[#E5E7EB] overflow-hidden">
           <div className="bg-[#F7F8FA] px-4 py-3 border-b border-[#E5E7EB] flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2 truncate text-xs">
-              <span className="font-mono text-[#1E3A8A] font-semibold">
+              <span className="font-sans text-[#1E3A8A] font-semibold">
                 {activeDoc.relativePath}
               </span>
               <span className="text-[#D1D5DB]">·</span>

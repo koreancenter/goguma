@@ -49,7 +49,7 @@ export default function Navbar({ projectTitle, saveStatus }: NavbarProps) {
             <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#6B7280] shrink-0">
               <span aria-hidden="true" className="leading-none select-none">·</span>
               <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${saveStatus === 'saving' ? 'bg-[#B45309] animate-pulse' : 'bg-[#15803D]'}`} />
-              <span className="font-mono text-[11px] text-[#4B5563] leading-none whitespace-nowrap">
+              <span className="font-sans text-[11px] text-[#4B5563] leading-none whitespace-nowrap">
                 {saveStatus === 'saving' ? '보존 중' : '자동 보존됨'}
               </span>
             </div>

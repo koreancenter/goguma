@@ -29,7 +29,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold uppercase tracking-tight text-[#111827]">GOGUMA</span>
-                <span className="px-2 py-0.5 bg-[#EFF6FF] text-[#1E3A8A] text-[10px] font-mono rounded border border-[#1E3A8A]/20 font-semibold">
+                <span className="px-2 py-0.5 bg-[#EFF6FF] text-[#1E3A8A] text-[10px] font-sans rounded border border-[#1E3A8A]/20 font-semibold">
                   OPEN SOURCE
                 </span>
               </div>
@@ -43,7 +43,7 @@ export default function Footer() {
 
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <RegionSelector />
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] text-[11px] font-mono text-[#374151]">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] text-[11px] font-sans text-[#374151]">
                 <span className="text-[#6B7280]">STATUS</span>
                 <span className="text-[#D1D5DB]">/</span>
                 <span className="text-[#1E3A8A] font-semibold">LOCAL-FIRST ACTIVE</span>
@@ -55,7 +55,7 @@ export default function Footer() {
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8 lg:pl-12">
             {/* Column 1: 안내 & 소스코드 */}
             <div className="space-y-4">
-              <h4 className="text-[11px] font-mono font-medium text-[#6B7280] uppercase tracking-widest">
+              <h4 className="text-[11px] font-sans font-medium text-[#6B7280] uppercase tracking-widest">
                 {language === 'ko' ? '안내 및 서비스' : 'About & Service'}
               </h4>
               <ul className="space-y-2.5">
@@ -92,7 +92,7 @@ export default function Footer() {
 
             {/* Column 2: 라이선스 및 정책 */}
             <div className="space-y-4">
-              <h4 className="text-[11px] font-mono font-medium text-[#6B7280] uppercase tracking-widest">
+              <h4 className="text-[11px] font-sans font-medium text-[#6B7280] uppercase tracking-widest">
                 {language === 'ko' ? '라이선스 및 정책' : 'License & Policies'}
               </h4>
               <ul className="space-y-2.5">
@@ -157,7 +157,7 @@ export default function Footer() {
           <div>
             © {year} GOGUMA · {language === 'ko' ? '무료 & 오픈소스 소프트웨어 (MIT 라이선스)' : 'Free & Open Source Software (MIT Licensed)'}
           </div>
-          <div className="font-mono text-[10px] text-[#9CA3AF]">
+          <div className="font-sans text-[10px] text-[#9CA3AF]">
             ZERO SERVER DEPENDENCY · 100% CLIENT-SIDE
           </div>
         </div>
