@@ -41,6 +41,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   } = useStudioHeader();
 
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [openPageSubmenu, setOpenPageSubmenu] = useState<'settings' | 'help' | null>(null);
   const [isAppsMenuOpen, setIsAppsMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [hoveredMenuId, setHoveredMenuId] = useState<number | 'settings' | 'help'>(currentChapter);
@@ -53,6 +54,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
 
   useEffect(() => {
     setIsMegaMenuOpen(false);
+    setOpenPageSubmenu(null);
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
     setIsMobileChapterDrawerOpen(false);
@@ -60,6 +62,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
 
   const navigateFromMenu = (path: string) => {
     setIsMegaMenuOpen(false);
+    setOpenPageSubmenu(null);
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
     setIsMobileChapterDrawerOpen(false);
@@ -72,10 +75,16 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
     setIsMegaMenuOpen(true);
   };
 
+  const handleOpenPageSubmenu = (menuId: 'settings' | 'help') => {
+    if (isAppsMenuOpen || isLangMenuOpen) return;
+    setOpenPageSubmenu(menuId);
+  };
+
   const handleChapterClick = (chapterId: number) => {
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
     setIsMegaMenuOpen(false);
+    setOpenPageSubmenu(null);
     setIsMobileChapterDrawerOpen(false);
     onSelectChapter(chapterId);
     if (location.pathname !== '/workspace') {
@@ -87,6 +96,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
     setIsMegaMenuOpen(false);
+    setOpenPageSubmenu(null);
     setIsMobileChapterDrawerOpen(false);
     onSelectChapter(chapterId);
     onSelectSection(sectionKey);
@@ -96,10 +106,11 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   };
 
   useEffect(() => {
-    if (!isMegaMenuOpen && !isMobileChapterDrawerOpen && !isAppsMenuOpen && !isLangMenuOpen) return;
+    if (!isMegaMenuOpen && !openPageSubmenu && !isMobileChapterDrawerOpen && !isAppsMenuOpen && !isLangMenuOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (headerWrapperRef.current && !headerWrapperRef.current.contains(e.target as Node)) {
         setIsMegaMenuOpen(false);
+        setOpenPageSubmenu(null);
         setIsAppsMenuOpen(false);
         setIsLangMenuOpen(false);
         setIsMobileChapterDrawerOpen(false);
@@ -108,6 +119,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsMegaMenuOpen(false);
+        setOpenPageSubmenu(null);
         setIsAppsMenuOpen(false);
         setIsLangMenuOpen(false);
         setIsMobileChapterDrawerOpen(false);
@@ -119,14 +131,31 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isMegaMenuOpen, isMobileChapterDrawerOpen, isAppsMenuOpen, isLangMenuOpen]);
+  }, [isMegaMenuOpen, openPageSubmenu, isMobileChapterDrawerOpen, isAppsMenuOpen, isLangMenuOpen]);
 
   const isWorkspaceRoute = location.pathname === '/workspace';
+  const isBlogRoute = location.pathname === '/blog';
   const isSettingsRoute =
     location.pathname === '/settings' ||
     location.pathname === '/templates' ||
     location.pathname === '/backup';
-  const isHelpRoute = location.pathname === '/support';
+  const isHelpRoute =
+    location.pathname === '/support' ||
+    location.pathname === '/dev-notes' ||
+    location.pathname === '/privacy' ||
+    location.pathname === '/terms' ||
+    location.pathname === '/license' ||
+    location.pathname === '/ai-policy' ||
+    location.pathname === '/community-terms' ||
+    location.pathname === '/cookies';
+
+  const currentPageLabel = isBlogRoute
+    ? '블로그'
+    : isSettingsRoute
+    ? '환경 설정'
+    : isHelpRoute
+    ? '도움말'
+    : '메뉴';
 
   const currentChapterObj = GOGUMA_CHAPTERS.find(c => c.id === currentChapter) || GOGUMA_CHAPTERS[0];
 
@@ -182,12 +211,50 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       label: '도움말',
       action: () => navigateFromMenu('/support'),
     },
+    {
+      id: 'privacy',
+      label: '개인정보 취급방침',
+      action: () => navigateFromMenu('/privacy'),
+    },
+    {
+      id: 'terms',
+      label: '이용약관',
+      action: () => navigateFromMenu('/terms'),
+    },
+    {
+      id: 'license',
+      label: '오픈소스 라이선스',
+      action: () => navigateFromMenu('/license'),
+    },
+    {
+      id: 'ai-policy',
+      label: '인공지능 정책',
+      action: () => navigateFromMenu('/ai-policy'),
+    },
+    {
+      id: 'community-terms',
+      label: '커뮤니티 이용 규약',
+      action: () => navigateFromMenu('/community-terms'),
+    },
+    {
+      id: 'cookies',
+      label: '쿠키 정책',
+      action: () => navigateFromMenu('/cookies'),
+    },
+    {
+      id: 'dev-notes',
+      label: '개발자 노트',
+      action: () => navigateFromMenu('/dev-notes'),
+    },
   ];
 
   return (
     <div
       ref={headerWrapperRef}
-      onMouseLeave={() => setIsMegaMenuOpen(false)}
+      onMouseLeave={() => {
+        setIsMegaMenuOpen(false);
+        setOpenPageSubmenu(null);
+      }}
       className="sticky top-0 shrink-0 z-40 select-none bg-[#FFFFFF]"
     >
       {/* Tier 1: Editorial Black Utility Strip (#000000) — Unified Across All Pages */}
@@ -245,6 +312,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 setIsAppsMenuOpen(prev => !prev);
                 setIsLangMenuOpen(false);
                 setIsMegaMenuOpen(false);
+                setOpenPageSubmenu(null);
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isAppsMenuOpen
@@ -298,6 +366,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 setIsLangMenuOpen(prev => !prev);
                 setIsAppsMenuOpen(false);
                 setIsMegaMenuOpen(false);
+                setOpenPageSubmenu(null);
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isLangMenuOpen
@@ -374,74 +443,185 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
         </div>
       </div>
 
-      {/* Tier 2: Unified 10-Column Main Editorial Menu Bar (#FFFFFF) */}
+      {/* Tier 2: Workspace 10-Column Menu OR Page-Only Right-Aligned 4-Item Menu (#FFFFFF) */}
       <header className="relative z-30 bg-[#FFFFFF] border-b border-[#E4E2DC]">
-        {/* Desktop Unified 10-Column Menu Bar (lg+) */}
-        <nav
-          className="hidden lg:grid grid-cols-10 divide-x divide-[#E4E2DC] h-20 w-full"
-          aria-label="기획서 주요 메뉴"
-        >
-          {GOGUMA_CHAPTERS.map((ch) => {
-            const isCurrent = isWorkspaceRoute && ch.id === currentChapter;
-            const isHovered = isMegaMenuOpen && hoveredMenuId === ch.id;
+        {isWorkspaceRoute ? (
+          /* Desktop Unified 10-Column Menu Bar (lg+) — Workspace Only */
+          <nav
+            className="hidden lg:grid grid-cols-10 divide-x divide-[#E4E2DC] h-20 w-full"
+            aria-label="기획서 주요 메뉴"
+          >
+            {GOGUMA_CHAPTERS.map((ch) => {
+              const isCurrent = ch.id === currentChapter;
+              const isHovered = isMegaMenuOpen && hoveredMenuId === ch.id;
 
-            return (
+              return (
+                <button
+                  key={ch.id}
+                  type="button"
+                  onMouseEnter={() => handleOpenMegaMenu(ch.id)}
+                  onFocus={() => handleOpenMegaMenu(ch.id)}
+                  onClick={() => handleChapterClick(ch.id)}
+                  className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                    isHovered
+                      ? 'bg-[#000000] text-[#FFFFFF]'
+                      : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+                  }`}
+                >
+                  <span>{CHAPTER_SHORT_LABELS[ch.id] || ch.title}</span>
+                  {isCurrent && !isHovered && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                  )}
+                </button>
+              );
+            })}
+
+            {/* 9th Unified Column: [환경 설정] */}
+            <button
+              type="button"
+              onMouseEnter={() => handleOpenMegaMenu('settings')}
+              onFocus={() => handleOpenMegaMenu('settings')}
+              onClick={() => navigateFromMenu('/settings?tab=engine')}
+              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                isMegaMenuOpen && hoveredMenuId === 'settings'
+                  ? 'bg-[#000000] text-[#FFFFFF]'
+                  : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+              }`}
+            >
+              <span>환경 설정</span>
+              {isSettingsRoute && !(isMegaMenuOpen && hoveredMenuId === 'settings') && (
+                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+              )}
+            </button>
+
+            {/* 10th Unified Column: [도움말] */}
+            <button
+              type="button"
+              onMouseEnter={() => handleOpenMegaMenu('help')}
+              onFocus={() => handleOpenMegaMenu('help')}
+              onClick={() => navigateFromMenu('/support')}
+              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                isMegaMenuOpen && hoveredMenuId === 'help'
+                  ? 'bg-[#000000] text-[#FFFFFF]'
+                  : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+              }`}
+            >
+              <span>도움말</span>
+              {isHelpRoute && !(isMegaMenuOpen && hoveredMenuId === 'help') && (
+                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+              )}
+            </button>
+          </nav>
+        ) : (
+          /* Desktop Page-Only Right-Aligned 4-Item Menu Bar (lg+) */
+          <nav
+            className="hidden lg:flex items-stretch justify-end h-20 w-full"
+            aria-label="페이지 주요 메뉴"
+          >
+            <div className="flex items-stretch h-full divide-x divide-[#E4E2DC] border-l border-[#E4E2DC]">
+              {/* 1. [블로그] */}
               <button
-                key={ch.id}
                 type="button"
-                onMouseEnter={() => handleOpenMegaMenu(ch.id)}
-                onFocus={() => handleOpenMegaMenu(ch.id)}
-                onClick={() => handleChapterClick(ch.id)}
-                className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
-                  isHovered
-                    ? 'bg-[#000000] text-[#FFFFFF]'
-                    : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
-                }`}
+                onMouseEnter={() => setOpenPageSubmenu(null)}
+                onClick={() => navigateFromMenu('/blog')}
+                className="relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF] transition-colors duration-150 cursor-pointer"
               >
-                <span>{CHAPTER_SHORT_LABELS[ch.id] || ch.title}</span>
-                {isCurrent && !isHovered && (
+                <span>블로그</span>
+                {isBlogRoute && (
                   <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
                 )}
               </button>
-            );
-          })}
 
-          {/* 9th Unified Column: [환경 설정] */}
-          <button
-            type="button"
-            onMouseEnter={() => handleOpenMegaMenu('settings')}
-            onFocus={() => handleOpenMegaMenu('settings')}
-            onClick={() => navigateFromMenu('/settings?tab=engine')}
-            className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
-              isMegaMenuOpen && hoveredMenuId === 'settings'
-                ? 'bg-[#000000] text-[#FFFFFF]'
-                : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
-            }`}
-          >
-            <span>환경 설정</span>
-            {isSettingsRoute && !(isMegaMenuOpen && hoveredMenuId === 'settings') && (
-              <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
-            )}
-          </button>
+              {/* 2. [환경 설정] */}
+              <div
+                className="relative flex items-stretch h-full"
+                onMouseEnter={() => handleOpenPageSubmenu('settings')}
+                onMouseLeave={() => setOpenPageSubmenu(prev => (prev === 'settings' ? null : prev))}
+              >
+                <button
+                  type="button"
+                  onFocus={() => handleOpenPageSubmenu('settings')}
+                  onClick={() => navigateFromMenu('/settings?tab=engine')}
+                  className={`relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                    openPageSubmenu === 'settings'
+                      ? 'bg-[#000000] text-[#FFFFFF]'
+                      : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+                  }`}
+                >
+                  <span>환경 설정</span>
+                  {isSettingsRoute && openPageSubmenu !== 'settings' && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                  )}
+                </button>
 
-          {/* 10th Unified Column: [도움말] */}
-          <button
-            type="button"
-            onMouseEnter={() => handleOpenMegaMenu('help')}
-            onFocus={() => handleOpenMegaMenu('help')}
-            onClick={() => navigateFromMenu('/support')}
-            className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
-              isMegaMenuOpen && hoveredMenuId === 'help'
-                ? 'bg-[#000000] text-[#FFFFFF]'
-                : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
-            }`}
-          >
-            <span>도움말</span>
-            {isHelpRoute && !(isMegaMenuOpen && hoveredMenuId === 'help') && (
-              <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
-            )}
-          </button>
-        </nav>
+                {openPageSubmenu === 'settings' && (
+                  <div className="absolute right-0 top-full min-w-[230px] bg-[#FFFFFF] border-x border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40 p-2.5 flex flex-col gap-1">
+                    {SETTINGS_MENU_ITEMS.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={item.action}
+                        className="w-full px-3 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                      >
+                        <span className="break-keep">{item.label}</span>
+                        <ChevronRight size={13} className="shrink-0 opacity-60" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 3. [도움말] */}
+              <div
+                className="relative flex items-stretch h-full"
+                onMouseEnter={() => handleOpenPageSubmenu('help')}
+                onMouseLeave={() => setOpenPageSubmenu(prev => (prev === 'help' ? null : prev))}
+              >
+                <button
+                  type="button"
+                  onFocus={() => handleOpenPageSubmenu('help')}
+                  onClick={() => navigateFromMenu('/support')}
+                  className={`relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                    openPageSubmenu === 'help'
+                      ? 'bg-[#000000] text-[#FFFFFF]'
+                      : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+                  }`}
+                >
+                  <span>도움말</span>
+                  {isHelpRoute && openPageSubmenu !== 'help' && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                  )}
+                </button>
+
+                {openPageSubmenu === 'help' && (
+                  <div className="absolute right-0 top-full min-w-[240px] bg-[#FFFFFF] border-x border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40 p-2.5 flex flex-col gap-1">
+                    {HELP_MENU_ITEMS.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={item.action}
+                        className="w-full px-3 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                      >
+                        <span className="break-keep">{item.label}</span>
+                        <ChevronRight size={13} className="shrink-0 opacity-60" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 4. [작업실 입장] */}
+              <button
+                type="button"
+                onMouseEnter={() => setOpenPageSubmenu(null)}
+                onClick={() => navigateFromMenu('/workspace')}
+                className="relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF] transition-colors duration-150 cursor-pointer"
+              >
+                <span>작업실 입장</span>
+              </button>
+            </div>
+          </nav>
+        )}
 
         {/* Tablet / Mobile Compact Header (< lg) */}
         <div className="flex lg:hidden h-20 px-4 sm:px-6 items-center justify-between gap-4">
@@ -451,37 +631,51 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
               className="h-10 px-3.5 rounded-[2px] border border-[#111111] text-[15px] font-bold text-[#000000] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[240px]"
             >
-              <span className="truncate">{CHAPTER_SHORT_LABELS[currentChapterObj.id] || currentChapterObj.title}</span>
+              <span className="truncate">
+                {isWorkspaceRoute
+                  ? CHAPTER_SHORT_LABELS[currentChapterObj.id] || currentChapterObj.title
+                  : currentPageLabel}
+              </span>
               <ChevronDown size={15} className={`shrink-0 transition-transform ${isMobileChapterDrawerOpen ? 'rotate-180' : ''}`} />
             </button>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {mobilePane && onChangeMobilePane && (
-              <div className="flex items-center bg-[#F6F5F1] p-0.5 rounded-[2px] border border-[#E4E2DC] shrink-0">
-                <button
-                  type="button"
-                  onClick={() => onChangeMobilePane('editor')}
-                  className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
-                    mobilePane === 'editor'
-                      ? 'bg-[#FFFFFF] text-[#000000]'
-                      : 'text-[#3F3F3C] hover:text-[#000000]'
-                  }`}
-                >
-                  에디터
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onChangeMobilePane('preview')}
-                  className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
-                    mobilePane === 'preview'
-                      ? 'bg-[#FFFFFF] text-[#000000]'
-                      : 'text-[#3F3F3C] hover:text-[#000000]'
-                  }`}
-                >
-                  미리보기
-                </button>
-              </div>
+            {isWorkspaceRoute ? (
+              mobilePane && onChangeMobilePane && (
+                <div className="flex items-center bg-[#F6F5F1] p-0.5 rounded-[2px] border border-[#E4E2DC] shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => onChangeMobilePane('editor')}
+                    className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
+                      mobilePane === 'editor'
+                        ? 'bg-[#FFFFFF] text-[#000000]'
+                        : 'text-[#3F3F3C] hover:text-[#000000]'
+                    }`}
+                  >
+                    에디터
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onChangeMobilePane('preview')}
+                    className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
+                      mobilePane === 'preview'
+                        ? 'bg-[#FFFFFF] text-[#000000]'
+                        : 'text-[#3F3F3C] hover:text-[#000000]'
+                    }`}
+                  >
+                    미리보기
+                  </button>
+                </div>
+              )
+            ) : (
+              <button
+                type="button"
+                onClick={() => navigateFromMenu('/workspace')}
+                className="px-3 py-2 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-xs font-bold transition-colors cursor-pointer whitespace-nowrap"
+              >
+                작업실 입장
+              </button>
             )}
 
             <button
@@ -496,8 +690,8 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
         </div>
       </header>
 
-      {/* Full-Width 10-Column Sub-Menu Panel */}
-      {isMegaMenuOpen && (
+      {/* Full-Width 10-Column Sub-Menu Panel (Workspace Only) */}
+      {isWorkspaceRoute && isMegaMenuOpen && (
         <div
           className="hidden lg:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40"
           role="region"
@@ -591,6 +785,24 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       {isMobileChapterDrawerOpen && (
         <div className="lg:hidden absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-lg z-50 max-h-[75vh] overflow-y-auto">
           <div className="p-4 border-b border-[#E4E2DC] bg-[#F6F5F1] space-y-4">
+            {!isWorkspaceRoute && (
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => navigateFromMenu('/blog')}
+                  className="px-3 py-2.5 bg-[#FFFFFF] border border-[#000000] text-xs font-extrabold text-[#000000] flex items-center justify-center rounded-[2px] cursor-pointer"
+                >
+                  블로그
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigateFromMenu('/workspace')}
+                  className="px-3 py-2.5 bg-[#000000] border border-[#000000] text-xs font-extrabold text-[#FFFFFF] flex items-center justify-center rounded-[2px] cursor-pointer"
+                >
+                  작업실 입장
+                </button>
+              </div>
+            )}
             <div>
               <div className="text-xs font-extrabold text-[#000000] mb-2">환경 설정</div>
               <div className="grid grid-cols-2 gap-2">
@@ -623,7 +835,8 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
             </div>
           </div>
 
-          <div className="divide-y divide-[#E4E2DC]">
+          {isWorkspaceRoute && (
+            <div className="divide-y divide-[#E4E2DC]">
             {GOGUMA_CHAPTERS.map((ch) => {
               const isActive = isWorkspaceRoute && ch.id === currentChapter;
               return (
@@ -668,7 +881,8 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 </div>
               );
             })}
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>

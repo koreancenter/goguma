@@ -35,6 +35,8 @@ const BackupPage = lazy(() => import('./components/pages/BackupPage'));
 const ExportSpecPage = lazy(() => import('./components/pages/ExportSpecPage'));
 const CreateAccountPage = lazy(() => import('./components/pages/CreateAccountPage'));
 const LogoutPage = lazy(() => import('./components/pages/LogoutPage'));
+const BlogPage = lazy(() => import('./components/pages/BlogPage'));
+const DevNotesPage = lazy(() => import('./components/pages/DevNotesPage'));
 const About = lazy(() => import('./components/classic/company/About'));
 const Contact = lazy(() => import('./components/classic/company/Contact'));
 const CustomerService = lazy(() => import('./components/classic/company/CustomerService'));
@@ -673,6 +675,8 @@ export default function App() {
           <Route path="/contact" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
           <Route path="/support" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
           <Route path="/community" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
+          <Route path="/blog" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><BlogPage /></main><Footer /></div>} />
+          <Route path="/dev-notes" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><DevNotesPage /></main><Footer /></div>} />
           <Route path="/welcome" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
 
