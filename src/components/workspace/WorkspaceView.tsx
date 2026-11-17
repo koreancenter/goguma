@@ -381,16 +381,16 @@ export default function WorkspaceView({
           <div className="shrink-0" />
         </div>
 
-        {/* Tier 2: Main White Navigation Row (#FFFFFF) — Pure Centered Editorial Navigation */}
-        <header className="h-20 px-4 sm:px-6 bg-[#FFFFFF] border-b border-[#E4E2DC] flex items-center justify-between gap-4">
-          {/* Center: High-Contrast Single-Line Horizontal Main Menu (Zero Numbers, Zero English, 2x Scale) */}
+        {/* Tier 2: Unified 10-Column Main Editorial Menu Bar (#FFFFFF) */}
+        <header className="bg-[#FFFFFF] border-b border-[#E4E2DC]">
+          {/* Desktop Unified 10-Column Menu Bar (lg+) — Preserves Primary 1st-Level Font Size */}
           <nav
-            className="hidden lg:flex items-center justify-center flex-1 min-w-0 h-full gap-0.5 xl:gap-1.5 2xl:gap-2.5"
+            className="hidden lg:grid grid-cols-10 divide-x divide-[#E4E2DC] h-20 w-full"
             aria-label="기획서 주요 메뉴"
           >
             {GOGUMA_CHAPTERS.map((ch) => {
               const isCurrent = ch.id === project.currentChapter;
-              const isHighlighted = isMegaMenuOpen ? hoveredMenuId === ch.id : isCurrent;
+              const isHovered = isMegaMenuOpen && hoveredMenuId === ch.id;
 
               return (
                 <button
@@ -405,27 +405,24 @@ export default function WorkspaceView({
                     setIsMegaMenuOpen(true);
                   }}
                   onClick={() => {
-                    if (isMegaMenuOpen && hoveredMenuId === ch.id) {
-                      handleSelectChapter(ch.id);
-                      setIsMegaMenuOpen(false);
-                    } else {
-                      setHoveredMenuId(ch.id);
-                      setIsMegaMenuOpen(true);
-                    }
+                    handleSelectChapter(ch.id);
+                    setIsMegaMenuOpen(false);
                   }}
-                  className={`relative h-full px-1.5 xl:px-2.5 2xl:px-3 flex items-center gap-1.5 text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-                    isHighlighted ? 'text-[#000000]' : 'text-[#111111] hover:text-[#000000]'
+                  className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                    isHovered
+                      ? 'bg-[#000000] text-[#FFFFFF]'
+                      : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
                   }`}
                 >
                   <span>{CHAPTER_SHORT_LABELS[ch.id] || ch.title}</span>
-                  {(isCurrent || (isMegaMenuOpen && hoveredMenuId === ch.id)) && (
-                    <span className="absolute bottom-0 left-1.5 right-1.5 h-[3px] bg-[#000000]" />
+                  {isCurrent && !isHovered && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
                   )}
                 </button>
               );
             })}
 
-            {/* Unified [환경 설정] Top-Level Main Menu */}
+            {/* 9th Unified Column: [환경 설정] */}
             <button
               type="button"
               onMouseEnter={() => {
@@ -437,17 +434,19 @@ export default function WorkspaceView({
                 setIsMegaMenuOpen(true);
               }}
               onClick={() => openPreferences('engine')}
-              className={`relative h-full px-1.5 xl:px-2.5 2xl:px-3 flex items-center gap-1.5 text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-                isMegaMenuOpen && hoveredMenuId === 'settings' ? 'text-[#000000]' : 'text-[#111111] hover:text-[#000000]'
+              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                isMegaMenuOpen && hoveredMenuId === 'settings'
+                  ? 'bg-[#000000] text-[#FFFFFF]'
+                  : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
               }`}
             >
               <span>환경 설정</span>
-              {((isMegaMenuOpen && hoveredMenuId === 'settings') || isPreferencesOpen) && (
-                <span className="absolute bottom-0 left-1.5 right-1.5 h-[3px] bg-[#000000]" />
+              {isPreferencesOpen && !(isMegaMenuOpen && hoveredMenuId === 'settings') && (
+                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
               )}
             </button>
 
-            {/* Unified [도움말] Top-Level Main Menu */}
+            {/* 10th Unified Column: [도움말] */}
             <button
               type="button"
               onMouseEnter={() => {
@@ -462,226 +461,162 @@ export default function WorkspaceView({
                 setIsMegaMenuOpen(false);
                 navigate('/support');
               }}
-              className={`relative h-full px-1.5 xl:px-2.5 2xl:px-3 flex items-center gap-1.5 text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-                isMegaMenuOpen && hoveredMenuId === 'help' ? 'text-[#000000]' : 'text-[#111111] hover:text-[#000000]'
+              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                isMegaMenuOpen && hoveredMenuId === 'help'
+                  ? 'bg-[#000000] text-[#FFFFFF]'
+                  : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
               }`}
             >
               <span>도움말</span>
-              {isMegaMenuOpen && hoveredMenuId === 'help' && (
-                <span className="absolute bottom-0 left-1.5 right-1.5 h-[3px] bg-[#000000]" />
-              )}
             </button>
           </nav>
 
-          {/* Compact Chapter Selector for Tablet / Mobile (< lg) */}
-          <div className="flex lg:hidden items-center flex-1 justify-center min-w-0">
-            <button
-              type="button"
-              onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
-              className="h-10 px-3.5 rounded-[2px] border border-[#111111] text-[15px] font-bold text-[#000000] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[240px]"
-            >
-              <span className="truncate">{CHAPTER_SHORT_LABELS[currentChapterObj.id] || currentChapterObj.title}</span>
-              <ChevronDown size={15} className={`shrink-0 transition-transform ${isMobileChapterDrawerOpen ? 'rotate-180' : ''}`} />
-            </button>
-          </div>
-
-          {/* Right: Mobile Controls (< lg) */}
-          <div className="flex lg:hidden items-center gap-2 shrink-0">
-            {/* Responsive Editor / Preview Toggle (< lg) */}
-            <div className="flex items-center bg-[#F6F5F1] p-0.5 rounded-[2px] border border-[#E4E2DC] shrink-0">
+          {/* Tablet / Mobile Compact Header (< lg) */}
+          <div className="flex lg:hidden h-20 px-4 sm:px-6 items-center justify-between gap-4">
+            <div className="flex items-center flex-1 justify-center min-w-0">
               <button
                 type="button"
-                onClick={() => setMobilePane('editor')}
-                className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
-                  mobilePane === 'editor'
-                    ? 'bg-[#FFFFFF] text-[#000000]'
-                    : 'text-[#3F3F3C] hover:text-[#000000]'
-                }`}
+                onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
+                className="h-10 px-3.5 rounded-[2px] border border-[#111111] text-[15px] font-bold text-[#000000] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[240px]"
               >
-                에디터
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobilePane('preview')}
-                className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
-                  mobilePane === 'preview'
-                    ? 'bg-[#FFFFFF] text-[#000000]'
-                    : 'text-[#3F3F3C] hover:text-[#000000]'
-                }`}
-              >
-                미리보기
+                <span className="truncate">{CHAPTER_SHORT_LABELS[currentChapterObj.id] || currentChapterObj.title}</span>
+                <ChevronDown size={15} className={`shrink-0 transition-transform ${isMobileChapterDrawerOpen ? 'rotate-180' : ''}`} />
               </button>
             </div>
 
-            {/* Mobile Drawer Toggle */}
-            <button
-              type="button"
-              onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
-              className="p-2 rounded-[2px] border border-[#111111] text-[#000000] cursor-pointer"
-              aria-label="전체 메뉴 열기"
-            >
-              {isMobileChapterDrawerOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Responsive Editor / Preview Toggle (< lg) */}
+              <div className="flex items-center bg-[#F6F5F1] p-0.5 rounded-[2px] border border-[#E4E2DC] shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setMobilePane('editor')}
+                  className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
+                    mobilePane === 'editor'
+                      ? 'bg-[#FFFFFF] text-[#000000]'
+                      : 'text-[#3F3F3C] hover:text-[#000000]'
+                  }`}
+                >
+                  에디터
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobilePane('preview')}
+                  className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
+                    mobilePane === 'preview'
+                      ? 'bg-[#FFFFFF] text-[#000000]'
+                      : 'text-[#3F3F3C] hover:text-[#000000]'
+                  }`}
+                >
+                  미리보기
+                </button>
+              </div>
+
+              {/* Mobile Drawer Toggle */}
+              <button
+                type="button"
+                onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
+                className="p-2 rounded-[2px] border border-[#111111] text-[#000000] cursor-pointer"
+                aria-label="전체 메뉴 열기"
+              >
+                {isMobileChapterDrawerOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
+            </div>
           </div>
         </header>
 
-        {/* Full-Width 10-Column Sejong Architectural Mega-Menu (8 Chapters + [환경 설정] + [도움말]) */}
+        {/* Full-Width 10-Column Sub-Menu Panel (No Duplicate Header Row) */}
         {isMegaMenuOpen && (
           <div
-            className="hidden lg:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-t border-[#E4E2DC] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-50"
+            className="hidden lg:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-50"
             role="region"
-            aria-label="전체 메뉴, 환경 설정 및 도움말 메가메뉴"
+            aria-label="전체 하위 메뉴, 환경 설정 및 도움말"
           >
             <div className="grid grid-cols-10 divide-x divide-[#E4E2DC]">
-              {GOGUMA_CHAPTERS.map((ch) => {
-                const isActiveCol = hoveredMenuId === ch.id;
+              {GOGUMA_CHAPTERS.map((ch) => (
+                <div
+                  key={ch.id}
+                  onMouseEnter={() => setHoveredMenuId(ch.id)}
+                  className="flex flex-col min-h-[200px] p-2.5 gap-1.5 bg-[#FFFFFF] text-[#000000]"
+                >
+                  {ch.sections.map((sec) => {
+                    const isSecCurrent = project.currentChapter === ch.id && project.currentSection === sec.key;
+                    const secEntry = formInputs[`${ch.id}_${sec.key}`];
+                    const isSecFilled = Boolean(secEntry?.userRawInput?.trim());
 
-                return (
-                  <div
-                    key={ch.id}
-                    onMouseEnter={() => setHoveredMenuId(ch.id)}
-                    className="flex flex-col min-h-[260px] bg-[#FFFFFF] text-[#000000]"
-                  >
-                    {/* Pure Korean Column Heading — Black Hover Highlight Box Only */}
+                    return (
+                      <button
+                        key={sec.key}
+                        type="button"
+                        onClick={() => {
+                          handleSelectChapter(ch.id);
+                          handleSelectSection(sec.key);
+                          setIsMegaMenuOpen(false);
+                        }}
+                        className={`w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-start justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer ${
+                          isSecCurrent
+                            ? 'bg-[#F6F5F1] text-[#000000] font-bold'
+                            : 'text-[#000000] hover:bg-[#F6F5F1]'
+                        }`}
+                      >
+                        <span className="break-keep">{sec.title}</span>
+                        {isSecFilled ? (
+                          <Check size={13} className="shrink-0 mt-0.5 text-[#1F5132]" />
+                        ) : (
+                          <ChevronRight size={13} className="shrink-0 mt-0.5 opacity-60" />
+                        )}
+                      </button>
+                    );
+                  })}
+                  {ch.id === 8 && (
                     <button
                       type="button"
                       onClick={() => {
-                        handleSelectChapter(ch.id);
                         setIsMegaMenuOpen(false);
+                        handleOpenExportModal();
                       }}
-                      className={`w-full px-2.5 py-4 text-center border-b cursor-pointer transition-colors duration-150 ${
-                        isActiveCol
-                          ? 'bg-[#000000] text-[#FFFFFF] border-[#000000]'
-                          : 'bg-[#FFFFFF] text-[#000000] border-[#E4E2DC] hover:bg-[#000000] hover:text-[#FFFFFF] hover:border-[#000000]'
-                      }`}
+                      className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
                     >
-                      <div className="text-[16px] xl:text-[19px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
-                        {CHAPTER_SHORT_LABELS[ch.id] || ch.title}
-                      </div>
+                      <span className="break-keep">사양서 내보내기</span>
+                      <ChevronRight size={13} className="shrink-0 opacity-60" />
                     </button>
+                  )}
+                </div>
+              ))}
 
-                    {/* Column Sub-Sections (Clean White Surface) */}
-                    <div className="flex-1 p-2.5 flex flex-col gap-1.5 bg-[#FFFFFF] text-[#000000]">
-                      {ch.sections.map((sec) => {
-                        const isSecCurrent = project.currentChapter === ch.id && project.currentSection === sec.key;
-                        const secEntry = formInputs[`${ch.id}_${sec.key}`];
-                        const isSecFilled = Boolean(secEntry?.userRawInput?.trim());
-
-                        return (
-                          <button
-                            key={sec.key}
-                            type="button"
-                            onClick={() => {
-                              handleSelectChapter(ch.id);
-                              handleSelectSection(sec.key);
-                              setIsMegaMenuOpen(false);
-                            }}
-                            className={`w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-start justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                              isSecCurrent
-                                ? 'bg-[#F6F5F1] text-[#000000] font-bold'
-                                : 'text-[#000000] hover:bg-[#F6F5F1]'
-                            }`}
-                          >
-                            <span className="break-keep">{sec.title}</span>
-                            {isSecFilled ? (
-                              <Check size={13} className="shrink-0 mt-0.5 text-[#1F5132]" />
-                            ) : (
-                              <ChevronRight size={13} className="shrink-0 mt-0.5 opacity-60" />
-                            )}
-                          </button>
-                        );
-                      })}
-                      {ch.id === 8 && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsMegaMenuOpen(false);
-                            handleOpenExportModal();
-                          }}
-                          className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
-                        >
-                          <span className="break-keep">사양서 내보내기</span>
-                          <ChevronRight size={13} className="shrink-0 opacity-60" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* 9th Column: Dedicated [환경 설정] Mega-Menu Column */}
+              {/* 9th Column Sub-Items: [환경 설정] */}
               <div
                 onMouseEnter={() => setHoveredMenuId('settings')}
-                className="flex flex-col min-h-[260px] bg-[#FFFFFF] text-[#000000]"
+                className="flex flex-col min-h-[200px] p-2.5 gap-1 bg-[#FFFFFF] text-[#000000]"
               >
-                <button
-                  type="button"
-                  onClick={() => openPreferences('engine')}
-                  className={`w-full px-2.5 py-4 text-center border-b cursor-pointer transition-colors duration-150 ${
-                    hoveredMenuId === 'settings'
-                      ? 'bg-[#000000] text-[#FFFFFF] border-[#000000]'
-                      : 'bg-[#FFFFFF] text-[#000000] border-[#E4E2DC] hover:bg-[#000000] hover:text-[#FFFFFF] hover:border-[#000000]'
-                  }`}
-                >
-                  <div className="text-[16px] xl:text-[19px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
-                    환경 설정
-                  </div>
-                </button>
-
-                <div className="flex-1 p-2.5 flex flex-col justify-between gap-2 bg-[#FFFFFF] text-[#000000]">
-                  <div className="space-y-1">
-                    {SETTINGS_MENU_ITEMS.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={item.action}
-                        className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
-                      >
-                        <span className="break-keep">{item.label}</span>
-                        <ChevronRight size={13} className="shrink-0 opacity-60" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {SETTINGS_MENU_ITEMS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={item.action}
+                    className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                  >
+                    <span className="break-keep">{item.label}</span>
+                    <ChevronRight size={13} className="shrink-0 opacity-60" />
+                  </button>
+                ))}
               </div>
 
-              {/* 10th Column: Dedicated [도움말] Mega-Menu Column */}
+              {/* 10th Column Sub-Items: [도움말] */}
               <div
                 onMouseEnter={() => setHoveredMenuId('help')}
-                className="flex flex-col min-h-[260px] bg-[#FFFFFF] text-[#000000]"
+                className="flex flex-col min-h-[200px] p-2.5 gap-1 bg-[#FFFFFF] text-[#000000]"
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMegaMenuOpen(false);
-                    navigate('/support');
-                  }}
-                  className={`w-full px-2.5 py-4 text-center border-b cursor-pointer transition-colors duration-150 ${
-                    hoveredMenuId === 'help'
-                      ? 'bg-[#000000] text-[#FFFFFF] border-[#000000]'
-                      : 'bg-[#FFFFFF] text-[#000000] border-[#E4E2DC] hover:bg-[#000000] hover:text-[#FFFFFF] hover:border-[#000000]'
-                  }`}
-                >
-                  <div className="text-[16px] xl:text-[19px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
-                    도움말
-                  </div>
-                </button>
-
-                <div className="flex-1 p-2.5 flex flex-col justify-between gap-2 bg-[#FFFFFF] text-[#000000]">
-                  <div className="space-y-1">
-                    {HELP_MENU_ITEMS.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={item.action}
-                        className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
-                      >
-                        <span className="break-keep">{item.label}</span>
-                        <ChevronRight size={13} className="shrink-0 opacity-60" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {HELP_MENU_ITEMS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={item.action}
+                    className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                  >
+                    <span className="break-keep">{item.label}</span>
+                    <ChevronRight size={13} className="shrink-0 opacity-60" />
+                  </button>
+                ))}
               </div>
             </div>
           </div>
