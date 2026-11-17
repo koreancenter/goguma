@@ -265,11 +265,10 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
   if (currentChapter === 8) {
     return (
       <section 
-        className="flex-1 min-w-0 w-full h-full flex flex-col bg-[#FFFFFF] overflow-y-auto selection:bg-[#EFF6FF] selection:text-[#1E3A8A]"
+        className="flex-1 min-w-0 w-full h-full flex flex-col bg-[#FFFFFF] overflow-y-auto selection:bg-[#111111] selection:text-[#FFFFFF]"
         aria-label="산출물 사출 허브"
       >
-        {/* Chapter 8 Canvas Body - Generous airy padding */}
-        <div className={`flex-1 w-full mx-auto px-8 sm:px-12 py-12 flex flex-col transition-all duration-300 ease-in-out ${
+        <div className={`flex-1 w-full mx-auto px-8 sm:px-14 py-14 flex flex-col transition-all duration-300 ease-in-out ${
           isPreviewCollapsed ? 'max-w-5xl' : 'max-w-3xl'
         }`}>
           <PromptExtractionHub
@@ -285,86 +284,96 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
     );
   }
 
-  // Chapters 1 to 7: Single Airy Minimalist Editorial Canvas
+  // Chapters 1 to 7: Sejong Monograph Editorial Writing Canvas
   return (
     <section 
-      className="flex-1 min-w-0 w-full h-full flex flex-col bg-[#FFFFFF] overflow-y-auto selection:bg-[#EFF6FF] selection:text-[#1E3A8A]"
+      className="flex-1 min-w-0 w-full h-full flex flex-col bg-[#FFFFFF] overflow-y-auto selection:bg-[#111111] selection:text-[#FFFFFF]"
       aria-label="집필 캔버스"
     >
-      {/* Main Unified Canvas Body */}
-      <div className={`flex-1 w-full mx-auto px-8 sm:px-12 pt-12 pb-16 flex flex-col space-y-10 transition-all duration-300 ease-in-out ${
+      <div className={`flex-1 w-full mx-auto px-8 sm:px-14 pt-12 pb-20 flex flex-col space-y-12 transition-all duration-300 ease-in-out ${
         isPreviewCollapsed ? 'max-w-4xl' : 'max-w-3xl'
       }`}>
-        {/* Crisp Editorial Title Only (Generous top/bottom padding, zero breadcrumb or subtitle clutter) */}
-        <div className="pt-2 pb-6 border-b border-[#E5E7EB]/70 flex items-start justify-between gap-4">
-          <h1 className={`font-sans font-semibold text-[#111827] tracking-[-0.025em] leading-[1.3] ${
-            largeTextMode ? 'text-4xl sm:text-5xl' : 'text-[32px]'
-          }`} style={{ textWrap: 'balance' }}>
+        {/* Monograph Chapter Kicker + Serif Editorial Title */}
+        <header className="pt-2 pb-7 border-b border-[#111111]/20 space-y-3">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-[11px] font-sans font-medium uppercase tracking-[0.18em] text-[#8C8B85] tabular-nums">
+              Chapter 0{chapter.id} · {chapter.engTitle}
+            </span>
+
+            <div className="flex items-center gap-3 shrink-0">
+              {isChapterLocked && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#8B261D] whitespace-nowrap">
+                  <Lock size={11} className="shrink-0" />
+                  <span>Locked · AI Protected</span>
+                </span>
+              )}
+
+              {onToggleChapterLock && (
+                <button
+                  type="button"
+                  onClick={() => onToggleChapterLock(currentChapter)}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 border ${
+                    isChapterLocked
+                      ? 'border-[#111111] bg-[#111111] text-[#FFFFFF]'
+                      : 'border-[#E4E2DC] text-[#52524E] hover:text-[#111111] hover:border-[#111111]'
+                  }`}
+                  title={isChapterLocked ? '챕터 잠금 해제 (편집 허용)' : '챕터 사양 잠금 (AI context drift 방지)'}
+                  aria-label={isChapterLocked ? 'Unlock Chapter Spec' : 'Lock Chapter Spec'}
+                >
+                  {isChapterLocked ? (
+                    <>
+                      <Unlock size={12} />
+                      <span>Unlock</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock size={12} />
+                      <span>Lock Spec</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+
+          <h1
+            className={`font-display font-bold text-[#111111] tracking-[-0.03em] leading-[1.18] ${
+              largeTextMode ? 'text-4xl sm:text-5xl' : 'text-[34px] sm:text-[38px]'
+            }`}
+            style={{ textWrap: 'balance' }}
+          >
             {section.title}
           </h1>
+        </header>
 
-          <div className="flex items-center gap-2 shrink-0 pt-1.5">
-            {isChapterLocked && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFF6FF] text-[#1E3A8A] text-[11px] font-medium whitespace-nowrap">
-                <Lock size={11} className="shrink-0" />
-                <span>Locked · AI Protected</span>
-              </span>
-            )}
-
-            {onToggleChapterLock && (
-              <button
-                type="button"
-                onClick={() => onToggleChapterLock(currentChapter)}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                  isChapterLocked
-                    ? 'text-[#1E3A8A] hover:bg-[#EFF6FF]'
-                    : 'text-[#6B7280] hover:text-[#1E3A8A] hover:bg-[#F7F8FA]'
-                }`}
-                title={isChapterLocked ? '챕터 잠금 해제 (편집 허용)' : '챕터 사양 잠금 (AI context drift 방지)'}
-                aria-label={isChapterLocked ? 'Unlock Chapter Spec' : 'Lock Chapter Spec'}
-              >
-                {isChapterLocked ? (
-                  <>
-                    <Unlock size={13} />
-                    <span>Unlock</span>
-                  </>
-                ) : (
-                  <>
-                    <Lock size={13} />
-                    <span>Lock Spec</span>
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* 1. Natural Language Writing Area — Direct Fine White Paper */}
-        <div className="space-y-4">
+        {/* 01. Natural Language Writing Area — Direct Fine Paper */}
+        <div className="space-y-5">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5">
-              <h2 className={`font-sans font-semibold text-[#111827] tracking-[-0.015em] ${largeTextMode ? 'text-xl' : 'text-[18px]'}`}>
+            <div className="flex items-baseline gap-3">
+              <span className="text-[11px] font-sans tabular-nums text-[#8C8B85] tracking-[0.12em]">
+                01
+              </span>
+              <h2 className={`font-sans font-semibold text-[#111111] tracking-[-0.015em] ${largeTextMode ? 'text-xl' : 'text-[17px]'}`}>
                 Thinking Canvas
               </h2>
-              <span className="font-sans text-xs tabular-nums text-[#9CA3AF]">
+              <span className="font-sans text-xs tabular-nums text-[#8C8B85]">
                 {currentValue.length}자
               </span>
             </div>
 
-            {/* Lightweight Borderless Ghost AI Co-pilot Action */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleInlineRefine}
                 disabled={isRefining || isChapterLocked}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] text-xs font-medium transition-colors whitespace-nowrap ${
                   isChapterLocked
-                    ? 'text-[#9CA3AF] cursor-not-allowed'
-                    : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#F7F8FA] disabled:opacity-50 cursor-pointer'
+                    ? 'text-[#8C8B85] cursor-not-allowed'
+                    : 'text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1] disabled:opacity-50 cursor-pointer'
                 }`}
                 title={isChapterLocked ? '잠금 상태에서는 AI 초안 작성이 비활성화됩니다' : '일상 서술을 명확한 엔지니어링 요구사항 문장으로 다듬기'}
               >
-                <Sparkles size={13} className={`${isChapterLocked ? 'text-[#9CA3AF]' : 'text-[#1E3A8A]'} ${isRefining ? 'animate-spin' : ''}`} />
+                <Sparkles size={13} className={`${isChapterLocked ? 'text-[#8C8B85]' : 'text-[#111111]'} ${isRefining ? 'animate-spin' : ''}`} />
                 <span>{isRefining ? '생성 중...' : 'AI 초안'}</span>
               </button>
 
@@ -372,7 +381,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
                 <button
                   type="button"
                   onClick={handleUndoRefine}
-                  className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-sans font-medium text-[#6B7280] hover:text-[#111827] hover:bg-[#F7F8FA] transition-colors cursor-pointer whitespace-nowrap"
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[2px] text-[11px] font-sans font-medium text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1] transition-colors cursor-pointer whitespace-nowrap"
                   title="이전 원고로 되돌리기"
                 >
                   <Undo2 size={11} />
@@ -382,18 +391,16 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
             </div>
           </div>
 
-          {/* Co-pilot Feedback Notification */}
           {coPilotNotification && (
-            <div className="px-4 py-2.5 rounded-xl bg-[#EFF6FF] text-[#1E3A8A] text-xs font-medium flex items-center gap-2">
+            <div className="px-4 py-2.5 rounded-[2px] bg-[#F6F5F1] border border-[#CBC8BF] text-[#111111] text-xs font-medium flex items-center gap-2">
               <Check size={13} className="stroke-[2.5] shrink-0" />
               <span>{coPilotNotification}</span>
             </div>
           )}
 
-          {/* Direct-on-Paper Tiptap v3 Writing Canvas */}
-          <div className={`relative flex flex-col transition-all duration-200 ${
+          <div className={`relative flex flex-col transition-colors duration-200 ${
             isChapterLocked
-              ? 'bg-[#F7F8FA] rounded-xl px-5 py-4 border border-[#E5E7EB]/80'
+              ? 'bg-[#F6F5F1] rounded-[2px] px-5 py-4 border border-[#E4E2DC]'
               : 'bg-[#FFFFFF]'
           }`}>
             <TiptapThinkingCanvas
@@ -406,44 +413,46 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           </div>
         </div>
 
-        {/* 2. Domain Rules & Constraints Builder (When - Then - Except When) */}
-        <DomainRulesSection
-          rules={currentBusinessRules}
-          onChange={(updatedRules) => {
-            onBusinessRulesChange?.(currentChapter, section.key, updatedRules);
-          }}
-          largeTextMode={largeTextMode}
-          isParentLocked={isChapterLocked}
-        />
+        {/* 02. Domain Rules & Constraints Builder */}
+        <div className="pt-8 border-t border-[#E4E2DC]">
+          <DomainRulesSection
+            rules={currentBusinessRules}
+            onChange={(updatedRules) => {
+              onBusinessRulesChange?.(currentChapter, section.key, updatedRules);
+            }}
+            largeTextMode={largeTextMode}
+            isParentLocked={isChapterLocked}
+          />
+        </div>
 
-        {/* 3. Unified Chapter Interactive Widget Section (Chapters 3-6) */}
+        {/* 03. Unified Chapter Interactive Widget Section (Chapters 3-6) */}
         {renderChapterInteractiveWidget() && (
           <div
             aria-disabled={isChapterLocked}
-            className={isChapterLocked ? 'pointer-events-none opacity-80 select-none' : undefined}
+            className={`pt-8 border-t border-[#E4E2DC] ${isChapterLocked ? 'pointer-events-none opacity-80 select-none' : ''}`}
           >
             {renderChapterInteractiveWidget()}
           </div>
         )}
 
-        {/* Bottom Actions Bar — Lightweight Borderless Ghost Buttons */}
-        <div className="pt-6 border-t border-[#E5E7EB]/70 flex items-center justify-between gap-3 flex-nowrap">
+        {/* Bottom Editorial Pagination */}
+        <div className="pt-8 border-t border-[#111111]/20 flex items-center justify-between gap-3 flex-nowrap">
           <button
             onClick={() => onNavigateSection('prev')}
             disabled={isFirstSection}
             type="button"
-            className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+            className={`flex items-center gap-2 rounded-[2px] px-3 py-2 text-xs font-medium transition-colors whitespace-nowrap ${
               isFirstSection
-                ? 'opacity-30 cursor-not-allowed text-[#9CA3AF]'
-                : 'text-[#6B7280] hover:text-[#111827] hover:bg-[#F7F8FA] cursor-pointer'
+                ? 'opacity-30 cursor-not-allowed text-[#8C8B85]'
+                : 'text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1] cursor-pointer'
             }`}
           >
             <ArrowLeft size={14} />
             <span>이전 단계</span>
           </button>
 
-          <div className="hidden sm:flex items-center gap-1.5 text-xs font-sans tabular-nums text-[#9CA3AF]">
-            <span>{chapter.id}장</span>
+          <div className="hidden sm:flex items-center gap-2 text-[11px] font-sans tabular-nums tracking-[0.12em] uppercase text-[#8C8B85]">
+            <span>0{chapter.id} / 08</span>
             <span>·</span>
             <span>{currentSectionIdx + 1} / {chapter.sections.length}</span>
           </div>
@@ -451,7 +460,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           <button
             onClick={() => onNavigateSection('next')}
             type="button"
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer whitespace-nowrap"
+            className="flex items-center gap-2 rounded-[2px] px-4 py-2 text-xs font-medium bg-[#111111] hover:bg-[#2A2A28] text-[#FFFFFF] transition-colors cursor-pointer whitespace-nowrap"
           >
             <span>{isLastSection ? '배포 허브' : '다음 단계'}</span>
             <ArrowRight size={14} />

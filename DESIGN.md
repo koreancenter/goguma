@@ -1,12 +1,12 @@
-# GOGUMA Design System Specification (v2.0 — Editorial Light)
+# GOGUMA Design System Specification (v2.1 — Sejong Editorial Monochrome)
 
 ## 1. Design Philosophy & Aesthetic Direction
-GOGUMA v2.0 transitions away from a dense, dark-mode developer IDE (`Sumi Black`) toward an **open, architectural, editorial workspace** inspired by cultural institutions (such as the Sejong Center for the Performing Arts).
+GOGUMA v2.1 adopts the **architectural editorial minimalism** of the Sejong Center for the Performing Arts (`sejongpac.or.kr`) — uniting **Sumi Ink (`#111111`)** typography with **Gallery White (`#FFFFFF`)** and **Warm Hanji Paper (`#F6F5F1`)**.
 
-- **Gallery White & Visual Breathing Room:** Replace heavy dark containers and `1px` box borders with expansive pure white (`#FFFFFF`) and warm alabaster (`#F7F8FA`) surfaces. Let generous whitespace create natural grouping.
-- **Typography Over Boxes:** Establish visual hierarchy through crisp typographic scale, weight, and vertical rhythm rather than enclosing every form group in bordered cards.
-- **The Preview as a Curated Stage:** Treat the right-hand Live Preview not as a cramped debug pane, but as an exhibition stage where the user's specification and prototype breathe with clarity.
-- **Strict Separation of Concerns (Core Preservation):** All visual updates reside strictly in the presentation layer. Local-first IndexedDB persistence, TipTap v3 rich-text state, CodeMirror bindings, the 3-Tier AI pipeline (`WebLLM → Ollama → Gemini API`), and the 11-document JSZip export engine remain untouched.
+- **Architectural Edges & Zero Box Clutter:** Replace SaaS-style rounded cards (`rounded-xl`/`2xl`), floating shadows, and pastel tint pills (`bg-[#EFF6FF]`) with sharp `0px–2px` geometry, expansive whitespace, and disciplined `1px` structural hairlines (`#E4E2DC`).
+- **Editorial Typographic Contrast:** Pair geometric architectural display sans-serif (`Plus Jakarta Sans` + `SUIT Variable`) with crisp UI/prose sans-serif (`DM Sans` + `SUIT Variable`), anchored by bold weight contrast (`700/800` vs `400`) and tabular editorial numbering (`01`, `02`, ...).
+- **The Preview as an Exhibition Frame:** Treat the right-hand Live Preview as an archival exhibition stage on warm hanji paper (`#F6F5F1`) rather than a cramped developer pane.
+- **Strict Separation of Concerns (Core Preservation):** All updates reside strictly in the presentation layer. Local-first IndexedDB persistence, TipTap v3 rich-text state, CodeMirror bindings, the 3-Tier AI pipeline (`WebLLM → Ollama → Gemini API`), and the 11-document JSZip export engine remain untouched.
 
 ---
 
@@ -15,85 +15,55 @@ GOGUMA v2.0 transitions away from a dense, dark-mode developer IDE (`Sumi Black`
 ### 2.1 Surfaces & Canvas
 | Token Name | Hex Value | Tailwind / CSS Usage | Role & Application |
 | :--- | :--- | :--- | :--- |
-| `--bg-canvas` | `#FFFFFF` | `bg-white` | Primary editor surface, top header, modal interiors |
-| `--bg-stage` | `#F7F8FA` | `bg-[#F7F8FA]` | Right-hand preview stage backdrop, collapsible chapter drawer |
-| `--bg-subtle` | `#F1F5F9` | `bg-slate-100` | Hover states, inactive segmented tabs, subtle input fills |
-| `--bg-elevated` | `#FFFFFF` | `bg-white` | Floating toolbars, popovers, preview device frame |
+| `--bg-canvas` | `#FFFFFF` | `bg-white` | Primary editor surface, top header, unboxed reading canvas |
+| `--bg-stage` | `#F6F5F1` | `bg-[#F6F5F1]` | Warm Hanji stage backdrop, preview mat, chapter index drawer |
+| `--bg-subtle` | `#EFEDE7` | `bg-[#EFEDE7]` | Subtle hover surfaces, inactive editorial fills |
+| `--bg-elevated` | `#FFFFFF` | `bg-white` | Elevated exhibition frames, popovers, preview device stage |
 
-### 2.2 Typography & Ink
+### 2.2 Typography & Sumi Ink
 | Token Name | Hex Value | Tailwind / CSS Usage | Role & Application |
 | :--- | :--- | :--- | :--- |
-| `--text-primary` | `#111827` | `text-gray-900` | Page titles, section headers, active body copy |
-| `--text-secondary` | `#4B5563` | `text-gray-600` | Descriptions, helper copy, inactive navigation items |
-| `--text-tertiary` | `#9CA3AF` | `text-gray-400` | Placeholders, timestamps, subtle metadata |
+| `--text-primary` | `#111111` | `text-[#111111]` | Display headlines, section headers, active navigation, solid buttons |
+| `--text-body` | `#1C1C1A` | `text-[#1C1C1A]` | Long-form editor copy and specification prose |
+| `--text-secondary` | `#52524E` | `text-[#52524E]` | Descriptions, helper copy, inactive navigation items |
+| `--text-tertiary` | `#8C8B85` | `text-[#8C8B85]` | Editorial kickers, timestamps, subtle index numbers |
 
-### 2.3 Brand & Editorial Accents
+### 2.3 Brand & Architectural Accents
 | Token Name | Hex Value | Tailwind / CSS Usage | Role & Application |
 | :--- | :--- | :--- | :--- |
-| `--accent-primary` | `#1E3A8A` | `bg-[#1E3A8A]` / `text-[#1E3A8A]` | Primary CTAs, active chapter marker, key focus rings |
-| `--accent-hover` | `#172554` | `hover:bg-[#172554]` | Hover state for primary buttons |
-| `--accent-tint` | `#EFF6FF` | `bg-blue-50` | Active chapter pill background, selected tag fill |
+| `--accent-primary` | `#111111` | `bg-[#111111]` / `text-[#111111]` | Primary CTAs, active underline bars, sharp focus rings |
+| `--accent-hover` | `#2A2A28` | `hover:bg-[#2A2A28]` | Charcoal hover lift for primary solid actions |
+| `--accent-tint` | `#F2F1EC` | `bg-[#F2F1EC]` | Restrained warm tint for active list rows |
+| `--accent-seal` | `#8B261D` | `text-[#8B261D]` | Optional muted cultural seal accent (used sparingly) |
 
 ### 2.4 Semantic & Hairline Tokens
 | Token Name | Hex Value | Role & Application |
 | :--- | :--- | :--- |
-| `--border-hairline` | `#E5E7EB` | Used **sparingly** only for structural seams (top header bottom, 50:50 split divider) |
-| `--status-success` | `#15803D` (bg `#F0FDF4`) | AI Engine connected (`WebLLM` / `Ollama` / `Gemini`), Saved locally |
-| `--status-warning` | `#B45309` (bg `#FFFBEB`) | Fallback engine active, unsaved draft indicator |
-| `--status-danger` | `#B91C1C` (bg `#FEF2F2`) | Validation errors, destructive actions |
+| `--border-hairline` | `#E4E2DC` | Structural `1px` seams (top header bottom, 50:50 split divider, row separators) |
+| `--border-hairline-strong` | `#CBC8BF` | Focused input bottom lines, table headers, emphasized dividers |
+| `--status-success` | `#1F5132` (bg `#F3F7F4`) | Local persistence confirmed, AI engine ready |
+| `--status-warning` | `#8A5314` (bg `#FAF6EE`) | Unsaved draft or fallback indicator |
+| `--status-danger` | `#8B261D` (bg `#FBF3F2`) | Validation errors, destructive actions |
 
 ---
 
 ## 3. Typography System
 
-### 3.1 Font Families
-- **Primary Sans (UI & Editorial):** `'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif`
-- **Monospace (Strictly Inside Code-Viewer Blocks Only):** `'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`
+### 3.1 Font Families (2+1 Editorial Sans-Serif Rule)
+- **Editorial Display (`--font-display`):** `'Plus Jakarta Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif`
+- **Primary Sans (UI & Body Prose, `--font-sans`):** `'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif`
+- **Monospace (Strictly Inside Code-Viewer Blocks Only, `--font-mono`):** `'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`
 
 ### 3.2 Type Scale & Rhythm
-- **Base Document Flow:** `font-size: 15.5px`, `font-weight: 400`, `line-height: 1.75`, `letter-spacing: -0.01em`, color `#1E293B` with `-webkit-font-smoothing: antialiased` and `-moz-osx-font-smoothing: grayscale`.
-- **Main Chapter Title:** `2rem` (`32px`), `font-weight: 600` (SemiBold), `letter-spacing: -0.025em`, `line-height: 1.3`
-- **Section Heading:** `1.125rem` (`18px`), `font-weight: 600` (SemiBold), `letter-spacing: -0.015em`, `leading-[1.4]`
-- **Body & Editor Text:** `15.5px`, `font-weight: 400`, `line-height: 1.75`, `letter-spacing: -0.01em`, color `#1E293B`
-- **UI Control / Label / Badge:** Unified in `'DM Sans', 'SUIT Variable'` sans-serif (`tabular-nums` where alignment is needed). Monospace is reserved strictly for code-viewer blocks (`CodeMirror`, `<pre>`, `<code>`, TipTap code blocks).
-
-### 3.3 Global CSS & Tailwind v4 Theme Foundation (`index.html` & `src/index.css`)
-- **Single Light Foundation:** Root `<html>` (`color-scheme: light`) and `<body>` are unified on `#FFFFFF` canvas with `#1E293B` body ink, `#111827` heading ink, and `#EFF6FF` / `#1E3A8A` text selection. No `.dark` variant overrides or `#0B0C10` / `#0E1217` dark surfaces remain in global styles.
-- **Token Availability:** All surface, ink, accent, hairline, and semantic tokens are defined in `:root` and mirrored in Tailwind v4 `@theme` (`--color-canvas`, `--color-stage`, `--color-subtle`, `--color-ink-primary`, `--color-ink-secondary`, `--color-accent-primary`, `--color-hairline`), alongside `--font-sans` (`DM Sans`, `SUIT Variable`) and `--font-mono` (`JetBrains Mono`).
+- **Display Hero / Exhibition Title:** `clamp(2.5rem, 4.5vw, 4rem)`, `font-display`, `font-weight: 700`, `letter-spacing: -0.03em`, `line-height: 1.15`, `text-wrap: balance`
+- **Main Chapter / Section Title:** `2rem`–`2.5rem` (`32px`–`40px`), `font-display`, `font-weight: 700`, `letter-spacing: -0.03em`, `line-height: 1.2`
+- **Base Document Flow:** `15.5px`, `font-sans`, `font-weight: 400`, `line-height: 1.75`–`1.8`, `letter-spacing: -0.01em`, color `#1C1C1A`
+- **Editorial Kicker & Index:** `11px`, `tracking-[0.16em]`, `uppercase`, `tabular-nums`, color `#8C8B85`
 
 ---
 
-## 4. Spatial Architecture & Layout Shell
-
-### 4.1 Reclaiming Horizontal Space (Collapsible Navigation + 50:50 Split)
-Replace the rigid 3-column IDE grid (`Sidebar + Editor + Preview`) with a breathable 2-pane studio:
-
-1. **Top Utility Header (`h-14` / `56px`):**
-   - Pure white (`#FFFFFF`) with a single `1px solid #E5E7EB` bottom hairline.
-   - **Left:** Chapter Drawer Toggle button + GOGUMA wordmark + Current Project Title (inline editable).
-   - **Center:** Compact Chapter Progress / Quick-Jump Pill (e.g., `02. Core Architecture`).
-   - **Right:** 3-Tier AI Engine Status Indicator (`WebLLM` / `Ollama` / `Gemini`) + Primary CTA (`Export 11 Specs` in `#1E3A8A`).
-
-2. **Collapsible Chapter Navigation (Rail / Slide-Over Drawer):**
-   - **Default State:** Collapsed to a minimal `52px` icon/number rail (or hidden drawer) so the main workspace enjoys maximum width.
-   - **Expanded State:** `240px` clean drawer in `#F7F8FA` listing the specification chapters with generous row height (`40px`), active `#EFF6FF` pill highlight, and `#1E3A8A` text.
-
-3. **50:50 Fluid Split Workspace (`h-[calc(100vh-56px)]`):**
-   - **Left Pane — Editorial Specification Input (`50%` width):**
-     - Background: `#FFFFFF`.
-     - Inner container: `max-w-3xl mx-auto px-10 py-12` (generous side and top breathing room).
-     - Form sections are separated by `space-y-12` and subtle typographic headers—**no outer `1px` card boxes**.
-   - **Right Pane — Curated Preview Stage (`50%` width):**
-     - Background: `#F7F8FA` (Warm Alabaster stage).
-     - Separated from the left pane by a single `1px solid #E5E7EB` vertical divider.
-     - Displays a floating minimal toolbar at the top (`Live Preview` / `Spec Document` / `Code View` toggle + viewport width switcher) and centers the rendered output on an elevated white canvas (`shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)]`).
-
----
-
-## 5. Component Styling Standards
-
-- **Inputs & Textareas:** Borderless or bottom-hairline/soft-fill (`bg-[#F7F8FA] focus:bg-white focus:ring-2 focus:ring-[#1E3A8A]/15 rounded-lg px-4 py-3 transition-all`). Avoid harsh dark outlines.
-- **Example / Prompt Suggestions:** Instead of boxed cards, render as subtle tonal callouts (`bg-[#F7F8FA] rounded-xl p-5`) with a crisp `#1E3A8A` label.
-- **Primary Button:** `bg-[#1E3A8A] hover:bg-[#172554] text-white font-medium px-4 py-2 rounded-lg shadow-xs transition-colors`.
-- **Secondary / Ghost Button:** `text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors`.
-- **CodeMirror Integration:** Configure CodeMirror to use a clean light theme (`githubLight` or custom `#F7F8FA` surface with `#111827` syntax ink) to eliminate dark-mode visual shock.
+## 4. Component & Spatial Standards (Phase 1–3 Roadmap)
+- **Sharp Geometry:** Standard radius is `0px` (`rounded-none`) for layout containers/frames/dividers and `2px` (`rounded-[2px]`) for interactive buttons and inputs.
+- **Hairline & Margin Structure:** Separate content with generous vertical spacing (`space-y-12` to `space-y-16`) and `1px` full-width hairlines (`#E4E2DC`) rather than nested cards or `border-l-4` stripes.
+- **Zero-Pill Discipline:** Metadata, statuses, and chapter numbers are rendered as unboxed inline typography separated by `·` or `/`, never pill capsules.
+- **CodeMirror & Tiptap Alignment:** Light archival theme (`#FFFFFF` canvas, `#F6F5F1` gutters/tables, `#111111` cursor & selection) to maintain seamless monochrome visual continuity.

@@ -67,27 +67,30 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
   return (
     <section
       aria-label="Domain Rules and Constraints"
-      className="space-y-5 pt-2"
+      className="space-y-6"
     >
       {/* Section Header */}
       <div className="flex items-center justify-between gap-3">
-        <div className="space-y-0.5 min-w-0">
-          <div className="flex items-center gap-2">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-baseline gap-3">
+            <span className="text-[11px] font-sans tabular-nums text-[#8C8B85] tracking-[0.12em]">
+              02
+            </span>
             <h2
-              className={`font-sans font-semibold text-[#111827] tracking-[-0.015em] ${
-                largeTextMode ? 'text-xl' : 'text-[18px]'
+              className={`font-sans font-semibold text-[#111111] tracking-[-0.015em] ${
+                largeTextMode ? 'text-xl' : 'text-[17px]'
               }`}
             >
               Domain Rules &amp; Constraints
             </h2>
             {rules.length > 0 && (
-              <span className="font-sans text-xs font-medium tabular-nums text-[#9CA3AF]">
+              <span className="font-sans text-xs font-medium tabular-nums text-[#8C8B85]">
                 {String(rules.length).padStart(2, '0')}
               </span>
             )}
           </div>
           <p
-            className={`text-[#6B7280] font-sans ${
+            className={`text-[#52524E] font-sans pl-6 ${
               largeTextMode ? 'text-sm' : 'text-xs'
             }`}
           >
@@ -99,10 +102,10 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
           type="button"
           onClick={handleAddRule}
           disabled={isParentLocked}
-          className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 ${
+          className={`inline-flex items-center justify-center px-3 py-1.5 rounded-[2px] text-xs font-medium transition-colors whitespace-nowrap shrink-0 border ${
             isParentLocked
-              ? 'text-[#9CA3AF] cursor-not-allowed'
-              : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#F7F8FA] cursor-pointer'
+              ? 'text-[#8C8B85] border-[#E4E2DC] cursor-not-allowed'
+              : 'text-[#111111] border-[#CBC8BF] hover:border-[#111111] hover:bg-[#F6F5F1] cursor-pointer'
           }`}
           title={isParentLocked ? '잠금 상태에서는 새 규칙을 추가할 수 없습니다' : '새 도메인 규칙 추가'}
         >
@@ -110,7 +113,7 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
         </button>
       </div>
 
-      {/* Rule Cards (No duplicate empty-state box when 0 rules) */}
+      {/* Rule Blocks (Sharp Editorial Architecture) */}
       {rules.length > 0 && (
         <div className="space-y-4">
           {rules.map((rule, index) => {
@@ -121,35 +124,35 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
             return (
               <div
                 key={rule.id}
-                className={`rounded-xl p-5 sm:p-6 space-y-4 transition-colors ${
-                  isLocked ? 'bg-[#F7F8FA] ring-1 ring-[#1E3A8A]/15' : 'bg-[#F7F8FA]'
+                className={`rounded-[2px] border p-5 sm:p-6 space-y-4 transition-colors ${
+                  isLocked ? 'bg-[#F6F5F1] border-[#CBC8BF]' : 'bg-[#F6F5F1] border-[#E4E2DC]'
                 }`}
               >
                 {/* Card Header Row */}
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
-                    <span className="font-sans text-xs font-semibold tabular-nums text-[#1E3A8A]">
+                <div className="flex items-center justify-between gap-3 flex-wrap pb-3 border-b border-[#E4E2DC]">
+                  <div className="flex items-center gap-3 min-w-0 flex-wrap">
+                    <span className="font-sans text-xs font-semibold tabular-nums tracking-[0.08em] uppercase text-[#111111]">
                       Rule {ruleNumber}
                     </span>
                     {isLocked && (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#1E3A8A] text-[11px] font-medium whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#8B261D] whitespace-nowrap">
                         <Lock size={10} className="shrink-0" />
                         <span>Locked · AI Protected</span>
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       type="button"
                       onClick={() => handleToggleLock(rule.id)}
                       disabled={isParentLocked}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors whitespace-nowrap ${
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[11px] font-medium transition-colors whitespace-nowrap ${
                         isParentLocked
-                          ? 'text-[#9CA3AF] cursor-not-allowed'
+                          ? 'text-[#8C8B85] cursor-not-allowed'
                           : isSelfLocked
-                          ? 'text-[#1E3A8A] bg-[#EFF6FF] hover:bg-[#DBEAFE] cursor-pointer'
-                          : 'text-[#6B7280] hover:text-[#1E3A8A] hover:bg-[#FFFFFF] cursor-pointer'
+                          ? 'text-[#FFFFFF] bg-[#111111] hover:bg-[#2A2A28] cursor-pointer'
+                          : 'text-[#52524E] hover:text-[#111111] hover:bg-[#FFFFFF] cursor-pointer'
                       }`}
                       title={
                         isParentLocked
@@ -177,25 +180,25 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
                       type="button"
                       onClick={() => handleDeleteRule(rule.id)}
                       disabled={isLocked}
-                      className={`inline-flex items-center justify-center h-8 w-8 rounded-lg transition-colors shrink-0 ${
+                      className={`inline-flex items-center justify-center h-7 w-7 rounded-[2px] transition-colors shrink-0 ${
                         isLocked
-                          ? 'opacity-35 cursor-not-allowed text-[#9CA3AF]'
-                          : 'text-[#6B7280] hover:text-[#B91C1C] hover:bg-[#FEF2F2] cursor-pointer'
+                          ? 'opacity-35 cursor-not-allowed text-[#8C8B85]'
+                          : 'text-[#52524E] hover:text-[#8B261D] hover:bg-[#FBF3F2] cursor-pointer'
                       }`}
                       title={isLocked ? '잠금 상태에서는 삭제할 수 없습니다' : '규칙 삭제'}
                       aria-label={`Rule ${ruleNumber} 삭제`}
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={13} />
                     </button>
                   </div>
                 </div>
 
                 {/* When - Then - Except When Fields */}
-                <div className="space-y-3.5">
+                <div className="space-y-4">
                   <div className="space-y-1.5">
                     <label
                       htmlFor={`${rule.id}_when`}
-                      className="block text-[11px] font-sans font-semibold tracking-wider text-[#1E3A8A] uppercase"
+                      className="block text-[11px] font-sans font-semibold tracking-[0.12em] text-[#111111] uppercase"
                     >
                       WHEN (Trigger / Condition)
                     </label>
@@ -207,12 +210,12 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
                       disabled={isLocked}
                       onChange={(e) => handleUpdateField(rule.id, 'when', e.target.value)}
                       placeholder="A patient requests an appointment slot that is already booked"
-                      className={`w-full rounded-lg px-4 py-3 font-sans placeholder:text-[#9CA3AF] outline-none transition-all ${
+                      className={`w-full rounded-[2px] px-3.5 py-2.5 font-sans placeholder:text-[#8C8B85] outline-none transition-colors border ${
                         largeTextMode ? 'text-base' : 'text-sm'
                       } ${
                         isLocked
-                          ? 'bg-[#F7F8FA] text-[#4B5563] cursor-not-allowed border border-[#E5E7EB]/80'
-                          : 'bg-[#FFFFFF] text-[#111827] focus:ring-2 focus:ring-[#1E3A8A]/15'
+                          ? 'bg-[#EFEDE7] text-[#52524E] cursor-not-allowed border-[#E4E2DC]'
+                          : 'bg-[#FFFFFF] text-[#111111] border-[#E4E2DC] focus:border-[#111111]'
                       }`}
                     />
                   </div>
@@ -220,7 +223,7 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
                   <div className="space-y-1.5">
                     <label
                       htmlFor={`${rule.id}_then`}
-                      className="block text-[11px] font-sans font-semibold tracking-wider text-[#111827] uppercase"
+                      className="block text-[11px] font-sans font-semibold tracking-[0.12em] text-[#111111] uppercase"
                     >
                       THEN (Expected Behavior)
                     </label>
@@ -232,12 +235,12 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
                       disabled={isLocked}
                       onChange={(e) => handleUpdateField(rule.id, 'then', e.target.value)}
                       placeholder="Block double-booking and suggest the next 3 available slots"
-                      className={`w-full rounded-lg px-4 py-3 font-sans placeholder:text-[#9CA3AF] outline-none transition-all ${
+                      className={`w-full rounded-[2px] px-3.5 py-2.5 font-sans placeholder:text-[#8C8B85] outline-none transition-colors border ${
                         largeTextMode ? 'text-base' : 'text-sm'
                       } ${
                         isLocked
-                          ? 'bg-[#F7F8FA] text-[#4B5563] cursor-not-allowed border border-[#E5E7EB]/80'
-                          : 'bg-[#FFFFFF] text-[#111827] focus:ring-2 focus:ring-[#1E3A8A]/15'
+                          ? 'bg-[#EFEDE7] text-[#52524E] cursor-not-allowed border-[#E4E2DC]'
+                          : 'bg-[#FFFFFF] text-[#111111] border-[#E4E2DC] focus:border-[#111111]'
                       }`}
                     />
                   </div>
@@ -245,7 +248,7 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
                   <div className="space-y-1.5">
                     <label
                       htmlFor={`${rule.id}_exception`}
-                      className="block text-[11px] font-sans font-semibold tracking-wider text-[#4B5563] uppercase"
+                      className="block text-[11px] font-sans font-semibold tracking-[0.12em] text-[#52524E] uppercase"
                     >
                       EXCEPT WHEN (Edge Case / Override)
                     </label>
@@ -257,12 +260,12 @@ export const DomainRulesSection: React.FC<DomainRulesSectionProps> = ({
                       disabled={isLocked}
                       onChange={(e) => handleUpdateField(rule.id, 'exception', e.target.value)}
                       placeholder="Emergency triage override is enabled by an admin"
-                      className={`w-full rounded-lg px-4 py-3 font-sans placeholder:text-[#9CA3AF] outline-none transition-all ${
+                      className={`w-full rounded-[2px] px-3.5 py-2.5 font-sans placeholder:text-[#8C8B85] outline-none transition-colors border ${
                         largeTextMode ? 'text-base' : 'text-sm'
                       } ${
                         isLocked
-                          ? 'bg-[#F7F8FA] text-[#4B5563] cursor-not-allowed border border-[#E5E7EB]/80'
-                          : 'bg-[#FFFFFF] text-[#111827] focus:ring-2 focus:ring-[#1E3A8A]/15'
+                          ? 'bg-[#EFEDE7] text-[#52524E] cursor-not-allowed border-[#E4E2DC]'
+                          : 'bg-[#FFFFFF] text-[#111111] border-[#E4E2DC] focus:border-[#111111]'
                       }`}
                     />
                   </div>

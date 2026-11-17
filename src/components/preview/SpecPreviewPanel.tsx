@@ -41,7 +41,7 @@ type DevHubSubTab = 'typescript' | 'html' | 'sql' | 'api' | 'prompt';
 const editorialCodeMirrorTheme = EditorView.theme({
   '&': {
     backgroundColor: '#FFFFFF',
-    color: '#111827',
+    color: '#111111',
     fontSize: '12.5px',
     fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
     height: '100%',
@@ -52,27 +52,27 @@ const editorialCodeMirrorTheme = EditorView.theme({
   },
   '.cm-content': {
     padding: '16px 0',
-    caretColor: '#1E3A8A',
+    caretColor: '#111111',
   },
   '.cm-gutters': {
-    backgroundColor: '#F7F8FA',
-    color: '#9CA3AF',
-    borderRight: '1px solid #E5E7EB',
+    backgroundColor: '#F6F5F1',
+    color: '#8C8B85',
+    borderRight: '1px solid #E4E2DC',
     paddingRight: '4px',
   },
   '.cm-activeLineGutter': {
-    backgroundColor: '#EFF6FF',
-    color: '#1E3A8A',
+    backgroundColor: '#EFEDE7',
+    color: '#111111',
     fontWeight: '600',
   },
   '.cm-activeLine': {
-    backgroundColor: '#F7F8FA',
+    backgroundColor: '#F6F5F1',
   },
   '.cm-selectionBackground, ::selection': {
-    backgroundColor: '#DBEAFE !important',
+    backgroundColor: '#E4E2DC !important',
   },
   '.cm-cursor': {
-    borderLeftColor: '#1E3A8A',
+    borderLeftColor: '#111111',
     borderLeftWidth: '2px',
   },
 }, { dark: false });
@@ -418,13 +418,13 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
   if (isCollapsed) {
     return (
       <aside 
-        className="w-[52px] h-full flex flex-col items-center bg-[#F7F8FA] border-l border-[#E5E7EB] shrink-0 select-none py-3 justify-between"
+        className="w-[52px] h-full flex flex-col items-center bg-[#F6F5F1] border-l border-[#E4E2DC] shrink-0 select-none py-3 justify-between"
         aria-label="미리보기 패널 펼치기"
       >
         <div className="flex flex-col items-center gap-2.5 w-full px-1.5">
           <button
             onClick={onToggleCollapse}
-            className="w-9 h-9 rounded-lg bg-[#FFFFFF] border border-[#E5E7EB] hover:bg-[#EFF6FF] text-[#4B5563] hover:text-[#1E3A8A] flex items-center justify-center transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-[2px] bg-[#FFFFFF] border border-[#E4E2DC] hover:bg-[#111111] hover:text-[#FFFFFF] hover:border-[#111111] text-[#52524E] flex items-center justify-center transition-colors cursor-pointer"
             title="미리보기 패널 펼치기"
             aria-label="미리보기 패널 펼치기"
           >
@@ -434,7 +434,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
 
         <button
           onClick={onToggleCollapse}
-          className="p-2 rounded-lg hover:bg-[#FFFFFF] text-[#4B5563] hover:text-[#1E3A8A] text-xs font-medium cursor-pointer"
+          className="p-2 rounded-[2px] hover:bg-[#EFEDE7] text-[#52524E] hover:text-[#111111] text-xs font-medium cursor-pointer"
           title="패널 펼치기"
         >
           열기
@@ -457,72 +457,72 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
   return (
     <aside 
       style={width ? { width: `${width}px` } : undefined}
-      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[#F7F8FA] p-5 sm:p-8 gap-5 shrink-0 select-none text-[#111827] font-sans overflow-hidden`}
+      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[#F6F5F1] p-5 sm:p-7 gap-4 shrink-0 select-none text-[#111111] font-sans overflow-hidden`}
       aria-label="실시간 프로토타입 및 11종 사양서 프리뷰"
     >
-      {/* Minimal Borderless Tab Switcher (프리뷰 | 사양서 | 상태 ▾) */}
-      <div className="flex items-center justify-center shrink-0 z-30" ref={stateMenuRef}>
-        <div className="relative inline-flex items-center gap-6">
+      {/* Editorial Underline Tab Switcher (프리뷰 | 사양서 | 상태 ▾) */}
+      <div className="flex items-center justify-center shrink-0 z-30 border-b border-[#E4E2DC]" ref={stateMenuRef}>
+        <div className="relative inline-flex items-center gap-8">
           <button
             type="button"
             onClick={() => setActiveTab('prototype')}
-            className={`relative pb-1.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            className={`relative pb-2.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'prototype'
-                ? 'text-[#111827] font-semibold'
-                : 'text-[#6B7280] hover:text-[#111827] font-medium'
+                ? 'text-[#111111] font-semibold'
+                : 'text-[#52524E] hover:text-[#111111] font-medium'
             }`}
           >
             <span>프리뷰</span>
             {isSyncing && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] animate-ping shrink-0" />
+              <span className="text-[10px] text-[#8C8B85] font-normal">· 동기화</span>
             )}
             {activeTab === 'prototype' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
             )}
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('docs')}
-            className={`relative pb-1.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            className={`relative pb-2.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'docs'
-                ? 'text-[#111827] font-semibold'
-                : 'text-[#6B7280] hover:text-[#111827] font-medium'
+                ? 'text-[#111111] font-semibold'
+                : 'text-[#52524E] hover:text-[#111111] font-medium'
             }`}
           >
             <span>사양서</span>
             {activeTab === 'docs' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
             )}
           </button>
 
           <button
             type="button"
             onClick={() => setIsStateMenuOpen(prev => !prev)}
-            className={`relative pb-1.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+            className={`relative pb-2.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap ${
               isStateMenuOpen || activeTab === 'devhub' || activeTab === 'sitemap' || activeStateShortLabel
-                ? 'text-[#1E3A8A] font-semibold'
-                : 'text-[#6B7280] hover:text-[#111827] font-medium'
+                ? 'text-[#111111] font-semibold'
+                : 'text-[#52524E] hover:text-[#111111] font-medium'
             }`}
             aria-expanded={isStateMenuOpen}
             aria-label="프리뷰 상태 및 도구 선택"
           >
-            <span>상태</span>
+            <span>상태 및 뷰</span>
             {activeStateShortLabel && (
-              <span className="text-[11px] font-sans text-[#1E3A8A] font-medium">
+              <span className="text-[11px] font-sans text-[#52524E] font-medium">
                 · {activeStateShortLabel}
               </span>
             )}
             <ChevronDown size={13} className={`transition-transform duration-150 ${isStateMenuOpen ? 'rotate-180' : ''}`} />
             {(activeTab === 'devhub' || activeTab === 'sitemap') && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E3A8A] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
             )}
           </button>
 
           {/* Clean Dropdown Menu for Preview State Switcher & Extra Views */}
           {isStateMenuOpen && (
-            <div className="absolute right-0 top-full mt-2.5 w-64 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.12)] p-2 z-50 text-xs">
-              <div className="px-2 py-1 text-[10px] font-sans font-semibold uppercase tracking-wider text-[#9CA3AF]">
+            <div className="absolute right-0 top-full mt-2 w-64 bg-[#FFFFFF] border border-[#CBC8BF] rounded-[2px] shadow-[0_12px_28px_-8px_rgba(17,17,17,0.12)] p-2 z-50 text-xs">
+              <div className="px-2 py-1 text-[10px] font-sans font-medium uppercase tracking-[0.14em] text-[#8C8B85]">
                 Preview State Switcher
               </div>
               <div className="space-y-0.5 mt-1">
@@ -546,21 +546,21 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                           setIsStateMenuOpen(false);
                         }
                       }}
-                      className={`w-full px-2.5 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors cursor-pointer ${
+                      className={`w-full px-2.5 py-1.5 rounded-[2px] text-left flex items-center justify-between transition-colors cursor-pointer ${
                         isActive
-                          ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
-                          : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                          ? 'bg-[#EFEDE7] text-[#111111] font-semibold'
+                          : 'text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1]'
                       }`}
                     >
                       <span>{mode.label}</span>
-                      {isActive && <Check size={12} className="text-[#1E3A8A]" />}
+                      {isActive && <Check size={12} className="text-[#111111]" />}
                     </button>
                   );
                 })}
               </div>
 
               {previewState === 'role' && (
-                <div className="mt-1.5 mx-1 p-1 bg-[#F7F8FA] rounded-lg flex items-center gap-1">
+                <div className="mt-1.5 mx-1 p-1 bg-[#F6F5F1] rounded-[2px] flex items-center gap-1 border border-[#E4E2DC]">
                   <button
                     type="button"
                     onClick={() => {
@@ -568,10 +568,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                       setActiveTab('prototype');
                       setIsStateMenuOpen(false);
                     }}
-                    className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                    className={`flex-1 py-1 rounded-[2px] text-[11px] font-medium transition-colors cursor-pointer ${
                       previewRole === 'user'
-                        ? 'bg-[#FFFFFF] text-[#1E3A8A] font-semibold shadow-2xs'
-                        : 'text-[#6B7280] hover:text-[#111827]'
+                        ? 'bg-[#111111] text-[#FFFFFF] font-semibold'
+                        : 'text-[#52524E] hover:text-[#111111]'
                     }`}
                   >
                     Standard User
@@ -583,10 +583,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                       setActiveTab('prototype');
                       setIsStateMenuOpen(false);
                     }}
-                    className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                    className={`flex-1 py-1 rounded-[2px] text-[11px] font-medium transition-colors cursor-pointer ${
                       previewRole === 'admin'
-                        ? 'bg-[#FFFFFF] text-[#1E3A8A] font-semibold shadow-2xs'
-                        : 'text-[#6B7280] hover:text-[#111827]'
+                        ? 'bg-[#111111] text-[#FFFFFF] font-semibold'
+                        : 'text-[#52524E] hover:text-[#111111]'
                     }`}
                   >
                     Admin / Operator
@@ -594,9 +594,9 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </div>
               )}
 
-              <div className="my-2 border-t border-[#E5E7EB]" />
+              <div className="my-2 border-t border-[#E4E2DC]" />
 
-              <div className="px-2 py-1 text-[10px] font-sans font-semibold uppercase tracking-wider text-[#9CA3AF]">
+              <div className="px-2 py-1 text-[10px] font-sans font-medium uppercase tracking-[0.14em] text-[#8C8B85]">
                 Views &amp; Viewport
               </div>
               <div className="space-y-0.5 mt-1">
@@ -606,10 +606,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     setActiveTab('devhub');
                     setIsStateMenuOpen(false);
                   }}
-                  className={`w-full px-2.5 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors cursor-pointer ${
+                  className={`w-full px-2.5 py-1.5 rounded-[2px] text-left flex items-center justify-between transition-colors cursor-pointer ${
                     activeTab === 'devhub'
-                      ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
-                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                      ? 'bg-[#EFEDE7] text-[#111111] font-semibold'
+                      : 'text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1]'
                   }`}
                 >
                   <span className="flex items-center gap-2"><Code size={12} /> 코드 뷰</span>
@@ -622,10 +622,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     setActiveTab('sitemap');
                     setIsStateMenuOpen(false);
                   }}
-                  className={`w-full px-2.5 py-1.5 rounded-lg text-left flex items-center justify-between transition-colors cursor-pointer ${
+                  className={`w-full px-2.5 py-1.5 rounded-[2px] text-left flex items-center justify-between transition-colors cursor-pointer ${
                     activeTab === 'sitemap'
-                      ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
-                      : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                      ? 'bg-[#EFEDE7] text-[#111111] font-semibold'
+                      : 'text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1]'
                   }`}
                 >
                   <span className="flex items-center gap-2"><Network size={12} /> 사이트맵</span>
@@ -633,7 +633,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </button>
               </div>
 
-              <div className="mt-2 px-1 flex items-center gap-1 bg-[#F7F8FA] p-1 rounded-lg">
+              <div className="mt-2 px-1 flex items-center gap-1 bg-[#F6F5F1] p-1 rounded-[2px] border border-[#E4E2DC]">
                 {(
                   [
                     { id: 'desktop', label: 'Desktop', Icon: Monitor },
@@ -649,10 +649,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                       setActiveTab('prototype');
                       setIsStateMenuOpen(false);
                     }}
-                    className={`flex-1 py-1 rounded-md text-[11px] flex items-center justify-center gap-1 transition-colors cursor-pointer ${
+                    className={`flex-1 py-1 rounded-[2px] text-[11px] flex items-center justify-center gap-1 transition-colors cursor-pointer ${
                       viewportMode === id
-                        ? 'bg-[#FFFFFF] text-[#1E3A8A] font-semibold shadow-2xs'
-                        : 'text-[#6B7280] hover:text-[#111827]'
+                        ? 'bg-[#111111] text-[#FFFFFF] font-semibold'
+                        : 'text-[#52524E] hover:text-[#111111]'
                     }`}
                   >
                     <Icon size={11} />
@@ -661,7 +661,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 ))}
               </div>
 
-              <div className="my-2 border-t border-[#E5E7EB]" />
+              <div className="my-2 border-t border-[#E4E2DC]" />
 
               <div className="flex items-center gap-1">
                 <button
@@ -670,7 +670,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     setReloadKey(k => k + 1);
                     setIsStateMenuOpen(false);
                   }}
-                  className="flex-1 px-2 py-1.5 rounded-lg text-[11px] text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] flex items-center justify-center gap-1 cursor-pointer"
+                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1] flex items-center justify-center gap-1 cursor-pointer"
                 >
                   <RefreshCw size={11} />
                   <span>새로고침</span>
@@ -681,7 +681,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     handleOpenStandalone();
                     setIsStateMenuOpen(false);
                   }}
-                  className="flex-1 px-2 py-1.5 rounded-lg text-[11px] text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA] flex items-center justify-center gap-1 cursor-pointer"
+                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1] flex items-center justify-center gap-1 cursor-pointer"
                 >
                   <ExternalLink size={11} />
                   <span>새 창</span>
@@ -692,7 +692,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     setIsPromptModalOpen(true);
                     setIsStateMenuOpen(false);
                   }}
-                  className="flex-1 px-2 py-1.5 rounded-lg text-[11px] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] flex items-center justify-center gap-1 cursor-pointer"
+                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[#52524E] hover:text-[#111111] hover:bg-[#EFEDE7] flex items-center justify-center gap-1 cursor-pointer"
                 >
                   <Bot size={11} />
                   <span>프롬프트</span>
@@ -703,13 +703,13 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
         </div>
       </div>
 
-      {/* Exhibition Piece Surface (bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)]) */}
-      <div className="flex-1 min-h-0 w-full bg-white rounded-2xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.06)] overflow-hidden relative flex flex-col">
+      {/* Exhibition Piece Surface (Sharp Architectural Frame on Warm Hanji Mat) */}
+      <div className="flex-1 min-h-0 w-full bg-[#FFFFFF] rounded-none border border-[#E4E2DC] shadow-[0_8px_24px_-12px_rgba(17,17,17,0.08)] overflow-hidden relative flex flex-col">
         {/* TAB 1: Live Interactive Prototype */}
         {activeTab === 'prototype' && (
           <div className="w-full h-full flex flex-col">
             <div className={`flex-1 overflow-auto flex items-center justify-center ${
-              viewportMode === 'desktop' ? 'bg-white' : 'bg-[#F7F8FA]/55 p-4 sm:p-6'
+              viewportMode === 'desktop' ? 'bg-white' : 'bg-[#F6F5F1]/65 p-4 sm:p-6'
             }`}>
               {viewportMode === 'desktop' ? (
                 <iframe
@@ -722,7 +722,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   className="w-full h-full border-0 bg-white"
                 />
               ) : viewportMode === 'tablet' ? (
-                <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-2xl border border-[#E5E7EB] shadow-[0_12px_32px_-4px_rgba(15,23,42,0.08)] overflow-hidden bg-white flex flex-col">
+                <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-[2px] border border-[#CBC8BF] shadow-[0_12px_32px_-8px_rgba(17,17,17,0.1)] overflow-hidden bg-white flex flex-col">
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
@@ -734,7 +734,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   />
                 </div>
               ) : (
-                <div className="w-[390px] max-w-full h-[780px] max-h-full rounded-[36px] border-[6px] border-[#E5E7EB] shadow-[0_16px_40px_-8px_rgba(15,23,42,0.12)] overflow-hidden bg-white flex flex-col">
+                <div className="w-[390px] max-w-full h-[780px] max-h-full rounded-[24px] border-[5px] border-[#111111] shadow-[0_16px_40px_-8px_rgba(17,17,17,0.16)] overflow-hidden bg-white flex flex-col">
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
@@ -753,24 +753,23 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
         {/* TAB 2: 11-Doc Markdown Blueprint Viewer (Document Spec View) */}
         {activeTab === 'docs' && (
           <div className="w-full h-full flex flex-col bg-white">
-            {/* Single Clean Spec Bar */}
-            <div className="px-5 py-3 bg-[#F7F8FA]/70 border-b border-[#E5E7EB]/80 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+            <div className="px-5 py-3 bg-[#F6F5F1]/70 border-b border-[#E4E2DC] flex flex-wrap items-center justify-between gap-2.5 shrink-0">
               <div className="flex items-center gap-2 flex-1 min-w-[200px]">
                 <div className="relative w-36 sm:w-44">
-                  <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+                  <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8C8B85]" />
                   <input
                     type="text"
                     value={docFilterQuery}
                     onChange={(e) => setDocFilterQuery(e.target.value)}
                     placeholder="사양서 검색..."
-                    className="w-full pl-8 pr-2.5 py-1.5 text-xs font-sans bg-white border border-[#E5E7EB] rounded-lg text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:ring-2 focus:ring-[#1E3A8A]/10"
+                    className="w-full pl-8 pr-2.5 py-1.5 text-xs font-sans bg-white border border-[#CBC8BF] rounded-[2px] text-[#111111] placeholder-[#8C8B85] focus:outline-none focus:border-[#111111]"
                   />
                 </div>
 
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
-                  className="flex-1 min-h-[32px] text-xs font-sans bg-white border border-[#E5E7EB] rounded-lg px-3 py-1.5 text-[#111827] focus:outline-none focus:border-[#1E3A8A] truncate cursor-pointer"
+                  className="flex-1 min-h-[32px] text-xs font-sans bg-white border border-[#CBC8BF] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-[#111111] truncate cursor-pointer"
                 >
                   {filteredDocs.map((doc) => {
                     const status = docImpactMap[doc.id] || 'idle';
@@ -792,11 +791,11 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     onClick={handlePrevDoc}
                     disabled={activeDocIndex <= 0}
                     title="이전 문서"
-                    className="p-1.5 rounded-lg text-[#4B5563] bg-white border border-[#E5E7EB] hover:bg-[#EFF6FF] hover:text-[#1E3A8A] disabled:opacity-35 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-[2px] text-[#52524E] bg-white border border-[#E4E2DC] hover:border-[#111111] hover:text-[#111111] disabled:opacity-35 transition-colors cursor-pointer"
                   >
                     <ChevronLeft size={13} />
                   </button>
-                  <span className="text-[11px] font-sans text-[#6B7280] px-1 tabular-nums">
+                  <span className="text-[11px] font-sans text-[#52524E] px-1 tabular-nums">
                     {activeDocIndex + 1}/{docsList.length}
                   </span>
                   <button
@@ -804,7 +803,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     onClick={handleNextDoc}
                     disabled={activeDocIndex >= docsList.length - 1}
                     title="다음 문서"
-                    className="p-1.5 rounded-lg text-[#4B5563] bg-white border border-[#E5E7EB] hover:bg-[#EFF6FF] hover:text-[#1E3A8A] disabled:opacity-35 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-[2px] text-[#52524E] bg-white border border-[#E4E2DC] hover:border-[#111111] hover:text-[#111111] disabled:opacity-35 transition-colors cursor-pointer"
                   >
                     <ChevronRight size={13} />
                   </button>
@@ -814,16 +813,16 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   type="button"
                   onClick={handleDownloadCurrentDoc}
                   title="이 사양서 파일만 다운로드 (.md)"
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-xs text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] bg-white border border-[#E4E2DC] text-xs text-[#52524E] hover:text-[#111111] hover:border-[#111111] transition-colors cursor-pointer whitespace-nowrap"
                 >
-                  <FileDown size={13} className="text-[#1E3A8A]" />
+                  <FileDown size={13} className="text-[#111111]" />
                   <span className="hidden sm:inline">.md 저장</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleCopyVibeCodingPrompt}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-xs text-[#1E3A8A] font-medium transition-colors cursor-pointer whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[#EFEDE7] hover:bg-[#111111] hover:text-[#FFFFFF] text-xs text-[#111111] font-medium transition-colors cursor-pointer whitespace-nowrap"
                 >
                   {copiedVibePrompt ? (
                     <>
@@ -841,12 +840,12 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={handleCopyCurrentDoc}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] hover:bg-[#EFF6FF] text-xs text-[#111827] hover:text-[#1E3A8A] font-medium transition-colors cursor-pointer whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] bg-white border border-[#E4E2DC] hover:border-[#111111] text-xs text-[#111111] font-medium transition-colors cursor-pointer whitespace-nowrap"
                 >
                   {copiedDoc ? (
                     <>
-                      <Check size={13} className="text-[#15803D]" />
-                      <span className="text-[#15803D]">복사됨</span>
+                      <Check size={13} className="text-[#1F5132]" />
+                      <span className="text-[#1F5132]">복사됨</span>
                     </>
                   ) : (
                     <>
@@ -858,8 +857,8 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               </div>
             </div>
 
-            {/* Spec Impact Strip across 00_EXECUTION_PLAYBOOK + 11 generated specifications */}
-            <div className="px-5 py-2.5 bg-[#FFFFFF] border-b border-[#E5E7EB]/60 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+            {/* Spec Impact Strip (Sharp Rectangular Index Tabs, Zero Pills) */}
+            <div className="px-5 py-2.5 bg-[#FFFFFF] border-b border-[#E4E2DC] flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
               {filteredDocs.map((doc) => {
                 const isActive = doc.id === selectedDocId;
                 const isPlaybook = doc.id === '00_EXECUTION_PLAYBOOK';
@@ -869,34 +868,22 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     key={doc.id}
                     type="button"
                     onClick={() => setSelectedDocId(doc.id)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[11px] font-sans transition-colors cursor-pointer whitespace-nowrap shrink-0 border ${
                       isActive
-                        ? 'bg-[#1E3A8A] text-white font-semibold'
+                        ? 'bg-[#111111] text-[#FFFFFF] border-[#111111] font-semibold'
                         : isPlaybook
-                        ? 'bg-[#EFF6FF] text-[#1E3A8A] hover:bg-[#DBEAFE] font-semibold'
-                        : 'bg-[#F7F8FA] text-[#4B5563] hover:text-[#111827] hover:bg-[#EFF6FF]'
+                        ? 'bg-[#F6F5F1] text-[#111111] border-[#CBC8BF] hover:border-[#111111] font-semibold'
+                        : 'bg-[#FFFFFF] text-[#52524E] border-[#E4E2DC] hover:text-[#111111] hover:border-[#CBC8BF]'
                     }`}
                     title={`${doc.relativePath} · ${
                       status === 'locked' ? 'Locked' : status === 'updated' ? 'Updated' : 'Synced'
                     }`}
                   >
                     {isPlaybook && (
-                      <span
-                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-sans font-semibold leading-none ${
-                          isActive ? 'bg-white/20 text-white' : 'bg-[#1E3A8A] text-white'
-                        }`}
-                      >
-                        Playbook
-                      </span>
-                    )}
-                    {!isPlaybook && status === 'updated' && (
-                      <span className={`inline-flex items-center gap-1 ${isActive ? 'text-white' : 'text-[#15803D]'}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#86EFAC]' : 'bg-[#15803D]'}`} />
-                      </span>
-                    )}
-                    {!isPlaybook && status === 'locked' && (
-                      <span className={`inline-flex items-center gap-1 ${isActive ? 'text-white' : 'text-[#1E3A8A]'}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#93C5FD]' : 'bg-[#1E3A8A]'}`} />
+                      <span className={`text-[10px] font-sans font-semibold uppercase tracking-wider ${
+                        isActive ? 'text-[#FFFFFF]/80' : 'text-[#8C8B85]'
+                      }`}>
+                        Playbook ·
                       </span>
                     )}
                     <span>{doc.filename}</span>
@@ -904,13 +891,13 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                       <span
                         className={`text-[10px] font-sans font-medium ${
                           isActive
-                            ? 'text-white/85'
+                            ? 'text-[#FFFFFF]/80'
                             : status === 'locked'
-                            ? 'text-[#1E3A8A]'
-                            : 'text-[#15803D]'
+                            ? 'text-[#111111]'
+                            : 'text-[#1F5132]'
                         }`}
                       >
-                        {status === 'locked' ? 'Locked' : 'Updated'}
+                        · {status === 'locked' ? 'Locked' : 'Updated'}
                       </span>
                     )}
                   </button>
@@ -920,31 +907,26 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
 
             {/* Editorial Document Reader */}
             <div className="flex-1 overflow-y-auto px-6 sm:px-10 py-8 bg-white custom-scroll">
-              <div className="max-w-3xl mx-auto space-y-4">
-                <div className="flex items-center justify-between gap-2 text-xs pb-3 border-b border-[#E5E7EB]">
+              <div className="max-w-3xl mx-auto space-y-5">
+                <div className="flex items-center justify-between gap-2 text-xs pb-3 border-b border-[#E4E2DC]">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-sans text-[#1E3A8A] font-semibold shrink-0">{activeDoc.relativePath}</span>
-                    <span className="text-[#D1D5DB] shrink-0">·</span>
-                    <span className="text-[#4B5563] truncate">{activeDoc.description}</span>
+                    <span className="font-sans text-[#111111] font-semibold shrink-0">{activeDoc.relativePath}</span>
+                    <span className="text-[#CBC8BF] shrink-0">·</span>
+                    <span className="text-[#52524E] truncate">{activeDoc.description}</span>
                   </div>
                   {docImpactMap[activeDoc.id] && docImpactMap[activeDoc.id] !== 'idle' && (
                     <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap shrink-0 ${
+                      className={`text-[11px] font-medium whitespace-nowrap shrink-0 ${
                         docImpactMap[activeDoc.id] === 'locked'
-                          ? 'bg-[#EFF6FF] text-[#1E3A8A]'
-                          : 'bg-[#F0FDF4] text-[#15803D]'
+                          ? 'text-[#111111]'
+                          : 'text-[#1F5132]'
                       }`}
                     >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          docImpactMap[activeDoc.id] === 'locked' ? 'bg-[#1E3A8A]' : 'bg-[#15803D]'
-                        }`}
-                      />
-                      <span>{docImpactMap[activeDoc.id] === 'locked' ? 'Locked' : 'Updated'}</span>
+                      {docImpactMap[activeDoc.id] === 'locked' ? 'Locked' : 'Updated'}
                     </span>
                   )}
                 </div>
-                <pre className="whitespace-pre-wrap leading-[1.75] text-[#111827] font-mono text-xs sm:text-[13px] select-text">
+                <pre className="whitespace-pre-wrap leading-[1.8] text-[#1C1C1A] font-mono text-xs sm:text-[13px] select-text">
                   {activeDoc.content}
                 </pre>
               </div>
@@ -954,32 +936,32 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
 
         {/* Golden Prompt Modal */}
         {isPromptModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111827]/35 backdrop-blur-xs select-none">
-            <div className="w-full max-w-2xl bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] flex flex-col overflow-hidden text-[#111827]">
-              <div className="px-5 py-4 bg-[#F7F8FA] border-b border-[#E5E7EB] flex items-center justify-between">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111111]/40 backdrop-blur-xs select-none">
+            <div className="w-full max-w-2xl bg-white rounded-[2px] border border-[#CBC8BF] shadow-[0_24px_48px_-12px_rgba(17,17,17,0.2)] flex flex-col overflow-hidden text-[#111111]">
+              <div className="px-5 py-4 bg-[#F6F5F1] border-b border-[#E4E2DC] flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Bot size={16} className="text-[#1E3A8A]" />
-                  <h3 className="font-sans font-semibold text-sm text-[#111827]">
+                  <Bot size={16} className="text-[#111111]" />
+                  <h3 className="font-sans font-semibold text-sm text-[#111111]">
                     에이전트 지시 골든 프롬프트 (Golden Prompt)
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsPromptModalOpen(false)}
-                  className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#111827] hover:bg-white cursor-pointer"
+                  className="p-1.5 rounded-[2px] text-[#52524E] hover:text-[#111111] hover:bg-white cursor-pointer"
                 >
                   <X size={15} />
                 </button>
               </div>
 
-              <div className="p-5 max-h-[460px] overflow-y-auto font-mono text-xs leading-relaxed text-[#111827] bg-white custom-scroll">
+              <div className="p-5 max-h-[460px] overflow-y-auto font-mono text-xs leading-relaxed text-[#1C1C1A] bg-white custom-scroll">
                 <pre className="whitespace-pre-wrap select-text">
                   {activePromptText}
                 </pre>
               </div>
 
-              <div className="px-5 py-3.5 border-t border-[#E5E7EB] bg-[#F7F8FA] flex items-center justify-between gap-3">
-                <span className="text-[11px] text-[#4B5563] font-sans">
+              <div className="px-5 py-3.5 border-t border-[#E4E2DC] bg-[#F6F5F1] flex items-center justify-between gap-3">
+                <span className="text-[11px] text-[#52524E] font-sans">
                   Cursor 또는 Claude Code 창에 붙여넣으면 프로토타입 기반으로 개발을 시작합니다.
                 </span>
                 <button
@@ -988,7 +970,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     await handleCopyAgentPrompt();
                     setIsPromptModalOpen(false);
                   }}
-                  className="px-4 py-2 rounded-lg bg-[#1E3A8A] text-white text-xs font-semibold hover:bg-[#172554] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+                  className="px-4 py-2 rounded-[2px] bg-[#111111] text-white text-xs font-medium hover:bg-[#2A2A28] transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
                 >
                   <Copy size={13} />
                   <span>프롬프트 복사하기</span>
@@ -1000,17 +982,16 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
 
         {/* TAB 3: Raw Code View (Light CodeMirror + API Contracts) */}
         {activeTab === 'devhub' && (
-          <div className="w-full h-full flex flex-col bg-white text-[#111827]">
-            {/* Single Clean Code View Toolbar */}
-            <div className="px-5 py-2.5 bg-[#F7F8FA]/70 border-b border-[#E5E7EB]/80 flex flex-wrap items-center justify-between shrink-0 select-none gap-2">
+          <div className="w-full h-full flex flex-col bg-white text-[#111111]">
+            <div className="px-5 py-2.5 bg-[#F6F5F1]/70 border-b border-[#E4E2DC] flex flex-wrap items-center justify-between shrink-0 select-none gap-2">
               <div className="flex items-center gap-1 overflow-x-auto">
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('typescript')}
-                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'typescript'
-                      ? 'bg-[#1E3A8A] text-white font-semibold'
-                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
+                      ? 'bg-[#111111] text-white font-semibold'
+                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
                   }`}
                 >
                   <Code size={12} />
@@ -1020,10 +1001,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('html')}
-                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'html'
-                      ? 'bg-[#1E3A8A] text-white font-semibold'
-                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
+                      ? 'bg-[#111111] text-white font-semibold'
+                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
                   }`}
                 >
                   <FileCode size={12} />
@@ -1033,10 +1014,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('sql')}
-                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'sql'
-                      ? 'bg-[#1E3A8A] text-white font-semibold'
-                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
+                      ? 'bg-[#111111] text-white font-semibold'
+                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
                   }`}
                 >
                   <Database size={12} />
@@ -1046,10 +1027,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('api')}
-                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'api'
-                      ? 'bg-[#1E3A8A] text-white font-semibold'
-                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
+                      ? 'bg-[#111111] text-white font-semibold'
+                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
                   }`}
                 >
                   <Layers size={12} />
@@ -1059,10 +1040,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('prompt')}
-                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'prompt'
-                      ? 'bg-[#1E3A8A] text-white font-semibold'
-                      : 'text-[#4B5563] hover:text-[#1E3A8A] hover:bg-white'
+                      ? 'bg-[#111111] text-white font-semibold'
+                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
                   }`}
                 >
                   <Bot size={12} />
@@ -1070,7 +1051,6 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </button>
               </div>
 
-              {/* Quick Copy & Reset Override */}
               <div className="flex items-center gap-2 shrink-0">
                 {devHubSubTab !== 'api' && codeOverrides[devHubSubTab] !== undefined && (
                   <button
@@ -1082,7 +1062,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                         return next;
                       });
                     }}
-                    className="px-2.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] hover:bg-[#FEF2F2] hover:text-[#B91C1C] text-[#4B5563] text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                    className="px-2.5 py-1.5 rounded-[2px] bg-white border border-[#E4E2DC] hover:bg-[#FBF3F2] hover:text-[#8B261D] text-[#52524E] text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
                     title="자동 생성 코드로 되돌리기"
                   >
                     <RotateCcw size={12} />
@@ -1093,7 +1073,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={() => handleCopyDevHubCode(activeCodeValue, devHubSubTab)}
-                  className="px-3 py-1.5 rounded-lg bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#1E3A8A] text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  className="px-3 py-1.5 rounded-[2px] bg-[#EFEDE7] hover:bg-[#111111] hover:text-[#FFFFFF] text-[#111111] text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
                 >
                   {copiedDevHub === devHubSubTab ? (
                     <>
@@ -1110,33 +1090,32 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               </div>
             </div>
 
-            {/* CodeMirror Light Editor / API Contracts */}
             <div className="flex-1 min-h-0 overflow-hidden flex flex-col bg-white">
               {devHubSubTab === 'api' ? (
                 <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scroll">
-                  <div className="flex items-center justify-between text-[#4B5563] text-xs pb-2 border-b border-[#E5E7EB]">
-                    <span className="font-sans font-semibold text-[#111827]">API Endpoint Contracts</span>
+                  <div className="flex items-center justify-between text-[#52524E] text-xs pb-2 border-b border-[#E4E2DC]">
+                    <span className="font-sans font-semibold text-[#111111]">API Endpoint Contracts</span>
                     <span className="font-sans">RESTful / JSON Payload</span>
                   </div>
                   <div className="space-y-3">
                     {generatedApiRoutes.map((api, idx) => (
-                      <div key={idx} className="p-4 bg-[#F7F8FA] rounded-xl space-y-2">
+                      <div key={idx} className="p-4 bg-[#F6F5F1] border border-[#E4E2DC] rounded-[2px] space-y-2">
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-sans font-bold shrink-0 ${
-                              api.method === 'GET' ? 'bg-[#EFF6FF] text-[#1E3A8A]' :
-                              api.method === 'POST' ? 'bg-[#ECFDF5] text-[#047857]' :
-                              api.method === 'PATCH' ? 'bg-[#FFFBEB] text-[#B45309]' :
-                              'bg-[#FEF2F2] text-[#B91C1C]'
+                            <span className={`px-2 py-0.5 rounded-[2px] text-[10px] font-sans font-bold shrink-0 ${
+                              api.method === 'GET' ? 'bg-[#111111] text-[#FFFFFF]' :
+                              api.method === 'POST' ? 'bg-[#F3F7F4] text-[#1F5132] border border-[#1F5132]/20' :
+                              api.method === 'PATCH' ? 'bg-[#FAF6EE] text-[#8A5314] border border-[#8A5314]/20' :
+                              'bg-[#FBF3F2] text-[#8B261D] border border-[#8B261D]/20'
                             }`}>
                               {api.method}
                             </span>
-                            <span className="font-sans text-xs font-semibold text-[#111827] truncate">{api.path}</span>
+                            <span className="font-sans text-xs font-semibold text-[#111111] truncate">{api.path}</span>
                           </div>
-                          <span className="text-[11px] font-sans text-[#6B7280] shrink-0">{api.status}</span>
+                          <span className="text-[11px] font-sans text-[#8C8B85] shrink-0">{api.status}</span>
                         </div>
-                        <p className="text-xs text-[#4B5563] leading-relaxed">{api.summary}</p>
-                        <div className="flex items-center gap-2 text-[11px] font-sans text-[#6B7280] pt-1">
+                        <p className="text-xs text-[#52524E] leading-relaxed">{api.summary}</p>
+                        <div className="flex items-center gap-2 text-[11px] font-sans text-[#8C8B85] pt-1">
                           <span>인증: {api.auth}</span>
                         </div>
                       </div>
@@ -1145,7 +1124,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </div>
               ) : (
                 <div className="flex-1 min-h-0 flex flex-col">
-                  <div className="px-5 py-2 bg-white border-b border-[#E5E7EB]/60 flex items-center justify-between text-[11px] font-sans text-[#6B7280] shrink-0">
+                  <div className="px-5 py-2 bg-white border-b border-[#E4E2DC] flex items-center justify-between text-[11px] font-sans text-[#8C8B85] shrink-0">
                     <span>
                       {devHubSubTab === 'typescript'
                         ? 'src/types/schema.ts'
@@ -1157,7 +1136,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     </span>
                     <span>
                       {devHubSubTab === 'typescript'
-                        ? 'TypeScript 5.8 · Zod 3.x (Light Theme)'
+                        ? 'TypeScript 5.8 · Zod 3.x'
                         : devHubSubTab === 'html'
                         ? 'Standalone Prototype HTML · Live Editable'
                         : devHubSubTab === 'sql'

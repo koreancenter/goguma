@@ -1,29 +1,28 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Download, FolderOpen, PanelRight, PanelLeft, LogOut, LayoutTemplate, Cpu, Type, ChevronDown, Check
+  Download, FolderOpen, PanelRight, PanelLeft, LogOut, LayoutTemplate, Cpu, Type, ChevronDown, Check, User, Lock, Menu, X, ChevronRight, SlidersHorizontal
 } from 'lucide-react';
 
 import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from '../../types';
 import { LocalUser } from '../../lib/localAuth';
-import { getAISettings, getActiveAILabel, AISettings } from '../../lib/aiConfig';
 import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
 import { Tooltip } from '../guide/Tooltip';
+import type { PreferencesTab } from '../guide/PreferencesModal';
 
 import { IntegratedNavigator } from '../classic/IntegratedNavigator';
 import { WritingCanvas } from '../classic/WritingCanvas';
 import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
 import { WorkspaceDropZoneOverlay } from '../classic/WorkspaceDropZoneOverlay';
 
-// Lazy-load heavyweight modals that are only opened on user interaction
 const LocalBackupModal = lazy(() =>
   import('../classic/LocalBackupModal').then(m => ({ default: m.LocalBackupModal }))
 );
 const StandardTemplateModal = lazy(() =>
   import('../classic/StandardTemplateModal').then(m => ({ default: m.StandardTemplateModal }))
 );
-const AISettingsModal = lazy(() =>
-  import('../guide/AISettingsModal').then(m => ({ default: m.AISettingsModal }))
+const PreferencesModal = lazy(() =>
+  import('../guide/PreferencesModal').then(m => ({ default: m.PreferencesModal }))
 );
 const ExportSpecModal = lazy(() =>
   import('../preview/ExportSpecModal').then(m => ({ default: m.ExportSpecModal }))
@@ -89,39 +88,48 @@ export default function WorkspaceView({
   const [backupModalTab, setBackupModalTab] = useState<'export' | 'import' | 'storage'>('export');
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [isAISettingsModalOpen, setIsAISettingsModalOpen] = useState(false);
-  const [aiSettings, setAiSettings] = useState<AISettings>(getAISettings);
-  const [isChapterMenuOpen, setIsChapterMenuOpen] = useState(false);
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [preferencesTab, setPreferencesTab] = useState<PreferencesTab>('engine');
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [hoveredMenuId, setHoveredMenuId] = useState<number | 'settings'>(project.currentChapter);
+  const [isMobileChapterDrawerOpen, setIsMobileChapterDrawerOpen] = useState(false);
   const [mobilePane, setMobilePane] = useState<'editor' | 'preview'>('editor');
-  const chapterMenuRef = useRef<HTMLDivElement>(null);
+  const headerWrapperRef = useRef<HTMLDivElement>(null);
   const splitContainerRef = useRef<HTMLDivElement>(null);
 
-  // Sync AI Settings in real time when changed or saved from modal
   useEffect(() => {
-    const handleSettingsUpdate = () => {
-      setAiSettings(getAISettings());
-    };
-    window.addEventListener('ai_settings_changed', handleSettingsUpdate);
-    window.addEventListener('storage', handleSettingsUpdate);
-    return () => {
-      window.removeEventListener('ai_settings_changed', handleSettingsUpdate);
-      window.removeEventListener('storage', handleSettingsUpdate);
-    };
-  }, []);
+    setHoveredMenuId(project.currentChapter);
+  }, [project.currentChapter]);
 
-  // Close quick chapter switcher on outside click
+  const openPreferences = (tab: PreferencesTab = 'engine') => {
+    setPreferencesTab(tab);
+    setIsPreferencesOpen(true);
+    setIsMegaMenuOpen(false);
+    setIsMobileChapterDrawerOpen(false);
+  };
+
   useEffect(() => {
-    if (!isChapterMenuOpen) return;
+    if (!isMegaMenuOpen && !isMobileChapterDrawerOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (chapterMenuRef.current && !chapterMenuRef.current.contains(e.target as Node)) {
-        setIsChapterMenuOpen(false);
+      if (headerWrapperRef.current && !headerWrapperRef.current.contains(e.target as Node)) {
+        setIsMegaMenuOpen(false);
+        setIsMobileChapterDrawerOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMegaMenuOpen(false);
+        setIsMobileChapterDrawerOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isChapterMenuOpen]);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isMegaMenuOpen, isMobileChapterDrawerOpen]);
 
-  // 50:50 Fluid Split Ratio (Defaults strictly to 50% / 50%)
   const [splitPercent, setSplitPercent] = useState<number>(() => {
     const saved = localStorage.getItem('goguma_split_percent');
     if (saved) {
@@ -235,278 +243,531 @@ export default function WorkspaceView({
     setIsExportModalOpen(true);
   };
 
+  const CHAPTER_SHORT_LABELS: Record<number, string> = {
+    1: '개요',
+    2: '사용자',
+    3: '기능',
+    4: '데이터',
+    5: '디자인',
+    6: '화면',
+    7: '아키텍처',
+    8: '산출물',
+  };
+
   const currentChapterObj = GOGUMA_CHAPTERS.find(c => c.id === project.currentChapter) || GOGUMA_CHAPTERS[0];
-  const activeTierLabel =
-    aiSettings.provider === 'webllm'
-      ? 'WebLLM'
-      : aiSettings.provider === 'ollama'
-      ? 'Ollama'
-      : 'Gemini';
+
+  const SETTINGS_MENU_ITEMS: {
+    id: string;
+    label: string;
+    Icon: React.ElementType;
+    action: () => void;
+  }[] = [
+    {
+      id: 'engine',
+      label: '인공지능 엔진 설정',
+      Icon: Cpu,
+      action: () => openPreferences('engine'),
+    },
+    {
+      id: 'display',
+      label: '화면 및 가독성 설정',
+      Icon: Type,
+      action: () => openPreferences('display'),
+    },
+    {
+      id: 'templates',
+      label: '표준 기획서 템플릿',
+      Icon: LayoutTemplate,
+      action: () => {
+        setIsTemplateModalOpen(true);
+        setIsMegaMenuOpen(false);
+        setIsMobileChapterDrawerOpen(false);
+      },
+    },
+    {
+      id: 'storage',
+      label: '보관함 및 로컬 백업',
+      Icon: FolderOpen,
+      action: () => {
+        setBackupModalTab('storage');
+        setIsBackupModalOpen(true);
+        setIsMegaMenuOpen(false);
+        setIsMobileChapterDrawerOpen(false);
+      },
+    },
+    {
+      id: 'account',
+      label: '내 계정 및 프로필',
+      Icon: User,
+      action: () => {
+        setIsMegaMenuOpen(false);
+        setIsMobileChapterDrawerOpen(false);
+        navigate('/profile');
+      },
+    },
+    {
+      id: 'logout',
+      label: '로그아웃',
+      Icon: LogOut,
+      action: () => {
+        setIsMegaMenuOpen(false);
+        setIsMobileChapterDrawerOpen(false);
+        onOpenLogoutModal();
+      },
+    },
+  ];
 
   return (
-    <div className="flex flex-col h-screen w-full overflow-hidden bg-[#FFFFFF] text-[#111827] font-sans selection:bg-[#EFF6FF] selection:text-[#1E3A8A]">
-      {/* Top Utility Header (h-14 / 56px, #FFFFFF, 1px solid #E5E7EB hairline) */}
-      <header className="h-14 px-3 sm:px-5 bg-[#FFFFFF] border-b border-[#E5E7EB] flex items-center justify-between shrink-0 select-none z-30 gap-2 sm:gap-4">
-        {/* Left Zone: Sidebar Toggle + GOGUMA Logo + Editable Project Title */}
-        <div className="flex items-center gap-2.5 min-w-0 shrink-0">
-          <Tooltip content={isCol1Collapsed ? '목차 서랍 펼치기' : '목차 서랍 접기'} position="bottom">
-            <button
-              onClick={handleToggleSidebar}
-              className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer shrink-0 ${
-                !isCol1Collapsed
-                  ? 'bg-[#EFF6FF] text-[#1E3A8A]'
-                  : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9]'
-              }`}
-              aria-label="사이드바 토글"
-            >
-              <PanelLeft size={16} />
-            </button>
-          </Tooltip>
+    <div className="flex flex-col h-screen w-full overflow-hidden bg-[#FFFFFF] text-[#000000] font-sans selection:bg-[#000000] selection:text-[#FFFFFF]">
+      {/* Sejong Architectural Two-Tier Header + Full-Width 9-Column Mega Menu */}
+      <div
+        ref={headerWrapperRef}
+        onMouseLeave={() => setIsMegaMenuOpen(false)}
+        className="relative shrink-0 z-40 select-none bg-[#FFFFFF]"
+      >
+        {/* Tier 1: Slim Black Utility Strip (#000000) — High-Contrast Pure White Links */}
+        <div className="h-10 bg-[#000000] text-[#FFFFFF] border-b border-white/20 px-4 sm:px-6 flex items-center justify-between gap-3 text-[13px] font-bold">
+          {/* Left: Sidebar Toggle + Editable Project Title + Quiet Save Indicator */}
+          <div className="flex items-center gap-3 min-w-0">
+            <Tooltip content={isCol1Collapsed ? '목차 서랍 펼치기' : '목차 서랍 접기'} position="bottom">
+              <button
+                type="button"
+                onClick={handleToggleSidebar}
+                className={`h-7 px-2.5 flex items-center gap-1.5 rounded-[2px] text-[13px] font-bold transition-colors cursor-pointer shrink-0 ${
+                  !isCol1Collapsed
+                    ? 'bg-[#FFFFFF] text-[#000000]'
+                    : 'text-[#FFFFFF] hover:bg-white/15'
+                }`}
+                aria-label="목차 서랍 토글"
+              >
+                <PanelLeft size={14} />
+                <span className="hidden sm:inline">목차</span>
+              </button>
+            </Tooltip>
 
-          <button
-            onClick={() => navigate('/')}
-            className="font-sans font-bold text-sm sm:text-[15px] tracking-tight text-[#111827] hover:text-[#1E3A8A] transition-colors cursor-pointer whitespace-nowrap shrink-0 leading-none"
-          >
-            GOGUMA
-          </button>
+            <span className="text-white/30 select-none hidden sm:inline" aria-hidden="true">|</span>
 
-          <span className="text-[#D1D5DB] select-none leading-none shrink-0 hidden xs:inline" aria-hidden="true">/</span>
+            <div className="min-w-0 max-w-[150px] sm:max-w-[260px] lg:max-w-[320px] flex items-center">
+              <input
+                type="text"
+                value={project.name}
+                onChange={(e) => {
+                  const newName = e.target.value;
+                  setProject(prev => ({ ...prev, name: newName }));
+                  setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
+                  schedulePersistence();
+                }}
+                className="w-full bg-transparent hover:bg-white/10 focus:bg-[#1A1A18] rounded-[2px] px-2 py-0.5 text-[13px] font-bold text-[#FFFFFF] truncate border-b border-transparent focus:border-white/60 outline-none transition-colors leading-normal"
+                title="프로젝트 이름 수정"
+                aria-label="프로젝트 이름"
+              />
+            </div>
 
-          {/* Inline Editable Project Title */}
-          <div className="min-w-0 max-w-[110px] sm:max-w-[220px] lg:max-w-[280px] flex items-center">
-            <input
-              type="text"
-              value={project.name}
-              onChange={(e) => {
-                const newName = e.target.value;
-                setProject(prev => ({ ...prev, name: newName }));
-                setPlan(prev => ({ ...prev, metadata: { ...prev.metadata, projectName: newName, title: newName } }));
-                schedulePersistence();
-              }}
-              className="w-full bg-[#F7F8FA] hover:bg-[#F1F5F9] focus:bg-[#FFFFFF] rounded-lg px-2.5 py-1 text-xs sm:text-sm font-semibold text-[#111827] truncate border border-transparent focus:border-[#1E3A8A]/30 focus:ring-2 focus:ring-[#1E3A8A]/10 outline-none transition-all leading-normal"
-              title="프로젝트 이름 수정"
-              aria-label="프로젝트 이름"
-            />
+            <span className="hidden md:inline-block text-[12px] font-semibold text-white/85 whitespace-nowrap shrink-0">
+              {saveStatus === 'saving' ? '보존 중...' : '로컬 보존됨'}
+            </span>
           </div>
 
-          <Tooltip content={saveStatus === 'saving' ? '로컬 저장 중...' : '브라우저 IndexedDB에 실시간 저장됨'} position="bottom">
-            <div className="hidden xl:flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#F0FDF4] text-[#15803D] cursor-default shrink-0">
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                saveStatus === 'saving' ? 'bg-[#B45309] animate-pulse' : 'bg-[#15803D]'
-              }`} />
-              <span className="text-[11px] font-medium whitespace-nowrap">
-                {saveStatus === 'saving' ? '저장 중' : '저장됨'}
-              </span>
-            </div>
-          </Tooltip>
-        </div>
-
-        {/* Center Zone: Compact Active Chapter Selector & Sidebar Toggle */}
-        <div className="hidden md:flex items-center justify-center flex-1 min-w-0" ref={chapterMenuRef}>
-          <div className="relative">
+          {/* Right: Clean Pure-Korean Studio Navigation & Preview Toggle */}
+          <div className="flex items-stretch h-full shrink-0 divide-x divide-white/20 border-l border-white/20">
             <button
               type="button"
-              onClick={() => setIsChapterMenuOpen(prev => !prev)}
-              className="h-8 px-3 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-transparent hover:border-[#E5E7EB] text-xs font-medium text-[#111827] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[280px]"
-              aria-expanded={isChapterMenuOpen}
-              aria-label="챕터 빠른 전환 및 목차 사이드바 토글"
+              onClick={() => navigate('/landing')}
+              className="hidden sm:flex items-center px-3.5 text-[#FFFFFF] hover:bg-white/15 transition-colors cursor-pointer whitespace-nowrap"
             >
-              <span className="font-sans text-[11px] font-semibold text-[#1E3A8A] tabular-nums shrink-0">
-                0{currentChapterObj.id}
-              </span>
-              <span className="text-[#D1D5DB] shrink-0" aria-hidden="true">·</span>
-              <span className="truncate">{currentChapterObj.title}</span>
-              <ChevronDown size={13} className={`text-[#4B5563] shrink-0 transition-transform duration-150 ${isChapterMenuOpen ? 'rotate-180' : ''}`} />
+              스튜디오 안내
             </button>
 
-            {isChapterMenuOpen && (
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl shadow-[0_12px_32px_-4px_rgba(15,23,42,0.1)] p-1.5 z-50">
-                <div className="px-2.5 py-1.5 text-[11px] font-medium text-[#4B5563] border-b border-[#E5E7EB] mb-1 flex items-center justify-between">
-                  <span>챕터 이동</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleToggleSidebar();
-                      setIsChapterMenuOpen(false);
-                    }}
-                    className="inline-flex items-center gap-1 text-[11px] font-medium text-[#1E3A8A] hover:underline cursor-pointer whitespace-nowrap"
+            <button
+              type="button"
+              onClick={() => navigate('/support')}
+              className="hidden md:flex items-center px-3.5 text-[#FFFFFF] hover:bg-white/15 transition-colors cursor-pointer whitespace-nowrap"
+            >
+              도움말
+            </button>
+
+            <button
+              type="button"
+              onClick={togglePreviewCollapsed}
+              className={`hidden lg:flex items-center gap-1.5 px-3.5 transition-colors cursor-pointer whitespace-nowrap ${
+                isPreviewCollapsed
+                  ? 'bg-[#FFFFFF] text-[#000000]'
+                  : 'text-[#FFFFFF] hover:bg-white/15'
+              }`}
+              aria-label="미리보기 패널 토글"
+            >
+              <PanelRight size={14} />
+              <span>{isPreviewCollapsed ? '미리보기 열기' : '미리보기'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => openPreferences('engine')}
+              className="flex items-center gap-1.5 px-3.5 bg-[#FFFFFF] text-[#000000] hover:bg-[#F6F5F1] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <SlidersHorizontal size={13} />
+              <span>환경 설정</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Tier 2: Main White Navigation Row (#FFFFFF) — Doubled Font Size & Maximum Ink Contrast */}
+        <header className="h-20 px-4 sm:px-6 bg-[#FFFFFF] border-b border-[#E4E2DC] flex items-center justify-between gap-4">
+          {/* Left: Bold Editorial Wordmark */}
+          <div className="flex items-center shrink-0">
+            <button
+              type="button"
+              onClick={() => navigate('/landing')}
+              className="font-display font-extrabold text-[22px] sm:text-[24px] tracking-[-0.04em] text-[#000000] hover:opacity-75 transition-opacity cursor-pointer whitespace-nowrap leading-none"
+            >
+              고구마
+            </button>
+          </div>
+
+          {/* Center: High-Contrast Single-Line Horizontal Main Menu (Zero Numbers, Zero English, 2x Scale) */}
+          <nav
+            className="hidden lg:flex items-center justify-center flex-1 min-w-0 h-full gap-0.5 xl:gap-2 2xl:gap-3"
+            aria-label="기획서 주요 메뉴"
+          >
+            {GOGUMA_CHAPTERS.map((ch) => {
+              const isCurrent = ch.id === project.currentChapter;
+              const isHighlighted = isMegaMenuOpen ? hoveredMenuId === ch.id : isCurrent;
+              const isDone = completedChapters.has(ch.id);
+
+              return (
+                <button
+                  key={ch.id}
+                  type="button"
+                  onMouseEnter={() => {
+                    setHoveredMenuId(ch.id);
+                    setIsMegaMenuOpen(true);
+                  }}
+                  onFocus={() => {
+                    setHoveredMenuId(ch.id);
+                    setIsMegaMenuOpen(true);
+                  }}
+                  onClick={() => {
+                    if (isMegaMenuOpen && hoveredMenuId === ch.id) {
+                      handleSelectChapter(ch.id);
+                      setIsMegaMenuOpen(false);
+                    } else {
+                      setHoveredMenuId(ch.id);
+                      setIsMegaMenuOpen(true);
+                    }
+                  }}
+                  className={`relative h-full px-2 xl:px-3 2xl:px-3.5 flex items-center gap-1.5 text-[18px] xl:text-[22px] 2xl:text-[24px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+                    isHighlighted ? 'text-[#000000]' : 'text-[#111111] hover:text-[#000000]'
+                  }`}
+                >
+                  <span>{CHAPTER_SHORT_LABELS[ch.id] || ch.title}</span>
+                  {isDone && (
+                    <span className="w-2 h-2 rounded-full bg-[#1F5132] shrink-0" aria-hidden="true" />
+                  )}
+                  {(isCurrent || (isMegaMenuOpen && hoveredMenuId === ch.id)) && (
+                    <span className="absolute bottom-0 left-2 right-2 h-[3px] bg-[#000000]" />
+                  )}
+                </button>
+              );
+            })}
+
+            {/* Unified [환경 설정] Top-Level Main Menu */}
+            <button
+              type="button"
+              onMouseEnter={() => {
+                setHoveredMenuId('settings');
+                setIsMegaMenuOpen(true);
+              }}
+              onFocus={() => {
+                setHoveredMenuId('settings');
+                setIsMegaMenuOpen(true);
+              }}
+              onClick={() => openPreferences('engine')}
+              className={`relative h-full px-2 xl:px-3 2xl:px-3.5 flex items-center gap-1.5 text-[18px] xl:text-[22px] 2xl:text-[24px] font-extrabold tracking-[-0.03em] whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+                isMegaMenuOpen && hoveredMenuId === 'settings' ? 'text-[#000000]' : 'text-[#111111] hover:text-[#000000]'
+              }`}
+            >
+              <span>환경 설정</span>
+              {((isMegaMenuOpen && hoveredMenuId === 'settings') || isPreferencesOpen) && (
+                <span className="absolute bottom-0 left-2 right-2 h-[3px] bg-[#000000]" />
+              )}
+            </button>
+          </nav>
+
+          {/* Compact Chapter Selector for Tablet / Mobile (< lg) */}
+          <div className="flex lg:hidden items-center flex-1 justify-center min-w-0">
+            <button
+              type="button"
+              onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
+              className="h-10 px-3.5 rounded-[2px] border border-[#111111] text-[15px] font-bold text-[#000000] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[240px]"
+            >
+              <span className="truncate">{CHAPTER_SHORT_LABELS[currentChapterObj.id] || currentChapterObj.title}</span>
+              <ChevronDown size={15} className={`shrink-0 transition-transform ${isMobileChapterDrawerOpen ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+
+          {/* Right: Mobile Split Toggle + Pure-Korean Export CTA */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Responsive Editor / Preview Toggle (< lg) */}
+            <div className="flex lg:hidden items-center bg-[#F6F5F1] p-0.5 rounded-[2px] border border-[#E4E2DC] shrink-0">
+              <button
+                type="button"
+                onClick={() => setMobilePane('editor')}
+                className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
+                  mobilePane === 'editor'
+                    ? 'bg-[#FFFFFF] text-[#000000]'
+                    : 'text-[#3F3F3C] hover:text-[#000000]'
+                }`}
+              >
+                에디터
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobilePane('preview')}
+                className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
+                  mobilePane === 'preview'
+                    ? 'bg-[#FFFFFF] text-[#000000]'
+                    : 'text-[#3F3F3C] hover:text-[#000000]'
+                }`}
+              >
+                미리보기
+              </button>
+            </div>
+
+            {/* Mobile Drawer Toggle */}
+            <button
+              type="button"
+              onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
+              className="lg:hidden p-2 rounded-[2px] border border-[#111111] text-[#000000] cursor-pointer"
+              aria-label="전체 메뉴 열기"
+            >
+              {isMobileChapterDrawerOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+
+            <Tooltip content="개발 사양서 및 실행 플레이북 내보내기" position="bottom">
+              <button
+                type="button"
+                onClick={handleOpenExportModal}
+                className="h-10 px-4 sm:px-5 flex items-center gap-2 justify-center rounded-[2px] bg-[#000000] hover:bg-[#1C1C1A] text-[#FFFFFF] transition-colors cursor-pointer text-[14px] font-bold whitespace-nowrap shrink-0 tracking-tight"
+                aria-label="사양서 내보내기"
+              >
+                <Download size={14} />
+                <span className="hidden sm:inline">사양서 내보내기</span>
+                <span className="sm:hidden">내보내기</span>
+              </button>
+            </Tooltip>
+          </div>
+        </header>
+
+        {/* Full-Width 9-Column Sejong Architectural Mega-Menu (8 Chapters + [환경 설정]) */}
+        {isMegaMenuOpen && (
+          <div
+            className="hidden lg:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-t border-[#E4E2DC] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-50"
+            role="region"
+            aria-label="전체 메뉴 및 환경 설정 메가메뉴"
+          >
+            <div className="grid grid-cols-9 divide-x divide-[#E4E2DC]">
+              {GOGUMA_CHAPTERS.map((ch) => {
+                const isActiveCol = hoveredMenuId === ch.id;
+                const isChapterDone = completedChapters.has(ch.id);
+                const isChapterLocked = project.lockedChapters?.includes(ch.id);
+
+                return (
+                  <div
+                    key={ch.id}
+                    onMouseEnter={() => setHoveredMenuId(ch.id)}
+                    className={`flex flex-col min-h-[260px] transition-colors duration-150 ${
+                      isActiveCol ? 'bg-[#000000] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#000000]'
+                    }`}
                   >
-                    <PanelLeft size={11} />
-                    <span>{isCol1Collapsed ? '목차 사이드바 열기' : '목차 사이드바 닫기'}</span>
-                  </button>
-                </div>
-                <div className="space-y-0.5 max-h-[340px] overflow-y-auto custom-scroll">
-                  {GOGUMA_CHAPTERS.map((ch) => {
-                    const isActive = ch.id === project.currentChapter;
-                    const isDone = completedChapters.has(ch.id);
-                    return (
-                      <button
-                        key={ch.id}
-                        type="button"
-                        onClick={() => {
-                          handleSelectChapter(ch.id);
-                          setIsChapterMenuOpen(false);
-                        }}
-                        className={`w-full px-2.5 py-2 rounded-lg text-left text-xs flex items-center justify-between gap-2 transition-colors cursor-pointer ${
-                          isActive
-                            ? 'bg-[#EFF6FF] text-[#1E3A8A] font-semibold'
-                            : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className={`font-sans text-[11px] tabular-nums shrink-0 ${
-                            isActive ? 'text-[#1E3A8A] font-bold' : 'text-[#9CA3AF]'
-                          }`}>
-                            0{ch.id}
+                    {/* Pure Korean Column Heading (2x Typography & High Contrast) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleSelectChapter(ch.id);
+                        setIsMegaMenuOpen(false);
+                      }}
+                      className={`w-full px-3 py-4 text-center border-b cursor-pointer transition-colors ${
+                        isActiveCol
+                          ? 'border-white/30 text-[#FFFFFF]'
+                          : 'border-[#E4E2DC] text-[#000000] hover:bg-[#F6F5F1]'
+                      }`}
+                    >
+                      <div className="text-[17px] xl:text-[20px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
+                        {CHAPTER_SHORT_LABELS[ch.id] || ch.title}
+                      </div>
+                    </button>
+
+                    {/* Column Sub-Sections */}
+                    <div className="flex-1 p-3 flex flex-col justify-between gap-3">
+                      <div className="space-y-1.5">
+                        {ch.sections.map((sec) => {
+                          const isSecCurrent = project.currentChapter === ch.id && project.currentSection === sec.key;
+                          const secEntry = formInputs[`${ch.id}_${sec.key}`];
+                          const isSecFilled = Boolean(secEntry?.userRawInput?.trim());
+
+                          return (
+                            <button
+                              key={sec.key}
+                              type="button"
+                              onClick={() => {
+                                handleSelectChapter(ch.id);
+                                handleSelectSection(sec.key);
+                                setIsMegaMenuOpen(false);
+                              }}
+                              className={`w-full px-2.5 py-2 text-left text-[14px] xl:text-[15px] font-semibold leading-snug flex items-start justify-between gap-2 rounded-[2px] transition-colors cursor-pointer ${
+                                isActiveCol
+                                  ? isSecCurrent
+                                    ? 'bg-white/20 text-[#FFFFFF] font-bold'
+                                    : 'text-[#FFFFFF] hover:bg-white/15'
+                                  : isSecCurrent
+                                  ? 'bg-[#F6F5F1] text-[#000000] font-bold'
+                                  : 'text-[#000000] hover:bg-[#F6F5F1]'
+                              }`}
+                            >
+                              <span className="break-keep">{sec.title}</span>
+                              {isSecFilled ? (
+                                <Check size={14} className={`shrink-0 mt-0.5 ${isActiveCol ? 'text-[#FFFFFF]' : 'text-[#1F5132]'}`} />
+                              ) : (
+                                <ChevronRight size={14} className="shrink-0 mt-0.5 opacity-60" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className={`pt-2.5 border-t text-[12px] font-bold flex items-center justify-between gap-1 ${
+                        isActiveCol ? 'border-white/20 text-[#FFFFFF]' : 'border-[#E4E2DC] text-[#111111]'
+                      }`}>
+                        <span>
+                          {isChapterLocked ? '잠금 보호됨' : isChapterDone ? '작성 완료' : '바로 이동'}
+                        </span>
+                        {isChapterLocked && <Lock size={12} className="shrink-0" />}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* 9th Column: Dedicated [환경 설정] Mega-Menu Column */}
+              <div
+                onMouseEnter={() => setHoveredMenuId('settings')}
+                className={`flex flex-col min-h-[260px] transition-colors duration-150 ${
+                  hoveredMenuId === 'settings' ? 'bg-[#000000] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#000000]'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => openPreferences('engine')}
+                  className={`w-full px-3 py-4 text-center border-b cursor-pointer transition-colors ${
+                    hoveredMenuId === 'settings'
+                      ? 'border-white/30 text-[#FFFFFF]'
+                      : 'border-[#E4E2DC] text-[#000000] hover:bg-[#F6F5F1]'
+                  }`}
+                >
+                  <div className="text-[17px] xl:text-[20px] font-extrabold tracking-[-0.03em] leading-snug break-keep">
+                    환경 설정
+                  </div>
+                </button>
+
+                <div className="flex-1 p-3 flex flex-col justify-between gap-2">
+                  <div className="space-y-1">
+                    {SETTINGS_MENU_ITEMS.map((item) => {
+                      const Icon = item.Icon;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={item.action}
+                          className={`w-full px-2.5 py-2 text-left text-[14px] xl:text-[15px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer ${
+                            hoveredMenuId === 'settings'
+                              ? 'text-[#FFFFFF] hover:bg-white/15'
+                              : 'text-[#000000] hover:bg-[#F6F5F1]'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2 min-w-0">
+                            <Icon size={14} className="shrink-0" />
+                            <span className="break-keep">{item.label}</span>
                           </span>
-                          <span className="truncate">{ch.title}</span>
-                        </div>
-                        {isDone && (
-                          <Check size={13} className="text-[#15803D] shrink-0" />
-                        )}
-                      </button>
-                    );
-                  })}
+                          <ChevronRight size={13} className="shrink-0 opacity-60" />
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Right Zone: Subtle 3-Tier AI Status Badge + Utilities + Editorial Navy Primary CTA */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* 3-Tier AI Engine Status Badge */}
-          <Tooltip content={`AI 엔진 설정 (${getActiveAILabel(aiSettings)})`} position="bottom">
-            <button
-              onClick={() => setIsAISettingsModalOpen(true)}
-              className="h-8 px-2.5 flex items-center gap-1.5 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-[#E5E7EB] text-xs font-medium text-[#111827] transition-colors cursor-pointer whitespace-nowrap shrink-0"
-              aria-label="인공지능 모델 설정"
-            >
-              <Cpu size={13} className="text-[#1E3A8A] shrink-0" />
-              <span className="font-sans text-[11px] font-medium text-[#111827]">{activeTierLabel}</span>
-            </button>
-          </Tooltip>
+        {/* Mobile & Tablet Drawer (< lg) — Zero Numbers, Zero English, Unified Settings */}
+        {isMobileChapterDrawerOpen && (
+          <div className="lg:hidden absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-lg z-50 max-h-[75vh] overflow-y-auto">
+            <div className="p-4 border-b border-[#E4E2DC] bg-[#F6F5F1] space-y-2">
+              <div className="text-xs font-extrabold text-[#000000] mb-2">환경 설정</div>
+              <div className="grid grid-cols-2 gap-2">
+                {SETTINGS_MENU_ITEMS.map((item) => {
+                  const Icon = item.Icon;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={item.action}
+                      className="px-3 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] text-xs font-bold text-[#000000] flex items-center gap-1.5 rounded-[2px] cursor-pointer text-left"
+                    >
+                      <Icon size={13} className="shrink-0" />
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-          {/* Subtle Studio Utilities */}
-          <div className="hidden sm:flex items-center gap-0.5">
-            <Tooltip content={largeTextMode ? '보통 글씨로 전환' : '큰 글씨 모드로 전환'} position="bottom">
-              <button
-                onClick={toggleLargeTextMode}
-                className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
-                  largeTextMode
-                    ? 'bg-[#EFF6FF] text-[#1E3A8A] font-bold'
-                    : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9]'
-                }`}
-                aria-label="글씨 크기 모드 토글"
-              >
-                <Type size={15} />
-              </button>
-            </Tooltip>
-
-            <Tooltip content="표준 기획서 템플릿" position="bottom">
-              <button
-                onClick={() => setIsTemplateModalOpen(true)}
-                className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
-                aria-label="표준 기획서 템플릿"
-              >
-                <LayoutTemplate size={15} />
-              </button>
-            </Tooltip>
-
-            <Tooltip content="프로젝트 보관함 및 백업" position="bottom">
-              <button
-                onClick={() => { setBackupModalTab('storage'); setIsBackupModalOpen(true); }}
-                className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
-                aria-label="프로젝트 보관함 및 백업"
-              >
-                <FolderOpen size={15} />
-              </button>
-            </Tooltip>
-
-            <Tooltip content={isPreviewCollapsed ? '미리보기 패널 열기' : '미리보기 패널 접기'} position="bottom">
-              <button
-                onClick={togglePreviewCollapsed}
-                className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
-                  isPreviewCollapsed
-                    ? 'bg-[#EFF6FF] text-[#1E3A8A]'
-                    : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9]'
-                }`}
-                aria-label="미리보기 패널 토글"
-              >
-                <PanelRight size={15} />
-              </button>
-            </Tooltip>
+            <div className="divide-y divide-[#E4E2DC]">
+              {GOGUMA_CHAPTERS.map((ch) => {
+                const isActive = ch.id === project.currentChapter;
+                return (
+                  <div key={ch.id} className={isActive ? 'bg-[#000000] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#000000]'}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleSelectChapter(ch.id);
+                        setIsMobileChapterDrawerOpen(false);
+                      }}
+                      className="w-full px-5 py-3.5 text-left flex items-center justify-between text-base font-extrabold cursor-pointer"
+                    >
+                      <span>{ch.title}</span>
+                      {completedChapters.has(ch.id) && <Check size={15} />}
+                    </button>
+                    <div className="px-5 pb-3.5 flex flex-wrap gap-2">
+                      {ch.sections.map((sec) => (
+                        <button
+                          key={sec.key}
+                          type="button"
+                          onClick={() => {
+                            handleSelectChapter(ch.id);
+                            handleSelectSection(sec.key);
+                            setIsMobileChapterDrawerOpen(false);
+                          }}
+                          className={`px-3 py-1.5 text-xs font-semibold rounded-[2px] border cursor-pointer ${
+                            isActive
+                              ? 'border-white/35 text-[#FFFFFF]'
+                              : 'border-[#CBC8BF] text-[#000000]'
+                          }`}
+                        >
+                          {sec.title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
+        )}
+      </div>
 
-          <div className="w-px h-4 bg-[#E5E7EB] hidden sm:block" />
-
-          {/* Responsive Editor / Preview Toggle (< lg) */}
-          <div className="flex lg:hidden items-center bg-[#F7F8FA] p-0.5 rounded-lg border border-[#E5E7EB] shrink-0">
-            <button
-              type="button"
-              onClick={() => setMobilePane('editor')}
-              className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
-                mobilePane === 'editor'
-                  ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
-                  : 'text-[#4B5563] hover:text-[#111827]'
-              }`}
-            >
-              에디터
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobilePane('preview')}
-              className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
-                mobilePane === 'preview'
-                  ? 'bg-[#FFFFFF] text-[#1E3A8A] shadow-2xs font-semibold'
-                  : 'text-[#4B5563] hover:text-[#111827]'
-              }`}
-            >
-              미리보기
-            </button>
-          </div>
-
-          {/* Primary CTA: Export 11 Specs & Playbook Modal in Editorial Navy (#1E3A8A) */}
-          <Tooltip content="00_EXECUTION_PLAYBOOK & 11종 사양서 내보내기" position="bottom">
-            <button
-              onClick={handleOpenExportModal}
-              className="h-8 px-2.5 sm:px-3.5 flex items-center gap-1.5 justify-center rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-white transition-colors cursor-pointer text-xs font-medium whitespace-nowrap shrink-0 shadow-xs"
-              aria-label="Export 11 Specs"
-            >
-              <Download size={13} />
-              <span className="hidden sm:inline">Export 11 Specs</span>
-              <span className="sm:hidden">Export</span>
-            </button>
-          </Tooltip>
-
-          {/* User Account & Sign Out */}
-          <div className="flex items-center gap-1 shrink-0">
-            <Tooltip content="내 계정 프로필" position="bottom">
-              <button
-                onClick={() => navigate('/profile')}
-                className="h-8 w-8 rounded-lg bg-[#F7F8FA] hover:bg-[#EFF6FF] border border-[#E5E7EB] transition-colors cursor-pointer text-[#1E3A8A] text-xs font-semibold flex items-center justify-center"
-                aria-label="내 계정 프로필"
-              >
-                {currentUser?.displayName ? currentUser.displayName[0] : 'U'}
-              </button>
-            </Tooltip>
-
-            <Tooltip content="로그아웃" position="bottom">
-              <button
-                onClick={onOpenLogoutModal}
-                className="h-8 w-8 rounded-lg text-[#4B5563] hover:text-[#B91C1C] hover:bg-[#FEF2F2] flex items-center justify-center transition-colors cursor-pointer"
-                aria-label="로그아웃"
-              >
-                <LogOut size={14} />
-              </button>
-            </Tooltip>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Workspace Shell: h-[calc(100vh-56px)] (Collapsible Rail + 50:50 Fluid Split) */}
-      <div className={`h-[calc(100vh-56px)] flex overflow-hidden bg-[#FFFFFF] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
-        {/* Left Collapsible Chapter Sidebar (Hidden by default for maximum breathing room) */}
+      {/* Main Workspace Shell: Fluid Remaining Height */}
+      <div className={`flex-1 min-h-0 flex overflow-hidden bg-[#FFFFFF] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
         {!isCol1Collapsed && (
           <IntegratedNavigator
             currentChapter={project.currentChapter}
@@ -521,7 +782,6 @@ export default function WorkspaceView({
           />
         )}
 
-        {/* 50:50 Fluid Split Workspace Area (Stacked/Toggled on < lg, 50:50 split on lg+) */}
         <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">
           {/* 50% Left Editor Pane (#FFFFFF) */}
           <div
@@ -552,7 +812,7 @@ export default function WorkspaceView({
             />
           </div>
 
-          {/* Single 1px solid #E5E7EB Vertical Divider (Desktop lg+ only) */}
+          {/* Single 1px solid #E4E2DC Vertical Divider (Desktop lg+ only) */}
           {!isPreviewCollapsed && (
             <div
               role="separator"
@@ -566,29 +826,28 @@ export default function WorkspaceView({
               onMouseDown={handleMouseDownResizer}
               onDoubleClick={handleResetSplit}
               title="드래그하여 비율 조절 (더블클릭 시 50:50 초기화)"
-              className="hidden lg:block w-px bg-[#E5E7EB] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[#1E3A8A] group"
+              className="hidden lg:block w-px bg-[#E4E2DC] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[#111111] group"
             >
               <div
                 className={`absolute inset-y-0 -left-1 -right-1 cursor-col-resize transition-colors ${
-                  isResizing ? 'bg-[#1E3A8A]/15' : 'group-hover:bg-[#1E3A8A]/10'
+                  isResizing ? 'bg-[#111111]/15' : 'group-hover:bg-[#111111]/10'
                 }`}
               />
             </div>
           )}
 
-          {/* Global Mouse-Capture Overlay during Resizing */}
           {isResizing && (
             <div className="fixed inset-0 z-40 cursor-col-resize select-none bg-transparent" />
           )}
 
-          {/* 50% Right Preview Stage (#F7F8FA) or Collapsed 52px Rail */}
+          {/* 50% Right Exhibition Preview Stage (#F6F5F1) */}
           <div
             style={!isPreviewCollapsed ? ({ '--split-right': `${100 - splitPercent}%` } as React.CSSProperties) : undefined}
             className={`${
               mobilePane === 'preview' ? 'flex w-full' : 'hidden lg:flex'
             } ${
               isPreviewCollapsed ? 'lg:w-auto lg:shrink-0' : 'lg:shrink-0 lg:w-[var(--split-right)]'
-            } min-w-0 h-full bg-[#F7F8FA] overflow-hidden flex-col`}
+            } min-w-0 h-full bg-[#F6F5F1] overflow-hidden flex-col`}
           >
             <SpecPreviewPanel
               plan={plan}
@@ -622,7 +881,6 @@ export default function WorkspaceView({
         </Suspense>
       )}
 
-      {/* Unified Storage & Backup Studio Modal */}
       {isBackupModalOpen && (
         <Suspense fallback={null}>
           <LocalBackupModal
@@ -638,7 +896,6 @@ export default function WorkspaceView({
         </Suspense>
       )}
 
-      {/* Export 11 Specs & Execution Playbook Modal */}
       {isExportModalOpen && (
         <Suspense fallback={null}>
           <ExportSpecModal
@@ -652,15 +909,25 @@ export default function WorkspaceView({
         </Suspense>
       )}
 
-      {/* AI Inference Engine Tier Settings Modal */}
-      {isAISettingsModalOpen && (
+      {isPreferencesOpen && (
         <Suspense fallback={null}>
-          <AISettingsModal
-            isOpen={isAISettingsModalOpen}
-            onClose={() => {
-              setIsAISettingsModalOpen(false);
-              setAiSettings(getAISettings());
+          <PreferencesModal
+            isOpen={isPreferencesOpen}
+            initialTab={preferencesTab}
+            onClose={() => setIsPreferencesOpen(false)}
+            largeTextMode={largeTextMode}
+            onToggleLargeTextMode={toggleLargeTextMode}
+            isPreviewCollapsed={isPreviewCollapsed}
+            onTogglePreviewCollapsed={togglePreviewCollapsed}
+            onOpenTemplates={() => setIsTemplateModalOpen(true)}
+            onOpenBackup={(tab = 'storage') => {
+              setBackupModalTab(tab);
+              setIsBackupModalOpen(true);
             }}
+            currentUserName={currentUser?.displayName}
+            currentUserRole={currentUser?.role}
+            onNavigateProfile={() => navigate('/profile')}
+            onOpenLogout={onOpenLogoutModal}
           />
         </Suspense>
       )}

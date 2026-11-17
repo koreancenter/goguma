@@ -34,11 +34,11 @@ const OnboardingTutorial = lazy(() =>
   import('./components/guide/OnboardingTutorial').then(m => ({ default: m.OnboardingTutorial }))
 );
 
-// Fallback loader in Gallery White & Editorial Navy
+// Fallback loader in Gallery White & Sejong Sumi Ink
 const PageLoader = () => (
   <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-center gap-3">
-    <div className="w-7 h-7 border-2 border-[#E5E7EB] border-t-[#1E3A8A] rounded-full animate-spin" />
-    <span className="text-[11px] font-sans tracking-widest text-[#1E3A8A] uppercase font-semibold">GOGUMA ARCHITECT</span>
+    <div className="w-7 h-7 border-2 border-[#E4E2DC] border-t-[#111111] rounded-full animate-spin" />
+    <span className="text-[11px] font-sans tracking-[0.2em] text-[#111111] uppercase font-medium">GOGUMA STUDIO</span>
   </div>
 );
 

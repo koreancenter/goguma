@@ -91,12 +91,12 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
         codeBlock: {
           HTMLAttributes: {
-            class: 'bg-[#F7F8FA] p-3.5 rounded-lg font-mono text-xs text-[#111827] border border-[#E5E7EB] my-3',
+            class: 'bg-[#F6F5F1] p-3.5 rounded-[2px] font-mono text-xs text-[#111111] border border-[#E4E2DC] my-3',
           },
         },
         blockquote: {
           HTMLAttributes: {
-            class: 'border-l-2 border-[#1E3A8A]/35 pl-4 my-3 text-[#4B5563] italic',
+            class: 'border-y border-[#E4E2DC] py-3 px-2 my-4 font-sans text-[#52524E] not-italic',
           },
         },
         bulletList: {
@@ -113,7 +113,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       Placeholder.configure({
         placeholder,
         emptyEditorClass:
-          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#9CA3AF] before:float-left before:pointer-events-none before:h-0',
+          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#8C8B85] before:float-left before:pointer-events-none before:h-0',
       }),
       Underline,
       ImageExtension.configure({
@@ -132,12 +132,12 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       TableRow,
       TableHeader.configure({
         HTMLAttributes: {
-          class: 'tiptap-th bg-[#F7F8FA] text-[#111827] font-semibold text-xs text-left p-2.5 border border-[#E5E7EB]',
+          class: 'tiptap-th bg-[#F6F5F1] text-[#111111] font-semibold text-xs text-left p-2.5 border border-[#E4E2DC]',
         },
       }),
       TableCell.configure({
         HTMLAttributes: {
-          class: 'tiptap-td p-2.5 text-xs text-[#111827] border border-[#E5E7EB] bg-[#FFFFFF] align-top',
+          class: 'tiptap-td p-2.5 text-xs text-[#1C1C1A] border border-[#E4E2DC] bg-[#FFFFFF] align-top',
         },
       }),
     ],
@@ -146,11 +146,11 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     editorProps: {
       attributes: {
         class: `w-full bg-transparent py-1 outline-none font-sans transition-all duration-200 focus:outline-none ${
-          readOnly ? 'text-[#4B5563] cursor-not-allowed select-text' : 'text-[#1E293B]'
+          readOnly ? 'text-[#52524E] cursor-not-allowed select-text' : 'text-[#1C1C1A]'
         } ${
           largeTextMode
             ? 'text-lg sm:text-xl leading-[1.8] tracking-[-0.01em] min-h-[200px]'
-            : 'text-[15.5px] font-normal leading-[1.75] tracking-[-0.01em] min-h-[160px]'
+            : 'text-[15.5px] font-normal leading-[1.8] tracking-[-0.01em] min-h-[160px]'
         }`,
       },
       handlePaste: (view, event) => {
