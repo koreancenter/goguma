@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { auth, LocalUser } from '../../lib/localAuth';
+import Navbar from '../classic/layout/Navbar';
 import Footer from '../classic/layout/Footer';
 
 export default function LoginGateway() {
@@ -91,24 +92,7 @@ export default function LoginGateway() {
 
   return (
     <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col selection:bg-[#111111] selection:text-[#FFFFFF] font-sans">
-      {/* Top Minimal Architectural Bar */}
-      <header className="h-16 px-6 sm:px-10 border-b border-[#E4E2DC] bg-[#FFFFFF] flex items-center justify-between shrink-0">
-        <Link to="/landing" className="font-display text-xl font-extrabold tracking-[-0.04em] text-[#111111] uppercase hover:opacity-75 transition-opacity">
-          GOGUMA
-        </Link>
-
-        <div className="flex items-center gap-6 text-xs font-sans text-[#52524E]">
-          <span className="hidden sm:inline text-[11px] uppercase tracking-[0.14em] text-[#8C8B85]">
-            Zero Server · Local Isolation
-          </span>
-          <Link
-            to="/landing"
-            className="text-xs font-medium text-[#111111] hover:underline underline-offset-4 transition-colors"
-          >
-            소개 보기
-          </Link>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Full-Bleed 50:50 Architectural Split */}
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-12">

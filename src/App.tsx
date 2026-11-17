@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
 
 // Domain Types strictly matching docs/06_DATA_SCHEMA.md
 import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from './types';
@@ -12,6 +11,7 @@ import { auth, LocalUser } from './lib/localAuth';
 
 // Contexts
 import { SitePlanProvider } from './contexts/SitePlanContext';
+import { StudioHeaderProvider } from './contexts/StudioHeaderContext';
 import { useLanguage } from './contexts/LanguageContext';
 
 // Navigation Layout
@@ -502,8 +502,30 @@ export default function App() {
     schedulePersistence();
   }, [handleInputChange, schedulePersistence]);
 
+  const handleUpdateProjectName = useCallback((newName: string) => {
+    setProject(prev => ({ ...prev, name: newName }));
+    setPlan(prev => ({
+      ...prev,
+      metadata: { ...prev.metadata, projectName: newName, title: newName },
+    }));
+    schedulePersistence();
+  }, [schedulePersistence]);
+
   return (
     <SitePlanProvider plan={plan} onChange={setPlan}>
+      <StudioHeaderProvider
+        value={{
+          projectName: project.name,
+          currentChapter: project.currentChapter,
+          currentSection: project.currentSection,
+          formInputs,
+          completedChapters,
+          currentUser,
+          onUpdateProjectName: handleUpdateProjectName,
+          onSelectChapter: handleSelectChapter,
+          onSelectSection: handleSelectSection,
+        }}
+      >
       <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Local-First Authentication Gateway */}
@@ -663,6 +685,7 @@ export default function App() {
       <Suspense fallback={null}>
         <OnboardingTutorial />
       </Suspense>
+      </StudioHeaderProvider>
     </SitePlanProvider>
   );
 }
