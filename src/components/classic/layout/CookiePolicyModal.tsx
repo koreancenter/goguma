@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Cookie, ShieldCheck, BarChart3, Megaphone, Check } from 'lucide-react';
+import { X, Cookie, ShieldCheck, Ban, Database } from 'lucide-react';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface CookiePolicyModalProps {
@@ -9,8 +9,7 @@ interface CookiePolicyModalProps {
 }
 
 export default function CookiePolicyModal({ isOpen, onClose }: CookiePolicyModalProps) {
-  const { t } = useLanguage();
-  const [analyticsEnabled, setAnalyticsEnabled] = React.useState(true);
+  const { t, language } = useLanguage();
 
   return (
     <AnimatePresence>
@@ -30,22 +29,27 @@ export default function CookiePolicyModal({ isOpen, onClose }: CookiePolicyModal
             initial={{ opacity: 0, scale: 0.97, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 10 }}
-            className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-2xl max-h-[90vh] h-[580px] bg-[#FFFFFF] rounded-2xl shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] z-[9999] overflow-hidden flex flex-col border border-[#E5E7EB] text-[#111827] font-sans"
+            className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-2xl max-h-[90vh] h-[540px] bg-[#FFFFFF] rounded-none shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] z-[9999] overflow-hidden flex flex-col border border-[#000000] text-[#111827] font-sans"
           >
             {/* Header */}
-            <div className="px-6 py-4 border-b border-[#E5E7EB] flex items-center justify-between bg-[#F7F8FA] shrink-0">
+            <div className="px-6 py-4 border-b border-[#E5E7EB] flex items-center justify-between bg-[#000000] text-[#FFFFFF] shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-[#EFF6FF] border border-[#1E3A8A]/20 text-[#1E3A8A] rounded-lg flex items-center justify-center font-bold shrink-0">
+                <div className="w-9 h-9 bg-[#1A1A18] border border-white/20 text-[#FFE600] rounded-none flex items-center justify-center font-bold shrink-0">
                   <Cookie size={18} />
                 </div>
                 <div>
-                  <h2 className="text-sm sm:text-base font-semibold text-[#111827] uppercase tracking-wide">{t('cookie_policy')}</h2>
-                  <p className="text-[11px] text-[#6B7280] font-sans mt-0.5">Privacy & Local Storage Transparency</p>
+                  <h2 className="text-sm sm:text-base font-bold uppercase tracking-wide">
+                    {t('cookie_policy')} (No Cookies)
+                  </h2>
+                  <p className="text-[11px] text-white/70 font-sans mt-0.5">
+                    Zero Cookies · 100% Local-First Architecture
+                  </p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#111827] hover:bg-[#E5E7EB]/60 transition-colors cursor-pointer"
+                className="p-1.5 rounded-none text-white/80 hover:text-[#FFE600] transition-colors cursor-pointer"
+                aria-label="닫기"
               >
                 <X size={16} />
               </button>
@@ -53,79 +57,78 @@ export default function CookiePolicyModal({ isOpen, onClose }: CookiePolicyModal
 
             {/* Content */}
             <div className="p-6 overflow-y-auto custom-scroll space-y-4 flex-1 bg-[#FFFFFF]">
-              {/* Essential Cookies */}
-              <div className="p-4 bg-[#F7F8FA] rounded-xl border border-[#E5E7EB] flex items-start gap-3.5">
-                <div className="w-8 h-8 bg-[#FFFFFF] rounded-lg border border-[#E5E7EB] flex items-center justify-center text-[#1E3A8A] shrink-0">
+              {/* Zero Cookies Declaration */}
+              <div className="p-4 bg-[#F7F8FA] rounded-none border border-[#000000]/20 flex items-start gap-3.5">
+                <div className="w-8 h-8 bg-[#000000] rounded-none flex items-center justify-center text-[#FFE600] shrink-0">
                   <ShieldCheck size={16} />
                 </div>
                 <div className="flex-1 space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold text-[#111827] uppercase tracking-wider">{t('essential_cookies_title')}</h3>
-                    <span className="px-2 py-0.5 bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20 rounded text-[9px] font-sans uppercase tracking-wider">
-                      {t('always_on')}
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-xs font-bold text-[#111827] uppercase tracking-wider">
+                      {language === 'ko' ? '쿠키 미사용 원칙 (NO COOKIES)' : 'Zero Cookies Policy (No Cookies)'}
+                    </h3>
+                    <span className="px-2 py-0.5 bg-[#000000] text-[#FFE600] text-[10px] font-bold uppercase tracking-wider">
+                      0 COOKIES
+                    </span>
+                  </div>
+                  <p className="text-xs leading-relaxed text-[#374151] font-sans">
+                    {language === 'ko'
+                      ? '고구마(GOGUMA)는 어떠한 형태의 HTTP 쿠키(필수 쿠키, 분석 쿠키, 광고·마케팅 쿠키)도 생성, 저장 또는 서버로 전송하지 않습니다.'
+                      : 'GOGUMA does not set, read, or transmit any HTTP cookies—neither essential, analytics, nor marketing cookies.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Analytics & Marketing Trackers */}
+              <div className="p-4 bg-[#F7F8FA] rounded-none border border-[#E5E7EB] flex items-start gap-3.5">
+                <div className="w-8 h-8 bg-[#FFFFFF] rounded-none border border-[#E5E7EB] flex items-center justify-center text-[#111827] shrink-0">
+                  <Ban size={16} />
+                </div>
+                <div className="flex-1 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-xs font-bold text-[#111827] uppercase tracking-wider">
+                      {language === 'ko' ? '외부 추적기 및 분석 도구 비탑재' : 'Zero Analytics & Third-Party Trackers'}
+                    </h3>
+                    <span className="px-2 py-0.5 bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] text-[10px] font-semibold uppercase tracking-wider">
+                      {language === 'ko' ? '미수집' : 'NOT USED'}
                     </span>
                   </div>
                   <p className="text-xs leading-relaxed text-[#4B5563] font-sans">
-                    {t('essential_cookies_desc')}
+                    {language === 'ko'
+                      ? 'Google Analytics, 광고 픽셀, 제3자 행동 추적 스크립트 및 핑거프린팅 도구를 일체 포함하지 않으며, 방문 이력을 외부로 전송하지 않습니다.'
+                      : 'No Google Analytics, advertising pixels, or third-party behavioral tracking scripts exist anywhere in GOGUMA.'}
                   </p>
                 </div>
               </div>
 
-              {/* Analytics Cookies */}
-              <div className="p-4 bg-[#F7F8FA] rounded-xl border border-[#E5E7EB] flex items-start gap-3.5">
-                <div className="w-8 h-8 bg-[#FFFFFF] rounded-lg border border-[#E5E7EB] flex items-center justify-center text-[#1E3A8A] shrink-0">
-                  <BarChart3 size={16} />
+              {/* Local Browser Storage Transparency */}
+              <div className="p-4 bg-[#F7F8FA] rounded-none border border-[#E5E7EB] flex items-start gap-3.5">
+                <div className="w-8 h-8 bg-[#FFFFFF] rounded-none border border-[#E5E7EB] flex items-center justify-center text-[#111827] shrink-0">
+                  <Database size={16} />
                 </div>
                 <div className="flex-1 space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold text-[#111827] uppercase tracking-wider">{t('analytics_cookies_title')}</h3>
-                    <button 
-                      onClick={() => setAnalyticsEnabled(!analyticsEnabled)}
-                      className={`relative w-9 h-5 rounded-full transition-colors cursor-pointer ${analyticsEnabled ? 'bg-[#1E3A8A]' : 'bg-[#D1D5DB]'}`}
-                    >
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all shadow-2xs ${analyticsEnabled ? 'left-4.5' : 'left-0.5'}`} />
-                    </button>
-                  </div>
+                  <h3 className="text-xs font-bold text-[#111827] uppercase tracking-wider">
+                    {language === 'ko' ? '브라우저 로컬 저장소 투명성' : 'Local Browser Storage Only'}
+                  </h3>
                   <p className="text-xs leading-relaxed text-[#4B5563] font-sans">
-                    {t('analytics_cookies_desc')}
+                    {language === 'ko'
+                      ? '언어 설정, 에디터 분할 비율, 작성 중인 기획서 데이터는 서버 쿠키가 아닌 사용자 기기 내부의 IndexedDB 및 LocalStorage에만 저장되며, 브라우저 설정을 통해 언제든 즉시 삭제할 수 있습니다.'
+                      : 'Language preferences, split layout ratios, and specification drafts reside strictly in on-device IndexedDB and LocalStorage—never in server cookies.'}
                   </p>
                 </div>
-              </div>
-
-              {/* Marketing Cookies */}
-              <div className="p-4 bg-[#F7F8FA] rounded-xl border border-[#E5E7EB] flex items-start gap-3.5">
-                <div className="w-8 h-8 bg-[#FFFFFF] rounded-lg border border-[#E5E7EB] flex items-center justify-center text-[#6B7280] shrink-0">
-                  <Megaphone size={16} />
-                </div>
-                <div className="flex-1 space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold text-[#111827] uppercase tracking-wider">{t('marketing_cookies_title')}</h3>
-                    <div className="flex items-center gap-1 px-2 py-0.5 bg-[#FFFFFF] text-[#4B5563] border border-[#E5E7EB] rounded text-[9px] font-sans uppercase tracking-wider">
-                      <X size={9} />
-                      <span>{t('not_collected')}</span>
-                    </div>
-                  </div>
-                  <p className="text-xs leading-relaxed text-[#4B5563] font-sans">
-                    {t('marketing_cookies_desc')}
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-[#E5E7EB]">
-                <p className="text-[11px] text-[#6B7280] font-sans text-center">
-                  Zero telemetry & zero third-party commercial trackers guarantee.
-                </p>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-3.5 border-t border-[#E5E7EB] bg-[#F7F8FA] flex justify-end shrink-0">
-              <button 
+            <div className="px-6 py-3.5 border-t border-[#E5E7EB] bg-[#F7F8FA] flex items-center justify-between shrink-0">
+              <span className="text-[11px] font-sans text-[#6B7280]">
+                No Cookies · No Telemetry · Local-First
+              </span>
+              <button
                 onClick={onClose}
-                className="px-4 py-1.5 bg-[#1E3A8A] hover:bg-[#172554] text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-4 py-1.5 bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] rounded-none text-xs font-bold transition-colors cursor-pointer"
               >
-                <Check size={13} strokeWidth={2.5} />
-                <span>{t('save_preferences')}</span>
+                {language === 'ko' ? '확인' : 'Confirm'}
               </button>
             </div>
           </motion.div>

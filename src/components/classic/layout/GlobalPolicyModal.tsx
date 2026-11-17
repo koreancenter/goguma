@@ -53,6 +53,17 @@ export default function GlobalPolicyModal({ isOpen, onClose }: GlobalPolicyModal
 
             {/* Content */}
             <div className="p-6 overflow-y-auto custom-scroll flex-1 space-y-4 bg-[#FFFFFF]">
+              <div className="p-4 bg-[#F7F8FA] border border-[#111111]/15 rounded-lg flex flex-col gap-1">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#111111]">
+                  <ShieldCheck size={15} className="text-[#111111]" />
+                  <span>NO DATA COLLECTION · 100% LOCAL-FIRST</span>
+                </div>
+                <p className="text-xs text-[#4B5563] leading-relaxed">
+                  {language === 'ko'
+                    ? '고구마(GOGUMA)는 중앙 서버로 사용자의 개인정보나 기획 데이터를 수집·전송하지 않습니다. 모든 작성 데이터와 설정은 사용자의 브라우저 로컬 저장소(IndexedDB / LocalStorage)에만 보관됩니다.'
+                    : 'GOGUMA collects zero user data on central servers. All specifications and settings remain strictly inside your browser local storage (IndexedDB / LocalStorage).'}
+                </p>
+              </div>
               {language === 'ko' ? (
                 <div className="space-y-6">
                   <ReactMarkdown
