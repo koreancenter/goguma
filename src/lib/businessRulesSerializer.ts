@@ -1,5 +1,6 @@
 import { DomainBusinessRule, FormInputEntity } from '../types/schema';
 import { GOGUMA_CHAPTERS } from './chapterData';
+import { normalizeAttachments, stripHtmlToPlainText } from './documentAttachmentParser';
 
 /**
  * Safely normalizes any raw or legacy businessRules value to a valid array.
@@ -193,7 +194,8 @@ export function buildChapterAIContext(
   const section = chapter.sections.find(s => s.key === sectionKey) || chapter.sections[0];
   const key = `${chapter.id}_${section.key}`;
   const entity = formInputs?.[key];
-  const rawProse = entity?.userRawInput?.trim() || '';
+  const rawProse = stripHtmlToPlainText(entity?.userRawInput || '');
+  const attachments = normalizeAttachments(entity?.attachments);
   const isCurrentLocked = isChapterOrSectionLocked(chapter.id, section.key, formInputs, lockedChapters);
   const rulesBlock = serializeSectionBusinessRulesToMarkdown(
     chapter.id,
@@ -217,6 +219,16 @@ export function buildChapterAIContext(
       isCurrentLocked && rawProse ? wrapImmutableConstraint(narrativeText) : narrativeText
     }`
   );
+
+  if (attachments.length > 0) {
+    const attachmentBlocks = attachments.map((att, idx) => {
+      const contentPreview = att.extractedText?.trim()
+        ? att.extractedText.trim().slice(0, 12000)
+        : '(Binary/scanned document attached without plain text stream)';
+      return `#### Attachment ${idx + 1}: ${att.name} (${att.extension})\n${contentPreview}`;
+    });
+    parts.push(`### Attached Reference Documents\n${attachmentBlocks.join('\n\n')}`);
+  }
 
   if (rulesBlock) {
     parts.push(`### Domain Rules & Constraints (Deterministic Guardrails)\n${rulesBlock}`);

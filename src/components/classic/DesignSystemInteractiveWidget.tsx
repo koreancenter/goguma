@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Palette, Check, Type, Sliders } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Check, Type, Sliders } from 'lucide-react';
 import { SitePlan } from '../../types';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface ThemePreset {
   id: string;
@@ -77,6 +78,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
   setPlan,
   onInputChange,
 }) => {
+  const { pick } = useLanguage();
   const currentThemeColor = plan.design?.themeColor || '#2563EB';
   const currentLayout = plan.design?.layout || 'standard';
 
@@ -84,10 +86,61 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
   const [inputStyle, setInputStyle] = useState<'underline' | 'box'>('box');
   const [copiedHex, setCopiedHex] = useState<string | null>(null);
 
+  const presetLocaleMap = useMemo<Record<string, { name: string; tag: string; description: string }>>(
+    () => ({
+      'sumi-black-sapphire-blue': {
+        name: pick({ ko: '수미 블랙 & 사파이어 블루', en: 'Sumi Black & Sapphire Blue', ja: '墨ブラック & サファイアブルー', id: 'Sumi Hitam & Biru Safir' }),
+        tag: pick({ ko: '시그니처 다크', en: 'Signature Dark', ja: 'シグネチャーダーク', id: 'Gelap Khas' }),
+        description: pick({
+          ko: '깊은 흑색 먹빛 캔버스(#0B0C10) 위에 정갈한 웜 화이트(#F0F3F6)와 지적인 럭셔리 사파이어 블루(#2563EB) 및 일렉트릭 애저(#38BDF8)의 콰이어트 럭셔리',
+          en: 'Quiet luxury combining deep sumi ink canvas (#0B0C10), warm white (#F0F3F6), sapphire blue (#2563EB), and electric azure (#38BDF8)',
+          ja: '深みのある墨色キャンバス(#0B0C10)にウォームホワイト(#F0F3F6)とサファイアブルー(#2563EB)・エレクトリックアジュール(#38BDF8)を配したクワイエットラグジュアリー',
+          id: 'Kemewahan tenang dengan kanvas tinta sumi (#0B0C10), putih hangat (#F0F3F6), biru safir (#2563EB), dan azure elektrik (#38BDF8)',
+        }),
+      },
+      'midnight-azure-slate': {
+        name: pick({ ko: '미드나잇 애저 & 딥 슬레이트', en: 'Midnight Azure & Deep Slate', ja: 'ミッドナイトアジュール & ストラタス', id: 'Midnight Azure & Deep Slate' }),
+        tag: pick({ ko: '테크 아키텍트', en: 'Tech Architect', ja: 'テック設計', id: 'Arsitek Teknologi' }),
+        description: pick({
+          ko: '깊은 자정의 네이비 블루(#0E1217) 베이스에 정제된 슬레이트 블루(#60A5FA)와 맑은 화이트(#F8FAFC)로 구성된 차분한 테크 아키텍처 테마',
+          en: 'Calm tech architecture theme built on midnight navy (#0E1217) with refined slate blue (#60A5FA) and crisp white (#F8FAFC)',
+          ja: '深夜のネイビーブルー(#0E1217)をベースにスレートブルー(#60A5FA)と澄んだホワイト(#F8FAFC)で構成された落ち着いたテックテーマ',
+          id: 'Tema arsitektur teknologi yang tenang di atas dasar navy tengah malam (#0E1217) dengan biru slate (#60A5FA) dan putih bersih (#F8FAFC)',
+        }),
+      },
+      'obsidian-cobalt-glow': {
+        name: pick({ ko: '옵시디언 & 코발트 글로우', en: 'Obsidian & Cobalt Glow', ja: 'オブシディアン & コバルトグロウ', id: 'Obsidian & Cobalt Glow' }),
+        tag: pick({ ko: '하이엔드 미니멀', en: 'High-End Minimal', ja: 'ハイエンドミニマル', id: 'Minimal Kelas Atas' }),
+        description: pick({
+          ko: '완전한 흑요석 블랙(#07080B) 캔버스에 네온 코발트 블루(#1D4ED8)와 크리스털 스카이(#7DD3FC) 악센트의 미니멀 하이엔드 테마',
+          en: 'Minimal high-end theme pairing pure obsidian black (#07080B) canvas with cobalt blue (#1D4ED8) and crystal sky (#7DD3FC)',
+          ja: '漆黒のオブシディアン(#07080B)キャンバスにコバルトブルー(#1D4ED8)とクリスタルスカイ(#7DD3FC)を効かせたミニマルテーマ',
+          id: 'Tema minimal kelas atas dengan kanvas obsidian murni (#07080B), biru kobalt (#1D4ED8), dan biru langit (#7DD3FC)',
+        }),
+      },
+      'porcelain-sapphire-clean': {
+        name: pick({ ko: '화이트 백자 & 사파이어 클래식', en: 'Porcelain & Sapphire Classic', ja: '白磁 & サファイアクラシック', id: 'Porselen & Safir Klasik' }),
+        tag: pick({ ko: '정갈한 라이트', en: 'Crisp Light', ja: '端正ライト', id: 'Terang Rapi' }),
+        description: pick({
+          ko: '정갈한 라이트 백자(#F8FAFC) 베이스 위에 지적인 사파이어 블루(#2563EB)와 다크 슬레이트(#0F172A) 타이포그래피의 세련된 조화',
+          en: 'Refined harmony of crisp porcelain (#F8FAFC), sapphire blue (#2563EB), and dark slate (#0F172A) typography',
+          ja: '端正な白磁(#F8FAFC)ベースにサファイアブルー(#2563EB)とダークスレート(#0F172A)のタイポグラフィが調和するテーマ',
+          id: 'Harmoni halus dasar porselen (#F8FAFC) dengan biru safir (#2563EB) dan tipografi slate gelap (#0F172A)',
+        }),
+      },
+    }),
+    [pick]
+  );
+
   // Match active preset or fallback to Sumi Black & Sapphire Blue
   const activePreset = THEME_PRESETS.find(
     p => p.primaryColor.toLowerCase() === currentThemeColor.toLowerCase() || p.id === 'sumi-black-sapphire-blue'
   ) || THEME_PRESETS[0];
+  const activeLocale = presetLocaleMap[activePreset.id] || {
+    name: activePreset.name,
+    tag: activePreset.tag,
+    description: activePreset.description,
+  };
 
   const handleSelectPreset = (preset: ThemePreset) => {
     // 1. Update plan.design
@@ -142,41 +195,61 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
   const isLightPreview = activePreset.id === 'porcelain-sapphire-clean';
 
   return (
-    <div className="space-y-10 text-[#111111] font-sans">
+    <div className="space-y-10 text-[var(--theme-ink-primary)] font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[#000000]">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[var(--theme-ink-strong)]">
         <div className="space-y-2">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[#52524E] tracking-[0.08em]">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em]">
               03
             </span>
-            <h3 className="font-extrabold text-[#000000] text-[22px] sm:text-[26px] tracking-[-0.02em]">
-              비주얼 테마 및 디자인 규약 조율
+            <h3 className="font-extrabold text-[var(--theme-ink-strong)] text-[22px] sm:text-[26px] tracking-[-0.02em]">
+              {pick({
+                ko: '비주얼 테마 및 디자인 규약 조율',
+                en: 'Visual Theme & Design System Calibration',
+                ja: 'ビジュアルテーマ・デザイン規範調整',
+                id: 'Kalibrasi Tema Visual & Sistem Desain',
+              })}
             </h3>
-            <span className="text-[15px] font-bold font-mono text-[#52524E]">
+            <span className="text-[15px] font-bold font-mono text-[var(--theme-ink-secondary)]">
               05_design_system.md
             </span>
           </div>
-          <p className="text-[17px] sm:text-[19px] text-[#52524E] leading-[1.7] pl-8">
-            원하는 테마 프리셋을 선택하면 11종 사양서와 프로토타입에 디자인 규약이 즉시 동기화됩니다.
+          <p className="text-[17px] sm:text-[19px] text-[var(--theme-ink-secondary)] leading-[1.7] pl-8">
+            {pick({
+              ko: '원하는 테마 프리셋을 선택하면 11종 사양서와 프로토타입에 디자인 규약이 즉시 동기화됩니다.',
+              en: 'Selecting a theme preset immediately syncs design tokens across the 11 specs and standalone prototype.',
+              ja: '希望のテーマプリセットを選択すると、11種の仕様書とプロトタイプにデザイン規範が即時同期されます。',
+              id: 'Memilih prasetel tema akan langsung menyinkronkan token desain ke 11 dokumen spesifikasi dan prototipe.',
+            })}
           </p>
         </div>
 
-        <div className="shrink-0 flex items-center gap-2.5 text-[15px] text-[#111111] bg-[#F6F5F1] border border-[#E4E2DC] px-4 py-2.5 rounded-none">
-          <span className="w-3.5 h-3.5 border border-black/20 shrink-0" style={{ backgroundColor: activePreset.primaryColor }} />
-          <span className="font-bold whitespace-nowrap">{activePreset.name}</span>
+        <div className="shrink-0 flex items-center gap-2.5 text-[15px] text-[var(--theme-ink-primary)] bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] px-4 py-2.5 rounded-none">
+          <span className="w-3.5 h-3.5 border border-[var(--theme-border-strong)] shrink-0" style={{ backgroundColor: activePreset.primaryColor }} />
+          <span className="font-bold whitespace-nowrap">{activeLocale.name}</span>
         </div>
       </div>
 
       {/* 1. 4 Signature Theme Preset Cards */}
       <div className="space-y-4">
-        <label className="text-[17px] sm:text-[18px] font-extrabold text-[#000000] block">
-          4종 감성 미니멀리즘 테마 프리셋
+        <label className="text-[17px] sm:text-[18px] font-extrabold text-[var(--theme-ink-strong)] block">
+          {pick({
+            ko: '4종 감성 미니멀리즘 테마 프리셋',
+            en: '4 Signature Minimalist Theme Presets',
+            ja: '4種のミニマリズムテーマプリセット',
+            id: '4 Prasetel Tema Minimalis Khas',
+          })}
         </label>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {THEME_PRESETS.map((preset) => {
             const isSelected = activePreset.id === preset.id;
+            const loc = presetLocaleMap[preset.id] || {
+              name: preset.name,
+              tag: preset.tag,
+              description: preset.description,
+            };
             return (
               <button
                 key={preset.id}
@@ -184,59 +257,59 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 onClick={() => handleSelectPreset(preset)}
                 className={`p-6 rounded-none text-left transition-colors cursor-pointer flex flex-col justify-between space-y-4 border ${
                   isSelected
-                    ? 'bg-[#FFFFFF] border-2 border-[#000000]'
-                    : 'bg-[#F6F5F1] border-[#E4E2DC] hover:border-[#000000]'
+                    ? 'bg-[var(--theme-canvas)] border-2 border-[var(--theme-ink-strong)]'
+                    : 'bg-[var(--theme-stage)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-extrabold text-[18px] text-[#000000]">
-                        {preset.name}
+                      <span className="font-extrabold text-[18px] text-[var(--theme-ink-strong)]">
+                        {loc.name}
                       </span>
-                      <span className="text-[#787772]">·</span>
-                      <span className="text-[#52524E] text-[15px] font-bold">
-                        {preset.tag}
+                      <span className="text-[var(--theme-ink-muted)]">·</span>
+                      <span className="text-[var(--theme-ink-secondary)] text-[15px] font-bold">
+                        {loc.tag}
                       </span>
                     </div>
-                    <p className="text-[15px] sm:text-[16px] text-[#52524E] mt-2 leading-[1.65]">
-                      {preset.description}
+                    <p className="text-[15px] sm:text-[16px] text-[var(--theme-ink-secondary)] mt-2 leading-[1.65]">
+                      {loc.description}
                     </p>
                   </div>
                   <div className="shrink-0 pt-0.5">
                     {isSelected ? (
-                      <span className="w-6 h-6 rounded-none bg-[#000000] text-[#FFE600] flex items-center justify-center font-bold">
+                      <span className="w-6 h-6 rounded-none bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] flex items-center justify-center font-bold">
                         <Check size={14} strokeWidth={3} />
                       </span>
                     ) : (
-                      <span className="w-6 h-6 rounded-none border border-[#CBC8BF] bg-[#FFFFFF] block" />
+                      <span className="w-6 h-6 rounded-none border border-[var(--theme-border-strong)] bg-[var(--theme-canvas)] block" />
                     )}
                   </div>
                 </div>
 
                 {/* Color Swatch Bar */}
-                <div className="flex items-center gap-2.5 pt-3 border-t border-[#E4E2DC]">
+                <div className="flex items-center gap-2.5 pt-3 border-t border-[var(--theme-border-hairline)]">
                   <div 
-                    className="w-5 h-5 rounded-none border border-black/20 shrink-0"
+                    className="w-5 h-5 rounded-none border border-[var(--theme-border-strong)] shrink-0"
                     style={{ backgroundColor: preset.paperBg }}
-                    title={`배경: ${preset.paperBg}`}
+                    title={`${pick({ ko: '배경', en: 'Background', ja: '背景', id: 'Latar' })}: ${preset.paperBg}`}
                   />
                   <div 
-                    className="w-5 h-5 rounded-none border border-black/20 shrink-0"
+                    className="w-5 h-5 rounded-none border border-[var(--theme-border-strong)] shrink-0"
                     style={{ backgroundColor: preset.primaryColor }}
-                    title={`주조색: ${preset.primaryColor}`}
+                    title={`${pick({ ko: '주조색', en: 'Primary', ja: 'メイン色', id: 'Utama' })}: ${preset.primaryColor}`}
                   />
                   <div 
-                    className="w-5 h-5 rounded-none border border-black/20 shrink-0"
+                    className="w-5 h-5 rounded-none border border-[var(--theme-border-strong)] shrink-0"
                     style={{ backgroundColor: preset.accentColor }}
-                    title={`악센트: ${preset.accentColor}`}
+                    title={`${pick({ ko: '악센트', en: 'Accent', ja: 'アクセント', id: 'Aksen' })}: ${preset.accentColor}`}
                   />
                   <div 
-                    className="w-5 h-5 rounded-none border border-black/20 shrink-0"
+                    className="w-5 h-5 rounded-none border border-[var(--theme-border-strong)] shrink-0"
                     style={{ backgroundColor: preset.textColor }}
-                    title={`본문색: ${preset.textColor}`}
+                    title={`${pick({ ko: '본문색', en: 'Body Text', ja: '本文色', id: 'Teks' })}: ${preset.textColor}`}
                   />
-                  <span className="text-[14px] font-mono font-bold tabular-nums text-[#52524E] ml-auto">
+                  <span className="text-[14px] font-mono font-bold tabular-nums text-[var(--theme-ink-secondary)] ml-auto">
                     {preset.primaryColor}
                   </span>
                 </div>
@@ -247,12 +320,12 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
       </div>
 
       {/* 2. Typography & Input Style Customizer */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-6 border-t border-[#E4E2DC]">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-6 border-t border-[var(--theme-border-hairline)]">
         {/* Sans Weight Selector */}
         <div className="space-y-3">
-          <label className="text-[16px] font-extrabold text-[#000000] flex items-center gap-2">
-            <Type size={16} className="text-[#000000]" />
-            <span>타이포그래피 위계</span>
+          <label className="text-[16px] font-extrabold text-[var(--theme-ink-strong)] flex items-center gap-2">
+            <Type size={16} className="text-[var(--theme-ink-strong)]" />
+            <span>{pick({ ko: '타이포그래피 위계', en: 'Typography Hierarchy', ja: 'タイポグラフィ階層', id: 'Hierarki Tipografi' })}</span>
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -260,8 +333,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleFontWeightChange('bold')}
               className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 headingWeight === 'bold'
-                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
-                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-ink-strong)]'
+                  : 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
               }`}
             >
               Bold (700)
@@ -271,8 +344,8 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleFontWeightChange('semibold')}
               className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 headingWeight === 'semibold'
-                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
-                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-ink-strong)]'
+                  : 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
               }`}
             >
               SemiBold (600)
@@ -282,9 +355,9 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
 
         {/* Input Field Style */}
         <div className="space-y-3">
-          <label className="text-[16px] font-extrabold text-[#000000] flex items-center gap-2">
-            <Sliders size={16} className="text-[#000000]" />
-            <span>필기 입력창 스타일</span>
+          <label className="text-[16px] font-extrabold text-[var(--theme-ink-strong)] flex items-center gap-2">
+            <Sliders size={16} className="text-[var(--theme-ink-strong)]" />
+            <span>{pick({ ko: '필기 입력창 스타일', en: 'Input Field Style', ja: '入力フィールドスタイル', id: 'Gaya Kolom Input' })}</span>
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -292,30 +365,30 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleInputStyleChange('underline')}
               className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 inputStyle === 'underline'
-                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
-                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-ink-strong)]'
+                  : 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
               }`}
             >
-              하단 밑줄형
+              {pick({ ko: '하단 밑줄형', en: 'Underline', ja: '下線スタイル', id: 'Garis Bawah' })}
             </button>
             <button
               type="button"
               onClick={() => handleInputStyleChange('box')}
               className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 inputStyle === 'box'
-                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
-                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-ink-strong)]'
+                  : 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
               }`}
             >
-              미니멀 박스
+              {pick({ ko: '미니멀 박스', en: 'Minimal Box', ja: 'ミニマルボックス', id: 'Kotak Minimalis' })}
             </button>
           </div>
         </div>
 
         {/* Layout Structure */}
         <div className="space-y-3">
-          <label className="text-[16px] font-extrabold text-[#000000] block">
-            화면 분할 구조
+          <label className="text-[16px] font-extrabold text-[var(--theme-ink-strong)] block">
+            {pick({ ko: '화면 분할 구조', en: 'Layout Architecture', ja: '画面分割レイアウト', id: 'Struktur Tata Letak' })}
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -323,34 +396,34 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
               onClick={() => handleLayoutChange('standard')}
               className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 currentLayout === 'standard'
-                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
-                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-ink-strong)]'
+                  : 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
               }`}
             >
-              2-Track 비대칭
+              {pick({ ko: '2-Track 비대칭', en: '2-Track Split', ja: '2カラム非対称', id: 'Split 2-Jalur' })}
             </button>
             <button
               type="button"
               onClick={() => handleLayoutChange('dashboard')}
               className={`py-3 px-3 rounded-none text-[15px] text-center transition-colors cursor-pointer font-bold border ${
                 currentLayout === 'dashboard'
-                  ? 'bg-[#000000] text-[#FFE600] border-[#000000]'
-                  : 'bg-[#F6F5F1] text-[#111111] border-[#E4E2DC] hover:border-[#000000]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-ink-strong)]'
+                  : 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
               }`}
             >
-              와이드 뷰
+              {pick({ ko: '와이드 뷰', en: 'Wide View', ja: 'ワイドビュー', id: 'Tampilan Lebar' })}
             </button>
           </div>
         </div>
       </div>
 
       {/* 3. Live UI Component Preview Card */}
-      <div className="pt-6 border-t border-[#E4E2DC]">
+      <div className="pt-6 border-t border-[var(--theme-border-hairline)]">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4 text-[16px]">
-          <span className="font-extrabold text-[#000000]">
-            선택된 테마 토큰 프리뷰
+          <span className="font-extrabold text-[var(--theme-ink-strong)]">
+            {pick({ ko: '선택된 테마 토큰 프리뷰', en: 'Selected Theme Token Preview', ja: '選択中テーマトークンプレビュー', id: 'Pratinjau Token Tema Terpilih' })}
           </span>
-          <span className="font-mono text-[15px] text-[#52524E]">
+          <span className="font-mono text-[15px] text-[var(--theme-ink-secondary)]">
             {activePreset.engName} · {activePreset.primaryColor}
           </span>
         </div>
@@ -378,18 +451,23 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 }`}
                 style={{ color: activePreset.textColor }}
               >
-                웹 서비스 관리 대시보드
+                {pick({
+                  ko: '웹 서비스 관리 대시보드',
+                  en: 'Web Service Management Dashboard',
+                  ja: 'Webサービス管理ダッシュボード',
+                  id: 'Dasbor Manajemen Layanan Web',
+                })}
               </h4>
             </div>
 
             {/* Unboxed Metadata Indicators */}
             <div className="flex items-center gap-3 text-[15px] font-bold">
               <span style={{ color: activePreset.primaryColor }}>
-                활성 인스턴스 3건
+                {pick({ ko: '활성 인스턴스 3건', en: '3 Active Instances', ja: '稼働中 3件', id: '3 Instans Aktif' })}
               </span>
               <span style={{ color: isLightPreview ? '#8C8B85' : '#7A889B' }}>·</span>
               <span style={{ color: activePreset.accentColor }}>
-                정상 배포 12건
+                {pick({ ko: '정상 배포 12건', en: '12 Healthy Deploys', ja: '正常デプロイ 12件', id: '12 Deploy Sukses' })}
               </span>
             </div>
           </div>
@@ -401,7 +479,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 <input
                   type="text"
                   readOnly
-                  value="서비스 도메인: api.platform.service/v1"
+                  value="api.platform.service/v1"
                   className="w-full bg-transparent border-0 border-b-2 px-2 py-2.5 text-[16px] font-sans outline-none"
                   style={{ borderColor: activePreset.accentColor, color: activePreset.textColor }}
                 />
@@ -409,7 +487,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 <input
                   type="text"
                   readOnly
-                  value="서비스 도메인: api.platform.service/v1"
+                  value="api.platform.service/v1"
                   className="w-full border px-4 py-3 text-[16px] font-sans rounded-none outline-none"
                   style={{
                     backgroundColor: isLightPreview ? '#FFFFFF' : '#13181F',
@@ -428,7 +506,7 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 color: '#FFFFFF'
               }}
             >
-              신규 등록
+              {pick({ ko: '신규 등록', en: 'New Record', ja: '新規登録', id: 'Tambah Baru' })}
             </button>
           </div>
 
@@ -446,10 +524,10 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 borderColor: isLightPreview ? '#E4E2DC' : 'rgba(255,255,255,0.12)',
                 color: activePreset.textColor,
               }}
-              title="배경색 복사"
+              title={pick({ ko: '배경색 복사', en: 'Copy background hex', ja: '背景色をコピー', id: 'Salin warna latar' })}
             >
               <span className="w-3.5 h-3.5 border border-black/15" style={{ backgroundColor: activePreset.paperBg }} />
-              <span>배경: {activePreset.paperBg}</span>
+              <span>{pick({ ko: '배경', en: 'BG', ja: '背景', id: 'Latar' })}: {activePreset.paperBg}</span>
               {copiedHex === activePreset.paperBg && <Check size={14} style={{ color: activePreset.accentColor }} />}
             </button>
 
@@ -462,10 +540,10 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 borderColor: isLightPreview ? '#E4E2DC' : 'rgba(255,255,255,0.12)',
                 color: activePreset.textColor,
               }}
-              title="주조색 복사"
+              title={pick({ ko: '주조색 복사', en: 'Copy primary hex', ja: 'メイン色をコピー', id: 'Salin warna utama' })}
             >
               <span className="w-3.5 h-3.5 border border-black/15" style={{ backgroundColor: activePreset.primaryColor }} />
-              <span>주조색: {activePreset.primaryColor}</span>
+              <span>{pick({ ko: '주조색', en: 'Primary', ja: 'メイン色', id: 'Utama' })}: {activePreset.primaryColor}</span>
               {copiedHex === activePreset.primaryColor && <Check size={14} style={{ color: activePreset.accentColor }} />}
             </button>
 
@@ -478,10 +556,10 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
                 borderColor: isLightPreview ? '#E4E2DC' : 'rgba(255,255,255,0.12)',
                 color: activePreset.textColor,
               }}
-              title="악센트색 복사"
+              title={pick({ ko: '악센트색 복사', en: 'Copy accent hex', ja: 'アクセント色をコピー', id: 'Salin warna aksen' })}
             >
               <span className="w-3.5 h-3.5 border border-black/15" style={{ backgroundColor: activePreset.accentColor }} />
-              <span>악센트: {activePreset.accentColor}</span>
+              <span>{pick({ ko: '악센트', en: 'Accent', ja: 'アクセント', id: 'Aksen' })}: {activePreset.accentColor}</span>
               {copiedHex === activePreset.accentColor && <Check size={14} style={{ color: activePreset.accentColor }} />}
             </button>
           </div>

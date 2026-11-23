@@ -12,10 +12,47 @@ export interface LocalUser {
   lastLoginAt?: string;
 }
 
+function getStoredLang(): 'ko' | 'en' | 'ja' | 'id' {
+  try {
+    const val = localStorage.getItem('goguma_language');
+    if (val === 'en' || val === 'ja' || val === 'id' || val === 'ko') return val;
+  } catch {
+    // ignore storage access errors
+  }
+  return 'ko';
+}
+
+const LOCAL_AUTH_LABELS = {
+  ko: {
+    defaultDirector: '기획 총괄 디렉터',
+    defaultStudio: '독립 기획 스튜디오',
+    guestArchitect: '게스트 아키텍트',
+    guestWorkspace: '체험 워크스페이스',
+  },
+  en: {
+    defaultDirector: 'Lead Specification Director',
+    defaultStudio: 'Independent Planning Studio',
+    guestArchitect: 'Guest Architect',
+    guestWorkspace: 'Sandbox Workspace',
+  },
+  ja: {
+    defaultDirector: '企画統括ディレクター',
+    defaultStudio: '独立企画スタジオ',
+    guestArchitect: 'ゲストアーキテクト',
+    guestWorkspace: '体験ワークスペース',
+  },
+  id: {
+    defaultDirector: 'Direktur Perencanaan Utama',
+    defaultStudio: 'Studio Perencanaan Independen',
+    guestArchitect: 'Arsitek Tamu',
+    guestWorkspace: 'Ruang Kerja Uji Coba',
+  },
+} as const;
+
 export const DEFAULT_DIRECTOR_PROFILE: LocalUser = {
   uid: 'local-director-user',
   email: 'mrpark@kwavemission.org',
-  displayName: '기획 총괄 디렉터',
+  displayName: 'Lead Director (GOGUMA)',
   companyName: 'K-Wave Mission Hub',
   emailVerified: true,
   isAnonymous: false,
@@ -188,12 +225,13 @@ class LocalAuthManager {
       : 'dir_' + Math.random().toString(36).substring(2, 10);
 
     const pinHash = params.pin ? await hashSecretPin(params.pin) : undefined;
+    const labels = LOCAL_AUTH_LABELS[getStoredLang()];
 
     const newUser: LocalUser = {
       uid,
       email,
       displayName: params.displayName.trim(),
-      companyName: params.companyName?.trim() || '독립 기획 스튜디오',
+      companyName: params.companyName?.trim() || labels.defaultStudio,
       pinHash,
       emailVerified: true,
       isAnonymous: false,
@@ -212,11 +250,12 @@ class LocalAuthManager {
 
   // 3. One-click anonymous guest session
   async signInAsGuest(): Promise<LocalUser> {
+    const labels = LOCAL_AUTH_LABELS[getStoredLang()];
     const guestUser: LocalUser = {
       uid: 'guest_' + Math.random().toString(36).substring(2, 9),
       email: 'guest@goguma.local',
-      displayName: '게스트 아키텍트',
-      companyName: '체험 워크스페이스',
+      displayName: labels.guestArchitect,
+      companyName: labels.guestWorkspace,
       emailVerified: true,
       isAnonymous: true,
       role: 'USER',

@@ -166,47 +166,47 @@ export const translations: Translations = {
     en: 'This SLA applies exclusively to B2B Paid Enterprise accounts. Free and Personal tiers are excluded from uptime guarantees and service credits.', 
     ko: '본 SLA는 B2B 유료 엔터프라이즈 계정에만 독점적으로 적용됩니다. 무료(Free) 티어 및 개인용(Personal) 사용자는 가동률 보장 및 서비스 크레딧 대상에서 제외됩니다.' 
   },
-  'about_us': { en: 'About GOGUMA', ko: 'GOGUMA 소개', id: 'Tentang GOGUMA' },
-  'contact_us': { en: 'Contact Us', ko: '문의하기', id: 'Hubungi Kami' },
-  'contact_subtitle': { en: "Got questions? We're here to help you scale your architecture.", ko: "궁금한 점이 있으신가요? 아키텍처 규모를 확장할 수 있도록 도와드리겠습니다." },
-  'support_email': { en: 'Support Email', ko: '지원 이메일' },
-  'consultation_hours': { en: 'Consultation Hours', ko: '상담 시간', id: 'Jam Konsultasi' },
-  'consultation_hours_desc': { en: 'Mon - Fri, 09:00 - 18:00 (KST)', ko: '평일 09:00 - 18:00 (주말 및 공휴일 휴무)', id: 'Senin - Jumat, 09:00 - 18:00 (KST)' },
-  'global_hq': { en: 'Global HQ', ko: '글로벌 본사' },
-  'tell_us_about': { en: 'Tell us about your project...', ko: '프로젝트에 대해 설명해 주세요...' },
-  'privacy_agreement_title': { en: 'Personal Information Collection and Usage Agreement', ko: '개인정보 수집·이용 동의서' },
-  'privacy_agreement_purpose': { en: 'Purpose: Responding to customer inquiries and replying with outcomes', ko: '수집 및 이용 목적: 고객 문의 응대 및 처리 결과 회신' },
-  'privacy_agreement_items': { en: 'Collected items: Minimum information required to process inquiries, such as name and email', ko: '수집 항목: 이름, 이메일 등 문의 처리에 필요한 최소한의 정보' },
-  'privacy_agreement_period': { en: 'Retention period: Destroyed immediately after processing the inquiry is complete', ko: '보유 및 이용 기간: 문의 처리 완료 후 즉시 파기' },
-  'privacy_agreement_rejection': { en: 'Right to object: You can decline consent, but doing so may limit your access to customer inquiry services.', ko: '동의 거부 권리: 동의를 거부할 수 있으며, 거부 시 고객문의 서비스 이용이 제한될 수 있습니다.' },
-  'privacy_agreement_check_policy': { en: 'Please check the Privacy Policy for detailed terms.', ko: '자세한 내용은 개인정보처리방침을 확인해 주세요.' },
-  'privacy_agreement_question': { en: 'Do you agree to the collection and use of personal information above?', ko: '위 개인정보 수집 및 이용에 동의하십니까?' },
-  'privacy_agreement_agree': { en: 'Agree', ko: '동의함' },
-  'privacy_agreement_disagree': { en: 'Disagree', ko: '동의하지 않음' },
-  'customer_service': { en: 'Customer Service', ko: '고객 센터', id: 'Layanan Pelanggan' },
-  'company': { en: 'Company', ko: '회사', id: 'Perusahaan' },
-  'support': { en: 'Support', ko: '지원', id: 'Dukungan' },
-  'send_message': { en: 'Send Message', ko: '메시지 보내기' },
-  'name': { en: 'Name', ko: '이름' },
-  'message': { en: 'Message', ko: '메시지' },
-  'contact_support': { en: 'Contact Support', ko: '고객 지원' },
-  'all_rights_reserved': { en: 'All rights reserved.', ko: '모든 권리 보유.', id: 'Seluruh hak cipta.' },
-  'product': { en: 'Product', ko: '제품', id: 'Produk' },
-  'resources': { en: 'Resources', ko: '리소스', id: 'Sumber Daya' },
-  'legal': { en: 'Legal', ko: '법적 고지', id: 'Legal' },
-  'social': { en: 'Social', ko: '소셜' },
-  'blog': { en: 'Blog', ko: '블로그' },
-  'help_center': { en: 'Help Center', ko: '헬프 센터' },
-  'goguma_manual': { en: 'GOGUMA Manual', ko: 'GOGUMA 매뉴얼' },
-  'features': { en: 'Features', ko: '주요 기능', id: 'Fitur' },
-  'pricing': { en: 'Pricing', ko: '가격 정책', id: 'Harga' },
-  'logout': { en: 'Logout', ko: '로그아웃', id: 'Keluar' },
-  'logout_confirm': { en: 'Are you sure you want to log out?', ko: '로그아웃 하시겠습니까?' },
-  'close': { en: 'Close', ko: '닫기', id: 'Tutup' },
-  'select': { en: 'Select', ko: '선택', id: 'Pilih' },
-  'delete': { en: 'Delete', ko: '삭제', id: 'Hapus' },
-  'cancel': { en: 'Cancel', ko: '취소', id: 'Batal' },
-  'confirm': { en: 'Confirm', ko: '확인', id: 'Konfirmasi' },
+  'about_us': { en: 'About GOGUMA', ko: 'GOGUMA 소개', ja: 'GOGUMAについて', id: 'Tentang GOGUMA' },
+  'contact_us': { en: 'Contact Us', ko: '문의하기', ja: 'お問い合わせ', id: 'Hubungi Kami' },
+  'contact_subtitle': { en: "Got questions? We're here to help you scale your architecture.", ko: "궁금한 점이 있으신가요? 아키텍처 규모를 확장할 수 있도록 도와드리겠습니다.", ja: "ご質問がありますか？アーキテクチャの拡張をサポートします。", id: "Punya pertanyaan? Kami siap membantu menskalakan arsitektur Anda." },
+  'support_email': { en: 'Support Email', ko: '지원 이메일', ja: 'サポートメール', id: 'Email Dukungan' },
+  'consultation_hours': { en: 'Consultation Hours', ko: '상담 시간', ja: '相談時間', id: 'Jam Konsultasi' },
+  'consultation_hours_desc': { en: 'Mon - Fri, 09:00 - 18:00 (KST)', ko: '평일 09:00 - 18:00 (주말 및 공휴일 휴무)', ja: '月〜金 09:00 - 18:00 (KST / 土日祝休)', id: 'Senin - Jumat, 09:00 - 18:00 (KST)' },
+  'global_hq': { en: 'Global HQ', ko: '글로벌 본사', ja: 'グローバル本社', id: 'Kantor Pusat Global' },
+  'tell_us_about': { en: 'Tell us about your project...', ko: '프로젝트에 대해 설명해 주세요...', ja: 'プロジェクトについてお聞かせください...', id: 'Ceritakan tentang proyek Anda...' },
+  'privacy_agreement_title': { en: 'Personal Information Collection and Usage Agreement', ko: '개인정보 수집·이용 동의서', ja: '個人情報の収集・利用同意書', id: 'Persetujuan Pengumpulan dan Penggunaan Data Pribadi' },
+  'privacy_agreement_purpose': { en: 'Purpose: Responding to customer inquiries and replying with outcomes', ko: '수집 및 이용 목적: 고객 문의 응대 및 처리 결과 회신', ja: '収集・利用目的：お問い合わせへの対応および結果のご連絡', id: 'Tujuan: Menanggapi pertanyaan pelanggan dan mengirimkan balasan hasil' },
+  'privacy_agreement_items': { en: 'Collected items: Minimum information required to process inquiries, such as name and email', ko: '수집 항목: 이름, 이메일 등 문의 처리에 필요한 최소한의 정보', ja: '収集項目：お名前、メールアドレスなど対応に必要な最小限の情報', id: 'Item yang dikumpulkan: Informasi minimum yang diperlukan seperti nama dan email' },
+  'privacy_agreement_period': { en: 'Retention period: Destroyed immediately after processing the inquiry is complete', ko: '보유 및 이용 기간: 문의 처리 완료 후 즉시 파기', ja: '保有・利用期間：お問い合わせ対応完了後に即時破棄', id: 'Masa retensi: Dihapus segera setelah penanganan pertanyaan selesai' },
+  'privacy_agreement_rejection': { en: 'Right to object: You can decline consent, but doing so may limit your access to customer inquiry services.', ko: '동의 거부 권리: 동의를 거부할 수 있으며, 거부 시 고객문의 서비스 이용이 제한될 수 있습니다.', ja: '同意拒否の権利：同意を拒否できますが、お問い合わせサービスのご利用が制限される場合があります。', id: 'Hak untuk menolak: Anda dapat menolak persetujuan, tetapi akses layanan pertanyaan mungkin terbatas.' },
+  'privacy_agreement_check_policy': { en: 'Please check the Privacy Policy for detailed terms.', ko: '자세한 내용은 개인정보처리방침을 확인해 주세요.', ja: '詳細はプライバシーポリシーをご確認ください。', id: 'Silakan periksa Kebijakan Privasi untuk ketentuan lengkap.' },
+  'privacy_agreement_question': { en: 'Do you agree to the collection and use of personal information above?', ko: '위 개인정보 수집 및 이용에 동의하십니까?', ja: '上記の個人情報の収集・利用に同意しますか？', id: 'Apakah Anda menyetujui pengumpulan dan penggunaan informasi pribadi di atas?' },
+  'privacy_agreement_agree': { en: 'Agree', ko: '동의함', ja: '同意する', id: 'Setuju' },
+  'privacy_agreement_disagree': { en: 'Disagree', ko: '동의하지 않음', ja: '同意しない', id: 'Tidak Setuju' },
+  'customer_service': { en: 'Customer Service', ko: '고객 센터', ja: 'カスタマーセンター', id: 'Layanan Pelanggan' },
+  'company': { en: 'Company', ko: '회사', ja: '会社情報', id: 'Perusahaan' },
+  'support': { en: 'Support', ko: '지원', ja: 'サポート', id: 'Dukungan' },
+  'send_message': { en: 'Send Message', ko: '메시지 보내기', ja: 'メッセージを送信', id: 'Kirim Pesan' },
+  'name': { en: 'Name', ko: '이름', ja: 'お名前', id: 'Nama' },
+  'message': { en: 'Message', ko: '메시지', ja: 'メッセージ', id: 'Pesan' },
+  'contact_support': { en: 'Contact Support', ko: '고객 지원', ja: 'カスタマーサポート', id: 'Hubungi Dukungan' },
+  'all_rights_reserved': { en: 'All rights reserved.', ko: '모든 권리 보유.', ja: 'All rights reserved.', id: 'Seluruh hak cipta.' },
+  'product': { en: 'Product', ko: '제품', ja: '製品', id: 'Produk' },
+  'resources': { en: 'Resources', ko: '리소스', ja: 'リソース', id: 'Sumber Daya' },
+  'legal': { en: 'Legal', ko: '법적 고지', ja: '法的情報', id: 'Legal' },
+  'social': { en: 'Social', ko: '소셜', ja: 'ソーシャル', id: 'Sosial' },
+  'blog': { en: 'Blog', ko: '블로그', ja: 'ブログ', id: 'Blog' },
+  'help_center': { en: 'Help Center', ko: '헬프 센터', ja: 'ヘルプセンター', id: 'Pusat Bantuan' },
+  'goguma_manual': { en: 'GOGUMA Manual', ko: 'GOGUMA 매뉴얼', ja: 'GOGUMAマニュアル', id: 'Manual GOGUMA' },
+  'features': { en: 'Features', ko: '주요 기능', ja: '主な機能', id: 'Fitur' },
+  'pricing': { en: 'Pricing', ko: '가격 정책', ja: '料金プラン', id: 'Harga' },
+  'logout': { en: 'Logout', ko: '로그아웃', ja: 'ログアウト', id: 'Keluar' },
+  'logout_confirm': { en: 'Are you sure you want to log out?', ko: '로그아웃 하시겠습니까?', ja: 'ログアウトしますか？', id: 'Apakah Anda yakin ingin keluar?' },
+  'close': { en: 'Close', ko: '닫기', ja: '閉じる', id: 'Tutup' },
+  'select': { en: 'Select', ko: '선택', ja: '選択', id: 'Pilih' },
+  'delete': { en: 'Delete', ko: '삭제', ja: '削除', id: 'Hapus' },
+  'cancel': { en: 'Cancel', ko: '취소', ja: 'キャンセル', id: 'Batal' },
+  'confirm': { en: 'Confirm', ko: '확인', ja: '確認', id: 'Konfirmasi' },
   'error': { en: 'Error', ko: '오류' },
   'success': { en: 'Success', ko: '성공' },
   'search': { en: 'Search...', ko: '검색...' },
@@ -428,8 +428,8 @@ export const translations: Translations = {
   'propagation_success_desc': { en: 'Global DNS distributed cache integrity matched 100% successfully! External access has been activated immediately.', ko: '전 세계 DNS 분산 캐시 정합성이 100% 매칭 완료되어 즉시 외부 접근이 활성화되었습니다!', id: 'Integritas cache terdistribusi DNS global 100% cocok! Akses eksternal segera diaktifkan.' },
 
   // Landing Page
-  'select_region': { en: 'Region', ko: '지역', id: 'Wilayah' },
-  'select_language': { en: 'Language', ko: '언어', id: 'Bahasa' },
+  'select_region': { en: 'Region', ko: '지역', ja: '地域', id: 'Wilayah' },
+  'select_language': { en: 'Language', ko: '언어', ja: '言語', id: 'Bahasa' },
   'select_currency': { en: 'Currency', ko: '통화', id: 'Mata Uang' },
   'welcome_back': { en: 'Welcome to GOGUMA FIELD', ko: 'GOGUMA FIELD에 오신 것을 환영합니다', id: 'Selamat Datang di GOGUMA FIELD' },
   'signup_welcome_desc': { 
@@ -474,7 +474,7 @@ export const translations: Translations = {
   'login_desc': { en: 'Access your account to planning.', ko: '기획을 위해 계정에 로그인하세요.' },
   'signup_desc': { en: 'Create a new account and start planning like a pro.', ko: '새 계정을 만들고 전문가처럼 기획을 시작하세요.' },
   'forgot_password_desc': { en: "Forgot your password? We'll send a reset link to your email.", ko: '비밀번호를 잊으셨나요? 이메일로 재설정 링크를 보내드립니다.' },
-  'email': { en: 'Email', ko: '이메일' },
+  'email': { en: 'Email', ko: '이메일', ja: 'メール', id: 'Email' },
   'password': { en: 'Password', ko: '비밀번호' },
   'forgot_password_link': { en: 'Forgot Password?', ko: '비밀번호 찾기' },
   'sign_in': { en: 'Sign In', ko: '로그인', id: 'Masuk' },
@@ -559,10 +559,10 @@ export const translations: Translations = {
   'navigation_architecture': { en: 'Navigation Architecture', ko: '내비게이션 아키텍처' },
   'extract_logo_colors': { en: 'Extract Logo Colors', ko: '로고 색상 추출' },
   'extracting': { en: 'Extracting...', ko: '추출 중...' },
-  'back': { en: 'Back', ko: '뒤로' },
-  'back_to_login': { en: 'Back to Login', ko: '로그인으로 돌아가기' },
-  'next_step': { en: 'Next Step', ko: '다음 단계' },
-  'finish': { en: 'Finish', ko: '마침' },
+  'back': { en: 'Back', ko: '뒤로', ja: '戻る', id: 'Kembali' },
+  'back_to_login': { en: 'Back to Login', ko: '로그인으로 돌아가기', ja: 'ログインへ戻る', id: 'Kembali ke Masuk' },
+  'next_step': { en: 'Next Step', ko: '다음 단계', ja: '次のステップ', id: 'Langkah Berikutnya' },
+  'finish': { en: 'Finish', ko: '마침', ja: '完了', id: 'Selesai' },
   'step': { en: 'Step', ko: '단계' },
   'drafting_future': { en: 'Drafting the future of web design with GOOGLE AI WEB ARCHITECT', ko: 'GOOGLE AI WEB ARCHITECT와 함께 웹 디자인의 미래를 설계합니다' },
   'architect_vision': { en: 'WEB ARCHITECT', ko: '웹 아키텍트' },
@@ -680,8 +680,8 @@ export const translations: Translations = {
   'criticism_placeholder': { en: 'Document system constraints, security requirements, and anti-patterns to avoid (e.g., - DO NOT expose API keys on client\n- Strict 44px mobile touch targets)...', ko: '시스템 구축 시 준수해야 할 보안 규칙, 배제할 안티패턴, 성능 제약 사항을 입력하세요 (예: - 클라이언트 API 키 노출 금지\n- 모바일 터치 타겟 44px 이상 보장)...' },
   'tech_stack_ai_recommend': { en: 'Auto Suggest', ko: '자동 제안' },
   'tech_stack_placeholder': { en: 'e.g., React, Next.js, Node.js, Tailwind CSS, PostgreSQL', ko: '예: React, Next.js, Node.js, Tailwind CSS, PostgreSQL' },
-  'visual_sitemap': { en: 'Visual Sitemap', ko: '시각적 사이트맵' },
-  'sitemap_desc': { en: 'Visualize the entire structure of your site at a glance.', ko: '사이트의 전체 구조를 한눈에 시각화하세요.' },
+  'visual_sitemap': { en: 'Visual Sitemap', ko: '시각적 사이트맵', ja: 'ビジュアルサイトマップ', id: 'Peta Situs Visual' },
+  'sitemap_desc': { en: 'Visualize the entire structure of your site at a glance.', ko: '사이트의 전체 구조를 한눈에 시각화하세요.', ja: 'サイト全体の構造を一目で視覚化します。', id: 'Visualisasikan seluruh struktur situs Anda secara sekilas.' },
   'gemini_strategy_title': { en: 'Strategic Direction & Implementation Guide', ko: '전략 방향성 및 실행 가이드' },
   'generate': { en: 'Generate', ko: '생성' },
   'strategy_placeholder': { en: "Define operational guidelines, business logic, and implementation phases.", ko: "서비스 운영 가이드라인, 비즈니스 로직 및 구현 단계를 기술하세요." },
@@ -715,7 +715,12 @@ export const translations: Translations = {
   'generating_roadmap': { en: 'Generating Roadmap...', ko: '로드맵 생성 중...' },
   'roadmap_generated': { en: 'Roadmap generated successfully!', ko: '로드맵이 생성되었습니다!' },
   'responsible_person': { en: 'Responsible', ko: '담당자' },
-  'month_names': { en: 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec', ko: '1월,2월,3월,4월,5월,6월,7월,8월,9월,10월,11월,12월' },
+  'month_names': {
+    en: 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec',
+    ko: '1월,2월,3월,4월,5월,6월,7월,8월,9월,10월,11월,12월',
+    ja: '1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月',
+    id: 'Jan,Feb,Mar,Apr,Mei,Jun,Jul,Agu,Sep,Okt,Nov,Des',
+  },
 
   // Planning Form
   'design_system_preview': { en: 'Color Combination Preview', ko: '색상 조합 미리보기' },
@@ -746,7 +751,7 @@ export const translations: Translations = {
   'app_vibe_desc': { en: 'Optimized for touch, personalization, and rapid access.', ko: '터치, 개인화, 빠른 접근에 최적화된 앱 구조입니다.' },
   'tab_count': { en: 'Number of Tabs (1-5)', ko: '탭 개수 (1-5)' },
   'ai_tab_recommend': { en: 'Recommend Tab Functions', ko: '탭 기능 추천' },
-  'bottom_tab_config': { en: 'Bottom Tab Configuration', ko: '하단 탭 바 구성' },
+  'bottom_tab_config': { en: 'Bottom Tab Configuration', ko: '하단 탭 바 구성', ja: 'ボトムタブ設定', id: 'Konfigurasi Tab Bawah' },
   'hamburger_menu': { en: 'Hamburger Menu (Drawer)', ko: '햄버거 메뉴 (드로어)' },
   'sync_nav_menus': { en: 'Synchronized with NAVIGATION MENUS', ko: 'NAVIGATION MENUS와 동기화됨' },
   'icon': { en: 'Icon', ko: '아이콘' },
@@ -801,7 +806,7 @@ export const translations: Translations = {
   'move_down': { en: 'Move Down', ko: '아래로' },
   'indent': { en: 'Indent Right', ko: '들여쓰기' },
   'outdent': { en: 'Indent Left', ko: '내어쓰기' },
-  'untitled_page': { en: 'Untitled Page', ko: '제목 없음' },
+  'untitled_page': { en: 'Untitled Page', ko: '제목 없음', ja: '無題のページ', id: 'Halaman Tanpa Judul' },
   'empty_script_warn': { en: 'Page script is empty. Please write content or use AI Refine to generate it.', ko: '비어 있음.' },
   'script_empty_error': { en: 'Content is missing', ko: '내용 없음' },
   'ai_refine_suggest': { en: 'Try AI Refine for content', ko: 'AI 다듬기' },
@@ -1007,19 +1012,19 @@ export const translations: Translations = {
   'import_project_json': { en: 'Import Project JSON (.json)', ko: '프로젝트 JSON 가져오기', id: 'Impor Proyek JSON' },
   'download_this_project': { en: 'Download Project JSON', ko: '이 프로젝트 JSON 다운로드', id: 'Unduh JSON Proyek' },
   'copy_this_project': { en: 'Copy Project JSON', ko: '프로젝트 JSON 복사', id: 'Salin JSON Proyek' },
-  'dropzone_title': { en: 'Drop Project File Here', ko: 'GOGUMA 프로젝트 파일 드롭', id: 'Lepaskan File Proyek di Sini' },
-  'dropzone_subtitle': { en: 'Release your .goguma.json or .json file to instantly import your project state.', ko: '.goguma.json 또는 .json 파일을 놓으면 프로젝트 상태를 즉시 분석하여 불러옵니다.', id: 'Lepaskan file .goguma.json atau .json Anda untuk langsung mengimpor status proyek.' },
-  'dropzone_formats': { en: 'Supports .goguma.json • .json (v2.0 & Raw SitePlan)', ko: '.goguma.json • .json 지원 (v2.0 규격 및 원본 SitePlan)', id: 'Mendukung .goguma.json • .json' },
-  'drop_confirm_title': { en: 'Confirm Project Import', ko: '프로젝트 가져오기 확인', id: 'Konfirmasi Impor Proyek' },
-  'drop_confirm_subtitle': { en: 'Review project summary before importing into your workspace.', ko: '워크스페이스에 불러오기 전 프로젝트 요약 정보를 검토하세요.', id: 'Tinjau ringkasan proyek sebelum mengimpor ke ruang kerja Anda.' },
-  'confirm_import_button': { en: 'Confirm & Import to Workspace', ko: '확인 및 워크스페이스에 불러오기', id: 'Konfirmasi & Impor ke Ruang Kerja' },
-  'save_to_library_only': { en: 'Save to Library Only', ko: '보관함에만 저장', id: 'Hanya Simpan ke Pustaka' },
-  'number_of_pages': { en: 'Number of Pages', ko: '페이지 수', id: 'Jumlah Halaman' },
-  'open_in_workspace': { en: 'Open in Workspace', ko: '워크스페이스에 바로 열기', id: 'Buka di Ruang Kerja' },
-  'save_to_library_btn': { en: 'Save to Projects Library', ko: '보관함에 새 프로젝트로 저장', id: 'Simpan ke Pustaka Proyek' },
-  'drop_import_success': { en: 'Project loaded into workspace successfully.', ko: '프로젝트를 워크스페이스에 성공적으로 불러왔습니다.', id: 'Proyek berhasil dimuat ke ruang kerja.' },
-  'drop_save_success': { en: 'Project saved to library successfully.', ko: '프로젝트가 보관함에 안전하게 저장되었습니다.', id: 'Proyek berhasil disimpan ke pustaka.' },
-  'drop_invalid_error': { en: 'The dropped file is not a valid GOGUMA project JSON file.', ko: '드롭된 파일이 올바른 GOGUMA 프로젝트 JSON 파일이 아닙니다.', id: 'File bukan JSON proyek GOGUMA yang valid.' },
+  'dropzone_title': { en: 'Drop Project File Here', ko: 'GOGUMA 프로젝트 파일 드롭', ja: 'GOGUMAプロジェクトファイルをドロップ', id: 'Lepaskan File Proyek di Sini' },
+  'dropzone_subtitle': { en: 'Release your .goguma.json or .json file to instantly import your project state.', ko: '.goguma.json 또는 .json 파일을 놓으면 프로젝트 상태를 즉시 분석하여 불러옵니다.', ja: '.goguma.json または .json ファイルをドロップすると、プロジェクト状態を即座に読み込みます。', id: 'Lepaskan file .goguma.json atau .json Anda untuk langsung mengimpor status proyek.' },
+  'dropzone_formats': { en: 'Supports .goguma.json • .json (v2.0 & Raw SitePlan)', ko: '.goguma.json • .json 지원 (v2.0 규격 및 원본 SitePlan)', ja: '.goguma.json • .json 対応（v2.0規格および生SitePlan）', id: 'Mendukung .goguma.json • .json' },
+  'drop_confirm_title': { en: 'Confirm Project Import', ko: '프로젝트 가져오기 확인', ja: 'プロジェクトのインポート確認', id: 'Konfirmasi Impor Proyek' },
+  'drop_confirm_subtitle': { en: 'Review project summary before importing into your workspace.', ko: '워크스페이스에 불러오기 전 프로젝트 요약 정보를 검토하세요.', ja: 'ワークスペースに読み込む前にプロジェクトの概要を確認してください。', id: 'Tinjau ringkasan proyek sebelum mengimpor ke ruang kerja Anda.' },
+  'confirm_import_button': { en: 'Confirm & Import to Workspace', ko: '확인 및 워크스페이스에 불러오기', ja: '確認してワークスペースに読み込む', id: 'Konfirmasi & Impor ke Ruang Kerja' },
+  'save_to_library_only': { en: 'Save to Library Only', ko: '보관함에만 저장', ja: 'ライブラリにのみ保存', id: 'Hanya Simpan ke Pustaka' },
+  'number_of_pages': { en: 'Number of Pages', ko: '페이지 수', ja: 'ページ数', id: 'Jumlah Halaman' },
+  'open_in_workspace': { en: 'Open in Workspace', ko: '워크스페이스에 바로 열기', ja: 'ワークスペースで開く', id: 'Buka di Ruang Kerja' },
+  'save_to_library_btn': { en: 'Save to Projects Library', ko: '보관함에 새 프로젝트로 저장', ja: 'ライブラリに新規保存', id: 'Simpan ke Pustaka Proyek' },
+  'drop_import_success': { en: 'Project loaded into workspace successfully.', ko: '프로젝트를 워크스페이스에 성공적으로 불러왔습니다.', ja: 'プロジェクトをワークスペースに読み込みました。', id: 'Proyek berhasil dimuat ke ruang kerja.' },
+  'drop_save_success': { en: 'Project saved to library successfully.', ko: '프로젝트가 보관함에 안전하게 저장되었습니다.', ja: 'プロジェクトをライブラリに保存しました。', id: 'Proyek berhasil disimpan ke pustaka.' },
+  'drop_invalid_error': { en: 'The dropped file is not a valid GOGUMA project JSON file.', ko: '드롭된 파일이 올바른 GOGUMA 프로젝트 JSON 파일이 아닙니다.', ja: 'ドロップされたファイルは有効なGOGUMAプロジェクトJSONではありません。', id: 'File bukan JSON proyek GOGUMA yang valid.' },
   'generating_proposal': { en: 'Generating Strategic Proposal...', ko: '전략적 제안서 생성 중...' },
   'review_comments': { en: 'Review Comments', ko: '검토 의견' },
   'approval_signature': { en: 'Approval Signature', ko: '승인 서명' },
@@ -1045,7 +1050,7 @@ export const translations: Translations = {
   'user_mgmt_desc': { en: 'Manage permissions and account status for administrators and general users.', ko: '관리자 및 일반 사용자 계정의 권한과 상태를 관리합니다.' },
   'search_user_placeholder': { en: 'Search by name or email...', ko: '이름 또는 이메일로 검색...' },
   'user_profile': { en: 'User Profile', ko: '사용자 프로필' },
-  'my_account': { en: 'My Account', ko: '내 계정' },
+  'my_account': { en: 'My Account', ko: '내 계정', ja: 'マイアカウント', id: 'Akun Saya' },
   'ai_policy': { en: 'AI Policy', ko: '인공지능 정책', id: 'Kebijakan AI' },
   'ai_policy_intro_title': { en: '1. Introduction', ko: '1. 개요 및 목적', id: '1. Pendahuluan' },
   'ai_policy_intro_desc': { 
@@ -1078,15 +1083,20 @@ export const translations: Translations = {
     id: 'Karena sifat teknologi AI, keluaran yang dihasilkan terkadang mengandung informasi yang tidak akurat atau bias (halusinasi). Pengguna harus memverifikasi informasi kritis secara independen sebelum mengandalkannya untuk keputusan bisnis, hukum, atau medis. Kami tidak bertanggung jawab atas konsekuensi yang timbul dari penggunaan konten yang dihasilkan AI.'
   },
   'usage_details': { en: 'AI Policy', ko: '인공지능 정책', id: 'Kebijakan AI' },
-  'update_profile': { en: 'Update Profile', ko: '프로필 수정' },
-  'profile_updated': { en: 'Profile updated successfully', ko: '프로필이 성공적으로 수정되었습니다.' },
-  'save_changes': { en: 'Save Changes', ko: '변경사항 저장' },
-  'usage_summary': { en: 'Usage Summary', ko: '사용현황 요약' },
-  'total_api_calls': { en: 'Total API Calls', ko: '총 API 호출 수' },
-  'full_name': { en: 'Full Name', ko: '이름' },
-  'company_name': { en: 'Company Name', ko: '회사명' },
-  'optional': { en: 'Optional', ko: '선택사항' },
-  'full_name_hint': { en: '2-30 characters. Letters, spaces, and hyphens only. No numbers or special characters.', ko: '2~30자 이내. 영문/한글, 공백, 하이픈(-)만 허용됩니다. 숫자나 특수문자는 사용할 수 없습니다.' },
+  'update_profile': { en: 'Update Profile', ko: '프로필 수정', ja: 'プロフィール編集', id: 'Perbarui Profil' },
+  'profile_updated': { en: 'Profile updated successfully', ko: '프로필이 성공적으로 수정되었습니다.', ja: 'プロフィールが正常に更新されました。', id: 'Profil berhasil diperbarui.' },
+  'save_changes': { en: 'Save Changes', ko: '변경사항 저장', ja: '変更を保存', id: 'Simpan Perubahan' },
+  'usage_summary': { en: 'Usage Summary', ko: '사용현황 요약', ja: '利用状況サマリー', id: 'Ringkasan Penggunaan' },
+  'total_api_calls': { en: 'Total API Calls', ko: '총 API 호출 수', ja: '総API呼び出し数', id: 'Total Panggilan API' },
+  'full_name': { en: 'Full Name', ko: '이름', ja: '氏名 / 表示名', id: 'Nama Lengkap' },
+  'company_name': { en: 'Company Name', ko: '회사명', ja: '会社名 / チーム名', id: 'Nama Perusahaan' },
+  'optional': { en: 'Optional', ko: '선택사항', ja: '任意', id: 'Opsional' },
+  'full_name_hint': {
+    en: '2-30 characters. Letters, spaces, and hyphens only. No numbers or special characters.',
+    ko: '2~30자 이내. 영문/한글, 공백, 하이픈(-)만 허용됩니다. 숫자나 특수문자는 사용할 수 없습니다.',
+    ja: '2〜30文字。文字、スペース、ハイフン(-)のみ使用できます。数字や特殊文字は使用できません。',
+    id: '2-30 karakter. Hanya huruf, spasi, dan tanda hubung. Angka atau karakter khusus tidak diperbolehkan.'
+  },
   'password_rules': { en: 'Password Rules', ko: '비밀번호 규칙' },
   'password_hint': { en: '8-20 characters. Must include uppercase, lowercase, number, and special character (!@#$%^&*).', ko: '8~20자 이내. 대문자, 소문자, 숫자, 특수문자(!@#$%^&*)를 포함해야 합니다.' },
   'current_password': { en: 'Current Password', ko: '현재 비밀번호' },
@@ -1104,17 +1114,17 @@ export const translations: Translations = {
   'cost': { en: 'Cost', ko: '비용' },
   'actions': { en: 'Actions', ko: '작업' },
   'active': { en: 'ACTIVE', ko: '활성' },
-  'onboarding_welcome_title': { en: 'Welcome to GOGUMA Architect', ko: '고구마 아키텍트에 오신 것을 환영합니다' },
-  'onboarding_welcome_desc': { en: 'I am your Master Architect. Let me guide you through the process of turning your vision into production-ready code.', ko: '저는 당신의 수석 아키텍트입니다. 당신의 비전을 실제 코드로 전환하는 과정을 안내해 드리겠습니다.' },
-  'onboarding_platform_title': { en: 'Define Your Platform', ko: '플랫폼 정의' },
-  'onboarding_platform_desc': { en: 'Choose between a Web application or a Mobile-first App. This determines the entire architecture logic.', ko: '웹 애플리케이션 또는 모바일 앱 중 선택하세요. 이는 전체 아키텍처 로직을 결정합니다.' },
-  'onboarding_context_title': { en: 'Strategic Context', ko: '전략적 맥락' },
-  'onboarding_context_desc': { en: 'Provide detailed project goals. AI uses this to build a logic map that aligns with your business intent.', ko: '상세한 프로젝트 목표를 제공하세요. AI는 이를 기반으로 비즈니스 의도에 맞는 로직 맵을 구축합니다.' },
-  'onboarding_dispatch_title': { en: 'SDD Dispatch', ko: 'SDD 사출' },
-  'onboarding_dispatch_desc': { en: 'Finalize your Software Design Document and dispatch it to the engine for code generation.', ko: '소프트웨어 설계 문서(SDD)를 최종 확정하고 코드 생성을 위해 엔진으로 전송합니다.' },
-  'got_it': { en: 'Got it', ko: '알겠습니다' },
-  'skip_tutorial': { en: 'Skip Tutorial', ko: '튜토리얼 건너뛰기' },
-  'start_exploring': { en: 'Start Exploring', ko: '탐색 시작하기' },
+  'onboarding_welcome_title': { en: 'Welcome to GOGUMA Architect', ko: '고구마 아키텍트에 오신 것을 환영합니다', ja: 'GOGUMA Architectへようこそ', id: 'Selamat Datang di GOGUMA Architect' },
+  'onboarding_welcome_desc': { en: 'I am your Master Architect. Let me guide you through the process of turning your vision into production-ready code.', ko: '저는 당신의 수석 아키텍트입니다. 당신의 비전을 실제 코드로 전환하는 과정을 안내해 드리겠습니다.', ja: '私はあなたのマスターアーキテクトです。ビジョンを実用的なコードと仕様書へ変換するプロセスをご案内します。', id: 'Saya Master Architect Anda. Izinkan saya memandu Anda mengubah visi menjadi spesifikasi dan kode siap produksi.' },
+  'onboarding_platform_title': { en: 'Define Your Platform', ko: '플랫폼 정의', ja: 'プラットフォームの定義', id: 'Tentukan Platform Anda' },
+  'onboarding_platform_desc': { en: 'Choose between a Web application or a Mobile-first App. This determines the entire architecture logic.', ko: '웹 애플리케이션 또는 모바일 앱 중 선택하세요. 이는 전체 아키텍처 로직을 결정합니다.', ja: 'Webアプリかモバイルアプリかを選択してください。これが全体のアーキテクチャ設計を決定します。', id: 'Pilih antara aplikasi Web atau aplikasi Mobile-first. Ini menentukan seluruh logika arsitektur.' },
+  'onboarding_context_title': { en: 'Strategic Context', ko: '전략적 맥락', ja: '戦略的コンテキスト', id: 'Konteks Strategis' },
+  'onboarding_context_desc': { en: 'Provide detailed project goals. AI uses this to build a logic map that aligns with your business intent.', ko: '상세한 프로젝트 목표를 제공하세요. AI는 이를 기반으로 비즈니스 의도에 맞는 로직 맵을 구축합니다.', ja: 'プロジェクト目標を詳しく記述してください。AIがビジネス意図に沿ったロジックマップを構築します。', id: 'Berikan tujuan proyek secara rinci. AI menggunakannya untuk membangun peta logika yang selaras dengan bisnis Anda.' },
+  'onboarding_dispatch_title': { en: 'SDD Dispatch', ko: 'SDD 사출', ja: 'SDDディスパッチ', id: 'Pengiriman SDD' },
+  'onboarding_dispatch_desc': { en: 'Finalize your Software Design Document and dispatch it to the engine for code generation.', ko: '소프트웨어 설계 문서(SDD)를 최종 확정하고 코드 생성을 위해 엔진으로 전송합니다.', ja: 'ソフトウェア設計文書（SDD）を確定し、ビルドエンジンへディスパッチします。', id: 'Finalisasi Dokumen Desain Perangkat Lunak dan kirimkan ke mesin untuk pembuatan kode.' },
+  'got_it': { en: 'Got it', ko: '알겠습니다', ja: '了解しました', id: 'Mengerti' },
+  'skip_tutorial': { en: 'Skip Tutorial', ko: '튜토리얼 건너뛰기', ja: 'チュートリアルをスキップ', id: 'Lewati Tutorial' },
+  'start_exploring': { en: 'Start Exploring', ko: '탐색 시작하기', ja: '探索を始める', id: 'Mulai Menjelajah' },
   'inactive': { en: 'INACTIVE', ko: '비활성' },
   'loading_users': { en: 'Loading Users...', ko: '사용자 목록 로드 중...' },
   'no_users_found': { en: 'No users found', ko: '사용자를 찾을 수 없습니다' },
@@ -1148,6 +1158,23 @@ export const translations: Translations = {
   },
 };
 
+const LANG_STORAGE_KEY = 'goguma_language';
+const REGION_STORAGE_KEY = 'goguma_region';
+const CURRENCY_STORAGE_KEY = 'goguma_currency';
+
+const VALID_LANGUAGES: Language[] = ['en', 'ko', 'ja', 'id'];
+
+function isValidLanguage(value: string | null | undefined): value is Language {
+  return !!value && (VALID_LANGUAGES as string[]).includes(value);
+}
+
+export type LocalizedMap<T = string> = {
+  ko: T;
+  en: T;
+  ja?: T;
+  id?: T;
+};
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
@@ -1156,14 +1183,88 @@ interface LanguageContextType {
   currency: string;
   setCurrency: (currency: string) => void;
   t: (key: string, params?: Record<string, string>) => string;
+  pick: <T = string>(map: LocalizedMap<T>) => T;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+function detectDefaultLocale(): { language: Language; region: string; currency: string } {
+  try {
+    const browserLang = (navigator.language || '').toLowerCase();
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+
+    if (browserLang.startsWith('ko') || timeZone.includes('Seoul')) {
+      return { language: 'ko', region: 'korea', currency: 'KRW' };
+    }
+    if (browserLang.startsWith('ja') || timeZone.includes('Tokyo')) {
+      return { language: 'ja', region: 'asiapacific', currency: 'JPY' };
+    }
+    if (browserLang.startsWith('id') || timeZone.includes('Jakarta')) {
+      return { language: 'id', region: 'indonesia', currency: 'IDR' };
+    }
+  } catch (e) {
+    console.warn('Browser detection failed:', e);
+  }
+  return { language: 'en', region: 'global', currency: 'USD' };
+}
+
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('en');
-  const [region, setRegion] = useState<string>('global');
-  const [currency, setCurrency] = useState<string>('USD');
+  const [language, setLanguageState] = useState<Language>(() => {
+    try {
+      const saved = localStorage.getItem(LANG_STORAGE_KEY);
+      if (isValidLanguage(saved)) return saved;
+    } catch {
+      // ignore storage error
+    }
+    return detectDefaultLocale().language;
+  });
+
+  const [region, setRegionState] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem(REGION_STORAGE_KEY);
+      if (saved) return saved;
+    } catch {
+      // ignore storage error
+    }
+    return detectDefaultLocale().region;
+  });
+
+  const [currency, setCurrencyState] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem(CURRENCY_STORAGE_KEY);
+      if (saved) return saved;
+    } catch {
+      // ignore storage error
+    }
+    return detectDefaultLocale().currency;
+  });
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    try {
+      localStorage.setItem(LANG_STORAGE_KEY, lang);
+    } catch {
+      // ignore storage error
+    }
+  };
+
+  const setRegion = (nextRegion: string) => {
+    setRegionState(nextRegion);
+    try {
+      localStorage.setItem(REGION_STORAGE_KEY, nextRegion);
+    } catch {
+      // ignore storage error
+    }
+  };
+
+  const setCurrency = (nextCurrency: string) => {
+    setCurrencyState(nextCurrency);
+    try {
+      localStorage.setItem(CURRENCY_STORAGE_KEY, nextCurrency);
+    } catch {
+      // ignore storage error
+    }
+  };
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -1174,40 +1275,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [language]);
 
-  useEffect(() => {
-    // Detect language and region from browser locale and timezone
-    try {
-      const browserLang = navigator.language.toLowerCase();
-      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-      if (browserLang.startsWith('ko') || timeZone.includes('Seoul')) {
-        setLanguage('ko');
-        setRegion('korea');
-        setCurrency('KRW');
-        return;
-      }
-      if (browserLang.startsWith('ja') || timeZone.includes('Tokyo')) {
-        setLanguage('ja');
-        setRegion('asiapacific');
-        setCurrency('JPY');
-        return;
-      }
-      if (browserLang.startsWith('id') || timeZone.includes('Jakarta')) {
-        setLanguage('id');
-        setRegion('indonesia');
-        setCurrency('IDR');
-        return;
-      }
-    } catch (e) {
-      console.warn('Browser detection failed:', e);
-    }
-  }, []);
-
   const t = (key: string, params?: Record<string, string>) => {
     const entry = translations[key];
     if (!entry) return key;
 
-    let text = entry[language] || entry['en'];
+    let text = entry[language] || entry['en'] || entry['ko'] || key;
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         text = text.replace(`{${k}}`, v);
@@ -1216,8 +1288,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return text;
   };
 
+  const pick = <T = string,>(map: LocalizedMap<T>): T => {
+    const candidate = map[language];
+    if (candidate !== undefined) return candidate;
+    return language === 'ko' ? map.ko : map.en;
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, region, setRegion, currency, setCurrency, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, region, setRegion, currency, setCurrency, t, pick }}>
       {children}
     </LanguageContext.Provider>
   );

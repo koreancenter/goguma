@@ -3,7 +3,7 @@ import { Calendar } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
-  const { t } = useLanguage();
+  const { t, pick } = useLanguage();
   const months = (t('month_names') || '').split(',');
   
   const parseRoadmap = (text: string = '') => {
@@ -55,26 +55,26 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
   const categoryNames = Object.keys(categories);
 
   return (
-    <div className="w-full mt-8 bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden text-[#111827] font-sans shadow-[0_8px_24px_-4px_rgba(15,23,42,0.05)]">
-      <div className="p-4 sm:p-5 border-b border-[#E5E7EB] flex items-center justify-between bg-[#F7F8FA]">
-        <h4 className="text-sm font-sans font-semibold text-[#111827] tracking-tight flex items-center gap-2.5">
-          <Calendar size={16} className="text-[#1E3A8A]" />
-          <span>월별 개발 마일스톤 및 로드맵 타임라인</span>
+    <div className="w-full mt-8 bg-[var(--theme-elevated)] rounded-[2px] border border-[var(--theme-border-hairline)] overflow-hidden text-[var(--theme-ink-primary)] font-sans">
+      <div className="p-4 sm:p-5 border-b border-[var(--theme-border-hairline)] flex items-center justify-between bg-[var(--theme-stage)]">
+        <h4 className="text-sm font-sans font-semibold text-[var(--theme-ink-strong)] tracking-tight flex items-center gap-2.5">
+          <Calendar size={16} className="text-[var(--theme-seal)]" />
+          <span>{pick({ ko: '월별 개발 마일스톤 및 로드맵 타임라인', en: 'Monthly Development Milestones & Roadmap Timeline', ja: '月別開発マイルストーン＆ロードマップ', id: 'Tonggak Pengembangan Bulanan & Linimasa' })}</span>
         </h4>
-        <div className="px-2.5 py-1 bg-white border border-[#E5E7EB] text-[#4B5563] rounded-lg text-xs font-sans font-medium uppercase tracking-wider">
-          {new Date().getFullYear()} TIMELINE
+        <div className="px-2.5 py-1 bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] text-[var(--theme-ink-secondary)] rounded-[2px] text-xs font-sans font-medium uppercase tracking-wider">
+          {new Date().getFullYear()} {pick({ ko: '타임라인', en: 'TIMELINE', ja: 'タイムライン', id: 'LINIMASA' })}
         </div>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="bg-[#F7F8FA]">
-              <th className="px-4 py-3 border-b border-r border-[#E5E7EB] min-w-[180px] text-xs font-sans font-semibold uppercase tracking-wider text-[#6B7280]">
-                CATEGORY & TASK
+            <tr className="bg-[var(--theme-stage)]">
+              <th className="px-4 py-3 border-b border-r border-[var(--theme-border-hairline)] min-w-[180px] text-xs font-sans font-semibold uppercase tracking-wider text-[var(--theme-ink-secondary)]">
+                {pick({ ko: '카테고리 및 태스크', en: 'CATEGORY & TASK', ja: 'カテゴリ＆タスク', id: 'KATEGORI & TUGAS' })}
               </th>
               {months.map((m, i) => (
-                <th key={i} className="px-2 py-3 border-b border-r border-[#E5E7EB] text-[10px] font-sans font-semibold uppercase tracking-widest text-[#6B7280] text-center">
+                <th key={i} className="px-2 py-3 border-b border-r border-[var(--theme-border-hairline)] text-[10px] font-sans font-semibold uppercase tracking-widest text-[var(--theme-ink-secondary)] text-center">
                   {m.trim()}
                 </th>
               ))}
@@ -83,33 +83,33 @@ export const RoadmapChart = ({ schedule = '' }: { schedule?: string }) => {
           <tbody>
             {categoryNames.length === 0 ? (
               <tr>
-                <td colSpan={months.length + 1} className="p-8 text-center text-xs text-[#6B7280] font-sans">
-                  기획서에 등록된 월별 일정 데이터가 없습니다.
+                <td colSpan={months.length + 1} className="p-8 text-center text-xs text-[var(--theme-ink-secondary)] font-sans">
+                  {pick({ ko: '기획서에 등록된 월별 일정 데이터가 없습니다.', en: 'No monthly schedule data found in the specification.', ja: '仕様書に登録された月別スケジュールデータがありません。', id: 'Tidak ada data jadwal bulanan dalam spesifikasi.' })}
                 </td>
               </tr>
             ) : (
               categoryNames.map((cat, catIdx) => {
                 const tasks = categories[cat];
                 return tasks.map((task, taskIdx) => (
-                  <tr key={`${catIdx}-${taskIdx}`} className="border-b border-[#E5E7EB] hover:bg-[#F7F8FA]/60 transition-colors">
-                    <td className="px-4 py-2.5 border-r border-[#E5E7EB]">
-                      <div className="font-sans font-semibold text-xs text-[#111827] truncate max-w-[180px]">{task.name}</div>
-                      <div className="text-[10px] font-sans text-[#6B7280] mt-0.5 truncate">{cat} · {task.owner}</div>
+                  <tr key={`${catIdx}-${taskIdx}`} className="border-b border-[var(--theme-border-hairline)] hover:bg-[var(--theme-stage)]/60 transition-colors">
+                    <td className="px-4 py-2.5 border-r border-[var(--theme-border-hairline)]">
+                      <div className="font-sans font-semibold text-xs text-[var(--theme-ink-strong)] truncate max-w-[180px]">{task.name}</div>
+                      <div className="text-[10px] font-sans text-[var(--theme-ink-secondary)] mt-0.5 truncate">{cat} · {task.owner}</div>
                     </td>
                     {months.map((_, mIdx) => {
                       const isActive = mIdx >= task.startMonth && mIdx <= task.endMonth;
                       const isStart = mIdx === task.startMonth;
                       const isEnd = mIdx === task.endMonth;
                       return (
-                        <td key={mIdx} className="p-1 border-r border-[#E5E7EB]/60 text-center relative">
+                        <td key={mIdx} className="p-1 border-r border-[var(--theme-border-hairline)]/60 text-center relative">
                           {isActive && (
                             <div 
                               className={`h-5 flex items-center justify-center text-[10px] font-sans font-medium transition-all ${
-                                isStart ? 'rounded-l-md' : ''
-                              } ${isEnd ? 'rounded-r-md' : ''} ${
+                                isStart ? 'rounded-l-[2px]' : ''
+                              } ${isEnd ? 'rounded-r-[2px]' : ''} ${
                                 catIdx % 2 === 0 
-                                  ? 'bg-[#1E3A8A] text-white font-semibold' 
-                                  : 'bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/20'
+                                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold' 
+                                  : 'bg-[var(--theme-subtle)] text-[var(--theme-ink-strong)] border border-[var(--theme-border-strong)]'
                               }`}
                             >
                               {isStart && <span className="truncate px-1 text-[9px]">{task.name}</span>}

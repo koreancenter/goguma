@@ -21,6 +21,17 @@ export interface DomainBusinessRule {
   isLocked?: boolean;
 }
 
+export interface SectionAttachment {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+  extension: string;
+  extractedText: string;
+  base64Pdf?: string;
+  addedAt: string;
+}
+
 export interface FormInputEntity {
   id: string;                  // Composite key: `${projectId}_${chapterId}_${sectionKey}`
   projectId: string;           // Associated Project ID
@@ -29,6 +40,7 @@ export interface FormInputEntity {
   userRawInput: string;        // Raw natural language input from user
   refinedGuideText?: string;   // Refined 1-line guidance text from AI tier
   businessRules?: DomainBusinessRule[]; // Structured When-Then-Exception domain constraints
+  attachments?: SectionAttachment[];    // Local-first attached reference docs (md, txt, pdf, office)
   isLocked?: boolean;          // Spec Lock persistence flag
   lastSavedAt: string;         // ISO timestamp
 }

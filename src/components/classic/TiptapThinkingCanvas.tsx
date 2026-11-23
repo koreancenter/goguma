@@ -11,11 +11,18 @@ import ImageExtension from '@tiptap/extension-image';
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, Code,
   Heading1, Heading2, Heading3, List, ListOrdered, Quote, Minus, Undo, Redo,
-  Table as TableIcon, Trash2, Upload, X, Image as ImageIcon,
+  Table as TableIcon, Trash2, Upload, X, Image as ImageIcon, Paperclip, FileText,
   ArrowUpFromLine, ArrowDownFromLine, ArrowLeftFromLine, ArrowRightFromLine,
   ListMinus, SquareMinus, TableCellsMerge, TableCellsSplit,
   PanelTopDashed, Rows3, PanelTop, SeparatorHorizontal, Minimize2, RotateCcw
 } from 'lucide-react';
+import { SectionAttachment } from '../../types/schema';
+import {
+  SUPPORTED_ATTACHMENT_ACCEPT,
+  parseDocumentAttachment,
+  formatAttachmentBytes,
+} from '../../lib/documentAttachmentParser';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 // Extended Tiptap Table supporting visual style attributes persisted in HTML
 const StyledTiptapTable = TiptapTable.extend({
@@ -64,21 +71,36 @@ export interface TiptapThinkingCanvasProps {
   placeholder?: string;
   largeTextMode?: boolean;
   readOnly?: boolean;
+  attachments?: SectionAttachment[];
+  onAttachmentsChange?: (attachments: SectionAttachment[]) => void;
 }
 
 export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
   value,
   onChange,
-  placeholder = '생각나는 내용을 한 줄 또는 문장으로 서술해 주세요...',
+  placeholder,
   largeTextMode = false,
   readOnly = false,
+  attachments = [],
+  onAttachmentsChange,
 }) => {
+  const { pick } = useLanguage();
+  const resolvedPlaceholder =
+    placeholder ||
+    pick({
+      ko: '생각나는 내용을 한 줄 또는 문장으로 서술해 주세요...',
+      en: 'Describe what comes to mind in a line or paragraph...',
+      ja: '思いついた内容を1行または文章で記述してください...',
+      id: 'Tuliskan ide Anda dalam satu baris atau kalimat...',
+    });
   const isInternalUpdateRef = useRef(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [imageUrlInput, setImageUrlInput] = useState('');
-  const [isEditorFocused, setIsEditorFocused] = useState(false);
+  const [isParsingAttachment, setIsParsingAttachment] = useState(false);
+  const [attachmentError, setAttachmentError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
   const imagePopoverRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const floatingMenuRef = useRef<HTMLDivElement>(null);
@@ -91,12 +113,12 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
         codeBlock: {
           HTMLAttributes: {
-            class: 'bg-[#F6F5F1] p-4 rounded-none font-mono text-[16px] text-[#000000] border border-[#E4E2DC] my-4',
+            class: 'bg-[var(--theme-stage)] p-4 rounded-none font-mono text-[16px] text-[var(--theme-ink-strong)] border border-[var(--theme-border-hairline)] my-4',
           },
         },
         blockquote: {
           HTMLAttributes: {
-            class: 'border-y border-[#E4E2DC] py-4 px-3 my-5 font-sans text-[#52524E] not-italic',
+            class: 'border-y border-[var(--theme-border-hairline)] py-4 px-3 my-5 font-sans text-[var(--theme-ink-secondary)] not-italic',
           },
         },
         bulletList: {
@@ -111,9 +133,9 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
       }),
       Placeholder.configure({
-        placeholder,
+        placeholder: resolvedPlaceholder,
         emptyEditorClass:
-          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[#787772] before:float-left before:pointer-events-none before:h-0',
+          'is-editor-empty before:content-[attr(data-placeholder)] before:text-[var(--theme-ink-muted)] before:float-left before:pointer-events-none before:h-0',
       }),
       Underline,
       ImageExtension.configure({
@@ -132,12 +154,12 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       TableRow,
       TableHeader.configure({
         HTMLAttributes: {
-          class: 'tiptap-th bg-[#000000] text-[#FFFFFF] font-bold text-[16px] text-left p-3 border border-[#E4E2DC]',
+          class: 'tiptap-th bg-[var(--theme-active-bg)] text-[var(--theme-bar-text)] font-bold text-[16px] text-left p-3 border border-[var(--theme-border-hairline)]',
         },
       }),
       TableCell.configure({
         HTMLAttributes: {
-          class: 'tiptap-td p-3 text-[17px] text-[#2B2B29] border border-[#E4E2DC] bg-[#FFFFFF] align-top',
+          class: 'tiptap-td p-3 text-[17px] text-[var(--theme-ink-body)] border border-[var(--theme-border-hairline)] bg-[var(--theme-canvas)] align-top',
         },
       }),
     ],
@@ -146,7 +168,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     editorProps: {
       attributes: {
         class: `w-full bg-transparent py-1 outline-none font-sans transition-all duration-200 focus:outline-none ${
-          readOnly ? 'text-[#52524E] cursor-not-allowed select-text' : 'text-[#2B2B29]'
+          readOnly ? 'text-[var(--theme-ink-secondary)] cursor-not-allowed select-text' : 'text-[var(--theme-ink-body)]'
         } ${
           largeTextMode
             ? 'text-[21px] sm:text-[23px] leading-[1.85] tracking-[-0.01em] min-h-[240px]'
@@ -212,23 +234,47 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         return false;
       },
     },
-    onFocus: () => {
-      setIsEditorFocused(true);
-    },
-    onBlur: () => {
-      requestAnimationFrame(() => {
-        if (containerRef.current && containerRef.current.contains(document.activeElement)) {
-          return;
-        }
-        setIsEditorFocused(false);
-      });
-    },
     onUpdate: ({ editor }) => {
       isInternalUpdateRef.current = true;
       const content = editor.isEmpty ? '' : editor.getHTML();
       onChange(content);
     },
-  });
+  }, [resolvedPlaceholder]);
+
+  // Handle attaching reference documents (md, txt, pdf, office)
+  const handleDocumentFilesSelected = async (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0 || readOnly || !onAttachmentsChange) return;
+    setAttachmentError(null);
+    setIsParsingAttachment(true);
+    try {
+      const parsedList: SectionAttachment[] = [];
+      for (const file of Array.from(fileList)) {
+        const parsed = await parseDocumentAttachment(file);
+        parsedList.push(parsed);
+      }
+      if (parsedList.length > 0) {
+        onAttachmentsChange([...attachments, ...parsedList]);
+      }
+    } catch (err: any) {
+      setAttachmentError(
+        err?.message ||
+          pick({
+            ko: '파일을 읽는 중 오류가 발생했습니다.',
+            en: 'An error occurred while reading the file.',
+            ja: 'ファイルの読み込み中にエラーが発生しました。',
+            id: 'Terjadi kesalahan saat membaca file.',
+          })
+      );
+    } finally {
+      setIsParsingAttachment(false);
+    }
+  };
+
+  const handleRemoveAttachment = (attachmentId: string) => {
+    if (readOnly || !onAttachmentsChange) return;
+    setAttachmentError(null);
+    onAttachmentsChange(attachments.filter(att => att.id !== attachmentId));
+  };
 
   // Helper function to insert local image file
   const handleImageFileUpload = (file: File) => {
@@ -304,8 +350,6 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   // Suppress floating bubble menu while readOnly or image insertion popover is open
   const isMenuVisible = !readOnly && !isImageModalOpen && (isTableActive || hasTextSelection || isImageActive);
-  // Show top formatting toolbar only when editor is focused or a selection/popover is active
-  const isToolbarVisible = !readOnly && (isEditorFocused || hasTextSelection || isTableActive || isImageActive || isImageModalOpen);
 
   // Read active table visual style attributes
   const tableAttrs = editor && isTableActive ? editor.getAttributes('table') : {};
@@ -364,7 +408,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       try {
         const fromPos = view.coordsAtPos(sel.from);
         let top = fromPos.top - containerRect.top - menuHeight - 8;
-        if (top < 44) {
+        if (top < 58) {
           top = fromPos.bottom - containerRect.top + 8;
         }
         const left = Math.max(0, Math.min(fromPos.left - containerRect.left, Math.max(0, containerRect.width - menuWidth)));
@@ -382,7 +426,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         const selCenter = (startCoords.left + endCoords.right) / 2;
 
         let top = selTop - containerRect.top - menuHeight - 8;
-        if (top < 44) {
+        if (top < 58) {
           top = selBottom - containerRect.top + 8;
         }
 
@@ -415,7 +459,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       }
 
       const tableRect = domNode.getBoundingClientRect();
-      const spaceAboveTable = tableRect.top - containerRect.top - 44;
+      const spaceAboveTable = tableRect.top - containerRect.top - 58;
       let top: number;
 
       if (spaceAboveTable >= menuHeight + 8) {
@@ -423,7 +467,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       } else if (tableRect.height < 320) {
         top = tableRect.bottom - containerRect.top + 8;
       } else {
-        top = Math.max(46, cursorTop - containerRect.top - menuHeight - 8);
+        top = Math.max(58, cursorTop - containerRect.top - menuHeight - 8);
       }
 
       const maxLeft = Math.max(0, containerRect.width - Math.min(menuWidth, containerRect.width));
@@ -459,185 +503,204 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   if (!editor) {
     return (
-      <div className="w-full min-h-[200px] bg-transparent p-2 animate-pulse text-[#787772] text-[18px] font-sans">
-        에디터 초기화 중...
+      <div className="w-full min-h-[200px] bg-transparent p-2 animate-pulse text-[var(--theme-ink-muted)] text-[18px] font-sans">
+        {pick({
+          ko: '에디터 초기화 중...',
+          en: 'Initializing editor...',
+          ja: 'エディターを初期化中...',
+          id: 'Menginisialisasi editor...',
+        })}
       </div>
     );
   }
 
-  // Minimal unobtrusive formatting toolbar button helpers (Sejong Sharp Ink)
+  // Bright, high-contrast fixed formatting toolbar button helpers (Theme-Aware Sharp Ink)
   const topBtnClass = (active: boolean) =>
-    `p-2 rounded-none transition-colors cursor-pointer ${
+    `p-2 rounded-none transition-colors cursor-pointer flex items-center justify-center ${
       active
-        ? 'bg-[#000000] text-[#FFE600] font-bold'
-        : 'text-[#52524E] hover:bg-[#F6F5F1] hover:text-[#000000]'
-    }`;
+        ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-bold'
+        : 'text-[var(--theme-ink-strong)] hover:bg-[var(--theme-bar-accent)] hover:text-[var(--theme-bar-bg)]'
+    } disabled:opacity-35 disabled:cursor-not-allowed`;
 
   const bubbleBtnClass = (active = false, destructive = false) =>
     `p-2 rounded-none transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
       destructive
-        ? 'text-[#52524E] hover:bg-[#DC2626] hover:text-[#FFE600]'
+        ? 'text-[var(--theme-ink-strong)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
         : active
-        ? 'bg-[#000000] text-[#FFE600] font-bold'
-        : 'text-[#52524E] hover:bg-[#F6F5F1] hover:text-[#000000]'
+        ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-bold'
+        : 'text-[var(--theme-ink-strong)] hover:bg-[var(--theme-bar-accent)] hover:text-[var(--theme-bar-bg)]'
     }`;
 
   return (
     <div ref={containerRef} className="relative flex flex-col w-full">
-      {/* Contextual Minimal Formatting Toolbar (Hidden by default; reveals on focus or selection) */}
-      {isToolbarVisible && (
+      {/* Pinned High-Luminance Formatting Toolbar (Always fixed at editor top) */}
       <div
         onMouseDown={(e) => {
           if (!imagePopoverRef.current?.contains(e.target as Node)) {
             e.preventDefault();
           }
         }}
-        className="flex items-center gap-1 pb-3 mb-4 border-b border-[#E4E2DC] flex-wrap select-none animate-in fade-in duration-150"
+        className={`sticky top-0 z-20 flex items-center gap-1 px-3 py-2.5 mb-5 bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] border-b-[var(--theme-ink-strong)] flex-wrap select-none ${
+          readOnly ? 'opacity-50 pointer-events-none' : ''
+        }`}
       >
         {/* Text Formatting */}
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          disabled={!editor.can().chain().focus().toggleBold().run()}
+          disabled={readOnly || !editor.can().chain().focus().toggleBold().run()}
           className={topBtnClass(editor.isActive('bold'))}
-          title="굵게 (Ctrl+B)"
-          aria-label="굵게"
+          title={pick({ ko: '굵게 (Ctrl+B)', en: 'Bold (Ctrl+B)', ja: '太字 (Ctrl+B)', id: 'Tebal (Ctrl+B)' })}
+          aria-label={pick({ ko: '굵게', en: 'Bold', ja: '太字', id: 'Tebal' })}
         >
-          <Bold size={13} />
+          <Bold size={16} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          disabled={!editor.can().chain().focus().toggleItalic().run()}
+          disabled={readOnly || !editor.can().chain().focus().toggleItalic().run()}
           className={topBtnClass(editor.isActive('italic'))}
-          title="기울임 (Ctrl+I)"
-          aria-label="기울임"
+          title={pick({ ko: '기울임 (Ctrl+I)', en: 'Italic (Ctrl+I)', ja: '斜体 (Ctrl+I)', id: 'Miring (Ctrl+I)' })}
+          aria-label={pick({ ko: '기울임', en: 'Italic', ja: '斜体', id: 'Miring' })}
         >
-          <Italic size={13} />
+          <Italic size={16} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          disabled={!editor.can().chain().focus().toggleUnderline().run()}
+          disabled={readOnly || !editor.can().chain().focus().toggleUnderline().run()}
           className={topBtnClass(editor.isActive('underline'))}
-          title="밑줄 (Ctrl+U)"
-          aria-label="밑줄"
+          title={pick({ ko: '밑줄 (Ctrl+U)', en: 'Underline (Ctrl+U)', ja: '下線 (Ctrl+U)', id: 'Garis bawah (Ctrl+U)' })}
+          aria-label={pick({ ko: '밑줄', en: 'Underline', ja: '下線', id: 'Garis bawah' })}
         >
-          <UnderlineIcon size={13} />
+          <UnderlineIcon size={16} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          disabled={!editor.can().chain().focus().toggleStrike().run()}
+          disabled={readOnly || !editor.can().chain().focus().toggleStrike().run()}
           className={topBtnClass(editor.isActive('strike'))}
-          title="취소선"
-          aria-label="취소선"
+          title={pick({ ko: '취소선', en: 'Strikethrough', ja: '取り消し線', id: 'Coret' })}
+          aria-label={pick({ ko: '취소선', en: 'Strikethrough', ja: '取り消し線', id: 'Coret' })}
         >
-          <Strikethrough size={13} />
+          <Strikethrough size={16} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleCode().run()}
-          disabled={!editor.can().chain().focus().toggleCode().run()}
+          disabled={readOnly || !editor.can().chain().focus().toggleCode().run()}
           className={topBtnClass(editor.isActive('code'))}
-          title="인라인 코드"
-          aria-label="인라인 코드"
+          title={pick({ ko: '인라인 코드', en: 'Inline Code', ja: 'インラインコード', id: 'Kode Sebaris' })}
+          aria-label={pick({ ko: '인라인 코드', en: 'Inline Code', ja: 'インラインコード', id: 'Kode Sebaris' })}
         >
-          <Code size={13} />
+          <Code size={16} strokeWidth={2.2} />
         </button>
 
-        <span className="w-px h-3.5 bg-[#E5E7EB] mx-1" />
+        <span className="w-px h-4 bg-[var(--theme-border-strong)] mx-1.5" />
 
-        {/* Headings (Icon-only) */}
+        {/* Headings */}
         <button
           type="button"
+          disabled={readOnly}
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           className={topBtnClass(editor.isActive('heading', { level: 1 }))}
-          title="제목 1 (H1)"
-          aria-label="제목 1"
+          title={pick({ ko: '제목 1 (H1)', en: 'Heading 1 (H1)', ja: '見出し 1 (H1)', id: 'Judul 1 (H1)' })}
+          aria-label={pick({ ko: '제목 1', en: 'Heading 1', ja: '見出し 1', id: 'Judul 1' })}
         >
-          <Heading1 size={14} />
+          <Heading1 size={17} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
+          disabled={readOnly}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={topBtnClass(editor.isActive('heading', { level: 2 }))}
-          title="제목 2 (H2)"
-          aria-label="제목 2"
+          title={pick({ ko: '제목 2 (H2)', en: 'Heading 2 (H2)', ja: '見出し 2 (H2)', id: 'Judul 2 (H2)' })}
+          aria-label={pick({ ko: '제목 2', en: 'Heading 2', ja: '見出し 2', id: 'Judul 2' })}
         >
-          <Heading2 size={14} />
+          <Heading2 size={17} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
+          disabled={readOnly}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           className={topBtnClass(editor.isActive('heading', { level: 3 }))}
-          title="제목 3 (H3)"
-          aria-label="제목 3"
+          title={pick({ ko: '제목 3 (H3)', en: 'Heading 3 (H3)', ja: '見出し 3 (H3)', id: 'Judul 3 (H3)' })}
+          aria-label={pick({ ko: '제목 3', en: 'Heading 3', ja: '見出し 3', id: 'Judul 3' })}
         >
-          <Heading3 size={14} />
+          <Heading3 size={17} strokeWidth={2.2} />
         </button>
 
-        <span className="w-px h-3.5 bg-[#E5E7EB] mx-1" />
+        <span className="w-px h-4 bg-[var(--theme-border-strong)] mx-1.5" />
 
         {/* Lists & Blocks */}
         <button
           type="button"
+          disabled={readOnly}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={topBtnClass(editor.isActive('bulletList'))}
-          title="글머리 기호 목록"
-          aria-label="글머리 기호 목록"
+          title={pick({ ko: '글머리 기호 목록', en: 'Bullet List', ja: '箇条書きリスト', id: 'Daftar Poin' })}
+          aria-label={pick({ ko: '글머리 기호 목록', en: 'Bullet List', ja: '箇条書きリスト', id: 'Daftar Poin' })}
         >
-          <List size={13} />
+          <List size={16} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
+          disabled={readOnly}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={topBtnClass(editor.isActive('orderedList'))}
-          title="번호 매기기 목록"
-          aria-label="번호 매기기 목록"
+          title={pick({ ko: '번호 매기기 목록', en: 'Numbered List', ja: '番号付きリスト', id: 'Daftar Bernomor' })}
+          aria-label={pick({ ko: '번호 매기기 목록', en: 'Numbered List', ja: '番号付きリスト', id: 'Daftar Bernomor' })}
         >
-          <ListOrdered size={13} />
+          <ListOrdered size={16} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
+          disabled={readOnly}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={topBtnClass(editor.isActive('blockquote'))}
-          title="인용구"
-          aria-label="인용구"
+          title={pick({ ko: '인용구', en: 'Blockquote', ja: '引用', id: 'Kutipan' })}
+          aria-label={pick({ ko: '인용구', en: 'Blockquote', ja: '引用', id: 'Kutipan' })}
         >
-          <Quote size={13} />
+          <Quote size={16} strokeWidth={2.2} />
         </button>
 
         <button
           type="button"
+          disabled={readOnly}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           className={topBtnClass(false)}
-          title="구분선 삽입"
-          aria-label="구분선 삽입"
+          title={pick({ ko: '구분선 삽입', en: 'Insert Divider', ja: '区切り線を挿入', id: 'Sisipkan Pemisah' })}
+          aria-label={pick({ ko: '구분선 삽입', en: 'Insert Divider', ja: '区切り線を挿入', id: 'Sisipkan Pemisah' })}
         >
-          <Minus size={13} />
+          <Minus size={16} strokeWidth={2.2} />
         </button>
 
-        <span className="w-px h-3.5 bg-[#E5E7EB] mx-1" />
+        <span className="w-px h-4 bg-[var(--theme-border-strong)] mx-1.5" />
 
-        {/* Image Insertion (Icon-only + Single Non-overlapping Popover) */}
+        {/* Image Insertion */}
         <div ref={imagePopoverRef} className="relative">
           <button
             type="button"
+            disabled={readOnly}
             onClick={() => setIsImageModalOpen((prev) => !prev)}
             className={topBtnClass(isImageModalOpen || editor.isActive('image'))}
-            title="이미지 삽입 (업로드 · URL · 붙여넣기)"
-            aria-label="이미지 삽입"
+            title={pick({
+              ko: '이미지 삽입 (업로드 · URL · 붙여넣기)',
+              en: 'Insert Image (Upload · URL · Paste)',
+              ja: '画像を挿入 (アップロード · URL · 貼り付け)',
+              id: 'Sisipkan Gambar (Unggah · URL · Tempel)',
+            })}
+            aria-label={pick({ ko: '이미지 삽입', en: 'Insert Image', ja: '画像を挿入', id: 'Sisipkan Gambar' })}
           >
-            <ImageIcon size={13} />
+            <ImageIcon size={16} strokeWidth={2.2} />
           </button>
 
           <input
@@ -656,17 +719,17 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           />
 
           {isImageModalOpen && (
-            <div className="absolute left-0 top-full mt-2 z-50 w-80 bg-[#FFFFFF] border border-[#000000] rounded-none p-5 shadow-none flex flex-col gap-3.5 text-[16px] text-[#111111]">
-              <div className="flex items-center justify-between pb-2.5 border-b border-[#E4E2DC]">
-                <span className="font-sans text-[16px] tracking-tight text-[#000000] font-bold flex items-center gap-2">
-                  <ImageIcon size={15} className="text-[#000000]" />
-                  이미지 삽입
+            <div className="absolute left-0 top-full mt-2 z-50 w-80 bg-[var(--theme-elevated)] border border-[var(--theme-ink-strong)] rounded-none p-5 shadow-none flex flex-col gap-3.5 text-[16px] text-[var(--theme-ink-primary)]">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[var(--theme-border-hairline)]">
+                <span className="font-sans text-[16px] tracking-tight text-[var(--theme-ink-strong)] font-bold flex items-center gap-2">
+                  <ImageIcon size={15} className="text-[var(--theme-ink-strong)]" />
+                  {pick({ ko: '이미지 삽입', en: 'Insert Image', ja: '画像を挿入', id: 'Sisipkan Gambar' })}
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsImageModalOpen(false)}
-                  className="p-1.5 text-[#52524E] hover:text-[#000000] rounded-none cursor-pointer"
-                  aria-label="닫기"
+                  className="p-1.5 text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] rounded-none cursor-pointer"
+                  aria-label={pick({ ko: '닫기', en: 'Close', ja: '閉じる', id: 'Tutup' })}
                 >
                   <X size={15} />
                 </button>
@@ -675,10 +738,10 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-none bg-[#F6F5F1] border border-[#E4E2DC] hover:bg-[#000000] text-[#111111] hover:text-[#FFE600] hover:border-[#000000] font-bold text-[15px] transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-none bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] hover:bg-[var(--theme-active-bg)] text-[var(--theme-ink-primary)] hover:text-[var(--theme-active-text)] hover:border-[var(--theme-ink-strong)] font-bold text-[15px] transition-colors cursor-pointer"
               >
                 <Upload size={15} />
-                <span>파일 선택</span>
+                <span>{pick({ ko: '파일 선택', en: 'Choose File', ja: 'ファイルを選択', id: 'Pilih File' })}</span>
               </button>
 
               <form onSubmit={handleImageUrlSubmit} className="flex flex-col gap-2">
@@ -687,29 +750,51 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                     type="url"
                     value={imageUrlInput}
                     onChange={(e) => setImageUrlInput(e.target.value)}
-                    placeholder="https:// 이미지 URL"
-                    className="flex-1 bg-[#FFFFFF] border border-[#E4E2DC] focus:border-[#000000] focus:outline-none px-3.5 py-2.5 rounded-none text-[15px] text-[#111111] placeholder-[#787772] transition-colors"
+                    placeholder={pick({ ko: 'https:// 이미지 URL', en: 'https:// Image URL', ja: 'https:// 画像URL', id: 'https:// URL Gambar' })}
+                    className="flex-1 bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] focus:border-[var(--theme-ink-strong)] focus:outline-none px-3.5 py-2.5 rounded-none text-[15px] text-[var(--theme-ink-primary)] placeholder-[var(--theme-ink-muted)] transition-colors"
                   />
                   <button
                     type="submit"
                     disabled={!imageUrlInput.trim()}
-                    className="px-4 py-2.5 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] disabled:opacity-35 disabled:cursor-not-allowed text-white text-[15px] font-bold cursor-pointer transition-colors"
+                    className="px-4 py-2.5 rounded-none bg-[var(--theme-btn-bg)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] disabled:opacity-35 disabled:cursor-not-allowed text-[var(--theme-btn-text)] text-[15px] font-bold cursor-pointer transition-colors"
                   >
-                    삽입
+                    {pick({ ko: '삽입', en: 'Insert', ja: '挿入', id: 'Sisipkan' })}
                   </button>
                 </div>
               </form>
 
-              <p className="text-[14px] text-[#52524E] leading-relaxed">
-                캔버스 내 <kbd className="px-2 py-0.5 bg-[#F6F5F1] border border-[#E4E2DC] rounded-none text-[#000000] font-mono">Ctrl+V</kbd> 또는 드래그로도 삽입됩니다.
+              <p className="text-[14px] text-[var(--theme-ink-secondary)] leading-relaxed">
+                {pick({
+                  ko: (
+                    <>
+                      캔버스 내 <kbd className="px-2 py-0.5 bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-none text-[var(--theme-ink-strong)] font-mono">Ctrl+V</kbd> 또는 드래그로도 삽입됩니다.
+                    </>
+                  ),
+                  en: (
+                    <>
+                      You can also paste with <kbd className="px-2 py-0.5 bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-none text-[var(--theme-ink-strong)] font-mono">Ctrl+V</kbd> or drag &amp; drop.
+                    </>
+                  ),
+                  ja: (
+                    <>
+                      キャンバス内で <kbd className="px-2 py-0.5 bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-none text-[var(--theme-ink-strong)] font-mono">Ctrl+V</kbd> またはドラッグでも挿入できます。
+                    </>
+                  ),
+                  id: (
+                    <>
+                      Anda juga dapat menempel dengan <kbd className="px-2 py-0.5 bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-none text-[var(--theme-ink-strong)] font-mono">Ctrl+V</kbd> atau seret &amp; lepas.
+                    </>
+                  ),
+                })}
               </p>
             </div>
           )}
         </div>
 
-        {/* Table Insertion (Icon-only; contextual actions live in the floating menu) */}
+        {/* Table Insertion */}
         <button
           type="button"
+          disabled={readOnly}
           onClick={() => {
             if (!isTableActive) {
               editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
@@ -718,10 +803,14 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             }
           }}
           className={topBtnClass(isTableActive)}
-          title={isTableActive ? '표 편집 중 (플로팅 메뉴 사용)' : '표 삽입 (3×3)'}
-          aria-label="표 삽입"
+          title={
+            isTableActive
+              ? pick({ ko: '표 편집 중 (플로팅 메뉴 사용)', en: 'Editing Table (Use Floating Menu)', ja: '表を編集中 (フローティングメニューを使用)', id: 'Mengedit Tabel (Gunakan Menu Mengambang)' })
+              : pick({ ko: '표 삽입 (3×3)', en: 'Insert Table (3×3)', ja: '表を挿入 (3×3)', id: 'Sisipkan Tabel (3×3)' })
+          }
+          aria-label={pick({ ko: '표 삽입', en: 'Insert Table', ja: '表を挿入', id: 'Sisipkan Tabel' })}
         >
-          <TableIcon size={15} />
+          <TableIcon size={16} strokeWidth={2.2} />
         </button>
 
         {/* History: Undo / Redo */}
@@ -729,26 +818,25 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
           <button
             type="button"
             onClick={() => editor.chain().focus().undo().run()}
-            disabled={!editor.can().undo()}
-            className="p-2 rounded-none text-[#52524E] hover:bg-[#F6F5F1] hover:text-[#000000] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
-            title="실행 취소 (Ctrl+Z)"
-            aria-label="실행 취소"
+            disabled={readOnly || !editor.can().undo()}
+            className={topBtnClass(false)}
+            title={pick({ ko: '실행 취소 (Ctrl+Z)', en: 'Undo (Ctrl+Z)', ja: '元に戻す (Ctrl+Z)', id: 'Urungkan (Ctrl+Z)' })}
+            aria-label={pick({ ko: '실행 취소', en: 'Undo', ja: '元に戻す', id: 'Urungkan' })}
           >
-            <Undo size={15} />
+            <Undo size={16} strokeWidth={2.2} />
           </button>
           <button
             type="button"
             onClick={() => editor.chain().focus().redo().run()}
-            disabled={!editor.can().redo()}
-            className="p-2 rounded-none text-[#52524E] hover:bg-[#F6F5F1] hover:text-[#000000] disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
-            title="다시 실행 (Ctrl+Y)"
-            aria-label="다시 실행"
+            disabled={readOnly || !editor.can().redo()}
+            className={topBtnClass(false)}
+            title={pick({ ko: '다시 실행 (Ctrl+Y)', en: 'Redo (Ctrl+Y)', ja: 'やり直し (Ctrl+Y)', id: 'Ulangi (Ctrl+Y)' })}
+            aria-label={pick({ ko: '다시 실행', en: 'Redo', ja: 'やり直し', id: 'Ulangi' })}
           >
-            <Redo size={15} />
+            <Redo size={16} strokeWidth={2.2} />
           </button>
         </div>
       </div>
-      )}
 
       {/* Contextual Minimalist Icon-Only Floating Bubble Menu */}
       {isMenuVisible && floatingMenuPos && (
@@ -762,7 +850,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
             // Keep active editor selection when clicking floating controls
             e.preventDefault();
           }}
-          className="absolute z-40 flex items-center gap-0.5 p-1.5 bg-[#FFFFFF] border border-[#000000] rounded-none select-none transition-all duration-150 tiptap-table-bubble-menu max-w-full overflow-x-auto no-scrollbar"
+          className="absolute z-40 flex items-center gap-0.5 p-1.5 bg-[var(--theme-elevated)] border border-[var(--theme-ink-strong)] rounded-none select-none transition-all duration-150 tiptap-table-bubble-menu max-w-full overflow-x-auto no-scrollbar"
         >
           {/* Context 1: Selected Image Actions */}
           {isImageActive && (
@@ -771,8 +859,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className={bubbleBtnClass(false)}
-                title="다른 이미지로 교체"
-                aria-label="이미지 교체"
+                title={pick({ ko: '다른 이미지로 교체', en: 'Replace Image', ja: '別の画像に置換', id: 'Ganti Gambar' })}
+                aria-label={pick({ ko: '이미지 교체', en: 'Replace Image', ja: '画像を置換', id: 'Ganti Gambar' })}
               >
                 <Upload size={13} />
               </button>
@@ -780,8 +868,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => editor.chain().focus().deleteSelection().run()}
                 className={bubbleBtnClass(false, true)}
-                title="이미지 삭제"
-                aria-label="이미지 삭제"
+                title={pick({ ko: '이미지 삭제', en: 'Delete Image', ja: '画像を削除', id: 'Hapus Gambar' })}
+                aria-label={pick({ ko: '이미지 삭제', en: 'Delete Image', ja: '画像を削除', id: 'Hapus Gambar' })}
               >
                 <Trash2 size={13} />
               </button>
@@ -796,8 +884,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 disabled={!editor.can().chain().focus().toggleBold().run()}
                 className={bubbleBtnClass(editor.isActive('bold'))}
-                title="굵게 (Ctrl+B)"
-                aria-label="굵게"
+                title={pick({ ko: '굵게 (Ctrl+B)', en: 'Bold (Ctrl+B)', ja: '太字 (Ctrl+B)', id: 'Tebal (Ctrl+B)' })}
+                aria-label={pick({ ko: '굵게', en: 'Bold', ja: '太字', id: 'Tebal' })}
               >
                 <Bold size={13} />
               </button>
@@ -806,8 +894,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 onClick={() => editor.chain().focus().toggleItalic().run()}
                 disabled={!editor.can().chain().focus().toggleItalic().run()}
                 className={bubbleBtnClass(editor.isActive('italic'))}
-                title="기울임 (Ctrl+I)"
-                aria-label="기울임"
+                title={pick({ ko: '기울임 (Ctrl+I)', en: 'Italic (Ctrl+I)', ja: '斜体 (Ctrl+I)', id: 'Miring (Ctrl+I)' })}
+                aria-label={pick({ ko: '기울임', en: 'Italic', ja: '斜体', id: 'Miring' })}
               >
                 <Italic size={13} />
               </button>
@@ -816,8 +904,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
                 disabled={!editor.can().chain().focus().toggleUnderline().run()}
                 className={bubbleBtnClass(editor.isActive('underline'))}
-                title="밑줄 (Ctrl+U)"
-                aria-label="밑줄"
+                title={pick({ ko: '밑줄 (Ctrl+U)', en: 'Underline (Ctrl+U)', ja: '下線 (Ctrl+U)', id: 'Garis bawah (Ctrl+U)' })}
+                aria-label={pick({ ko: '밑줄', en: 'Underline', ja: '下線', id: 'Garis bawah' })}
               >
                 <UnderlineIcon size={13} />
               </button>
@@ -826,8 +914,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 onClick={() => editor.chain().focus().toggleStrike().run()}
                 disabled={!editor.can().chain().focus().toggleStrike().run()}
                 className={bubbleBtnClass(editor.isActive('strike'))}
-                title="취소선"
-                aria-label="취소선"
+                title={pick({ ko: '취소선', en: 'Strikethrough', ja: '取り消し線', id: 'Coret' })}
+                aria-label={pick({ ko: '취소선', en: 'Strikethrough', ja: '取り消し線', id: 'Coret' })}
               >
                 <Strikethrough size={13} />
               </button>
@@ -836,8 +924,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 onClick={() => editor.chain().focus().toggleCode().run()}
                 disabled={!editor.can().chain().focus().toggleCode().run()}
                 className={bubbleBtnClass(editor.isActive('code'))}
-                title="인라인 코드"
-                aria-label="인라인 코드"
+                title={pick({ ko: '인라인 코드', en: 'Inline Code', ja: 'インラインコード', id: 'Kode Sebaris' })}
+                aria-label={pick({ ko: '인라인 코드', en: 'Inline Code', ja: 'インラインコード', id: 'Kode Sebaris' })}
               >
                 <Code size={13} />
               </button>
@@ -852,8 +940,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => editor.chain().focus().addRowBefore().run()}
                 className={bubbleBtnClass(false)}
-                title="위에 행 추가"
-                aria-label="위에 행 추가"
+                title={pick({ ko: '위에 행 추가', en: 'Add Row Above', ja: '上に行を追加', id: 'Tambah Baris di Atas' })}
+                aria-label={pick({ ko: '위에 행 추가', en: 'Add Row Above', ja: '上に行を追加', id: 'Tambah Baris di Atas' })}
               >
                 <ArrowUpFromLine size={13} />
               </button>
@@ -861,8 +949,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => editor.chain().focus().addRowAfter().run()}
                 className={bubbleBtnClass(false)}
-                title="아래에 행 추가"
-                aria-label="아래에 행 추가"
+                title={pick({ ko: '아래에 행 추가', en: 'Add Row Below', ja: '下に行を追加', id: 'Tambah Baris di Bawah' })}
+                aria-label={pick({ ko: '아래에 행 추가', en: 'Add Row Below', ja: '下に行を追加', id: 'Tambah Baris di Bawah' })}
               >
                 <ArrowDownFromLine size={13} />
               </button>
@@ -870,21 +958,21 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => editor.chain().focus().deleteRow().run()}
                 className={bubbleBtnClass(false, true)}
-                title="현재 행 삭제"
-                aria-label="현재 행 삭제"
+                title={pick({ ko: '현재 행 삭제', en: 'Delete Row', ja: '現在の行を削除', id: 'Hapus Baris Ini' })}
+                aria-label={pick({ ko: '현재 행 삭제', en: 'Delete Row', ja: '現在の行を削除', id: 'Hapus Baris Ini' })}
               >
                 <ListMinus size={13} />
               </button>
 
-              <span className="w-px h-3.5 bg-[#E5E7EB] mx-0.5 shrink-0" />
+              <span className="w-px h-3.5 bg-[var(--theme-border-hairline)] mx-0.5 shrink-0" />
 
               {/* Column Management */}
               <button
                 type="button"
                 onClick={() => editor.chain().focus().addColumnBefore().run()}
                 className={bubbleBtnClass(false)}
-                title="왼쪽에 열 추가"
-                aria-label="왼쪽에 열 추가"
+                title={pick({ ko: '왼쪽에 열 추가', en: 'Add Column Left', ja: '左に列を追加', id: 'Tambah Kolom di Kiri' })}
+                aria-label={pick({ ko: '왼쪽에 열 추가', en: 'Add Column Left', ja: '左に列を追加', id: 'Tambah Kolom di Kiri' })}
               >
                 <ArrowLeftFromLine size={13} />
               </button>
@@ -892,8 +980,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => editor.chain().focus().addColumnAfter().run()}
                 className={bubbleBtnClass(false)}
-                title="오른쪽에 열 추가"
-                aria-label="오른쪽에 열 추가"
+                title={pick({ ko: '오른쪽에 열 추가', en: 'Add Column Right', ja: '右に列を追加', id: 'Tambah Kolom di Kanan' })}
+                aria-label={pick({ ko: '오른쪽에 열 추가', en: 'Add Column Right', ja: '右に列を追加', id: 'Tambah Kolom di Kanan' })}
               >
                 <ArrowRightFromLine size={13} />
               </button>
@@ -901,13 +989,13 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => editor.chain().focus().deleteColumn().run()}
                 className={bubbleBtnClass(false, true)}
-                title="현재 열 삭제"
-                aria-label="현재 열 삭제"
+                title={pick({ ko: '현재 열 삭제', en: 'Delete Column', ja: '現在の列を削除', id: 'Hapus Kolom Ini' })}
+                aria-label={pick({ ko: '현재 열 삭제', en: 'Delete Column', ja: '現在の列を削除', id: 'Hapus Kolom Ini' })}
               >
                 <SquareMinus size={13} />
               </button>
 
-              <span className="w-px h-3.5 bg-[#E5E7EB] mx-0.5 shrink-0" />
+              <span className="w-px h-3.5 bg-[var(--theme-border-hairline)] mx-0.5 shrink-0" />
 
               {/* Cell Merge / Split / Header Row */}
               <button
@@ -915,8 +1003,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 onClick={() => editor.chain().focus().mergeCells().run()}
                 disabled={!editor.can().mergeCells()}
                 className={`${bubbleBtnClass(false)} disabled:opacity-25 disabled:cursor-not-allowed`}
-                title="선택된 셀 병합"
-                aria-label="셀 병합"
+                title={pick({ ko: '선택된 셀 병합', en: 'Merge Cells', ja: '選択したセルを結合', id: 'Gabungkan Sel' })}
+                aria-label={pick({ ko: '셀 병합', en: 'Merge Cells', ja: 'セルを結合', id: 'Gabungkan Sel' })}
               >
                 <TableCellsMerge size={13} />
               </button>
@@ -925,8 +1013,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 onClick={() => editor.chain().focus().splitCell().run()}
                 disabled={!editor.can().splitCell()}
                 className={`${bubbleBtnClass(false)} disabled:opacity-25 disabled:cursor-not-allowed`}
-                title="병합된 셀 분할"
-                aria-label="셀 분할"
+                title={pick({ ko: '병합된 셀 분할', en: 'Split Cell', ja: '結合セルを分割', id: 'Pisahkan Sel' })}
+                aria-label={pick({ ko: '셀 분할', en: 'Split Cell', ja: 'セルを分割', id: 'Pisahkan Sel' })}
               >
                 <TableCellsSplit size={13} />
               </button>
@@ -934,21 +1022,21 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => editor.chain().focus().toggleHeaderRow().run()}
                 className={bubbleBtnClass(false)}
-                title="상단 헤더 행 켜기/끄기"
-                aria-label="헤더 행 토글"
+                title={pick({ ko: '상단 헤더 행 켜기/끄기', en: 'Toggle Header Row', ja: 'ヘッダー行の切り替え', id: 'Alihkan Baris Header' })}
+                aria-label={pick({ ko: '헤더 행 토글', en: 'Toggle Header Row', ja: 'ヘッダー行の切り替え', id: 'Alihkan Baris Header' })}
               >
                 <PanelTopDashed size={13} />
               </button>
 
-              <span className="w-px h-3.5 bg-[#E5E7EB] mx-0.5 shrink-0" />
+              <span className="w-px h-3.5 bg-[var(--theme-border-hairline)] mx-0.5 shrink-0" />
 
               {/* Visual Style Toggles */}
               <button
                 type="button"
                 onClick={() => toggleTableStyleAttr('striped')}
                 className={bubbleBtnClass(isStriped)}
-                title="줄무늬 행 스타일"
-                aria-label="줄무늬 행 스타일"
+                title={pick({ ko: '줄무늬 행 스타일', en: 'Striped Rows', ja: 'ストライプ行スタイル', id: 'Baris Bergaris' })}
+                aria-label={pick({ ko: '줄무늬 행 스타일', en: 'Striped Rows', ja: 'ストライプ行スタイル', id: 'Baris Bergaris' })}
               >
                 <Rows3 size={13} />
               </button>
@@ -956,8 +1044,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => toggleTableStyleAttr('headerHighlight')}
                 className={bubbleBtnClass(isHeaderHighlighted)}
-                title="헤더 강조 스타일"
-                aria-label="헤더 강조 스타일"
+                title={pick({ ko: '헤더 강조 스타일', en: 'Highlight Header', ja: 'ヘッダー強調スタイル', id: 'Sorot Header' })}
+                aria-label={pick({ ko: '헤더 강조 스타일', en: 'Highlight Header', ja: 'ヘッダー強調スタイル', id: 'Sorot Header' })}
               >
                 <PanelTop size={13} />
               </button>
@@ -965,8 +1053,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => toggleTableStyleAttr('minimalBorder')}
                 className={bubbleBtnClass(isMinimalBorder)}
-                title="미니멀 수평선 스타일"
-                aria-label="미니멀 수평선 스타일"
+                title={pick({ ko: '미니멀 수평선 스타일', en: 'Minimal Borders', ja: 'ミニマル水平線スタイル', id: 'Garis Minimalis' })}
+                aria-label={pick({ ko: '미니멀 수평선 스타일', en: 'Minimal Borders', ja: 'ミニマル水平線スタイル', id: 'Garis Minimalis' })}
               >
                 <SeparatorHorizontal size={13} />
               </button>
@@ -974,8 +1062,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                 type="button"
                 onClick={() => toggleTableStyleAttr('compact')}
                 className={bubbleBtnClass(isCompact)}
-                title="컴팩트 밀도 스타일"
-                aria-label="컴팩트 밀도 스타일"
+                title={pick({ ko: '컴팩트 밀도 스타일', en: 'Compact Density', ja: 'コンパクト密度スタイル', id: 'Kepadatan Ringkas' })}
+                aria-label={pick({ ko: '컴팩트 밀도 스타일', en: 'Compact Density', ja: 'コンパクト密度スタイル', id: 'Kepadatan Ringkas' })}
               >
                 <Minimize2 size={13} />
               </button>
@@ -985,22 +1073,22 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
                   type="button"
                   onClick={resetTableStyles}
                   className={bubbleBtnClass(false)}
-                  title="기본 표 스타일로 초기화"
-                  aria-label="스타일 초기화"
+                  title={pick({ ko: '기본 표 스타일로 초기화', en: 'Reset Table Style', ja: '基本の表スタイルに戻す', id: 'Reset Gaya Tabel' })}
+                  aria-label={pick({ ko: '스타일 초기화', en: 'Reset Style', ja: 'スタイルを初期化', id: 'Reset Gaya' })}
                 >
                   <RotateCcw size={12} />
                 </button>
               )}
 
-              <span className="w-px h-3.5 bg-[#E5E7EB] mx-0.5 shrink-0" />
+              <span className="w-px h-3.5 bg-[var(--theme-border-hairline)] mx-0.5 shrink-0" />
 
               {/* Delete Table */}
               <button
                 type="button"
                 onClick={() => editor.chain().focus().deleteTable().run()}
                 className={bubbleBtnClass(false, true)}
-                title="표 전체 삭제"
-                aria-label="표 삭제"
+                title={pick({ ko: '표 전체 삭제', en: 'Delete Table', ja: '表全体を削除', id: 'Hapus Tabel' })}
+                aria-label={pick({ ko: '표 삭제', en: 'Delete Table', ja: '表を削除', id: 'Hapus Tabel' })}
               >
                 <Trash2 size={13} />
               </button>
@@ -1011,6 +1099,126 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
       {/* Tiptap Editor Content Mount */}
       <EditorContent editor={editor} className="tiptap-editor-wrap focus:outline-none" />
+
+      {/* Bottom Document Attachment Footer (md, txt, pdf, office) */}
+      <div className="mt-6 pt-4 border-t border-[var(--theme-border-hairline)] space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              ref={attachmentInputRef}
+              type="file"
+              multiple
+              accept={SUPPORTED_ATTACHMENT_ACCEPT}
+              className="hidden"
+              onChange={(e) => {
+                handleDocumentFilesSelected(e.target.files);
+                e.target.value = '';
+              }}
+            />
+
+            <button
+              type="button"
+              disabled={readOnly || isParsingAttachment || !onAttachmentsChange}
+              onClick={() => attachmentInputRef.current?.click()}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-none text-[15px] font-bold border transition-colors whitespace-nowrap ${
+                readOnly
+                  ? 'border-[var(--theme-border-hairline)] text-[var(--theme-ink-muted)] bg-[var(--theme-stage)] cursor-not-allowed'
+                  : 'border-[var(--theme-ink-strong)] text-[var(--theme-ink-strong)] bg-[var(--theme-canvas)] hover:bg-[var(--theme-bar-accent)] hover:text-[var(--theme-bar-bg)] cursor-pointer disabled:opacity-45'
+              }`}
+              title={pick({
+                ko: 'md, txt, pdf, office(docx, xlsx, pptx) 파일 첨부 후 AI 정제로 명세화',
+                en: 'Attach md, txt, pdf, or office (docx, xlsx, pptx) files to refine into spec',
+                ja: 'md, txt, pdf, office(docx, xlsx, pptx)ファイルを添付してAI精製で仕様化',
+                id: 'Lampirkan file md, txt, pdf, atau office (docx, xlsx, pptx) untuk disempurnakan AI',
+              })}
+            >
+              <Paperclip size={15} strokeWidth={2.2} />
+              <span>
+                {isParsingAttachment
+                  ? pick({ ko: '파일 분석 중...', en: 'Parsing file...', ja: 'ファイルを解析中...', id: 'Menganalisis file...' })
+                  : pick({ ko: '파일 첨부', en: 'Attach File', ja: 'ファイルを添付', id: 'Lampirkan File' })}
+              </span>
+            </button>
+
+            <span className="text-[14px] text-[var(--theme-ink-secondary)] font-medium">
+              md · txt · pdf · office (docx, xlsx, pptx)
+            </span>
+          </div>
+
+          {attachments.length > 0 && (
+            <span className="text-[14px] font-bold text-[var(--theme-ink-strong)] tabular-nums">
+              {pick({
+                ko: `첨부 ${attachments.length}건 · AI 정제 반영 대기`,
+                en: `${attachments.length} attached · Ready for AI refinement`,
+                ja: `添付 ${attachments.length}件 · AI精製反映待ち`,
+                id: `${attachments.length} terlampir · Siap disempurnakan AI`,
+              })}
+            </span>
+          )}
+        </div>
+
+        {attachmentError && (
+          <div className="px-4 py-2.5 bg-[var(--theme-danger-bg)] border border-[var(--theme-danger)] text-[var(--theme-danger)] text-[15px] font-bold flex items-center justify-between gap-3">
+            <span>{attachmentError}</span>
+            <button
+              type="button"
+              onClick={() => setAttachmentError(null)}
+              className="p-1 text-[var(--theme-danger)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] cursor-pointer"
+              aria-label={pick({ ko: '오류 닫기', en: 'Dismiss error', ja: 'エラーを閉じる', id: 'Tutup pesan galat' })}
+            >
+              <X size={15} />
+            </button>
+          </div>
+        )}
+
+        {attachments.length > 0 && (
+          <div className="space-y-2">
+            {attachments.map((att) => (
+              <div
+                key={att.id}
+                className="flex items-center justify-between gap-3 px-4 py-3 bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-none"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <FileText size={16} className="text-[var(--theme-ink-strong)] shrink-0" />
+                  <div className="min-w-0 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                    <span className="text-[13px] font-extrabold tracking-[0.08em] uppercase text-[var(--theme-ink-strong)]">
+                      {att.extension}
+                    </span>
+                    <span className="text-[var(--theme-ink-muted)]" aria-hidden="true">·</span>
+                    <span className="text-[15px] font-bold text-[var(--theme-ink-primary)] truncate max-w-[260px] sm:max-w-sm">
+                      {att.name}
+                    </span>
+                    <span className="text-[var(--theme-ink-muted)]" aria-hidden="true">·</span>
+                    <span className="text-[14px] text-[var(--theme-ink-secondary)] tabular-nums">
+                      {formatAttachmentBytes(att.size)}
+                    </span>
+                    <span className="text-[var(--theme-ink-muted)]" aria-hidden="true">·</span>
+                    <span className="text-[14px] text-[var(--theme-ink-secondary)]">
+                      {att.extractedText?.trim()
+                        ? pick({ ko: '본문 추출 완료', en: 'Text extracted', ja: '本文抽出完了', id: 'Teks diekstrak' })
+                        : att.base64Pdf
+                        ? pick({ ko: 'PDF 원문 준비됨', en: 'PDF source ready', ja: 'PDF原文準備完了', id: 'Sumber PDF siap' })
+                        : pick({ ko: '메타데이터 첨부됨', en: 'Metadata attached', ja: 'メタデータ添付済み', id: 'Metadata terlampir' })}
+                    </span>
+                  </div>
+                </div>
+
+                {!readOnly && onAttachmentsChange && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveAttachment(att.id)}
+                    className="p-1.5 text-[var(--theme-ink-secondary)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer shrink-0"
+                    title={pick({ ko: '첨부 파일 제거', en: 'Remove attachment', ja: '添付ファイルを削除', id: 'Hapus lampiran' })}
+                    aria-label={pick({ ko: `${att.name} 제거`, en: `Remove ${att.name}`, ja: `${att.name} を削除`, id: `Hapus ${att.name}` })}
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

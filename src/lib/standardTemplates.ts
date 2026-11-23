@@ -1,4 +1,4 @@
-import { SitePlan } from '../types';
+import { Language, SitePlan } from '../types';
 
 export interface StandardPrdTemplate {
   id: string;
@@ -396,22 +396,350 @@ export const STANDARD_PRD_TEMPLATES: StandardPrdTemplate[] = [
   }
 ];
 
+interface TemplateTranslationPatch {
+  badge: string;
+  name: string;
+  subtitle: string;
+  description: string;
+  targetUser: string;
+  keyFeatures: string[];
+  screens: { name: string; purpose: string }[];
+  slogan?: string;
+}
+
+const TEMPLATE_TRANSLATIONS: Record<string, Record<Exclude<Language, 'ko'>, TemplateTranslationPatch>> = {
+  'saas-web-platform': {
+    en: {
+      badge: 'Modern Web SaaS',
+      name: 'Modern Cloud SaaS Web Platform',
+      subtitle: 'Real-time Collaborative Workspace & Project Dashboard',
+      description: 'Enterprise-grade SaaS web application featuring token-based auth, real-time metrics monitoring, RBAC permissions, and virtualized data grids.',
+      targetUser: 'Engineering Teams, Product Managers, Data Analysts',
+      keyFeatures: [
+        'SSO & JWT user authentication with RBAC permissions',
+        'Real-time KPI telemetry and interactive metrics charts',
+        'High-performance data grid with multi-criteria filtering',
+        'REST/GraphQL API integrations and WebSocket live streams',
+      ],
+      screens: [
+        { name: 'Workspace Dashboard', purpose: 'Monitor live KPIs, recent activity logs, and system health' },
+        { name: 'Projects & Resources', purpose: 'Large-scale data grid with multi-sort and filter search' },
+        { name: 'Team & Permissions', purpose: 'Role-based access controls and member invitations' },
+        { name: 'API Keys & Webhooks', purpose: 'Manage API keys and secure webhook event subscriptions' },
+      ],
+      slogan: 'High-speed real-time collaboration and intuitive data control',
+    },
+    ja: {
+      badge: 'モダンWeb SaaS',
+      name: 'モダンクラウドSaaS Webプラットフォーム',
+      subtitle: 'リアルタイム協業ワークスペース＆プロジェクトダッシュボード',
+      description: 'トークン認証、リアルタイム指標モニタリング、RBAC権限制御、仮想化データグリッドを備えたエンタープライズSaaS Webアプリケーション。',
+      targetUser: 'エンジニアリングチーム、プロダクトマネージャー、データアナリスト',
+      keyFeatures: [
+        'SSOおよびJWTベースのユーザー認証・権限管理',
+        'リアルタイムKPIモニタリングとインタラクティブチャート',
+        '高速データテーブルと複合条件フィルタ検索',
+        'REST/GraphQL API連携およびWebSocketリアルタイムイベント',
+      ],
+      screens: [
+        { name: 'ワークスペース概要', purpose: '主要KPI指標・最新アクティビティ・システム稼働状況の監視' },
+        { name: 'プロジェクト一覧', purpose: '大容量データグリッドと複合ソート・検索対応' },
+        { name: 'チーム権限管理', purpose: 'ロールベースのアクセス制御とメンバー招待' },
+        { name: 'APIキー＆Webhook', purpose: '外部連携キーの発行とセキュアWebhook管理' },
+      ],
+      slogan: '高速リアルタイム協業と直感的なデータ統制',
+    },
+    id: {
+      badge: 'SaaS Web Modern',
+      name: 'Platform Web SaaS Cloud Modern',
+      subtitle: 'Ruang Kerja Kolaboratif Real-Time & Dasbor Proyek',
+      description: 'Aplikasi web SaaS kelas enterprise dengan autentikasi token, pemantauan metrik real-time, kontrol akses berbasis peran (RBAC), dan grid data berkinerja tinggi.',
+      targetUser: 'Tim Teknik, Manajer Produk, Analis Data',
+      keyFeatures: [
+        'Autentikasi SSO & JWT dengan kontrol akses RBAC',
+        'Pemantauan KPI real-time & grafik metrik interaktif',
+        'Tabel data berkinerja tinggi dengan filter multi-kondisi',
+        'Integrasi REST/GraphQL API dan event WebSocket langsung',
+      ],
+      screens: [
+        { name: 'Dasbor Ruang Kerja', purpose: 'Memantau KPI inti, log aktivitas terbaru, dan status sistem' },
+        { name: 'Daftar Proyek & Aset', purpose: 'Grid data skala besar dengan pengurutan dan filter cepat' },
+        { name: 'Manajemen Tim & Peran', purpose: 'Pengaturan hak akses berbasis peran dan undangan anggota' },
+        { name: 'Kunci API & Webhook', purpose: 'Kelola kunci integrasi dan webhook event aman' },
+      ],
+      slogan: 'Kolaborasi real-time berkinerja tinggi dan kendali data intuitif',
+    },
+  },
+  'ecommerce-web': {
+    en: {
+      badge: 'E-Commerce Web',
+      name: 'Responsive Premium E-Commerce Web',
+      subtitle: 'Product Catalog, Persistent Cart & One-Click Checkout Pipeline',
+      description: 'Mobile and desktop optimized storefront featuring faceted product discovery, client-cached cart state, and streamlined checkout orchestration.',
+      targetUser: 'Online Shoppers & Store Operations Managers',
+      keyFeatures: [
+        'Faceted search and multi-attribute category filtering',
+        'Persistent responsive mini-cart drawer',
+        'Streamlined checkout and payment gateway integration',
+        'Live order status tracking and digital receipts',
+      ],
+      screens: [
+        { name: 'Storefront Home', purpose: 'Curated collections and promotional showcase' },
+        { name: 'Product Catalog', purpose: 'Multi-attribute filtering and high-res product gallery' },
+        { name: 'Cart & Checkout', purpose: 'Order summary, promo codes, and payment processing' },
+        { name: 'Order Details', purpose: 'Payment receipt and live shipping milestone tracking' },
+      ],
+      slogan: 'Effortless browsing and frictionless checkout experience',
+    },
+    ja: {
+      badge: 'ECプラットフォーム',
+      name: 'レスポンシブ・プレミアムECウェブ',
+      subtitle: '商品カタログ、カート管理、ワンクリック決済パイプライン',
+      description: 'モバイルとデスクトップに最適化された商品検索、ローカル永続カート、スムーズな決済フローを備えたモダンECサイト。',
+      targetUser: 'オンライン購入者およびストア運営管理者',
+      keyFeatures: [
+        'ファセット検索とカテゴリ絞り込みエンジン',
+        'クライアントキャッシュ対応レスポンシブカート',
+        'ワンクリック決済と注文生成パイプライン',
+        'リアルタイム配送ステータス追跡・注文履歴管理',
+      ],
+      screens: [
+        { name: 'ストアホーム', purpose: '注目コレクションとプロモーションのキュレーション' },
+        { name: '商品カタログ', purpose: '多属性フィルタリングと高精細ギャラリーグリッド' },
+        { name: 'カート＆チェックアウト', purpose: '注文確認・クーポン適用・決済ゲートウェイ連携' },
+        { name: '注文詳細履歴', purpose: '領収書発行およびリアルタイム配送追跡' },
+      ],
+      slogan: '無駄のない商品探索とシームレスな決済体験',
+    },
+    id: {
+      badge: 'Web E-Commerce',
+      name: 'Web E-Commerce Premium Responsif',
+      subtitle: 'Katalog Produk, Keranjang & Alur Checkout Satu Klik',
+      description: 'Layanan belanja web responsif dengan penemuan produk berfaset, manajemen keranjang lokal, dan alur pembayaran terpadu.',
+      targetUser: 'Pembeli Online & Manajer Operasional Toko',
+      keyFeatures: [
+        'Pencarian faset & filter kategori multi-atribut',
+        'Keranjang belanja responsif berbasis cache lokal',
+        'Checkout ringkas & integrasi gateway pembayaran',
+        'Pelacakan status pesanan dan riwayat pengiriman real-time',
+      ],
+      screens: [
+        { name: 'Beranda Toko', purpose: 'Kurasi koleksi unggulan dan etalase promosi' },
+        { name: 'Katalog Produk', purpose: 'Filter multi-atribut dan galeri produk resolusi tinggi' },
+        { name: 'Keranjang & Checkout', purpose: 'Ringkasan pesanan, kupon, dan integrasi pembayaran' },
+        { name: 'Detail Pesanan', purpose: 'Bukti pembayaran dan pelacakan tahapan pengiriman' },
+      ],
+      slogan: 'Eksplorasi produk bersih dengan pengalaman checkout mulus',
+    },
+  },
+  'enterprise-portal': {
+    en: {
+      badge: 'Enterprise Portal',
+      name: 'Enterprise Admin & Governance Portal',
+      subtitle: 'Organization Management, Audit Logs & Operations Console',
+      description: 'High-trust internal portal for unified account governance, immutable access audit logs, pipeline telemetry, and bulk data operations.',
+      targetUser: 'IT Administrators, Security Officers, Business Ops',
+      keyFeatures: [
+        'Enterprise SSO & strict session expiration controls',
+        'Granular CRUD access policies per user role',
+        'Immutable real-time audit logs for all admin actions',
+        'Bulk data editing and CSV/Excel compliance exports',
+      ],
+      screens: [
+        { name: 'Admin Console Home', purpose: 'Active workforce metrics, security alerts, and health' },
+        { name: 'Users & Accounts', purpose: 'Assign roles, enforce 2FA, and manage lifecycles' },
+        { name: 'Security & Audit Logs', purpose: 'Inspect access IPs, mutations, and diff history' },
+        { name: 'System Policies', purpose: 'Configure global policies, backups, and infra settings' },
+      ],
+      slogan: 'Rigorous security governance and high-efficiency ops console',
+    },
+    ja: {
+      badge: 'エンタープライズポータル',
+      name: '企業向け統合管理ポータル＆コンソール',
+      subtitle: '組織管理、監査ログ、統計分析、運用コントロールパネル',
+      description: '組織アカウントの統合管理、アクセス統制監査ログ、データパイプライン監視、一括処理を備えた高信頼管理ポータル。',
+      targetUser: '社内システム管理者、情報セキュリティ責任者、運用チーム',
+      keyFeatures: [
+        'エンタープライズSSOとセッション有効期限制御',
+        'ユーザー別きめ細かなCRUDアクセス制御',
+        '全管理操作のリアルタイム不変監査ログ',
+        '大容量データ一括更新およびCSV/Excelエクスポート',
+      ],
+      screens: [
+        { name: '管理コンソールホーム', purpose: '全社アクティブ指標・セキュリティ通知・稼働監視' },
+        { name: 'ユーザー・アカウント管理', purpose: '権限付与・2FA強制・無効化制御' },
+        { name: 'セキュリティ監査ログ', purpose: 'アクセスIP・操作履歴・変更前後差分ログ' },
+        { name: 'システム全体設定', purpose: '全社ポリシー・バックアップ・インフラ設定管理' },
+      ],
+      slogan: '厳格なセキュリティ統制と高効率な運用コンソール',
+    },
+    id: {
+      badge: 'Portal Enterprise',
+      name: 'Portal Admin & Tata Kelola Terpadu',
+      subtitle: 'Manajemen Organisasi, Log Audit & Konsol Operasional',
+      description: 'Portal admin perusahaan untuk pengelolaan akun terpusat, log audit kepatuhan, pemantauan sistem, dan pemrosesan data massal.',
+      targetUser: 'Administrator Sistem, Petugas Keamanan, Tim Operasional',
+      keyFeatures: [
+        'SSO Enterprise & kontrol kedaluwarsa sesi ketat',
+        'Kontrol akses CRUD terperinci berdasarkan peran',
+        'Log audit real-time untuk seluruh aktivitas admin',
+        'Pembaruan data massal dan ekspor CSV/Excel',
+      ],
+      screens: [
+        { name: 'Beranda Konsol Admin', purpose: 'Metrik pengguna aktif, peringatan keamanan, dan kesehatan sistem' },
+        { name: 'Pengguna & Akun', purpose: 'Penetapan peran, wajib 2FA, dan manajemen siklus akun' },
+        { name: 'Log Keamanan & Audit', purpose: 'Riwayat IP akses, tindakan admin, dan perbandingan data' },
+        { name: 'Pengaturan Sistem', purpose: 'Kebijakan global, jadwal cadangan, dan parameter infrastruktur' },
+      ],
+      slogan: 'Kontrol keamanan ketat dan konsol operasional berkinerja tinggi',
+    },
+  },
+  'content-media-web': {
+    en: {
+      badge: 'Content Media',
+      name: 'Digital Publishing & Editorial Media Web',
+      subtitle: 'Block Editor, Content Curation & Subscriber Platform',
+      description: 'Readability-first digital publication with markdown/block authoring, automated SEO & OpenGraph tags, and tag-indexed archives.',
+      targetUser: 'Writers, Editors, Media Subscribers & Curators',
+      keyFeatures: [
+        'Minimalist Markdown & rich-text block editor',
+        'Automated SEO metadata and OpenGraph social cards',
+        'Tag-based discovery and instant full-text search',
+        'Subscriber memberships and newsletter dispatch',
+      ],
+      screens: [
+        { name: 'Editorial Home Feed', purpose: 'Latest featured articles and trending topic curation' },
+        { name: 'Article Reader', purpose: 'Distraction-free responsive typography reading view' },
+        { name: 'Editor Studio', purpose: 'Live-preview Markdown & block authoring studio' },
+        { name: 'Topic Archive', purpose: 'Categorized article archive and tag search' },
+      ],
+      slogan: 'Unrivaled readability and deeply focused reading experience',
+    },
+    ja: {
+      badge: 'コンテンツメディア',
+      name: 'デジタルパブリッシング＆メディアWeb',
+      subtitle: '記事エディター、メディアキュレーション、購読プラットフォーム',
+      description: 'タイポグラフィの可読性を極めたデジタルメディア、Markdown/ブロックエディター、タグキュレーションおよび購読会員Webアプリ。',
+      targetUser: '執筆者、編集者、メディア購読者、キュレーター',
+      keyFeatures: [
+        'ミニマルMarkdown＆リッチテキストブロックエディター',
+        'SEO最適化およびOpenGraphソーシャルカード自動生成',
+        'タグベースの記事探索と全文検索エンジン',
+        '購読メンバーシップとニュースレター配信連携',
+      ],
+      screens: [
+        { name: 'メディアホームフィード', purpose: '最新おすすめ記事と注目トピックのキュレーション' },
+        { name: '記事リーダー', purpose: '集中できるレスポンシブ・タイポグラフィ閲覧画面' },
+        { name: 'エディタースタジオ', purpose: 'リアルタイムプレビュー対応Markdownエディター' },
+        { name: 'トピックアーカイブ', purpose: 'カテゴリ別記事アーカイブおよび検索' },
+      ],
+      slogan: '究極の可読性と没入感あるコンテンツ体験',
+    },
+    id: {
+      badge: 'Media Konten',
+      name: 'Web Penerbitan Digital & Media Editorial',
+      subtitle: 'Editor Artikel, Kurasi Media & Platform Berlangganan',
+      description: 'Media digital berfokus pada keterbacaan tipografi dengan editor Markdown/blok, optimasi SEO otomatis, dan arsip berbasis tag.',
+      targetUser: 'Penulis, Editor, Pelanggan Media & Kurator',
+      keyFeatures: [
+        'Editor blok Markdown & teks kaya minimalis',
+        'Optimasi SEO & kartu OpenGraph otomatis',
+        'Eksplorasi artikel berbasis tag dan pencarian teks penuh',
+        'Keanggotaan pelanggan dan integrasi buletin',
+      ],
+      screens: [
+        { name: 'Beranda Umpan Media', purpose: 'Kurasi artikel unggulan terbaru dan topik populer' },
+        { name: 'Pembaca Artikel', purpose: 'Tampilan baca responsif bebas gangguan' },
+        { name: 'Studio Editor', purpose: 'Editor Markdown/blok dengan pratinjau langsung' },
+        { name: 'Arsip Topik', purpose: 'Arsip artikel berdasarkan kategori dan pencarian' },
+      ],
+      slogan: 'Keterbacaan terbaik dan pengalaman membaca yang imersif',
+    },
+  },
+};
+
+export function getLocalizedTemplates(language: Language): StandardPrdTemplate[] {
+  if (language === 'ko') return STANDARD_PRD_TEMPLATES;
+  return STANDARD_PRD_TEMPLATES.map((tmpl) => {
+    const patch = TEMPLATE_TRANSLATIONS[tmpl.id]?.[language] || TEMPLATE_TRANSLATIONS[tmpl.id]?.en;
+    if (!patch) return tmpl;
+    return {
+      ...tmpl,
+      badge: patch.badge,
+      name: patch.name,
+      subtitle: patch.subtitle,
+      description: patch.description,
+      targetUser: patch.targetUser,
+      keyFeatures: patch.keyFeatures,
+      screens: tmpl.screens.map((sc, idx) => ({
+        ...sc,
+        name: patch.screens[idx]?.name || sc.name,
+        purpose: patch.screens[idx]?.purpose || sc.purpose,
+      })),
+      plan: {
+        ...tmpl.plan,
+        metadata: {
+          ...tmpl.plan.metadata,
+          projectName: patch.name,
+          title: patch.name,
+          slogan: patch.slogan || tmpl.plan.metadata?.slogan || '',
+          subtitle: patch.subtitle,
+          description: patch.description,
+        },
+        navigation: tmpl.plan.navigation
+          ? {
+              ...tmpl.plan.navigation,
+              pageStructure: tmpl.plan.navigation.pageStructure.map((p, idx) => ({
+                ...p,
+                name: patch.screens[idx]?.name || p.name,
+                purpose: patch.screens[idx]?.purpose || p.purpose,
+              })),
+            }
+          : undefined,
+      },
+      formInputs: {
+        ...tmpl.formInputs,
+        project_name: patch.name,
+        target_user: patch.targetUser,
+        core_value: patch.slogan || tmpl.formInputs.core_value,
+        feature_list: patch.keyFeatures.join(', '),
+      },
+    };
+  });
+}
+
 /**
  * Convert user's raw text idea into a structured standard plan for web development.
  */
-export function parseRawIdeaToStandardPlan(rawText: string): StandardPrdTemplate {
+export function parseRawIdeaToStandardPlan(rawText: string, language: Language = 'ko'): StandardPrdTemplate {
   const text = rawText.toLowerCase();
+  const list = getLocalizedTemplates(language);
 
-  if (text.includes('커머스') || text.includes('쇼핑') || text.includes('스토어') || text.includes('결제') || text.includes('상품') || text.includes('장바구니') || text.includes('주문')) {
-    return STANDARD_PRD_TEMPLATES[1]; // E-commerce
+  if (
+    text.includes('커머스') || text.includes('쇼핑') || text.includes('스토어') || text.includes('결제') || text.includes('상품') || text.includes('장바구니') || text.includes('주문') ||
+    text.includes('commerce') || text.includes('shop') || text.includes('store') || text.includes('cart') || text.includes('checkout') ||
+    text.includes('ec') || text.includes('ショップ') || text.includes('決済') || text.includes('カート') ||
+    text.includes('toko') || text.includes('belanja') || text.includes('keranjang')
+  ) {
+    return list[1]; // E-commerce
   }
-  if (text.includes('어드민') || text.includes('관리자') || text.includes('포털') || text.includes('사내') || text.includes('보안') || text.includes('감사') || text.includes('인트라넷')) {
-    return STANDARD_PRD_TEMPLATES[2]; // Enterprise Portal
+  if (
+    text.includes('어드민') || text.includes('관리자') || text.includes('포털') || text.includes('사내') || text.includes('보안') || text.includes('감사') || text.includes('인트라넷') ||
+    text.includes('admin') || text.includes('portal') || text.includes('enterprise') || text.includes('audit') || text.includes('governance') ||
+    text.includes('管理') || text.includes('ポータル') || text.includes('監査') ||
+    text.includes('perusahaan') || text.includes('tata kelola')
+  ) {
+    return list[2]; // Enterprise Portal
   }
-  if (text.includes('미디어') || text.includes('블로그') || text.includes('콘텐츠') || text.includes('아티클') || text.includes('에디터') || text.includes('뉴스') || text.includes('매거진')) {
-    return STANDARD_PRD_TEMPLATES[3]; // Media & Publishing
+  if (
+    text.includes('미디어') || text.includes('블로그') || text.includes('콘텐츠') || text.includes('아티클') || text.includes('에디터') || text.includes('뉴스') || text.includes('매거진') ||
+    text.includes('media') || text.includes('blog') || text.includes('article') || text.includes('magazine') || text.includes('publish') ||
+    text.includes('メディア') || text.includes('ブログ') || text.includes('記事') ||
+    text.includes('artikel') || text.includes('penerbitan')
+  ) {
+    return list[3]; // Media & Publishing
   }
 
   // Default fallback to Modern SaaS Web Platform
-  return STANDARD_PRD_TEMPLATES[0];
+  return list[0];
 }

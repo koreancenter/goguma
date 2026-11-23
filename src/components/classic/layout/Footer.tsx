@@ -1,35 +1,52 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Github, ChevronDown } from 'lucide-react';
-
-const RELATED_SITES = [
-  { label: 'nettodot.org', url: 'https://nettodot.org' },
-  { label: 'eerum.goguma.app', url: 'https://eerum.goguma.app' },
-  { label: 'vibevault.goguma.app', url: 'https://vibevault.goguma.app' },
-  { label: 'vibecalendar.goguma.app', url: 'https://vibecalendar.goguma.app' },
-  { label: 'koreancenter.net', url: 'https://koreancenter.net' },
-  { label: 'slide.koreancenter.net', url: 'https://slide.koreancenter.net' },
-  { label: 'projects.koreancenter.net', url: 'https://projects.koreancenter.net' },
-  { label: 'aipodium.net', url: 'https://aipodium.net' },
-];
-
-const FOOTER_POLICY_LINKS = [
-  { label: '개인정보처리방침', to: '/privacy' },
-  { label: '이용약관', to: '/terms' },
-  { label: '오픈소스 라이선스', to: '/license' },
-  { label: '인공지능 정책', to: '/ai-policy' },
-  { label: '커뮤니티 이용 규약', to: '/community-terms' },
-  { label: '쿠키 정책', to: '/cookies' },
-];
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function Footer() {
   const location = useLocation();
+  const { pick } = useLanguage();
   const [isSiteMenuOpen, setIsSiteMenuOpen] = useState(false);
-  const [selectedSite, setSelectedSite] = useState<{ label: string; url: string } | null>(null);
+  const [selectedSiteUrl, setSelectedSiteUrl] = useState<string | null>(null);
   const siteDropdownRef = useRef<HTMLDivElement>(null);
   const year = new Date().getFullYear();
 
-  const isOnLegalPage = FOOTER_POLICY_LINKS.some((item) => item.to === location.pathname);
+  const relatedSites = [
+    { label: 'Net-to-Dot', url: 'https://nettodot.org' },
+    {
+      label: pick({ ko: '한국센터글로벌네트워크', en: 'Korean Center Global Network', ja: '韓国センターグローバルネットワーク', id: 'Korean Center Global Network' }),
+      url: 'https://koreancenter.net',
+    },
+    { label: 'Global K-Edu Community', url: 'https://kedu.koreancenter.net' },
+    {
+      label: pick({ ko: '인도네시아센터', en: 'Indonesia Center', ja: 'インドネシアセンター', id: 'Indonesia Center' }),
+      url: 'https://indonesiacenter.net',
+    },
+    {
+      label: pick({ ko: '인도네시아 창업지원센터', en: 'Indonesia Startup Support Center', ja: 'インドネシア創業支援センター', id: 'Pusat Dukungan Startup Indonesia' }),
+      url: 'https://visas.indonesiacenter.net',
+    },
+    {
+      label: pick({ ko: '인도네시아 언어 연수', en: 'Indonesia BIPA Language Program', ja: 'インドネシア語学研修 (BIPA)', id: 'Program Bahasa Indonesia (BIPA)' }),
+      url: 'https://bipa.indonesiacenter.net',
+    },
+    {
+      label: pick({ ko: '인도네시아 기업 연수', en: 'Indonesia Corporate Retreat', ja: 'インドネシア企業研修', id: 'Program Retret Korporat Indonesia' }),
+      url: 'https://retreat.indonesiacenter.net',
+    },
+  ];
+
+  const footerPolicyLinks = [
+    { label: pick({ ko: '개인정보처리방침', en: 'Privacy Policy', ja: 'プライバシーポリシー', id: 'Kebijakan Privasi' }), to: '/privacy' },
+    { label: pick({ ko: '이용약관', en: 'Terms of Service', ja: '利用規約', id: 'Ketentuan Layanan' }), to: '/terms' },
+    { label: pick({ ko: '오픈소스 라이선스', en: 'Open Source License', ja: 'OSSライセンス', id: 'Lisensi Open Source' }), to: '/license' },
+    { label: pick({ ko: '인공지능 정책', en: 'AI Policy', ja: 'AIポリシー', id: 'Kebijakan AI' }), to: '/ai-policy' },
+    { label: pick({ ko: '커뮤니티 이용 규약', en: 'Community Guidelines', ja: 'コミュニティ規約', id: 'Pedoman Komunitas' }), to: '/community-terms' },
+    { label: pick({ ko: '쿠키 정책', en: 'Cookie Policy', ja: 'Cookieポリシー', id: 'Kebijakan Cookie' }), to: '/cookies' },
+  ];
+
+  const selectedSite = relatedSites.find((s) => s.url === selectedSiteUrl) || null;
+  const isOnLegalPage = footerPolicyLinks.some((item) => item.to === location.pathname);
 
   useEffect(() => {
     if (!isSiteMenuOpen) return;
@@ -52,13 +69,15 @@ export default function Footer() {
   }, [isSiteMenuOpen]);
 
   return (
-    <footer className="w-full bg-[#FFFFFF] text-[#111111] font-sans border-t border-[#E4E2DC]">
-      {/* Top Black Utility Menu Strip — Links directly to dedicated Sejong-style pages */}
-      <div className="w-full bg-[#000000] text-[#FFFFFF]">
+    <footer className="no-print w-full bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] font-sans border-t border-[var(--theme-border-hairline)]">
+      {/* Top Utility Menu Strip */}
+      <div className="w-full bg-[var(--theme-bar-bg)] text-[var(--theme-bar-text)] border-b border-[var(--theme-border-hairline)]/30">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 min-h-14 py-2.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-          {/* 6 Editorial Policy Links */}
-          <nav className="flex flex-wrap items-center gap-x-6 sm:gap-x-8 gap-y-2" aria-label="푸터 정책 메뉴">
-            {FOOTER_POLICY_LINKS.map((item) => {
+          <nav
+            className="flex flex-wrap items-center gap-x-6 sm:gap-x-8 gap-y-2"
+            aria-label={pick({ ko: '푸터 정책 메뉴', en: 'Footer legal links', ja: 'フッター規約メニュー', id: 'Menu kebijakan footer' })}
+          >
+            {footerPolicyLinks.map((item) => {
               const isHighlighted = isOnLegalPage
                 ? location.pathname === item.to
                 : item.to === '/privacy';
@@ -69,8 +88,8 @@ export default function Footer() {
                   to={item.to}
                   className={`text-[13px] sm:text-[14px] font-bold tracking-tight rounded-none transition-colors whitespace-nowrap ${
                     isHighlighted
-                      ? 'text-[#FFE600]'
-                      : 'text-[#FFFFFF] hover:text-[#FFE600]'
+                      ? 'text-[var(--theme-bar-accent)]'
+                      : 'text-[var(--theme-bar-text)] hover:text-[var(--theme-bar-accent)]'
                   }`}
                 >
                   {item.label}
@@ -79,7 +98,6 @@ export default function Footer() {
             })}
           </nav>
 
-          {/* Right Social Media Icon: GitHub (Matches Sejong SNS Position) */}
           <div className="flex items-center shrink-0">
             <a
               href="https://github.com/koreancenter/goguma.git"
@@ -87,7 +105,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
               title="GitHub: https://github.com/koreancenter/goguma.git"
-              className="p-1.5 -mr-1.5 text-[#FFFFFF] hover:text-[#FFE600] rounded-none transition-colors inline-flex items-center justify-center"
+              className="p-1.5 -mr-1.5 text-[var(--theme-bar-text)] hover:text-[var(--theme-bar-accent)] rounded-none transition-colors inline-flex items-center justify-center"
             >
               <Github size={18} />
             </a>
@@ -95,7 +113,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Middle White Band: Emblem & Company Info | Net-to-Dot Movement Member | Related Sites */}
+      {/* Middle Band: Emblem & Company Info | Net-to-Dot Movement Member | Related Sites */}
       <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-10 pb-8">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           {/* Left: Architectural Mark + Company Info */}
@@ -108,24 +126,50 @@ export default function Footer() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <rect x="2" y="2" width="44" height="44" stroke="#000000" strokeWidth="2.5" />
+                <rect x="2" y="2" width="44" height="44" stroke="var(--theme-ink-strong)" strokeWidth="2.5" />
                 <path
                   d="M15 29C15 22.4 21.2 15 29.6 15C32.4 15 34 16.8 34 19.6C34 26.8 27.4 33 19.6 33C16.6 33 15 31.4 15 29Z"
-                  fill="#000000"
+                  fill="var(--theme-ink-strong)"
                 />
-                <path d="M29 15C30.4 12.6 32.6 11.2 35 11" stroke="#DC2626" strokeWidth="2.5" strokeLinecap="square" />
+                <path d="M29 15C30.4 12.6 32.6 11.2 35 11" stroke="var(--theme-seal)" strokeWidth="2.5" strokeLinecap="square" />
               </svg>
             </div>
 
-            <div className="text-[13px] text-[#3F3F3C] leading-[1.75] space-y-0.5 font-medium">
-              <p className="text-[#000000] font-bold">
-                한국센터글로벌네트워크 지식관리실 고구마앱팀
+            <div className="text-[13px] text-[var(--theme-ink-body)] leading-[1.75] space-y-0.5 font-medium">
+              <p className="text-[var(--theme-ink-strong)] font-bold">
+                {pick({
+                  ko: '한국센터글로벌네트워크 지식관리실 고구마앱팀',
+                  en: 'Korean Center Global Network · Knowledge Management · GOGUMA App Team',
+                  ja: '韓国センターグローバルネットワーク 知識管理室 GOGUMAアプリチーム',
+                  id: 'Korean Center Global Network · Divisi Manajemen Pengetahuan · Tim Aplikasi GOGUMA',
+                })}
               </p>
-              <p>경기도 부천시 원미구 역곡로 19번길 108동 803호</p>
+              <p>
+                {pick({
+                  ko: '대한민국 경기도 부천시 | 인도네시아 발리',
+                  en: 'Bucheon, South Korea | Bali, Indonesia',
+                  ja: '大韓民国 京畿道富川市 | インドネシア バリ',
+                  id: 'Bucheon, Korea Selatan | Bali, Indonesia',
+                })}
+              </p>
               <p className="flex flex-wrap items-center gap-x-4 gap-y-0.5">
-                <span>사업자등록번호 141-82-83410</span>
-                <span className="text-[#CBC8BF]" aria-hidden="true">|</span>
-                <span>통신판매업신고번호 제2025-부천원미-1090호</span>
+                <span>
+                  {pick({
+                    ko: '사업자등록번호 141-82-83410',
+                    en: 'Business Reg. No. 141-82-83410',
+                    ja: '事業者登録番号 141-82-83410',
+                    id: 'No. Registrasi Bisnis 141-82-83410',
+                  })}
+                </span>
+                <span className="text-[var(--theme-border-strong)]" aria-hidden="true">|</span>
+                <span>
+                  {pick({
+                    ko: '통신판매업신고번호 제2025-부천원미-1090호',
+                    en: 'E-Commerce Permit No. 2025-BucheonWonmi-1090',
+                    ja: '通信販売業届出 第2025-富川遠美-1090号',
+                    id: 'Izin Niaga Elektronik No. 2025-BucheonWonmi-1090',
+                  })}
+                </span>
               </p>
             </div>
           </div>
@@ -136,7 +180,7 @@ export default function Footer() {
               href="https://nettodot.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 border border-[#E4E2DC] hover:border-[#000000] px-4 py-2.5 rounded-none transition-colors"
+              className="group inline-flex items-center gap-3 border border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)] px-4 py-2.5 rounded-none transition-colors"
             >
               <svg
                 width="26"
@@ -144,39 +188,43 @@ export default function Footer() {
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="shrink-0 text-[#000000]"
+                className="shrink-0 text-[var(--theme-ink-strong)]"
                 aria-hidden="true"
               >
                 <line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" strokeWidth="1.5" />
                 <line x1="4" y1="18" x2="20" y2="18" stroke="currentColor" strokeWidth="1.5" />
                 <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="1.5" />
-                <circle cx="5" cy="6" r="2.2" fill="#000000" />
-                <circle cx="19" cy="6" r="2.2" fill="#000000" />
-                <circle cx="5" cy="18" r="2.2" fill="#000000" />
-                <circle cx="19" cy="18" r="2.2" fill="#DC2626" />
+                <circle cx="5" cy="6" r="2.2" fill="var(--theme-ink-strong)" />
+                <circle cx="19" cy="6" r="2.2" fill="var(--theme-ink-strong)" />
+                <circle cx="5" cy="18" r="2.2" fill="var(--theme-ink-strong)" />
+                <circle cx="19" cy="18" r="2.2" fill="var(--theme-seal)" />
               </svg>
               <div className="leading-tight">
-                <div className="text-[13px] font-extrabold tracking-[-0.02em] text-[#000000] group-hover:text-[#DC2626] transition-colors">
+                <div className="text-[13px] font-extrabold tracking-[-0.02em] text-[var(--theme-ink-strong)] group-hover:text-[var(--theme-seal)] transition-colors">
                   Net-to-Dot
                 </div>
-                <div className="text-[11px] font-bold tracking-[0.06em] uppercase text-[#52524E]">
+                <div className="text-[11px] font-bold tracking-[0.06em] uppercase text-[var(--theme-ink-secondary)]">
                   Movement Member
                 </div>
               </div>
             </a>
 
-            <div ref={siteDropdownRef} className="relative flex items-stretch h-11 border border-[#111111]/35 bg-[#FFFFFF] rounded-none">
+            <div ref={siteDropdownRef} className="relative flex items-stretch h-11 border border-[var(--theme-border-strong)] bg-[var(--theme-elevated)] rounded-none">
               <button
                 type="button"
                 onClick={() => setIsSiteMenuOpen(prev => !prev)}
-                className="min-w-[205px] sm:min-w-[225px] px-4 flex items-center justify-between gap-3 text-[13px] font-bold text-[#111111] hover:bg-[#F6F5F1] transition-colors cursor-pointer rounded-none"
+                className="min-w-[225px] sm:min-w-[250px] px-4 flex items-center justify-between gap-3 text-[13px] font-bold text-[var(--theme-ink-primary)] hover:bg-[var(--theme-stage)] transition-colors cursor-pointer rounded-none"
                 aria-haspopup="listbox"
                 aria-expanded={isSiteMenuOpen}
               >
-                <span className="truncate">{selectedSite ? selectedSite.label : '관련 사이트'}</span>
+                <span className="truncate">
+                  {selectedSite
+                    ? selectedSite.label
+                    : pick({ ko: '관련 사이트', en: 'Related Sites', ja: '関連サイト', id: 'Situs Terkait' })}
+                </span>
                 <ChevronDown
                   size={15}
-                  className={`shrink-0 text-[#52524E] transition-transform ${isSiteMenuOpen ? 'rotate-180' : ''}`}
+                  className={`shrink-0 text-[var(--theme-ink-secondary)] transition-transform ${isSiteMenuOpen ? 'rotate-180' : ''}`}
                 />
               </button>
 
@@ -185,43 +233,43 @@ export default function Footer() {
                   href={selectedSite.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 border-l border-[#111111]/35 flex items-center justify-center text-[13px] font-bold text-[#111111] hover:bg-[#000000] hover:text-[#FFE600] transition-colors rounded-none whitespace-nowrap"
+                  className="px-4 border-l border-[var(--theme-border-strong)] flex items-center justify-center text-[13px] font-bold text-[var(--theme-ink-primary)] hover:bg-[var(--theme-active-bg)] hover:text-[var(--theme-active-text)] transition-colors rounded-none whitespace-nowrap"
                 >
-                  이동
+                  {pick({ ko: '이동', en: 'Go', ja: '移動', id: 'Buka' })}
                 </a>
               ) : (
                 <button
                   type="button"
                   onClick={() => setIsSiteMenuOpen(true)}
-                  className="px-4 border-l border-[#111111]/35 flex items-center justify-center text-[13px] font-bold text-[#111111] hover:bg-[#000000] hover:text-[#FFE600] transition-colors cursor-pointer rounded-none whitespace-nowrap"
+                  className="px-4 border-l border-[var(--theme-border-strong)] flex items-center justify-center text-[13px] font-bold text-[var(--theme-ink-primary)] hover:bg-[var(--theme-active-bg)] hover:text-[var(--theme-active-text)] transition-colors cursor-pointer rounded-none whitespace-nowrap"
                 >
-                  이동
+                  {pick({ ko: '이동', en: 'Go', ja: '移動', id: 'Buka' })}
                 </button>
               )}
 
               {isSiteMenuOpen && (
                 <div
                   role="listbox"
-                  aria-label="관련 사이트 목록"
-                  className="absolute left-0 right-0 bottom-full mb-1 bg-[#FFFFFF] border border-[#000000] shadow-xl z-50 rounded-none divide-y divide-[#E4E2DC] max-h-72 overflow-y-auto"
+                  aria-label={pick({ ko: '관련 사이트 목록', en: 'Related sites list', ja: '関連サイト一覧', id: 'Daftar situs terkait' })}
+                  className="absolute left-0 right-0 bottom-full mb-1 bg-[var(--theme-elevated)] border border-[var(--theme-ink-strong)] shadow-xl z-50 rounded-none divide-y divide-[var(--theme-border-hairline)] max-h-80 overflow-y-auto"
                 >
-                  {RELATED_SITES.map((site) => (
+                  {relatedSites.map((site) => (
                     <button
-                      key={site.label}
+                      key={site.url}
                       type="button"
                       role="option"
-                      aria-selected={selectedSite?.label === site.label}
+                      aria-selected={selectedSiteUrl === site.url}
                       onClick={() => {
-                        setSelectedSite(site);
+                        setSelectedSiteUrl(site.url);
                         setIsSiteMenuOpen(false);
                       }}
-                      className={`w-full px-4 py-2.5 text-left text-[13px] font-bold transition-colors cursor-pointer rounded-none flex items-center justify-between ${
-                        selectedSite?.label === site.label
-                          ? 'bg-[#000000] text-[#FFE600]'
-                          : 'text-[#111111] hover:bg-[#000000] hover:text-[#FFE600]'
+                      className={`w-full px-4 py-2.5 text-left text-[13px] font-bold transition-colors cursor-pointer rounded-none flex items-center justify-between whitespace-nowrap ${
+                        selectedSiteUrl === site.url
+                          ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)]'
+                          : 'text-[var(--theme-ink-primary)] hover:bg-[var(--theme-active-bg)] hover:text-[var(--theme-active-text)]'
                       }`}
                     >
-                      <span>{site.label}</span>
+                      <span className="truncate">{site.label}</span>
                     </button>
                   ))}
                 </div>
@@ -231,11 +279,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Copyright Hairline Bar */}
-        <div className="mt-8 pt-5 border-t border-[#E4E2DC] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[12px] text-[#52524E] font-medium">
+        <div className="mt-8 pt-5 border-t border-[var(--theme-border-hairline)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[12px] text-[var(--theme-ink-secondary)] font-medium">
           <div>
             COPYRIGHT(C) {year} KOREAN CENTER GLOBAL NETWORK · GOGUMA APP TEAM. ALL RIGHTS RESERVED.
           </div>
-          <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#52524E]">
+          <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--theme-ink-secondary)]">
             100% LOCAL-FIRST · ZERO TELEMETRY · MIT LICENSE
           </div>
         </div>

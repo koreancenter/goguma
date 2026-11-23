@@ -331,11 +331,28 @@ Sitemap: https://goguma.app/sitemap.xml
   // Vite middleware for development vs static files in production
   const isDev = process.env.NODE_ENV !== "production" && (typeof __filename !== "undefined" ? !__filename.endsWith('.cjs') : true);
   if (isDev) {
-    const vite = await createViteServer({
+    let viteInstance: Awaited<ReturnType<typeof createViteServer>> | null = null;
+    const vitePromise = createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
+    })
+      .then((vite) => {
+        viteInstance = vite;
+        return vite;
+      })
+      .catch((err) => {
+        console.error('[Dev Server] Failed to initialize Vite middleware:', err);
+        throw err;
+      });
+
+    app.use(async (req, res, next) => {
+      try {
+        const vite = viteInstance || (await vitePromise);
+        vite.middlewares(req, res, next);
+      } catch (err) {
+        next(err);
+      }
     });
-    app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));

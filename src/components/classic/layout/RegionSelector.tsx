@@ -5,7 +5,7 @@ import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface Region {
   id: string;
-  name: { en: string; ko: string; id: string };
+  name: { en: string; ko: string; ja: string; id: string };
 }
 
 interface LanguageOption {
@@ -15,22 +15,24 @@ interface LanguageOption {
 }
 
 const regions: Region[] = [
-  { id: 'global', name: { en: 'Global', ko: '글로벌', id: 'Global' } },
-  { id: 'namerica', name: { en: 'North America', ko: '북미', id: 'Amerika Utara' } },
-  { id: 'europe', name: { en: 'Europe', ko: '유럽', id: 'Eropa' } },
-  { id: 'asiapacific', name: { en: 'Asia Pacific', ko: '아시아 태평양', id: 'Asia Pasifik' } },
-  { id: 'korea', name: { en: 'South Korea', ko: '대한민국', id: 'Korea Selatan' } },
-  { id: 'indonesia', name: { en: 'Indonesia', ko: '인도네시아', id: 'Indonesia' } },
+  { id: 'global', name: { en: 'Global', ko: '글로벌', ja: 'グローバル', id: 'Global' } },
+  { id: 'namerica', name: { en: 'North America', ko: '북미', ja: '北米', id: 'Amerika Utara' } },
+  { id: 'europe', name: { en: 'Europe', ko: '유럽', ja: 'ヨーロッパ', id: 'Eropa' } },
+  { id: 'asiapacific', name: { en: 'Asia Pacific', ko: '아시아 태평양', ja: 'アジア太平洋', id: 'Asia Pasifik' } },
+  { id: 'korea', name: { en: 'South Korea', ko: '대한민국', ja: '大韓民国', id: 'Korea Selatan' } },
+  { id: 'japan', name: { en: 'Japan', ko: '일본', ja: '日本', id: 'Jepang' } },
+  { id: 'indonesia', name: { en: 'Indonesia', ko: '인도네시아', ja: 'インドネシア', id: 'Indonesia' } },
 ];
 
 const languages: LanguageOption[] = [
-  { id: 'en', name: 'English', nativeName: 'English' },
   { id: 'ko', name: 'Korean', nativeName: '한국어' },
+  { id: 'en', name: 'English', nativeName: 'English' },
+  { id: 'ja', name: 'Japanese', nativeName: '日本語' },
   { id: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia' },
 ];
 
 export default function RegionSelector() {
-  const { language, setLanguage, region, setRegion, t } = useLanguage();
+  const { language, setLanguage, region, setRegion, t, pick } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,6 +44,8 @@ export default function RegionSelector() {
     // Automatic Mapping
     if (newRegion.id === 'korea') {
       setLanguage('ko');
+    } else if (newRegion.id === 'japan') {
+      setLanguage('ja');
     } else if (newRegion.id === 'indonesia') {
       setLanguage('id');
     } else {
@@ -63,21 +67,21 @@ export default function RegionSelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-3 px-3.5 py-2 bg-[#F7F8FA] hover:bg-[#F1F5F9] rounded-lg border border-[#E5E7EB] transition-all group min-w-[150px] cursor-pointer"
+        className="flex items-center justify-between gap-3 px-3.5 py-2 bg-[var(--theme-stage)] hover:bg-[var(--theme-subtle)] rounded-lg border border-[var(--theme-border-hairline)] transition-all group min-w-[150px] cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <Globe size={14} className="text-[#1E3A8A] flex-shrink-0" />
+          <Globe size={14} className="text-[var(--theme-ink-primary)] flex-shrink-0" />
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-sans uppercase tracking-widest text-[#111827] truncate max-w-[80px]">
-              {selectedRegion.name[language as 'en' | 'ko' | 'id']}
+            <span className="text-[10px] font-sans uppercase tracking-widest text-[var(--theme-ink-strong)] truncate max-w-[80px]">
+              {pick(selectedRegion.name)}
             </span>
-            <span className="text-[10px] text-[#D1D5DB]">|</span>
-            <span className="text-[10px] font-sans uppercase tracking-widest text-[#1E3A8A] font-semibold">
+            <span className="text-[10px] text-[var(--theme-border-strong)]">|</span>
+            <span className="text-[10px] font-sans uppercase tracking-widest text-[var(--theme-ink-primary)] font-semibold">
               {language.toUpperCase()}
             </span>
           </div>
         </div>
-        <ChevronDown size={14} className={`text-[#6B7280] transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown size={14} className={`text-[var(--theme-ink-muted)] transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence>
@@ -86,11 +90,11 @@ export default function RegionSelector() {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute bottom-full left-0 mb-4 w-72 bg-[#FFFFFF] rounded-2xl shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] border border-[#E5E7EB] overflow-hidden z-50 p-5 space-y-5"
+            className="absolute bottom-full left-0 mb-4 w-72 bg-[var(--theme-elevated)] rounded-2xl shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] border border-[var(--theme-border-hairline)] overflow-hidden z-50 p-5 space-y-5"
           >
             {/* Region Selection */}
             <div className="space-y-2.5">
-              <h4 className="text-[10px] font-sans text-[#6B7280] uppercase tracking-[0.2em]">{t('select_region')}</h4>
+              <h4 className="text-[10px] font-sans text-[var(--theme-ink-muted)] uppercase tracking-[0.2em]">{t('select_region')}</h4>
               <div className="grid grid-cols-2 gap-2">
                 {regions.map((r) => (
                   <button
@@ -98,11 +102,11 @@ export default function RegionSelector() {
                     onClick={() => handleRegionChange(r)}
                     className={`text-left px-3 py-2 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
                       selectedRegion.id === r.id
-                        ? 'bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/30 font-semibold'
-                        : 'bg-[#F7F8FA] text-[#374151] border border-[#E5E7EB] hover:bg-[#F1F5F9] hover:text-[#111827]'
+                        ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border border-[var(--theme-ink-strong)] font-semibold'
+                        : 'bg-[var(--theme-stage)] text-[var(--theme-ink-body)] border border-[var(--theme-border-hairline)] hover:bg-[var(--theme-subtle)] hover:text-[var(--theme-ink-strong)]'
                     }`}
                   >
-                    {r.name[language as 'en' | 'ko' | 'id']}
+                    {pick(r.name)}
                   </button>
                 ))}
               </div>
@@ -110,7 +114,7 @@ export default function RegionSelector() {
 
             {/* Language Selection */}
             <div className="space-y-2.5">
-              <h4 className="text-[10px] font-sans text-[#6B7280] uppercase tracking-[0.2em]">{t('select_language')}</h4>
+              <h4 className="text-[10px] font-sans text-[var(--theme-ink-muted)] uppercase tracking-[0.2em]">{t('select_language')}</h4>
               <div className="grid grid-cols-1 gap-2">
                 {languages.map((l) => (
                   <button
@@ -118,21 +122,21 @@ export default function RegionSelector() {
                     onClick={() => setLanguage(l.id as any)}
                     className={`flex items-center justify-between px-3 py-2 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
                       language === l.id
-                        ? 'bg-[#EFF6FF] text-[#1E3A8A] border border-[#1E3A8A]/30 font-semibold'
-                        : 'bg-[#F7F8FA] text-[#374151] border border-[#E5E7EB] hover:bg-[#F1F5F9] hover:text-[#111827]'
+                        ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border border-[var(--theme-ink-strong)] font-semibold'
+                        : 'bg-[var(--theme-stage)] text-[var(--theme-ink-body)] border border-[var(--theme-border-hairline)] hover:bg-[var(--theme-subtle)] hover:text-[var(--theme-ink-strong)]'
                     }`}
                   >
                     <span>{l.nativeName}</span>
-                    {language === l.id && <Check size={12} className="text-[#1E3A8A]" />}
+                    {language === l.id && <Check size={12} className="text-[var(--theme-active-text)]" />}
                   </button>
                 ))}
               </div>
             </div>
             
-            <div className="pt-3 border-t border-[#E5E7EB]">
+            <div className="pt-3 border-t border-[var(--theme-border-hairline)]">
               <button 
                 onClick={() => setIsOpen(false)}
-                className="w-full py-2.5 bg-[#1E3A8A] hover:bg-[#172554] text-white rounded-lg text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
+                className="w-full py-2.5 bg-[var(--theme-btn-bg)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] text-[var(--theme-btn-text)] rounded-lg text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
               >
                 {t('confirm')}
               </button>

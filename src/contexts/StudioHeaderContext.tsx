@@ -15,7 +15,7 @@ export interface StudioHeaderContextValue {
 }
 
 const defaultContext: StudioHeaderContextValue = {
-  projectName: '모던 웹 서비스 기획서',
+  projectName: 'GOGUMA Spec Studio',
   currentChapter: 1,
   currentSection: 'project_name',
   formInputs: {},

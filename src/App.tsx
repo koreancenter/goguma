@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 // Domain Types strictly matching docs/06_DATA_SCHEMA.md
-import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from './types';
+import { ProjectEntity, FormInputEntity, DomainBusinessRule, SectionAttachment, SitePlan } from './types';
 import { INITIAL_SITE_PLAN } from './lib/initialPlan';
 import { GOGUMA_CHAPTERS } from './lib/chapterData';
 import { normalizeBusinessRules, hasMeaningfulRuleContent } from './lib/businessRulesSerializer';
+import { normalizeAttachments, stripHtmlToPlainText } from './lib/documentAttachmentParser';
 import { db, doc, setDoc, getDoc } from './lib/localDb';
 import { auth, LocalUser } from './lib/localAuth';
 
@@ -45,20 +46,27 @@ const OnboardingTutorial = lazy(() =>
   import('./components/guide/OnboardingTutorial').then(m => ({ default: m.OnboardingTutorial }))
 );
 
-// Fallback loader in Gallery White & Sejong Sumi Ink
+// Fallback loader in Active Theme Canvas & Ink
 const PageLoader = () => (
-  <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-center gap-3">
-    <div className="w-7 h-7 border-2 border-[#E4E2DC] border-t-[#111111] rounded-full animate-spin" />
-    <span className="text-[11px] font-sans tracking-[0.2em] text-[#111111] uppercase font-medium">GOGUMA STUDIO</span>
+  <div className="min-h-screen bg-[var(--theme-canvas)] flex flex-col items-center justify-center gap-3">
+    <div className="w-7 h-7 border-2 border-[var(--theme-border-hairline)] border-t-[var(--theme-ink-primary)] rounded-full animate-spin" />
+    <span className="text-[11px] font-sans tracking-[0.2em] text-[var(--theme-ink-primary)] uppercase font-medium">GOGUMA STUDIO</span>
   </div>
 );
 
+const DEFAULT_PROJECT_NAMES = {
+  ko: '모던 웹 서비스 기획서',
+  en: 'Modern Web Service Spec',
+  ja: 'モダンWebサービス企画書',
+  id: 'Spesifikasi Layanan Web Modern',
+} as const;
+
 // Default initial project entity
-const createInitialProject = (): ProjectEntity => {
+const createInitialProject = (lang: keyof typeof DEFAULT_PROJECT_NAMES = 'ko'): ProjectEntity => {
   const now = new Date().toISOString();
   return {
     id: 'proj_default_local',
-    name: '모던 웹 서비스 기획서',
+    name: DEFAULT_PROJECT_NAMES[lang] || DEFAULT_PROJECT_NAMES.ko,
     slug: 'modern-web-service-spec',
     createdAt: now,
     updatedAt: now,
@@ -99,10 +107,24 @@ export default function App() {
   // --------------------------------------------------------------------------
   // 1. Unidirectional Local-First State (docs/06_DATA_SCHEMA.md)
   // --------------------------------------------------------------------------
-  const [project, setProject] = useState<ProjectEntity>(createInitialProject);
+  const [project, setProject] = useState<ProjectEntity>(() => createInitialProject(language));
   const [plan, setPlan] = useState<SitePlan>(INITIAL_SITE_PLAN);
   const [formInputs, setFormInputs] = useState<Record<string, FormInputEntity>>({});
   const [updatedChapters, setUpdatedChapters] = useState<Set<number>>(() => new Set());
+
+  // Sync untitled/default starter project name when language changes unless customized
+  useEffect(() => {
+    const defaultValues = new Set<string>(Object.values(DEFAULT_PROJECT_NAMES));
+    setProject(prev => {
+      if (defaultValues.has(prev.name)) {
+        const nextName = DEFAULT_PROJECT_NAMES[language];
+        if (prev.name !== nextName) {
+          return { ...prev, name: nextName };
+        }
+      }
+      return prev;
+    });
+  }, [language]);
 
   // --------------------------------------------------------------------------
   // 2. UI Layout & Viewport Ergonomics State
@@ -171,6 +193,7 @@ export default function App() {
             normalizedInputs[k] = {
               ...entry,
               businessRules: normalizeBusinessRules(entry.businessRules),
+              attachments: normalizeAttachments(entry.attachments),
               isLocked: Boolean(entry.isLocked),
             };
           }
@@ -264,6 +287,7 @@ export default function App() {
           sectionKey,
           userRawInput: text,
           businessRules: normalizeBusinessRules(existing?.businessRules),
+          attachments: normalizeAttachments(existing?.attachments),
           isLocked: Boolean(existing?.isLocked),
           lastSavedAt: now,
         }
@@ -278,30 +302,31 @@ export default function App() {
     });
 
     // Auto-reflect to high-level SitePlan properties for immediate prototype responsiveness
-    if (chapterId === 1 && sectionKey === 'project_name' && text.trim()) {
+    const plainText = stripHtmlToPlainText(text);
+    if (chapterId === 1 && sectionKey === 'project_name' && plainText) {
       setPlan(prev => ({
         ...prev,
         metadata: {
           ...prev.metadata,
-          projectName: text.trim(),
-          title: text.trim(),
+          projectName: plainText,
+          title: plainText,
         }
       }));
-      setProject(prev => ({ ...prev, name: text.trim() }));
-    } else if (chapterId === 1 && sectionKey === 'target_user' && text.trim()) {
+      setProject(prev => ({ ...prev, name: plainText }));
+    } else if (chapterId === 1 && sectionKey === 'target_user' && plainText) {
       setPlan(prev => ({
         ...prev,
         metadata: {
           ...prev.metadata,
-          targetAudience: text.trim(),
+          targetAudience: plainText,
         }
       }));
-    } else if (chapterId === 1 && sectionKey === 'primary_goal' && text.trim()) {
+    } else if (chapterId === 1 && sectionKey === 'primary_goal' && plainText) {
       setPlan(prev => ({
         ...prev,
         metadata: {
           ...prev.metadata,
-          description: text.trim(),
+          description: plainText,
         }
       }));
     }
@@ -329,6 +354,44 @@ export default function App() {
           sectionKey,
           userRawInput: existing?.userRawInput || '',
           businessRules: normalizeBusinessRules(businessRules),
+          attachments: normalizeAttachments(existing?.attachments),
+          isLocked: Boolean(existing?.isLocked),
+          lastSavedAt: now,
+        }
+      };
+    });
+
+    setUpdatedChapters(prev => {
+      if (prev.has(chapterId)) return prev;
+      const next = new Set(prev);
+      next.add(chapterId);
+      return next;
+    });
+
+    schedulePersistence();
+  }, [schedulePersistence]);
+
+  const handleAttachmentsChange = useCallback((chapterId: number, sectionKey: string, attachments: SectionAttachment[]) => {
+    const key = `${chapterId}_${sectionKey}`;
+    if (projectRef.current.lockedChapters?.includes(chapterId) || formInputsRef.current[key]?.isLocked) {
+      return;
+    }
+
+    const now = new Date().toISOString();
+
+    setFormInputs(prev => {
+      const existing = prev[key];
+      return {
+        ...prev,
+        [key]: {
+          ...(existing || {}),
+          id: existing?.id || `input_${key}`,
+          projectId: existing?.projectId || projectRef.current.id,
+          chapterId,
+          sectionKey,
+          userRawInput: existing?.userRawInput || '',
+          businessRules: normalizeBusinessRules(existing?.businessRules),
+          attachments: normalizeAttachments(attachments),
           isLocked: Boolean(existing?.isLocked),
           lastSavedAt: now,
         }
@@ -379,6 +442,7 @@ export default function App() {
             sectionKey: sec.key,
             userRawInput: existing?.userRawInput || '',
             businessRules: normalizeBusinessRules(existing?.businessRules),
+            attachments: normalizeAttachments(existing?.attachments),
             isLocked: nextLocked,
             lastSavedAt: now,
           };
@@ -555,6 +619,7 @@ export default function App() {
                   handleSelectSection={handleSelectSection}
                   handleInputChange={handleInputChange}
                   handleBusinessRulesChange={handleBusinessRulesChange}
+                  handleAttachmentsChange={handleAttachmentsChange}
                   handleNavigateSection={handleNavigateSection}
                   schedulePersistence={schedulePersistence}
                   currentUser={currentUser}
@@ -568,7 +633,7 @@ export default function App() {
             path="/profile" 
             element={
               <ProtectedRoute user={currentUser}>
-                <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                <div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans">
                   <Navbar />
                   <main className="flex-1">
                     <MyAccount />
@@ -583,7 +648,7 @@ export default function App() {
           <Route
             path="/settings"
             element={
-              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+              <div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans">
                 <Navbar />
                 <main className="flex-1">
                   <PreferencesPage
@@ -599,7 +664,7 @@ export default function App() {
           <Route
             path="/templates"
             element={
-              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+              <div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans">
                 <Navbar />
                 <main className="flex-1">
                   <TemplatesPage onApplyTemplate={handleApplyPrdTemplate} />
@@ -611,7 +676,7 @@ export default function App() {
           <Route
             path="/backup"
             element={
-              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+              <div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans">
                 <Navbar />
                 <main className="flex-1">
                   <BackupPage formInputs={formInputs} lockedChapters={project.lockedChapters} />
@@ -623,7 +688,7 @@ export default function App() {
           <Route
             path="/export"
             element={
-              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+              <div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans">
                 <Navbar />
                 <main className="flex-1">
                   <ExportSpecPage
@@ -640,7 +705,7 @@ export default function App() {
           <Route
             path="/create-account"
             element={
-              <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+              <div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans">
                 <Navbar />
                 <main className="flex-1">
                   <CreateAccountPage />
@@ -653,7 +718,7 @@ export default function App() {
             path="/logout"
             element={
               <ProtectedRoute user={currentUser}>
-                <div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans">
+                <div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans">
                   <Navbar />
                   <main className="flex-1">
                     <LogoutPage currentUser={currentUser} onConfirmLogout={handleLogout} />
@@ -665,18 +730,18 @@ export default function App() {
           />
 
           {/* Legal & Informational Pages */}
-          <Route path="/terms" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
-          <Route path="/license" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><OpenSourceLicensePage /></main><Footer /></div>} />
-          <Route path="/privacy" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
-          <Route path="/ai-policy" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><AIPolicyPage /></main><Footer /></div>} />
-          <Route path="/community-terms" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><CommunityTermsPage /></main><Footer /></div>} />
-          <Route path="/cookies" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><CookiePolicyPage /></main><Footer /></div>} />
-          <Route path="/about" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
-          <Route path="/contact" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
-          <Route path="/support" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
-          <Route path="/community" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
-          <Route path="/blog" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><BlogPage /></main><Footer /></div>} />
-          <Route path="/dev-notes" element={<div className="min-h-screen bg-[#FFFFFF] text-[#111111] flex flex-col font-sans"><Navbar /><main className="flex-1"><DevNotesPage /></main><Footer /></div>} />
+          <Route path="/terms" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><TermsOfService /></main><Footer /></div>} />
+          <Route path="/license" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><OpenSourceLicensePage /></main><Footer /></div>} />
+          <Route path="/privacy" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><PrivacyPolicy /></main><Footer /></div>} />
+          <Route path="/ai-policy" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><AIPolicyPage /></main><Footer /></div>} />
+          <Route path="/community-terms" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><CommunityTermsPage /></main><Footer /></div>} />
+          <Route path="/cookies" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><CookiePolicyPage /></main><Footer /></div>} />
+          <Route path="/about" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><About /></main><Footer /></div>} />
+          <Route path="/contact" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><Contact /></main><Footer /></div>} />
+          <Route path="/support" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><CustomerService /></main><Footer /></div>} />
+          <Route path="/community" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><Community /></main><Footer /></div>} />
+          <Route path="/blog" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><BlogPage /></main><Footer /></div>} />
+          <Route path="/dev-notes" element={<div className="min-h-screen bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] flex flex-col font-sans"><Navbar /><main className="flex-1"><DevNotesPage /></main><Footer /></div>} />
           <Route path="/welcome" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
 

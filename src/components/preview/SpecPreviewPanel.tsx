@@ -19,6 +19,8 @@ import {
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
 import { generatePlaybookVibePrompt } from '../../lib/executionPlaybook';
 import { getDocImpactStatus } from '../../lib/specImpact';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import VisualSitemap from './VisualSitemap';
 
 interface SpecPreviewPanelProps {
@@ -37,45 +39,6 @@ type PreviewTab = 'prototype' | 'docs' | 'devhub' | 'sitemap';
 type ViewportMode = 'desktop' | 'tablet' | 'mobile';
 type DevHubSubTab = 'typescript' | 'html' | 'sql' | 'api' | 'prompt';
 
-const editorialCodeMirrorTheme = EditorView.theme({
-  '&': {
-    backgroundColor: '#FFFFFF',
-    color: '#111111',
-    fontSize: '12.5px',
-    fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
-    height: '100%',
-  },
-  '.cm-scroller': {
-    fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
-    lineHeight: '1.7',
-  },
-  '.cm-content': {
-    padding: '16px 0',
-    caretColor: '#111111',
-  },
-  '.cm-gutters': {
-    backgroundColor: '#F6F5F1',
-    color: '#8C8B85',
-    borderRight: '1px solid #E4E2DC',
-    paddingRight: '4px',
-  },
-  '.cm-activeLineGutter': {
-    backgroundColor: '#EFEDE7',
-    color: '#111111',
-    fontWeight: '600',
-  },
-  '.cm-activeLine': {
-    backgroundColor: '#F6F5F1',
-  },
-  '.cm-selectionBackground, ::selection': {
-    backgroundColor: '#E4E2DC !important',
-  },
-  '.cm-cursor': {
-    borderLeftColor: '#111111',
-    borderLeftWidth: '2px',
-  },
-}, { dark: false });
-
 export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   plan,
   formInputs,
@@ -88,6 +51,8 @@ export const SpecPreviewPanel: React.FC<SpecPreviewPanelProps> = ({
   updatedChapters,
 }) => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
+  const { language, pick } = useLanguage();
   const [activeTab, setActiveTab] = useState<PreviewTab>('prototype');
   const [viewportMode, setViewportMode] = useState<ViewportMode>(() => 
     plan.metadata?.platform === 'APP' ? 'mobile' : 'desktop'
@@ -286,16 +251,81 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
   }, [plan, formInputs]);
 
   const generatedApiRoutes = useMemo(() => {
-    const pages = plan.navigation?.pageStructure || [];
     return [
-      { method: 'GET', path: '/api/v1/records', summary: '전체 목록 조회 (상태 필터링, 검색, 페이지네이션)', auth: 'Bearer JWT', status: '200 OK' },
-      { method: 'POST', path: '/api/v1/records', summary: '신규 엔터티 생성 (Zod 검증 및 트랜잭션 커밋)', auth: 'Bearer JWT', status: '201 Created' },
-      { method: 'GET', path: '/api/v1/records/:id', summary: '단일 엔터티 상세 정보 및 관계 조회', auth: 'Bearer JWT', status: '200 OK' },
-      { method: 'PATCH', path: '/api/v1/records/:id/status', summary: '상태 파이프라인 원클릭 전이 (대기 ➔ 진행 ➔ 완료)', auth: 'Bearer JWT', status: '200 OK' },
-      { method: 'DELETE', path: '/api/v1/records/:id', summary: '소프트 삭제 (Soft Delete) 및 감사 로그 기록', auth: 'Bearer JWT', status: '204 No Content' },
-      { method: 'GET', path: '/api/v1/analytics/kpi', summary: '스프린트 KPI 및 배포 통계 실시간 집계', auth: 'Bearer JWT', status: '200 OK' }
+      {
+        method: 'GET',
+        path: '/api/v1/records',
+        summary: pick({
+          ko: '전체 목록 조회 (상태 필터링, 검색, 페이지네이션)',
+          en: 'List all records (status filtering, search, pagination)',
+          ja: '全レコード一覧取得（ステータス絞り込み・検索・ページネーション）',
+          id: 'Ambil daftar lengkap (filter status, pencarian, paginasi)',
+        }),
+        auth: 'Bearer JWT',
+        status: '200 OK',
+      },
+      {
+        method: 'POST',
+        path: '/api/v1/records',
+        summary: pick({
+          ko: '신규 엔터티 생성 (Zod 검증 및 트랜잭션 커밋)',
+          en: 'Create new entity (Zod validation & transaction commit)',
+          ja: '新規エンティティ作成（Zod 検証およびトランザクション確定）',
+          id: 'Buat entitas baru (validasi Zod & commit transaksi)',
+        }),
+        auth: 'Bearer JWT',
+        status: '201 Created',
+      },
+      {
+        method: 'GET',
+        path: '/api/v1/records/:id',
+        summary: pick({
+          ko: '단일 엔터티 상세 정보 및 관계 조회',
+          en: 'Fetch single entity details and relations',
+          ja: '単一エンティティ詳細およびリレーション取得',
+          id: 'Ambil detail entitas tunggal dan relasinya',
+        }),
+        auth: 'Bearer JWT',
+        status: '200 OK',
+      },
+      {
+        method: 'PATCH',
+        path: '/api/v1/records/:id/status',
+        summary: pick({
+          ko: '상태 파이프라인 원클릭 전이 (대기 ➔ 진행 ➔ 완료)',
+          en: 'One-click status pipeline transition (Backlog ➔ Active ➔ Done)',
+          ja: 'ステータスパイプライン遷移（待機 ➔ 進行 ➔ 完了）',
+          id: 'Transisi status satu klik (Menunggu ➔ Berjalan ➔ Selesai)',
+        }),
+        auth: 'Bearer JWT',
+        status: '200 OK',
+      },
+      {
+        method: 'DELETE',
+        path: '/api/v1/records/:id',
+        summary: pick({
+          ko: '소프트 삭제 (Soft Delete) 및 감사 로그 기록',
+          en: 'Soft delete record & write audit log',
+          ja: '論理削除（Soft Delete）および監査ログ記録',
+          id: 'Hapus lunak (Soft Delete) & catat log audit',
+        }),
+        auth: 'Bearer JWT',
+        status: '204 No Content',
+      },
+      {
+        method: 'GET',
+        path: '/api/v1/analytics/kpi',
+        summary: pick({
+          ko: '스프린트 KPI 및 배포 통계 실시간 집계',
+          en: 'Real-time sprint KPI & deployment telemetry aggregation',
+          ja: 'スプリント KPI・デプロイ統計のリアルタイム集計',
+          id: 'Agregasi KPI sprint & statistik rilis real-time',
+        }),
+        auth: 'Bearer JWT',
+        status: '200 OK',
+      },
     ];
-  }, [plan]);
+  }, [plan, language]);
 
   const handleCopyDevHubCode = async (content: string, key: string) => {
     try {
@@ -371,6 +401,52 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
     }
   }, [codeOverrides, devHubSubTab, generatedTypeScript, prototypeHtml, generatedSqlDdl, activePromptText, generatedApiRoutes]);
 
+  const editorialCodeMirrorTheme = useMemo(
+    () =>
+      EditorView.theme(
+        {
+          '&': {
+            backgroundColor: theme.tokens.canvas,
+            color: theme.tokens.inkPrimary,
+            fontSize: '12.5px',
+            fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+            height: '100%',
+          },
+          '.cm-scroller': {
+            fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+            lineHeight: '1.7',
+          },
+          '.cm-content': {
+            padding: '16px 0',
+            caretColor: theme.tokens.inkPrimary,
+          },
+          '.cm-gutters': {
+            backgroundColor: theme.tokens.stage,
+            color: theme.tokens.inkMuted,
+            borderRight: `1px solid ${theme.tokens.borderHairline}`,
+            paddingRight: '4px',
+          },
+          '.cm-activeLineGutter': {
+            backgroundColor: theme.tokens.subtle,
+            color: theme.tokens.inkPrimary,
+            fontWeight: '600',
+          },
+          '.cm-activeLine': {
+            backgroundColor: theme.tokens.stage,
+          },
+          '.cm-selectionBackground, ::selection': {
+            backgroundColor: `${theme.tokens.borderHairline} !important`,
+          },
+          '.cm-cursor': {
+            borderLeftColor: theme.tokens.inkPrimary,
+            borderLeftWidth: '2px',
+          },
+        },
+        { dark: theme.isDark }
+      ),
+    [theme]
+  );
+
   const codeMirrorExtensions = useMemo(() => {
     const base = [editorialCodeMirrorTheme, EditorView.lineWrapping];
     if (devHubSubTab === 'typescript') {
@@ -380,7 +456,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
       return [...base, htmlLang()];
     }
     return base;
-  }, [devHubSubTab]);
+  }, [devHubSubTab, editorialCodeMirrorTheme]);
 
   const effectivePrototypeHtml = codeOverrides.html !== undefined ? codeOverrides.html : prototypeHtml;
 
@@ -412,27 +488,29 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
   return (
     <aside 
       style={width ? { width: `${width}px` } : undefined}
-      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[#F6F5F1] p-5 sm:p-7 gap-4 shrink-0 select-none text-[#111111] font-sans overflow-hidden`}
-      aria-label="실시간 프로토타입 및 11종 사양서 프리뷰"
+      className={`${width ? '' : 'w-full'} h-full flex flex-col bg-[var(--theme-stage)] p-5 sm:p-7 gap-4 shrink-0 select-none text-[var(--theme-ink-primary)] font-sans overflow-hidden`}
+      aria-label={pick({ ko: '실시간 프로토타입 및 11종 사양서 프리뷰', en: 'Live Prototype & 11-Spec Preview', ja: 'リアルタイムプロトタイプ＆11種仕様書プレビュー', id: 'Pratinjau Prototipe & 11 Spesifikasi Langsung' })}
     >
-      {/* Editorial Underline Tab Switcher (프리뷰 | 사양서 | 상태 ▾) */}
-      <div className="flex items-center justify-center shrink-0 z-30 border-b border-[#E4E2DC]" ref={stateMenuRef}>
+      {/* Editorial Underline Tab Switcher */}
+      <div className="flex items-center justify-center shrink-0 z-30 border-b border-[var(--theme-border-hairline)]" ref={stateMenuRef}>
         <div className="relative inline-flex items-center gap-8">
           <button
             type="button"
             onClick={() => setActiveTab('prototype')}
             className={`relative pb-2.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'prototype'
-                ? 'text-[#111111] font-semibold'
-                : 'text-[#52524E] hover:text-[#111111] font-medium'
+                ? 'text-[var(--theme-ink-strong)] font-semibold'
+                : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] font-medium'
             }`}
           >
-            <span>프리뷰</span>
+            <span>{pick({ ko: '프리뷰', en: 'Preview', ja: 'プレビュー', id: 'Pratinjau' })}</span>
             {isSyncing && (
-              <span className="text-[10px] text-[#8C8B85] font-normal">· 동기화</span>
+              <span className="text-[10px] text-[var(--theme-ink-muted)] font-normal">
+                · {pick({ ko: '동기화', en: 'Syncing', ja: '同期中', id: 'Sinkron' })}
+              </span>
             )}
             {activeTab === 'prototype' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--theme-ink-strong)]" />
             )}
           </button>
 
@@ -441,13 +519,13 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
             onClick={() => setActiveTab('docs')}
             className={`relative pb-2.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'docs'
-                ? 'text-[#111111] font-semibold'
-                : 'text-[#52524E] hover:text-[#111111] font-medium'
+                ? 'text-[var(--theme-ink-strong)] font-semibold'
+                : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] font-medium'
             }`}
           >
-            <span>사양서</span>
+            <span>{pick({ ko: '사양서', en: 'Specs', ja: '仕様書', id: 'Spesifikasi' })}</span>
             {activeTab === 'docs' && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--theme-ink-strong)]" />
             )}
           </button>
 
@@ -456,37 +534,37 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
             onClick={() => setIsStateMenuOpen(prev => !prev)}
             className={`relative pb-2.5 text-[13px] transition-colors cursor-pointer flex items-center gap-1 whitespace-nowrap ${
               isStateMenuOpen || activeTab === 'devhub' || activeTab === 'sitemap' || activeStateShortLabel
-                ? 'text-[#111111] font-semibold'
-                : 'text-[#52524E] hover:text-[#111111] font-medium'
+                ? 'text-[var(--theme-ink-strong)] font-semibold'
+                : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] font-medium'
             }`}
             aria-expanded={isStateMenuOpen}
-            aria-label="프리뷰 상태 및 도구 선택"
+            aria-label={pick({ ko: '프리뷰 상태 및 도구 선택', en: 'Select preview state and views', ja: 'プレビュー状態・ビュー選択', id: 'Pilih status & tampilan pratinjau' })}
           >
-            <span>상태 및 뷰</span>
+            <span>{pick({ ko: '상태 및 뷰', en: 'States & Views', ja: '状態・ビュー', id: 'Status & Tampilan' })}</span>
             {activeStateShortLabel && (
-              <span className="text-[11px] font-sans text-[#52524E] font-medium">
+              <span className="text-[11px] font-sans text-[var(--theme-ink-secondary)] font-medium">
                 · {activeStateShortLabel}
               </span>
             )}
             <ChevronDown size={13} className={`transition-transform duration-150 ${isStateMenuOpen ? 'rotate-180' : ''}`} />
             {(activeTab === 'devhub' || activeTab === 'sitemap') && (
-              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--theme-ink-strong)]" />
             )}
           </button>
 
           {/* Clean Dropdown Menu for Preview State Switcher & Extra Views */}
           {isStateMenuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-64 bg-[#FFFFFF] border border-[#CBC8BF] rounded-[2px] shadow-[0_12px_28px_-8px_rgba(17,17,17,0.12)] p-2 z-50 text-xs">
-              <div className="px-2 py-1 text-[10px] font-sans font-medium uppercase tracking-[0.14em] text-[#8C8B85]">
-                Preview State Switcher
+            <div className="absolute right-0 top-full mt-2 w-64 bg-[var(--theme-elevated)] border border-[var(--theme-border-strong)] rounded-[2px] shadow-[0_12px_28px_-8px_rgba(0,0,0,0.22)] p-2 z-50 text-xs">
+              <div className="px-2 py-1 text-[10px] font-sans font-medium uppercase tracking-[0.14em] text-[var(--theme-ink-muted)]">
+                {pick({ ko: '프리뷰 상태 전환', en: 'Preview State Switcher', ja: 'プレビュー状態切替', id: 'Pengalih Status Pratinjau' })}
               </div>
               <div className="space-y-0.5 mt-1">
                 {(
                   [
-                    { id: 'default', label: 'Default (Populated)' },
-                    { id: 'empty', label: 'Empty State (0 Records)' },
-                    { id: 'error', label: 'Blocked / Error State' },
-                    { id: 'role', label: 'Role: Admin vs. User' },
+                    { id: 'default', label: pick({ ko: '기본 상태 (데이터 포함)', en: 'Default (Populated)', ja: 'デフォルト (データあり)', id: 'Default (Terisi)' }) },
+                    { id: 'empty', label: pick({ ko: '빈 상태 (0건)', en: 'Empty State (0 Records)', ja: '空の状態 (0件)', id: 'Status Kosong (0 Data)' }) },
+                    { id: 'error', label: pick({ ko: '차단 / 오류 상태', en: 'Blocked / Error State', ja: 'ブロック / エラー状態', id: 'Status Diblokir / Error' }) },
+                    { id: 'role', label: pick({ ko: '역할: 관리자 vs 일반 사용자', en: 'Role: Admin vs. User', ja: '権限: 管理者 vs ユーザー', id: 'Peran: Admin vs Pengguna' }) },
                   ] as const
                 ).map((mode) => {
                   const isActive = previewState === mode.id;
@@ -503,19 +581,19 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                       }}
                       className={`w-full px-2.5 py-1.5 rounded-[2px] text-left flex items-center justify-between transition-colors cursor-pointer ${
                         isActive
-                          ? 'bg-[#EFEDE7] text-[#111111] font-semibold'
-                          : 'text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1]'
+                          ? 'bg-[var(--theme-subtle)] text-[var(--theme-ink-strong)] font-semibold'
+                          : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]'
                       }`}
                     >
                       <span>{mode.label}</span>
-                      {isActive && <Check size={12} className="text-[#111111]" />}
+                      {isActive && <Check size={12} className="text-[var(--theme-ink-strong)]" />}
                     </button>
                   );
                 })}
               </div>
 
               {previewState === 'role' && (
-                <div className="mt-1.5 mx-1 p-1 bg-[#F6F5F1] rounded-[2px] flex items-center gap-1 border border-[#E4E2DC]">
+                <div className="mt-1.5 mx-1 p-1 bg-[var(--theme-stage)] rounded-[2px] flex items-center gap-1 border border-[var(--theme-border-hairline)]">
                   <button
                     type="button"
                     onClick={() => {
@@ -525,11 +603,11 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     }}
                     className={`flex-1 py-1 rounded-[2px] text-[11px] font-medium transition-colors cursor-pointer ${
                       previewRole === 'user'
-                        ? 'bg-[#111111] text-[#FFFFFF] font-semibold'
-                        : 'text-[#52524E] hover:text-[#111111]'
+                        ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)] font-semibold'
+                        : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)]'
                     }`}
                   >
-                    Standard User
+                    {pick({ ko: '일반 사용자', en: 'Standard User', ja: '一般ユーザー', id: 'Pengguna Biasa' })}
                   </button>
                   <button
                     type="button"
@@ -540,19 +618,19 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     }}
                     className={`flex-1 py-1 rounded-[2px] text-[11px] font-medium transition-colors cursor-pointer ${
                       previewRole === 'admin'
-                        ? 'bg-[#111111] text-[#FFFFFF] font-semibold'
-                        : 'text-[#52524E] hover:text-[#111111]'
+                        ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)] font-semibold'
+                        : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)]'
                     }`}
                   >
-                    Admin / Operator
+                    {pick({ ko: '관리자 / 운영자', en: 'Admin / Operator', ja: '管理者 / 運営', id: 'Admin / Operator' })}
                   </button>
                 </div>
               )}
 
-              <div className="my-2 border-t border-[#E4E2DC]" />
+              <div className="my-2 border-t border-[var(--theme-border-hairline)]" />
 
-              <div className="px-2 py-1 text-[10px] font-sans font-medium uppercase tracking-[0.14em] text-[#8C8B85]">
-                Views &amp; Viewport
+              <div className="px-2 py-1 text-[10px] font-sans font-medium uppercase tracking-[0.14em] text-[var(--theme-ink-muted)]">
+                {pick({ ko: '뷰 및 화면 크기', en: 'Views & Viewport', ja: 'ビュー＆画面サイズ', id: 'Tampilan & Viewport' })}
               </div>
               <div className="space-y-0.5 mt-1">
                 <button
@@ -563,11 +641,11 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   }}
                   className={`w-full px-2.5 py-1.5 rounded-[2px] text-left flex items-center justify-between transition-colors cursor-pointer ${
                     activeTab === 'devhub'
-                      ? 'bg-[#EFEDE7] text-[#111111] font-semibold'
-                      : 'text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1]'
+                      ? 'bg-[var(--theme-subtle)] text-[var(--theme-ink-strong)] font-semibold'
+                      : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]'
                   }`}
                 >
-                  <span className="flex items-center gap-2"><Code size={12} /> 코드 뷰</span>
+                  <span className="flex items-center gap-2"><Code size={12} /> {pick({ ko: '코드 뷰', en: 'Code View', ja: 'コードビュー', id: 'Tampilan Kode' })}</span>
                   {activeTab === 'devhub' && <Check size={12} />}
                 </button>
 
@@ -579,16 +657,16 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   }}
                   className={`w-full px-2.5 py-1.5 rounded-[2px] text-left flex items-center justify-between transition-colors cursor-pointer ${
                     activeTab === 'sitemap'
-                      ? 'bg-[#EFEDE7] text-[#111111] font-semibold'
-                      : 'text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1]'
+                      ? 'bg-[var(--theme-subtle)] text-[var(--theme-ink-strong)] font-semibold'
+                      : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]'
                   }`}
                 >
-                  <span className="flex items-center gap-2"><Network size={12} /> 사이트맵</span>
+                  <span className="flex items-center gap-2"><Network size={12} /> {pick({ ko: '사이트맵', en: 'Sitemap', ja: 'サイトマップ', id: 'Peta Situs' })}</span>
                   {activeTab === 'sitemap' && <Check size={12} />}
                 </button>
               </div>
 
-              <div className="mt-2 px-1 flex items-center gap-1 bg-[#F6F5F1] p-1 rounded-[2px] border border-[#E4E2DC]">
+              <div className="mt-2 px-1 flex items-center gap-1 bg-[var(--theme-stage)] p-1 rounded-[2px] border border-[var(--theme-border-hairline)]">
                 {(
                   [
                     { id: 'desktop', label: 'Desktop', Icon: Monitor },
@@ -606,8 +684,8 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     }}
                     className={`flex-1 py-1 rounded-[2px] text-[11px] flex items-center justify-center gap-1 transition-colors cursor-pointer ${
                       viewportMode === id
-                        ? 'bg-[#111111] text-[#FFFFFF] font-semibold'
-                        : 'text-[#52524E] hover:text-[#111111]'
+                        ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)] font-semibold'
+                        : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)]'
                     }`}
                   >
                     <Icon size={11} />
@@ -616,7 +694,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 ))}
               </div>
 
-              <div className="my-2 border-t border-[#E4E2DC]" />
+              <div className="my-2 border-t border-[var(--theme-border-hairline)]" />
 
               <div className="flex items-center gap-1">
                 <button
@@ -625,10 +703,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     setReloadKey(k => k + 1);
                     setIsStateMenuOpen(false);
                   }}
-                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1] flex items-center justify-center gap-1 cursor-pointer"
+                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)] flex items-center justify-center gap-1 cursor-pointer"
                 >
                   <RefreshCw size={11} />
-                  <span>새로고침</span>
+                  <span>{pick({ ko: '새로고침', en: 'Reload', ja: '再読込', id: 'Muat Ulang' })}</span>
                 </button>
                 <button
                   type="button"
@@ -636,10 +714,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     handleOpenStandalone();
                     setIsStateMenuOpen(false);
                   }}
-                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[#52524E] hover:text-[#111111] hover:bg-[#F6F5F1] flex items-center justify-center gap-1 cursor-pointer"
+                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)] flex items-center justify-center gap-1 cursor-pointer"
                 >
                   <ExternalLink size={11} />
-                  <span>새 창</span>
+                  <span>{pick({ ko: '새 창', en: 'New Tab', ja: '別タブ', id: 'Tab Baru' })}</span>
                 </button>
                 <button
                   type="button"
@@ -647,10 +725,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     setIsStateMenuOpen(false);
                     navigate('/export');
                   }}
-                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[#52524E] hover:text-[#111111] hover:bg-[#EFEDE7] flex items-center justify-center gap-1 cursor-pointer"
+                  className="flex-1 px-2 py-1.5 rounded-[2px] text-[11px] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-subtle)] flex items-center justify-center gap-1 cursor-pointer"
                 >
                   <Bot size={11} />
-                  <span>프롬프트</span>
+                  <span>{pick({ ko: '프롬프트', en: 'Prompt', ja: 'プロンプト', id: 'Prompt' })}</span>
                 </button>
               </div>
             </div>
@@ -658,13 +736,13 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
         </div>
       </div>
 
-      {/* Exhibition Piece Surface (Sharp Architectural Frame on Warm Hanji Mat) */}
-      <div className="flex-1 min-h-0 w-full bg-[#FFFFFF] rounded-none border border-[#E4E2DC] shadow-[0_8px_24px_-12px_rgba(17,17,17,0.08)] overflow-hidden relative flex flex-col">
-        {/* TAB 1: Live Interactive Prototype */}
+      {/* Exhibition Piece Surface (Sharp Architectural Frame on Warm Hanji / Nocturnal Ink Mat) */}
+      <div className="flex-1 min-h-0 w-full bg-[var(--theme-elevated)] rounded-none border border-[var(--theme-border-hairline)] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.12)] overflow-hidden relative flex flex-col">
+        {/* TAB 1: Live Interactive Prototype (Fixed Crisp White Paper Canvas for Target App Preview) */}
         {activeTab === 'prototype' && (
           <div className="w-full h-full flex flex-col">
             <div className={`flex-1 overflow-auto flex items-center justify-center ${
-              viewportMode === 'desktop' ? 'bg-white' : 'bg-[#F6F5F1]/65 p-4 sm:p-6'
+              viewportMode === 'desktop' ? 'bg-[#FFFFFF]' : 'bg-[var(--theme-stage)] p-4 sm:p-6'
             }`}>
               {viewportMode === 'desktop' ? (
                 <iframe
@@ -674,10 +752,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   srcDoc={effectivePrototypeHtml}
                   title="Interactive Prototype Preview"
                   sandbox="allow-scripts allow-forms allow-modals"
-                  className="w-full h-full border-0 bg-white"
+                  className="w-full h-full border-0 bg-[#FFFFFF]"
                 />
               ) : viewportMode === 'tablet' ? (
-                <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-[2px] border border-[#CBC8BF] shadow-[0_12px_32px_-8px_rgba(17,17,17,0.1)] overflow-hidden bg-white flex flex-col">
+                <div className="w-[768px] max-w-full h-full max-h-[960px] rounded-[2px] border border-[var(--theme-border-strong)] shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)] overflow-hidden bg-[#FFFFFF] flex flex-col">
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
@@ -685,11 +763,11 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     srcDoc={effectivePrototypeHtml}
                     title="Tablet Prototype Preview"
                     sandbox="allow-scripts allow-forms allow-modals"
-                    className="w-full flex-1 border-0 bg-white"
+                    className="w-full flex-1 border-0 bg-[#FFFFFF]"
                   />
                 </div>
               ) : (
-                <div className="w-[390px] max-w-full h-[780px] max-h-full rounded-[24px] border-[5px] border-[#111111] shadow-[0_16px_40px_-8px_rgba(17,17,17,0.16)] overflow-hidden bg-white flex flex-col">
+                <div className="w-[390px] max-w-full h-[780px] max-h-full rounded-[24px] border-[5px] border-[var(--theme-ink-primary)] shadow-[0_16px_40px_-8px_rgba(0,0,0,0.22)] overflow-hidden bg-[#FFFFFF] flex flex-col">
                   <iframe
                     ref={iframeRef}
                     key={reloadKey}
@@ -697,7 +775,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     srcDoc={effectivePrototypeHtml}
                     title="Mobile Prototype Preview"
                     sandbox="allow-scripts allow-forms allow-modals"
-                    className="w-full flex-1 border-0 bg-white"
+                    className="w-full flex-1 border-0 bg-[#FFFFFF]"
                   />
                 </div>
               )}
@@ -705,26 +783,26 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
           </div>
         )}
 
-        {/* TAB 2: 11-Doc Markdown Blueprint Viewer (Document Spec View) */}
+        {/* TAB 2: 11-Doc Markdown Blueprint Viewer (Fixed Crisp White Paper Sheet for Spec Reader) */}
         {activeTab === 'docs' && (
-          <div className="w-full h-full flex flex-col bg-white">
-            <div className="px-5 py-3 bg-[#F6F5F1]/70 border-b border-[#E4E2DC] flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+          <div className="w-full h-full flex flex-col bg-[var(--theme-canvas)]">
+            <div className="px-5 py-3 bg-[var(--theme-stage)] border-b border-[var(--theme-border-hairline)] flex flex-wrap items-center justify-between gap-2.5 shrink-0 no-print">
               <div className="flex items-center gap-2 flex-1 min-w-[200px]">
                 <div className="relative w-36 sm:w-44">
-                  <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8C8B85]" />
+                  <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--theme-ink-muted)]" />
                   <input
                     type="text"
                     value={docFilterQuery}
                     onChange={(e) => setDocFilterQuery(e.target.value)}
-                    placeholder="사양서 검색..."
-                    className="w-full pl-8 pr-2.5 py-1.5 text-xs font-sans bg-white border border-[#CBC8BF] rounded-[2px] text-[#111111] placeholder-[#8C8B85] focus:outline-none focus:border-[#111111]"
+                    placeholder={pick({ ko: '사양서 검색...', en: 'Search specs...', ja: '仕様書検索...', id: 'Cari spesifikasi...' })}
+                    className="w-full pl-8 pr-2.5 py-1.5 text-xs font-sans bg-[var(--theme-canvas)] border border-[var(--theme-border-strong)] rounded-[2px] text-[var(--theme-ink-primary)] placeholder-[var(--theme-ink-muted)] focus:outline-none focus:border-[var(--theme-ink-strong)]"
                   />
                 </div>
 
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
-                  className="flex-1 min-h-[32px] text-xs font-sans bg-white border border-[#CBC8BF] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-[#111111] truncate cursor-pointer"
+                  className="flex-1 min-h-[32px] text-xs font-sans bg-[var(--theme-canvas)] border border-[var(--theme-border-strong)] rounded-[2px] px-3 py-1.5 text-[var(--theme-ink-primary)] focus:outline-none focus:border-[var(--theme-ink-strong)] truncate cursor-pointer"
                 >
                   {filteredDocs.map((doc) => {
                     const status = docImpactMap[doc.id] || 'idle';
@@ -745,20 +823,20 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     type="button"
                     onClick={handlePrevDoc}
                     disabled={activeDocIndex <= 0}
-                    title="이전 문서"
-                    className="p-1.5 rounded-[2px] text-[#52524E] bg-white border border-[#E4E2DC] hover:border-[#111111] hover:text-[#111111] disabled:opacity-35 transition-colors cursor-pointer"
+                    title={pick({ ko: '이전 문서', en: 'Previous document', ja: '前の文書', id: 'Dokumen sebelumnya' })}
+                    className="p-1.5 rounded-[2px] text-[var(--theme-ink-secondary)] bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)] hover:text-[var(--theme-ink-strong)] disabled:opacity-35 transition-colors cursor-pointer"
                   >
                     <ChevronLeft size={13} />
                   </button>
-                  <span className="text-[11px] font-sans text-[#52524E] px-1 tabular-nums">
+                  <span className="text-[11px] font-sans text-[var(--theme-ink-secondary)] px-1 tabular-nums">
                     {activeDocIndex + 1}/{docsList.length}
                   </span>
                   <button
                     type="button"
                     onClick={handleNextDoc}
                     disabled={activeDocIndex >= docsList.length - 1}
-                    title="다음 문서"
-                    className="p-1.5 rounded-[2px] text-[#52524E] bg-white border border-[#E4E2DC] hover:border-[#111111] hover:text-[#111111] disabled:opacity-35 transition-colors cursor-pointer"
+                    title={pick({ ko: '다음 문서', en: 'Next document', ja: '次の文書', id: 'Dokumen berikutnya' })}
+                    className="p-1.5 rounded-[2px] text-[var(--theme-ink-secondary)] bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)] hover:text-[var(--theme-ink-strong)] disabled:opacity-35 transition-colors cursor-pointer"
                   >
                     <ChevronRight size={13} />
                   </button>
@@ -767,27 +845,27 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={handleDownloadCurrentDoc}
-                  title="이 사양서 파일만 다운로드 (.md)"
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] bg-white border border-[#E4E2DC] text-xs text-[#52524E] hover:text-[#111111] hover:border-[#111111] transition-colors cursor-pointer whitespace-nowrap"
+                  title={pick({ ko: '이 사양서 파일만 다운로드 (.md)', en: 'Download this spec file (.md)', ja: 'この仕様書のみダウンロード (.md)', id: 'Unduh file spesifikasi ini (.md)' })}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] text-xs text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:border-[var(--theme-ink-strong)] transition-colors cursor-pointer whitespace-nowrap"
                 >
-                  <FileDown size={13} className="text-[#111111]" />
-                  <span className="hidden sm:inline">.md 저장</span>
+                  <FileDown size={13} className="text-[var(--theme-ink-strong)]" />
+                  <span className="hidden sm:inline">{pick({ ko: '.md 저장', en: 'Save .md', ja: '.md 保存', id: 'Simpan .md' })}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleCopyVibeCodingPrompt}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[#EFEDE7] hover:bg-[#111111] hover:text-[#FFFFFF] text-xs text-[#111111] font-medium transition-colors cursor-pointer whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[var(--theme-subtle)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)] text-xs text-[var(--theme-ink-primary)] font-medium transition-colors cursor-pointer whitespace-nowrap"
                 >
                   {copiedVibePrompt ? (
                     <>
                       <Check size={13} />
-                      <span>Prompt Copied</span>
+                      <span>{pick({ ko: '프롬프트 복사됨', en: 'Prompt Copied', ja: 'プロンプトコピー済', id: 'Prompt Disalin' })}</span>
                     </>
                   ) : (
                     <>
                       <Bot size={13} />
-                      <span>Copy Vibe-Coding Prompt</span>
+                      <span>{pick({ ko: '바이브코딩 프롬프트 복사', en: 'Copy Vibe-Coding Prompt', ja: 'Vibe-Coding プロンプトコピー', id: 'Salin Prompt Vibe-Coding' })}</span>
                     </>
                   )}
                 </button>
@@ -795,17 +873,17 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 <button
                   type="button"
                   onClick={handleCopyCurrentDoc}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] bg-white border border-[#E4E2DC] hover:border-[#111111] text-xs text-[#111111] font-medium transition-colors cursor-pointer whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)] text-xs text-[var(--theme-ink-primary)] font-medium transition-colors cursor-pointer whitespace-nowrap"
                 >
                   {copiedDoc ? (
                     <>
-                      <Check size={13} className="text-[#1F5132]" />
-                      <span className="text-[#1F5132]">복사됨</span>
+                      <Check size={13} className="text-[var(--theme-success)]" />
+                      <span className="text-[var(--theme-success)]">{pick({ ko: '복사됨', en: 'Copied', ja: 'コピー済', id: 'Disalin' })}</span>
                     </>
                   ) : (
                     <>
                       <Copy size={13} />
-                      <span>복사</span>
+                      <span>{pick({ ko: '복사', en: 'Copy', ja: 'コピー', id: 'Salin' })}</span>
                     </>
                   )}
                 </button>
@@ -813,7 +891,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
             </div>
 
             {/* Spec Impact Strip (Sharp Rectangular Index Tabs, Zero Pills) */}
-            <div className="px-5 py-2.5 bg-[#FFFFFF] border-b border-[#E4E2DC] flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+            <div className="px-5 py-2.5 bg-[var(--theme-canvas)] border-b border-[var(--theme-border-hairline)] flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0 no-print">
               {filteredDocs.map((doc) => {
                 const isActive = doc.id === selectedDocId;
                 const isPlaybook = doc.id === '00_EXECUTION_PLAYBOOK';
@@ -825,10 +903,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     onClick={() => setSelectedDocId(doc.id)}
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[11px] font-sans transition-colors cursor-pointer whitespace-nowrap shrink-0 border ${
                       isActive
-                        ? 'bg-[#111111] text-[#FFFFFF] border-[#111111] font-semibold'
+                        ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-active-bg)] font-semibold'
                         : isPlaybook
-                        ? 'bg-[#F6F5F1] text-[#111111] border-[#CBC8BF] hover:border-[#111111] font-semibold'
-                        : 'bg-[#FFFFFF] text-[#52524E] border-[#E4E2DC] hover:text-[#111111] hover:border-[#CBC8BF]'
+                        ? 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] border-[var(--theme-border-strong)] hover:border-[var(--theme-ink-strong)] font-semibold'
+                        : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-secondary)] border-[var(--theme-border-hairline)] hover:text-[var(--theme-ink-strong)] hover:border-[var(--theme-border-strong)]'
                     }`}
                     title={`${doc.relativePath} · ${
                       status === 'locked' ? 'Locked' : status === 'updated' ? 'Updated' : 'Synced'
@@ -836,7 +914,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   >
                     {isPlaybook && (
                       <span className={`text-[10px] font-sans font-semibold uppercase tracking-wider ${
-                        isActive ? 'text-[#FFFFFF]/80' : 'text-[#8C8B85]'
+                        isActive ? 'opacity-85' : 'text-[var(--theme-ink-muted)]'
                       }`}>
                         Playbook ·
                       </span>
@@ -846,10 +924,10 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                       <span
                         className={`text-[10px] font-sans font-medium ${
                           isActive
-                            ? 'text-[#FFFFFF]/80'
+                            ? 'opacity-85'
                             : status === 'locked'
-                            ? 'text-[#111111]'
-                            : 'text-[#1F5132]'
+                            ? 'text-[var(--theme-ink-primary)]'
+                            : 'text-[var(--theme-success)]'
                         }`}
                       >
                         · {status === 'locked' ? 'Locked' : 'Updated'}
@@ -860,8 +938,11 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
               })}
             </div>
 
-            {/* Editorial Document Reader */}
-            <div className="flex-1 overflow-y-auto px-6 sm:px-10 py-8 bg-white custom-scroll">
+            {/* Editorial Document Reader: Fixed Crisp White Paper (#FFFFFF / #111111) */}
+            <div
+              data-paper-fixed="true"
+              className="paper-sheet flex-1 overflow-y-auto px-6 sm:px-10 py-8 bg-[#FFFFFF] text-[#111111] custom-scroll"
+            >
               <div className="max-w-3xl mx-auto space-y-5">
                 <div className="flex items-center justify-between gap-2 text-xs pb-3 border-b border-[#E4E2DC]">
                   <div className="flex items-center gap-2 min-w-0">
@@ -889,18 +970,18 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
           </div>
         )}
 
-        {/* TAB 3: Raw Code View (Light CodeMirror + API Contracts) */}
+        {/* TAB 3: Raw Code View (Theme-Aware CodeMirror + API Contracts) */}
         {activeTab === 'devhub' && (
-          <div className="w-full h-full flex flex-col bg-white text-[#111111]">
-            <div className="px-5 py-2.5 bg-[#F6F5F1]/70 border-b border-[#E4E2DC] flex flex-wrap items-center justify-between shrink-0 select-none gap-2">
+          <div className="w-full h-full flex flex-col bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)]">
+            <div className="px-5 py-2.5 bg-[var(--theme-stage)] border-b border-[var(--theme-border-hairline)] flex flex-wrap items-center justify-between shrink-0 select-none gap-2">
               <div className="flex items-center gap-1 overflow-x-auto">
                 <button
                   type="button"
                   onClick={() => setDevHubSubTab('typescript')}
                   className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'typescript'
-                      ? 'bg-[#111111] text-white font-semibold'
-                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
+                      ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
+                      : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-canvas)]'
                   }`}
                 >
                   <Code size={12} />
@@ -912,8 +993,8 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   onClick={() => setDevHubSubTab('html')}
                   className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'html'
-                      ? 'bg-[#111111] text-white font-semibold'
-                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
+                      ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
+                      : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-canvas)]'
                   }`}
                 >
                   <FileCode size={12} />
@@ -925,8 +1006,8 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   onClick={() => setDevHubSubTab('sql')}
                   className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'sql'
-                      ? 'bg-[#111111] text-white font-semibold'
-                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
+                      ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
+                      : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-canvas)]'
                   }`}
                 >
                   <Database size={12} />
@@ -938,8 +1019,8 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   onClick={() => setDevHubSubTab('api')}
                   className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'api'
-                      ? 'bg-[#111111] text-white font-semibold'
-                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
+                      ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
+                      : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-canvas)]'
                   }`}
                 >
                   <Layers size={12} />
@@ -951,8 +1032,8 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                   onClick={() => setDevHubSubTab('prompt')}
                   className={`px-3 py-1.5 text-xs font-sans font-medium rounded-[2px] transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     devHubSubTab === 'prompt'
-                      ? 'bg-[#111111] text-white font-semibold'
-                      : 'text-[#52524E] hover:text-[#111111] hover:bg-white'
+                      ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
+                      : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-canvas)]'
                   }`}
                 >
                   <Bot size={12} />
@@ -971,61 +1052,61 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                         return next;
                       });
                     }}
-                    className="px-2.5 py-1.5 rounded-[2px] bg-white border border-[#E4E2DC] hover:bg-[#FBF3F2] hover:text-[#8B261D] text-[#52524E] text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                    title="자동 생성 코드로 되돌리기"
+                    className="px-2.5 py-1.5 rounded-[2px] bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] hover:bg-[var(--theme-danger-bg)] hover:text-[var(--theme-danger)] text-[var(--theme-ink-secondary)] text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                    title={pick({ ko: '자동 생성 코드로 되돌리기', en: 'Reset to auto-generated code', ja: '自動生成コードに戻す', id: 'Kembalikan ke kode otomatis' })}
                   >
                     <RotateCcw size={12} />
-                    <span>초기화</span>
+                    <span>{pick({ ko: '초기화', en: 'Reset', ja: 'リセット', id: 'Reset' })}</span>
                   </button>
                 )}
 
                 <button
                   type="button"
                   onClick={() => handleCopyDevHubCode(activeCodeValue, devHubSubTab)}
-                  className="px-3 py-1.5 rounded-[2px] bg-[#EFEDE7] hover:bg-[#111111] hover:text-[#FFFFFF] text-[#111111] text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  className="px-3 py-1.5 rounded-[2px] bg-[var(--theme-subtle)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)] text-[var(--theme-ink-primary)] text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
                 >
                   {copiedDevHub === devHubSubTab ? (
                     <>
                       <CheckCheck size={13} />
-                      <span className="font-semibold">복사됨</span>
+                      <span className="font-semibold">{pick({ ko: '복사됨', en: 'Copied', ja: 'コピー済', id: 'Disalin' })}</span>
                     </>
                   ) : (
                     <>
                       <Copy size={13} />
-                      <span>코드 복사</span>
+                      <span>{pick({ ko: '코드 복사', en: 'Copy Code', ja: 'コードコピー', id: 'Salin Kode' })}</span>
                     </>
                   )}
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-hidden flex flex-col bg-white">
+            <div className="flex-1 min-h-0 overflow-hidden flex flex-col bg-[var(--theme-canvas)]">
               {devHubSubTab === 'api' ? (
                 <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scroll">
-                  <div className="flex items-center justify-between text-[#52524E] text-xs pb-2 border-b border-[#E4E2DC]">
-                    <span className="font-sans font-semibold text-[#111111]">API Endpoint Contracts</span>
+                  <div className="flex items-center justify-between text-[var(--theme-ink-secondary)] text-xs pb-2 border-b border-[var(--theme-border-hairline)]">
+                    <span className="font-sans font-semibold text-[var(--theme-ink-primary)]">API Endpoint Contracts</span>
                     <span className="font-sans">RESTful / JSON Payload</span>
                   </div>
                   <div className="space-y-3">
                     {generatedApiRoutes.map((api, idx) => (
-                      <div key={idx} className="p-4 bg-[#F6F5F1] border border-[#E4E2DC] rounded-[2px] space-y-2">
+                      <div key={idx} className="p-4 bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-[2px] space-y-2">
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2.5 min-w-0">
                             <span className={`px-2 py-0.5 rounded-[2px] text-[10px] font-sans font-bold shrink-0 ${
-                              api.method === 'GET' ? 'bg-[#111111] text-[#FFFFFF]' :
-                              api.method === 'POST' ? 'bg-[#F3F7F4] text-[#1F5132] border border-[#1F5132]/20' :
-                              api.method === 'PATCH' ? 'bg-[#FAF6EE] text-[#8A5314] border border-[#8A5314]/20' :
-                              'bg-[#FBF3F2] text-[#8B261D] border border-[#8B261D]/20'
+                              api.method === 'GET' ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]' :
+                              api.method === 'POST' ? 'bg-[var(--theme-success-bg)] text-[var(--theme-success)] border border-[var(--theme-success)]/25' :
+                              api.method === 'PATCH' ? 'bg-[var(--theme-warning-bg)] text-[var(--theme-warning)] border border-[var(--theme-warning)]/25' :
+                              'bg-[var(--theme-danger-bg)] text-[var(--theme-danger)] border border-[var(--theme-danger)]/25'
                             }`}>
                               {api.method}
                             </span>
-                            <span className="font-sans text-xs font-semibold text-[#111111] truncate">{api.path}</span>
+                            <span className="font-sans text-xs font-semibold text-[var(--theme-ink-primary)] truncate">{api.path}</span>
                           </div>
-                          <span className="text-[11px] font-sans text-[#8C8B85] shrink-0">{api.status}</span>
+                          <span className="text-[11px] font-sans text-[var(--theme-ink-muted)] shrink-0">{api.status}</span>
                         </div>
-                        <p className="text-xs text-[#52524E] leading-relaxed">{api.summary}</p>
-                        <div className="flex items-center gap-2 text-[11px] font-sans text-[#8C8B85] pt-1">
-                          <span>인증: {api.auth}</span>
+                        <p className="text-xs text-[var(--theme-ink-secondary)] leading-relaxed">{api.summary}</p>
+                        <div className="flex items-center gap-2 text-[11px] font-sans text-[var(--theme-ink-muted)] pt-1">
+                          <span>{pick({ ko: '인증', en: 'Auth', ja: '認証', id: 'Autentikasi' })}: {api.auth}</span>
                         </div>
                       </div>
                     ))}
@@ -1033,7 +1114,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                 </div>
               ) : (
                 <div className="flex-1 min-h-0 flex flex-col">
-                  <div className="px-5 py-2 bg-white border-b border-[#E4E2DC] flex items-center justify-between text-[11px] font-sans text-[#8C8B85] shrink-0">
+                  <div className="px-5 py-2 bg-[var(--theme-canvas)] border-b border-[var(--theme-border-hairline)] flex items-center justify-between text-[11px] font-sans text-[var(--theme-ink-muted)] shrink-0">
                     <span>
                       {devHubSubTab === 'typescript'
                         ? 'src/types/schema.ts'
@@ -1057,7 +1138,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
                     <CodeMirror
                       value={activeCodeValue}
                       height="100%"
-                      theme="light"
+                      theme={theme.isDark ? 'dark' : 'light'}
                       extensions={codeMirrorExtensions}
                       editable={true}
                       onChange={(val) => {
@@ -1080,7 +1161,7 @@ CREATE POLICY "Allow authenticated user full access" ON main_records
 
         {/* TAB 4: Visual Sitemap & Real-time D3 Tree */}
         {activeTab === 'sitemap' && (
-          <div className="w-full h-full flex flex-col overflow-hidden bg-white">
+          <div className="w-full h-full flex flex-col overflow-hidden bg-[var(--theme-canvas)]">
             <VisualSitemap 
               plan={plan}
               formInputs={formInputs}

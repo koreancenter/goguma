@@ -44,11 +44,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
             initial={{ opacity: 0, scale: 0.95, y: position === 'top' ? 4 : position === 'bottom' ? -4 : 0 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: position === 'top' ? 4 : position === 'bottom' ? -4 : 0 }}
-            className={`absolute z-[100] whitespace-nowrap px-2.5 py-1.5 bg-[#FFFFFF] text-[#111827] text-[11px] font-medium rounded-md border border-[#E5E7EB] shadow-[0_8px_24px_-4px_rgba(15,23,42,0.12)] pointer-events-none ${getPositionClasses()}`}
+            className={`absolute z-[100] whitespace-nowrap px-2.5 py-1.5 bg-[var(--theme-elevated)] text-[var(--theme-ink-primary)] text-[11px] font-medium rounded-md border border-[var(--theme-border-hairline)] shadow-[0_8px_24px_-4px_rgba(0,0,0,0.22)] pointer-events-none ${getPositionClasses()}`}
           >
             {content}
             {/* Tooltip Arrow */}
-            <div className={`absolute w-2 h-2 bg-[#FFFFFF] border-t border-l border-[#E5E7EB] rotate-45 ${
+            <div className={`absolute w-2 h-2 bg-[var(--theme-elevated)] border-t border-l border-[var(--theme-border-hairline)] rotate-45 ${
               position === 'top' ? 'bottom-[-4px] left-1/2 -translate-x-1/2 border-t-0 border-l-0 border-b border-r' :
               position === 'bottom' ? 'top-[-4px] left-1/2 -translate-x-1/2' :
               position === 'left' ? 'right-[-4px] top-1/2 -translate-y-1/2 border-t border-r border-b-0 border-l-0' :
@@ -90,13 +90,13 @@ export const IconButton: React.FC<IconButtonProps> = ({
 }) => {
   const getVariantClasses = () => {
     switch (variant) {
-      case 'primary': return 'bg-[#1E3A8A] text-white hover:bg-[#172554] border border-[#1E3A8A] font-semibold shadow-xs';
-      case 'secondary': return 'bg-[#F7F8FA] text-[#111827] hover:bg-[#F1F5F9] border border-[#E5E7EB]';
-      case 'danger': return 'bg-[#FEF2F2] text-[#B91C1C] hover:bg-[#FEE2E2] border border-[#FECACA]';
-      case 'warning': return 'bg-[#EFF6FF] text-[#1E3A8A] hover:bg-[#DBEAFE] border border-[#BFDBFE]';
-      case 'ai': return 'bg-[#1E3A8A] text-white hover:bg-[#172554] border border-[#1E3A8A] font-semibold shadow-xs';
-      case 'ghost': return 'bg-transparent text-[#4B5563] hover:text-[#111827] hover:bg-[#F1F5F9] border border-transparent shadow-none';
-      default: return 'bg-[#1E3A8A] text-white border border-[#1E3A8A]';
+      case 'primary': return 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] border border-[var(--theme-ink-strong)] font-semibold shadow-xs';
+      case 'secondary': return 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-subtle)] border border-[var(--theme-border-hairline)]';
+      case 'danger': return 'bg-[var(--theme-danger-bg)] text-[var(--theme-danger)] hover:opacity-90 border border-[var(--theme-danger)]/40';
+      case 'warning': return 'bg-[var(--theme-warning-bg)] text-[var(--theme-warning)] hover:opacity-90 border border-[var(--theme-warning)]/40';
+      case 'ai': return 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] border border-[var(--theme-ink-strong)] font-semibold shadow-xs';
+      case 'ghost': return 'bg-transparent text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-primary)] hover:bg-[var(--theme-subtle)] border border-transparent shadow-none';
+      default: return 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)] border border-[var(--theme-ink-strong)]';
     }
   };
 

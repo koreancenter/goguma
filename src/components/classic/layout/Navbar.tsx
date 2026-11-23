@@ -4,7 +4,7 @@ import {
   ChevronDown, Check, Menu, X, ChevronRight, User, LayoutGrid
 } from 'lucide-react';
 import { Language } from '../../../types';
-import { GOGUMA_CHAPTERS } from '../../../lib/chapterData';
+import { getChapters } from '../../../lib/chapterData';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { useStudioHeader } from '../../../contexts/StudioHeaderContext';
 
@@ -13,21 +13,53 @@ interface NavbarProps {
   onChangeMobilePane?: (pane: 'editor' | 'preview') => void;
 }
 
-const CHAPTER_SHORT_LABELS: Record<number, string> = {
-  1: '개요',
-  2: '사용자',
-  3: '기능',
-  4: '데이터',
-  5: '디자인',
-  6: '화면',
-  7: '아키텍처',
-  8: '산출물',
+const CHAPTER_SHORT_LABELS_MAP: Record<Language, Record<number, string>> = {
+  ko: {
+    1: '개요',
+    2: '사용자',
+    3: '기능',
+    4: '데이터',
+    5: '디자인',
+    6: '화면',
+    7: '아키텍처',
+    8: '산출물',
+  },
+  en: {
+    1: 'Overview',
+    2: 'Users',
+    3: 'Features',
+    4: 'Data',
+    5: 'Design',
+    6: 'Screens',
+    7: 'Arch',
+    8: 'Release',
+  },
+  ja: {
+    1: '概要',
+    2: '対象',
+    3: '機能',
+    4: 'データ',
+    5: 'デザイン',
+    6: '画面',
+    7: '構成',
+    8: '成果物',
+  },
+  id: {
+    1: 'Ikhtisar',
+    2: 'Target',
+    3: 'Fitur',
+    4: 'Data',
+    5: 'Desain',
+    6: 'Layar',
+    7: 'Sistem',
+    8: 'Rilis',
+  },
 };
 
 export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps = {}) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, pick } = useLanguage();
   const {
     projectName,
     currentChapter,
@@ -149,15 +181,27 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
     location.pathname === '/community-terms' ||
     location.pathname === '/cookies';
 
-  const currentPageLabel = isBlogRoute
-    ? '블로그'
-    : isSettingsRoute
-    ? '환경 설정'
-    : isHelpRoute
-    ? '도움말'
-    : '메뉴';
+  const chapters = getChapters(language);
+  const shortLabels = CHAPTER_SHORT_LABELS_MAP[language] || CHAPTER_SHORT_LABELS_MAP.en;
 
-  const currentChapterObj = GOGUMA_CHAPTERS.find(c => c.id === currentChapter) || GOGUMA_CHAPTERS[0];
+  const GOGUMA_APPS_LINKS: { label: string; url: string }[] = [
+    { label: 'K-Design.md', url: 'https://kdesign.koreancenter.net' },
+    { label: pick({ ko: '디지털 명함', en: 'Digital Card', ja: 'デジタル名刺', id: 'Kartu Digital' }), url: 'https://eerum.goguma.app' },
+    { label: 'AI Podium', url: 'https://aipodium.net' },
+    { label: pick({ ko: 'AI 슬라이드', en: 'AI Slides', ja: 'AI スライド', id: 'AI Slide' }), url: 'https://vibeslide.goguma.app' },
+    { label: pick({ ko: 'AI 자산관리', en: 'AI Asset Vault', ja: 'AI 資産管理', id: 'AI Manajemen Aset' }), url: 'https://vibevault.goguma.app' },
+    { label: pick({ ko: 'AI 일정관리', en: 'AI Calendar', ja: 'AI 日程管理', id: 'AI Jadwal' }), url: 'https://vibecalendar.goguma.app' },
+  ];
+
+  const currentPageLabel = isBlogRoute
+    ? pick({ ko: '블로그', en: 'Blog', ja: 'ブログ', id: 'Blog' })
+    : isSettingsRoute
+    ? pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Pengaturan' })
+    : isHelpRoute
+    ? pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })
+    : pick({ ko: '메뉴', en: 'Menu', ja: 'メニュー', id: 'Menu' });
+
+  const currentChapterObj = chapters.find(c => c.id === currentChapter) || chapters[0];
 
   const SETTINGS_MENU_ITEMS: {
     id: string;
@@ -166,32 +210,34 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   }[] = [
     {
       id: 'engine',
-      label: '인공지능 엔진 설정',
+      label: pick({ ko: '인공지능 엔진 설정', en: 'AI Engine Settings', ja: 'AIエンジン設定', id: 'Pengaturan Mesin AI' }),
       action: () => navigateFromMenu('/settings?tab=engine'),
     },
     {
       id: 'display',
-      label: '화면 및 가독성 설정',
+      label: pick({ ko: '화면 · 테마 · 가독성', en: 'Display · Theme · Language', ja: '画面・テーマ・言語', id: 'Tampilan · Tema · Bahasa' }),
       action: () => navigateFromMenu('/settings?tab=display'),
     },
     {
       id: 'templates',
-      label: '표준 기획서 템플릿',
+      label: pick({ ko: '표준 기획서 템플릿', en: 'Standard Templates', ja: '標準テンプレート', id: 'Templat Standar' }),
       action: () => navigateFromMenu('/templates'),
     },
     {
       id: 'storage',
-      label: '보관함 및 로컬 백업',
+      label: pick({ ko: '보관함 및 로컬 백업', en: 'Library & Local Backup', ja: '保管庫・ローカルBackup', id: 'Pustaka & Cadangan Lokal' }),
       action: () => navigateFromMenu('/backup?tab=storage'),
     },
     {
       id: 'account',
-      label: '내 계정 및 프로필',
+      label: pick({ ko: '내 계정 및 프로필', en: 'Account & Profile', ja: 'アカウント・プロフィール', id: 'Akun & Profil' }),
       action: () => navigateFromMenu(currentUser ? '/profile' : '/login'),
     },
     {
       id: 'logout',
-      label: currentUser ? '로그아웃' : '로그인',
+      label: currentUser
+        ? pick({ ko: '로그아웃', en: 'Sign Out', ja: 'ログアウト', id: 'Keluar' })
+        : pick({ ko: '로그인', en: 'Sign In', ja: 'ログイン', id: 'Masuk' }),
       action: () => navigateFromMenu(currentUser ? '/logout' : '/login'),
     },
   ];
@@ -203,47 +249,47 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   }[] = [
     {
       id: 'studio-guide',
-      label: '스튜디오 안내',
+      label: pick({ ko: '스튜디오 안내', en: 'Studio Guide', ja: 'スタジオ案内', id: 'Panduan Studio' }),
       action: () => navigateFromMenu('/landing'),
     },
     {
       id: 'help-guide',
-      label: '도움말',
+      label: pick({ ko: '도움말', en: 'Help & Support', ja: 'ヘルプ・サポート', id: 'Bantuan' }),
       action: () => navigateFromMenu('/support'),
     },
     {
       id: 'privacy',
-      label: '개인정보 취급방침',
+      label: pick({ ko: '개인정보 취급방침', en: 'Privacy Policy', ja: 'プライバシーポリシー', id: 'Kebijakan Privasi' }),
       action: () => navigateFromMenu('/privacy'),
     },
     {
       id: 'terms',
-      label: '이용약관',
+      label: pick({ ko: '이용약관', en: 'Terms of Service', ja: '利用規約', id: 'Ketentuan Layanan' }),
       action: () => navigateFromMenu('/terms'),
     },
     {
       id: 'license',
-      label: '오픈소스 라이선스',
+      label: pick({ ko: '오픈소스 라이선스', en: 'Open Source License', ja: 'OSSライセンス', id: 'Lisensi Open Source' }),
       action: () => navigateFromMenu('/license'),
     },
     {
       id: 'ai-policy',
-      label: '인공지능 정책',
+      label: pick({ ko: '인공지능 정책', en: 'AI Policy', ja: 'AIポリシー', id: 'Kebijakan AI' }),
       action: () => navigateFromMenu('/ai-policy'),
     },
     {
       id: 'community-terms',
-      label: '커뮤니티 이용 규약',
+      label: pick({ ko: '커뮤니티 이용 규약', en: 'Community Guidelines', ja: 'コミュニティ規約', id: 'Pedoman Komunitas' }),
       action: () => navigateFromMenu('/community-terms'),
     },
     {
       id: 'cookies',
-      label: '쿠키 정책',
+      label: pick({ ko: '쿠키 정책', en: 'Cookie Policy', ja: 'Cookieポリシー', id: 'Kebijakan Cookie' }),
       action: () => navigateFromMenu('/cookies'),
     },
     {
       id: 'dev-notes',
-      label: '개발자 노트',
+      label: pick({ ko: '개발자 노트', en: 'Developer Notes', ja: '開発ノート', id: 'Catatan Pengembang' }),
       action: () => navigateFromMenu('/dev-notes'),
     },
   ];
@@ -255,17 +301,17 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
         setIsMegaMenuOpen(false);
         setOpenPageSubmenu(null);
       }}
-      className="sticky top-0 shrink-0 z-40 select-none bg-[#FFFFFF]"
+      className="no-print sticky top-0 shrink-0 z-40 select-none bg-[var(--theme-canvas)]"
     >
-      {/* Tier 1: Editorial Black Utility Strip (#000000) — Unified Across All Pages */}
-      <div className="relative z-[60] h-14 bg-[#000000] text-[#FFFFFF] border-b border-white/20 pl-4 sm:pl-6 pr-0 flex items-center justify-between gap-3">
-        {/* Left: '고구마' Brand Mark (Yellow Hover Only) + Editable Project Title */}
+      {/* Tier 1: Editorial Utility Strip */}
+      <div className="relative z-[60] h-14 bg-[var(--theme-bar-bg)] text-[var(--theme-bar-text)] border-b border-[var(--theme-border-hairline)]/40 pl-4 sm:pl-6 pr-0 flex items-center justify-between gap-3">
+        {/* Left: Brand Mark + Editable Project Title */}
         <div className="flex items-center gap-3 sm:gap-4 h-full min-w-0">
           <button
             type="button"
             onClick={() => navigateFromMenu('/landing')}
-            className="h-full px-3 sm:px-4 -ml-3 sm:-ml-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] bg-[#000000] rounded-none hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap shrink-0"
-            title="고구마 스튜디오 홈으로 이동"
+            className="h-full px-3 sm:px-4 -ml-3 sm:-ml-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold text-[var(--theme-bar-text)] bg-[var(--theme-bar-bg)] rounded-none hover:text-[var(--theme-bar-accent)] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+            title={pick({ ko: '고구마 스튜디오 홈으로 이동', en: 'Go to GOGUMA Studio Home', ja: 'GOGUMAスタジオホームへ', id: 'Ke Beranda GOGUMA Studio' })}
           >
             <svg
               width="15"
@@ -281,25 +327,25 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 d="M7.5 14.5C7.5 11.2 10.6 7.5 14.8 7.5C16.2 7.5 17 8.4 17 9.8C17 13.4 13.7 16.5 9.8 16.5C8.3 16.5 7.5 15.7 7.5 14.5Z"
                 fill="currentColor"
               />
-              <path d="M14.5 7.5C15.2 6.3 16.3 5.6 17.5 5.5" stroke="#FFE600" strokeWidth="1.75" strokeLinecap="round" />
+              <path d="M14.5 7.5C15.2 6.3 16.3 5.6 17.5 5.5" stroke="var(--theme-bar-accent)" strokeWidth="1.75" strokeLinecap="round" />
             </svg>
             <span className="leading-none">
-              고구마
+              {pick({ ko: '고구마', en: 'GOGUMA', ja: 'GOGUMA', id: 'GOGUMA' })}
             </span>
           </button>
 
           {isWorkspaceRoute && (
             <>
-              <span className="text-white/25 select-none shrink-0" aria-hidden="true">|</span>
+              <span className="opacity-25 select-none shrink-0" aria-hidden="true">|</span>
 
               <div className="min-w-0 max-w-[140px] sm:max-w-[240px] lg:max-w-[320px] flex items-center">
                 <input
                   type="text"
                   value={projectName}
                   onChange={(e) => onUpdateProjectName(e.target.value)}
-                  className="w-full bg-transparent hover:bg-white/10 focus:bg-[#1A1A18] rounded-none px-2 py-1 text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] truncate border-b border-transparent focus:border-white/60 outline-none transition-colors leading-normal"
-                  title="프로젝트 이름 수정"
-                  aria-label="프로젝트 이름"
+                  className="w-full bg-transparent hover:bg-white/10 focus:bg-white/15 rounded-none px-2 py-1 text-[13px] sm:text-[14px] font-bold text-[var(--theme-bar-text)] truncate border-b border-transparent focus:border-[var(--theme-bar-accent)] outline-none transition-colors leading-normal"
+                  title={pick({ ko: '프로젝트 이름 수정', en: 'Edit project name', ja: 'プロジェクト名を編集', id: 'Edit nama proyek' })}
+                  aria-label={pick({ ko: '프로젝트 이름', en: 'Project name', ja: 'プロジェクト名', id: 'Nama proyek' })}
                 />
               </div>
             </>
@@ -308,7 +354,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
 
         {/* Tier 1 Right: Rectangular Editorial Utility Strip */}
         <div className="flex items-stretch h-full shrink-0 border-l border-white/20 divide-x divide-white/20">
-          {/* 1. [고구마 앱스] */}
+          {/* 1. [GOGUMA Apps] */}
           <div className="relative flex items-stretch">
             <button
               type="button"
@@ -320,49 +366,33 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isAppsMenuOpen
-                  ? 'bg-[#DC2626] text-[#FFE600]'
-                  : 'bg-[#000000] text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600]'
+                  ? 'bg-[var(--theme-hover-bg)] text-[var(--theme-hover-text)]'
+                  : 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
               }`}
             >
               <LayoutGrid size={15} className="shrink-0" />
-              <span>고구마 앱스</span>
+              <span>{pick({ ko: '고구마 앱스', en: 'GOGUMA Apps', ja: 'GOGUMA Apps', id: 'Aplikasi GOGUMA' })}</span>
             </button>
 
             {isAppsMenuOpen && (
-              <div className="absolute right-0 top-full w-56 bg-[#000000] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
-                <button
-                  type="button"
-                  onClick={() => navigateFromMenu('/workspace')}
-                  className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
-                >
-                  고구마 사양서 스튜디오
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateFromMenu('/templates')}
-                  className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
-                >
-                  표준 기획서 템플릿
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateFromMenu('/backup?tab=storage')}
-                  className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
-                >
-                  로컬 데이터 보관함
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateFromMenu('/landing')}
-                  className="w-full px-4 py-3 text-left text-[13px] font-bold text-[#FFFFFF] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer"
-                >
-                  스튜디오 안내 홈
-                </button>
+              <div className="absolute right-0 top-full w-56 bg-[var(--theme-bar-bg)] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
+                {GOGUMA_APPS_LINKS.map((app) => (
+                  <a
+                    key={app.url}
+                    href={app.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsAppsMenuOpen(false)}
+                    className="block w-full px-4 py-3 text-left text-[13px] font-bold text-[var(--theme-bar-text)] rounded-none hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
+                  >
+                    {app.label}
+                  </a>
+                ))}
               </div>
             )}
           </div>
 
-          {/* 2. 언어 선택 버튼 (한/영/일/인니) */}
+          {/* 2. Language selector */}
           <div className="relative flex items-stretch">
             <button
               type="button"
@@ -374,19 +404,19 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isLangMenuOpen
-                  ? 'bg-[#DC2626] text-[#FFE600]'
-                  : 'bg-[#000000] text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600]'
+                  ? 'bg-[var(--theme-hover-bg)] text-[var(--theme-hover-text)]'
+                  : 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
               }`}
-              aria-label="언어 선택"
+              aria-label={pick({ ko: '언어 선택', en: 'Select language', ja: '言語選択', id: 'Pilih bahasa' })}
             >
               <span className="tracking-tight">
-                {language === 'ko' ? '한' : language === 'en' ? '영' : language === 'ja' ? '일' : '인니'}
+                {language === 'ko' ? '한' : language === 'en' ? 'EN' : language === 'ja' ? '日' : 'ID'}
               </span>
               <ChevronDown size={13} className="shrink-0" />
             </button>
 
             {isLangMenuOpen && (
-              <div className="absolute right-0 top-full w-40 bg-[#000000] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
+              <div className="absolute right-0 top-full w-40 bg-[var(--theme-bar-bg)] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
                 {(
                   [
                     { code: 'ko', label: '한국어' },
@@ -404,8 +434,8 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                     }}
                     className={`w-full px-4 py-3 text-left text-[13px] font-bold rounded-none flex items-center justify-between transition-colors cursor-pointer ${
                       language === opt.code
-                        ? 'bg-[#1A1A18] text-[#FFE600] hover:bg-[#DC2626] hover:text-[#FFE600]'
-                        : 'text-[#FFFFFF] hover:bg-[#DC2626] hover:text-[#FFE600]'
+                        ? 'bg-white/10 text-[var(--theme-bar-accent)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
+                        : 'text-[var(--theme-bar-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
                     }`}
                   >
                     <span>{opt.label}</span>
@@ -416,46 +446,55 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
             )}
           </div>
 
-          {/* 3. 로컬 계정 만들기 */}
-          <button
-            type="button"
-            onClick={() => navigateFromMenu('/create-account')}
-            className="hidden sm:flex h-full px-3 sm:px-4 items-center text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] bg-[#000000] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap"
-          >
-            로컬 계정 만들기
-          </button>
+          {/* 3. Create Local Account */}
+          {(!currentUser || currentUser.isAnonymous) && (
+            <button
+              type="button"
+              onClick={() => navigateFromMenu('/create-account')}
+              className="hidden sm:flex h-full px-3 sm:px-4 items-center text-[13px] sm:text-[14px] font-bold text-[var(--theme-bar-text)] bg-[var(--theme-bar-bg)] rounded-none hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              {currentUser?.isAnonymous
+                ? pick({ ko: '정식 프로필 등록', en: 'Register Profile', ja: '本登録', id: 'Daftar Profil' })
+                : pick({ ko: '로컬 계정 만들기', en: 'Create Account', ja: 'ローカル作成', id: 'Buat Akun Lokal' })}
+            </button>
+          )}
 
-          {/* 4. 로그인 / 로그아웃 */}
+          {/* 4. Sign In / Sign Out */}
           <button
             type="button"
             onClick={() => navigateFromMenu(currentUser ? '/logout' : '/login')}
-            className="h-full px-3 sm:px-4 flex items-center text-[13px] sm:text-[14px] font-bold text-[#FFFFFF] bg-[#000000] rounded-none hover:bg-[#DC2626] hover:text-[#FFE600] transition-colors cursor-pointer whitespace-nowrap"
+            className="h-full px-3 sm:px-4 flex items-center text-[13px] sm:text-[14px] font-bold text-[var(--theme-bar-text)] bg-[var(--theme-bar-bg)] rounded-none hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
           >
-            {currentUser ? '로그아웃' : '로그인'}
+            {currentUser
+              ? pick({ ko: '로그아웃', en: 'Sign Out', ja: 'ログアウト', id: 'Keluar' })
+              : pick({ ko: '로그인', en: 'Sign In', ja: 'ログイン', id: 'Masuk' })}
           </button>
 
-          {/* 5. 내 계정 아이콘 (Yellow Hover Only) */}
+          {/* 5. Account Icon */}
           <button
             type="button"
             onClick={() => navigateFromMenu(currentUser ? '/profile' : '/login')}
-            className="h-full px-3.5 sm:px-4 flex items-center justify-center text-[#FFFFFF] bg-[#000000] rounded-none hover:text-[#FFE600] transition-colors cursor-pointer shrink-0"
-            aria-label="내 계정"
-            title={currentUser?.displayName ? `${currentUser.displayName} (내 계정)` : '내 계정'}
+            className="h-full px-3.5 sm:px-4 flex items-center justify-center text-[var(--theme-bar-text)] bg-[var(--theme-bar-bg)] rounded-none hover:text-[var(--theme-bar-accent)] transition-colors cursor-pointer shrink-0"
+            aria-label={pick({ ko: '내 계정', en: 'My Account', ja: 'マイアカウント', id: 'Akun Saya' })}
+            title={
+              currentUser?.displayName
+                ? `${currentUser.displayName} (${pick({ ko: '내 계정', en: 'My Account', ja: 'マイアカウント', id: 'Akun Saya' })})`
+                : pick({ ko: '내 계정', en: 'My Account', ja: 'マイアカウント', id: 'Akun Saya' })
+            }
           >
             <User size={18} />
           </button>
         </div>
       </div>
 
-      {/* Tier 2: Workspace 10-Column Menu OR Page-Only Right-Aligned 4-Item Menu (#FFFFFF) */}
-      <header className="relative z-30 bg-[#FFFFFF] border-b border-[#E4E2DC]">
+      {/* Tier 2: Workspace 10-Column Menu OR Page-Only Right-Aligned 4-Item Menu */}
+      <header className="relative z-30 bg-[var(--theme-canvas)] border-b border-[var(--theme-border-hairline)]">
         {isWorkspaceRoute ? (
-          /* Desktop Unified 10-Column Menu Bar (lg+) — Workspace Only */
           <nav
-            className="hidden lg:grid grid-cols-10 divide-x divide-[#E4E2DC] h-20 w-full"
-            aria-label="기획서 주요 메뉴"
+            className="hidden lg:grid grid-cols-10 divide-x divide-[var(--theme-border-hairline)] h-20 w-full"
+            aria-label={pick({ ko: '기획서 주요 메뉴', en: 'Specification Navigation', ja: '仕様書メインメニュー', id: 'Navigasi Spesifikasi' })}
           >
-            {GOGUMA_CHAPTERS.map((ch) => {
+            {chapters.map((ch) => {
               const isCurrent = ch.id === currentChapter;
               const isHovered = isMegaMenuOpen && hoveredMenuId === ch.id;
 
@@ -466,77 +505,88 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                   onMouseEnter={() => handleOpenMegaMenu(ch.id)}
                   onFocus={() => handleOpenMegaMenu(ch.id)}
                   onClick={() => handleChapterClick(ch.id)}
-                  className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+                  className={`relative h-full w-full px-1.5 flex items-center justify-center text-center ${
+                    language === 'ko' || language === 'ja'
+                      ? 'text-[17px] xl:text-[20px] 2xl:text-[23px]'
+                      : 'text-[14px] xl:text-[16px] 2xl:text-[18px]'
+                  } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                     isHovered
-                      ? 'bg-[#000000] text-[#FFFFFF]'
-                      : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+                      ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
+                      : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
                   }`}
                 >
-                  <span>{CHAPTER_SHORT_LABELS[ch.id] || ch.title}</span>
+                  <span>{shortLabels[ch.id] || ch.title}</span>
                   {isCurrent && !isHovered && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
                   )}
                 </button>
               );
             })}
 
-            {/* 9th Unified Column: [환경 설정] */}
+            {/* 9th Unified Column: [Settings] */}
             <button
               type="button"
               onMouseEnter={() => handleOpenMegaMenu('settings')}
               onFocus={() => handleOpenMegaMenu('settings')}
               onClick={() => navigateFromMenu('/settings?tab=engine')}
-              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center ${
+                language === 'ko' || language === 'ja'
+                  ? 'text-[17px] xl:text-[20px] 2xl:text-[23px]'
+                  : 'text-[14px] xl:text-[16px] 2xl:text-[18px]'
+              } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                 isMegaMenuOpen && hoveredMenuId === 'settings'
-                  ? 'bg-[#000000] text-[#FFFFFF]'
-                  : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+                  ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
+                  : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
               }`}
             >
-              <span>환경 설정</span>
+              <span>{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Setelan' })}</span>
               {isSettingsRoute && !(isMegaMenuOpen && hoveredMenuId === 'settings') && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
               )}
             </button>
 
-            {/* 10th Unified Column: [도움말] */}
+            {/* 10th Unified Column: [Help] */}
             <button
               type="button"
               onMouseEnter={() => handleOpenMegaMenu('help')}
               onFocus={() => handleOpenMegaMenu('help')}
               onClick={() => navigateFromMenu('/support')}
-              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
+              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center ${
+                language === 'ko' || language === 'ja'
+                  ? 'text-[17px] xl:text-[20px] 2xl:text-[23px]'
+                  : 'text-[14px] xl:text-[16px] 2xl:text-[18px]'
+              } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                 isMegaMenuOpen && hoveredMenuId === 'help'
-                  ? 'bg-[#000000] text-[#FFFFFF]'
-                  : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+                  ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
+                  : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
               }`}
             >
-              <span>도움말</span>
+              <span>{pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })}</span>
               {isHelpRoute && !(isMegaMenuOpen && hoveredMenuId === 'help') && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
               )}
             </button>
           </nav>
         ) : (
-          /* Desktop Page-Only Right-Aligned 4-Item Menu Bar (lg+) */
           <nav
             className="hidden lg:flex items-stretch justify-end h-20 w-full"
-            aria-label="페이지 주요 메뉴"
+            aria-label={pick({ ko: '페이지 주요 메뉴', en: 'Page Navigation', ja: 'ページメニュー', id: 'Navigasi Halaman' })}
           >
-            <div className="flex items-stretch h-full divide-x divide-[#E4E2DC] border-l border-[#E4E2DC]">
-              {/* 1. [블로그] */}
+            <div className="flex items-stretch h-full divide-x divide-[var(--theme-border-hairline)] border-l border-[var(--theme-border-hairline)]">
+              {/* 1. [Blog] */}
               <button
                 type="button"
                 onMouseEnter={() => setOpenPageSubmenu(null)}
                 onClick={() => navigateFromMenu('/blog')}
-                className="relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF] transition-colors duration-150 cursor-pointer"
+                className="relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)] transition-colors duration-150 cursor-pointer"
               >
-                <span>블로그</span>
+                <span>{pick({ ko: '블로그', en: 'Blog', ja: 'ブログ', id: 'Blog' })}</span>
                 {isBlogRoute && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                  <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
                 )}
               </button>
 
-              {/* 2. [환경 설정] */}
+              {/* 2. [Settings] */}
               <div
                 className="relative flex items-stretch h-full"
                 onMouseEnter={() => handleOpenPageSubmenu('settings')}
@@ -548,24 +598,24 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                   onClick={() => navigateFromMenu('/settings?tab=engine')}
                   className={`relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                     openPageSubmenu === 'settings'
-                      ? 'bg-[#000000] text-[#FFFFFF]'
-                      : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+                      ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
+                      : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
                   }`}
                 >
-                  <span>환경 설정</span>
+                  <span>{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Pengaturan' })}</span>
                   {isSettingsRoute && openPageSubmenu !== 'settings' && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
                   )}
                 </button>
 
                 {openPageSubmenu === 'settings' && (
-                  <div className="absolute right-0 top-full min-w-[230px] bg-[#FFFFFF] border-x border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40 p-2.5 flex flex-col gap-1">
+                  <div className="absolute right-0 top-full min-w-[230px] bg-[var(--theme-elevated)] border-x border-b border-[var(--theme-ink-strong)] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40 p-2.5 flex flex-col gap-1">
                     {SETTINGS_MENU_ITEMS.map((item) => (
                       <button
                         key={item.id}
                         type="button"
                         onClick={item.action}
-                        className="w-full px-3 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                        className="w-full px-3 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
                       >
                         <span className="break-keep">{item.label}</span>
                         <ChevronRight size={13} className="shrink-0 opacity-60" />
@@ -575,7 +625,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 )}
               </div>
 
-              {/* 3. [도움말] */}
+              {/* 3. [Help] */}
               <div
                 className="relative flex items-stretch h-full"
                 onMouseEnter={() => handleOpenPageSubmenu('help')}
@@ -587,24 +637,24 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                   onClick={() => navigateFromMenu('/support')}
                   className={`relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                     openPageSubmenu === 'help'
-                      ? 'bg-[#000000] text-[#FFFFFF]'
-                      : 'bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF]'
+                      ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
+                      : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
                   }`}
                 >
-                  <span>도움말</span>
+                  <span>{pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })}</span>
                   {isHelpRoute && openPageSubmenu !== 'help' && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#000000]" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
                   )}
                 </button>
 
                 {openPageSubmenu === 'help' && (
-                  <div className="absolute right-0 top-full min-w-[240px] bg-[#FFFFFF] border-x border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40 p-2.5 flex flex-col gap-1">
+                  <div className="absolute right-0 top-full min-w-[240px] bg-[var(--theme-elevated)] border-x border-b border-[var(--theme-ink-strong)] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40 p-2.5 flex flex-col gap-1">
                     {HELP_MENU_ITEMS.map((item) => (
                       <button
                         key={item.id}
                         type="button"
                         onClick={item.action}
-                        className="w-full px-3 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                        className="w-full px-3 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
                       >
                         <span className="break-keep">{item.label}</span>
                         <ChevronRight size={13} className="shrink-0 opacity-60" />
@@ -614,14 +664,14 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 )}
               </div>
 
-              {/* 4. [작업실 입장] */}
+              {/* 4. [Enter Workspace] */}
               <button
                 type="button"
                 onMouseEnter={() => setOpenPageSubmenu(null)}
                 onClick={() => navigateFromMenu('/workspace')}
-                className="relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap bg-[#FFFFFF] text-[#111111] hover:bg-[#000000] hover:text-[#FFFFFF] transition-colors duration-150 cursor-pointer"
+                className="relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)] transition-colors duration-150 cursor-pointer"
               >
-                <span>작업실 입장</span>
+                <span>{pick({ ko: '작업실 입장', en: 'Workspace', ja: 'スタジオへ', id: 'Ruang Kerja' })}</span>
               </button>
             </div>
           </nav>
@@ -633,11 +683,11 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
             <button
               type="button"
               onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
-              className="h-10 px-3.5 rounded-[2px] border border-[#111111] text-[15px] font-bold text-[#000000] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[240px]"
+              className="h-10 px-3.5 rounded-[2px] border border-[var(--theme-ink-primary)] text-[15px] font-bold text-[var(--theme-ink-strong)] flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap max-w-[240px]"
             >
               <span className="truncate">
                 {isWorkspaceRoute
-                  ? CHAPTER_SHORT_LABELS[currentChapterObj.id] || currentChapterObj.title
+                  ? shortLabels[currentChapterObj.id] || currentChapterObj.title
                   : currentPageLabel}
               </span>
               <ChevronDown size={15} className={`shrink-0 transition-transform ${isMobileChapterDrawerOpen ? 'rotate-180' : ''}`} />
@@ -647,28 +697,28 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
           <div className="flex items-center gap-2 shrink-0">
             {isWorkspaceRoute ? (
               mobilePane && onChangeMobilePane && (
-                <div className="flex items-center bg-[#F6F5F1] p-0.5 rounded-[2px] border border-[#E4E2DC] shrink-0">
+                <div className="flex items-center bg-[var(--theme-stage)] p-0.5 rounded-[2px] border border-[var(--theme-border-hairline)] shrink-0">
                   <button
                     type="button"
                     onClick={() => onChangeMobilePane('editor')}
                     className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
                       mobilePane === 'editor'
-                        ? 'bg-[#FFFFFF] text-[#000000]'
-                        : 'text-[#3F3F3C] hover:text-[#000000]'
+                        ? 'bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]'
+                        : 'text-[var(--theme-ink-body)] hover:text-[var(--theme-ink-strong)]'
                     }`}
                   >
-                    에디터
+                    {pick({ ko: '에디터', en: 'Editor', ja: 'エディタ', id: 'Editor' })}
                   </button>
                   <button
                     type="button"
                     onClick={() => onChangeMobilePane('preview')}
                     className={`px-2.5 py-1.5 rounded-[2px] text-xs font-bold transition-colors cursor-pointer ${
                       mobilePane === 'preview'
-                        ? 'bg-[#FFFFFF] text-[#000000]'
-                        : 'text-[#3F3F3C] hover:text-[#000000]'
+                        ? 'bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]'
+                        : 'text-[var(--theme-ink-body)] hover:text-[var(--theme-ink-strong)]'
                     }`}
                   >
-                    미리보기
+                    {pick({ ko: '미리보기', en: 'Preview', ja: 'プレビュー', id: 'Pratinjau' })}
                   </button>
                 </div>
               )
@@ -676,17 +726,17 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               <button
                 type="button"
                 onClick={() => navigateFromMenu('/workspace')}
-                className="px-3 py-2 rounded-none bg-[#000000] hover:bg-[#DC2626] hover:text-[#FFE600] text-[#FFFFFF] text-xs font-bold transition-colors cursor-pointer whitespace-nowrap"
+                className="px-3 py-2 rounded-none bg-[var(--theme-btn-bg)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] text-[var(--theme-btn-text)] text-xs font-bold transition-colors cursor-pointer whitespace-nowrap"
               >
-                작업실 입장
+                {pick({ ko: '작업실 입장', en: 'Workspace', ja: 'スタジオへ', id: 'Ruang Kerja' })}
               </button>
             )}
 
             <button
               type="button"
               onClick={() => setIsMobileChapterDrawerOpen(prev => !prev)}
-              className="p-2 rounded-[2px] border border-[#111111] text-[#000000] cursor-pointer"
-              aria-label="전체 메뉴 열기"
+              className="p-2 rounded-[2px] border border-[var(--theme-ink-primary)] text-[var(--theme-ink-strong)] cursor-pointer"
+              aria-label={pick({ ko: '전체 메뉴 열기', en: 'Toggle menu', ja: 'メニューを開く', id: 'Buka menu' })}
             >
               {isMobileChapterDrawerOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -697,16 +747,16 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       {/* Full-Width 10-Column Sub-Menu Panel (Workspace Only) */}
       {isWorkspaceRoute && isMegaMenuOpen && (
         <div
-          className="hidden lg:block absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40"
+          className="hidden lg:block absolute left-0 right-0 top-full bg-[var(--theme-elevated)] border-b border-[var(--theme-ink-strong)] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40"
           role="region"
-          aria-label="전체 하위 메뉴, 환경 설정 및 도움말"
+          aria-label={pick({ ko: '전체 하위 메뉴, 환경 설정 및 도움말', en: 'Sub-menu, Settings & Help', ja: 'サブメニュー・設定・ヘルプ', id: 'Sub-menu, Pengaturan & Bantuan' })}
         >
-          <div className="grid grid-cols-10 divide-x divide-[#E4E2DC]">
-            {GOGUMA_CHAPTERS.map((ch) => (
+          <div className="grid grid-cols-10 divide-x divide-[var(--theme-border-hairline)]">
+            {chapters.map((ch) => (
               <div
                 key={ch.id}
                 onMouseEnter={() => setHoveredMenuId(ch.id)}
-                className="flex flex-col min-h-[200px] p-2.5 gap-1.5 bg-[#FFFFFF] text-[#000000]"
+                className="flex flex-col min-h-[200px] p-2.5 gap-1.5 bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]"
               >
                 {ch.sections.map((sec) => {
                   const isSecCurrent = isWorkspaceRoute && currentChapter === ch.id && currentSection === sec.key;
@@ -720,13 +770,13 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                       onClick={() => handleSectionClick(ch.id, sec.key)}
                       className={`w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-start justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer ${
                         isSecCurrent
-                          ? 'bg-[#F6F5F1] text-[#000000] font-bold'
-                          : 'text-[#000000] hover:bg-[#F6F5F1]'
+                          ? 'bg-[var(--theme-stage)] text-[var(--theme-ink-strong)] font-bold'
+                          : 'text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]'
                       }`}
                     >
                       <span className="break-keep">{sec.title}</span>
                       {isSecFilled ? (
-                        <Check size={13} className="shrink-0 mt-0.5 text-[#1F5132]" />
+                        <Check size={13} className="shrink-0 mt-0.5 text-[var(--theme-success)]" />
                       ) : (
                         <ChevronRight size={13} className="shrink-0 mt-0.5 opacity-60" />
                       )}
@@ -737,26 +787,26 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                   <button
                     type="button"
                     onClick={() => navigateFromMenu('/export')}
-                    className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                    className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
                   >
-                    <span className="break-keep">사양서 내보내기</span>
+                    <span className="break-keep">{pick({ ko: '사양서 내보내기', en: 'Export Spec', ja: '仕様書エクスポート', id: 'Ekspor Spesifikasi' })}</span>
                     <ChevronRight size={13} className="shrink-0 opacity-60" />
                   </button>
                 )}
               </div>
             ))}
 
-            {/* 9th Column Sub-Items: [환경 설정] */}
+            {/* 9th Column Sub-Items: [Settings] */}
             <div
               onMouseEnter={() => setHoveredMenuId('settings')}
-              className="flex flex-col min-h-[200px] p-2.5 gap-1 bg-[#FFFFFF] text-[#000000]"
+              className="flex flex-col min-h-[200px] p-2.5 gap-1 bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]"
             >
               {SETTINGS_MENU_ITEMS.map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={item.action}
-                  className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                  className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
                 >
                   <span className="break-keep">{item.label}</span>
                   <ChevronRight size={13} className="shrink-0 opacity-60" />
@@ -764,17 +814,17 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               ))}
             </div>
 
-            {/* 10th Column Sub-Items: [도움말] */}
+            {/* 10th Column Sub-Items: [Help] */}
             <div
               onMouseEnter={() => setHoveredMenuId('help')}
-              className="flex flex-col min-h-[200px] p-2.5 gap-1 bg-[#FFFFFF] text-[#000000]"
+              className="flex flex-col min-h-[200px] p-2.5 gap-1 bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]"
             >
               {HELP_MENU_ITEMS.map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={item.action}
-                  className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[#000000] hover:bg-[#F6F5F1]"
+                  className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
                 >
                   <span className="break-keep">{item.label}</span>
                   <ChevronRight size={13} className="shrink-0 opacity-60" />
@@ -787,35 +837,35 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
 
       {/* Mobile & Tablet Drawer (< lg) */}
       {isMobileChapterDrawerOpen && (
-        <div className="lg:hidden absolute left-0 right-0 top-full bg-[#FFFFFF] border-b border-[#000000] shadow-lg z-50 max-h-[75vh] overflow-y-auto">
-          <div className="p-4 border-b border-[#E4E2DC] bg-[#F6F5F1] space-y-4">
+        <div className="lg:hidden absolute left-0 right-0 top-full bg-[var(--theme-elevated)] border-b border-[var(--theme-ink-strong)] shadow-lg z-50 max-h-[75vh] overflow-y-auto">
+          <div className="p-4 border-b border-[var(--theme-border-hairline)] bg-[var(--theme-stage)] space-y-4">
             {!isWorkspaceRoute && (
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => navigateFromMenu('/blog')}
-                  className="px-3 py-2.5 bg-[#FFFFFF] border border-[#000000] text-xs font-extrabold text-[#000000] flex items-center justify-center rounded-[2px] cursor-pointer"
+                  className="px-3 py-2.5 bg-[var(--theme-elevated)] border border-[var(--theme-ink-strong)] text-xs font-extrabold text-[var(--theme-ink-strong)] flex items-center justify-center rounded-[2px] cursor-pointer"
                 >
-                  블로그
+                  {pick({ ko: '블로그', en: 'Blog', ja: 'ブログ', id: 'Blog' })}
                 </button>
                 <button
                   type="button"
                   onClick={() => navigateFromMenu('/workspace')}
-                  className="px-3 py-2.5 bg-[#000000] border border-[#000000] text-xs font-extrabold text-[#FFFFFF] flex items-center justify-center rounded-[2px] cursor-pointer"
+                  className="px-3 py-2.5 bg-[var(--theme-btn-bg)] border border-[var(--theme-ink-strong)] text-xs font-extrabold text-[var(--theme-btn-text)] flex items-center justify-center rounded-[2px] cursor-pointer"
                 >
-                  작업실 입장
+                  {pick({ ko: '작업실 입장', en: 'Workspace', ja: 'スタジオへ', id: 'Ruang Kerja' })}
                 </button>
               </div>
             )}
             <div>
-              <div className="text-xs font-extrabold text-[#000000] mb-2">환경 설정</div>
+              <div className="text-xs font-extrabold text-[var(--theme-ink-strong)] mb-2">{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Pengaturan' })}</div>
               <div className="grid grid-cols-2 gap-2">
                 {SETTINGS_MENU_ITEMS.map((item) => (
                   <button
                     key={item.id}
                     type="button"
                     onClick={item.action}
-                    className="px-3 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] text-xs font-bold text-[#000000] flex items-center rounded-[2px] cursor-pointer text-left"
+                    className="px-3 py-2.5 bg-[var(--theme-elevated)] border border-[var(--theme-border-strong)] text-xs font-bold text-[var(--theme-ink-strong)] flex items-center rounded-[2px] cursor-pointer text-left"
                   >
                     <span className="truncate">{item.label}</span>
                   </button>
@@ -823,14 +873,14 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               </div>
             </div>
             <div>
-              <div className="text-xs font-extrabold text-[#000000] mb-2">도움말</div>
+              <div className="text-xs font-extrabold text-[var(--theme-ink-strong)] mb-2">{pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })}</div>
               <div className="grid grid-cols-2 gap-2">
                 {HELP_MENU_ITEMS.map((item) => (
                   <button
                     key={item.id}
                     type="button"
                     onClick={item.action}
-                    className="px-3 py-2.5 bg-[#FFFFFF] border border-[#CBC8BF] text-xs font-bold text-[#000000] flex items-center rounded-[2px] cursor-pointer text-left"
+                    className="px-3 py-2.5 bg-[var(--theme-elevated)] border border-[var(--theme-border-strong)] text-xs font-bold text-[var(--theme-ink-strong)] flex items-center rounded-[2px] cursor-pointer text-left"
                   >
                     <span className="truncate">{item.label}</span>
                   </button>
@@ -840,11 +890,11 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
           </div>
 
           {isWorkspaceRoute && (
-            <div className="divide-y divide-[#E4E2DC]">
-            {GOGUMA_CHAPTERS.map((ch) => {
+            <div className="divide-y divide-[var(--theme-border-hairline)]">
+            {chapters.map((ch) => {
               const isActive = isWorkspaceRoute && ch.id === currentChapter;
               return (
-                <div key={ch.id} className={isActive ? 'bg-[#000000] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#000000]'}>
+                <div key={ch.id} className={isActive ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)]' : 'bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]'}>
                   <button
                     type="button"
                     onClick={() => handleChapterClick(ch.id)}
@@ -861,8 +911,8 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                         onClick={() => handleSectionClick(ch.id, sec.key)}
                         className={`px-3 py-1.5 text-xs font-semibold rounded-[2px] border cursor-pointer ${
                           isActive
-                            ? 'border-white/35 text-[#FFFFFF]'
-                            : 'border-[#CBC8BF] text-[#000000]'
+                            ? 'border-current/40 text-current'
+                            : 'border-[var(--theme-border-strong)] text-[var(--theme-ink-strong)]'
                         }`}
                       >
                         {sec.title}
@@ -874,11 +924,11 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                         onClick={() => navigateFromMenu('/export')}
                         className={`px-3 py-1.5 text-xs font-bold rounded-[2px] border cursor-pointer ${
                           isActive
-                            ? 'border-white text-[#FFFFFF]'
-                            : 'border-[#000000] text-[#000000]'
+                            ? 'border-current text-current'
+                            : 'border-[var(--theme-ink-strong)] text-[var(--theme-ink-strong)]'
                         }`}
                       >
-                        사양서 내보내기
+                        {pick({ ko: '사양서 내보내기', en: 'Export Spec', ja: '仕様書出力', id: 'Ekspor Spesifikasi' })}
                       </button>
                     )}
                   </div>

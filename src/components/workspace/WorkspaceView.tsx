@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-import { ProjectEntity, FormInputEntity, DomainBusinessRule, SitePlan } from '../../types';
+import { ProjectEntity, FormInputEntity, DomainBusinessRule, SectionAttachment, SitePlan } from '../../types';
 import { LocalUser } from '../../lib/localAuth';
 
 import { WritingCanvas } from '../classic/WritingCanvas';
@@ -8,6 +8,7 @@ import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
 import { WorkspaceDropZoneOverlay } from '../classic/WorkspaceDropZoneOverlay';
 import Navbar from '../classic/layout/Navbar';
 import Footer from '../classic/layout/Footer';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface WorkspaceViewProps {
   project: ProjectEntity;
@@ -26,6 +27,7 @@ export interface WorkspaceViewProps {
   handleSelectSection: (sectionKey: string) => void;
   handleInputChange: (chapterId: number, sectionKey: string, text: string) => void;
   handleBusinessRulesChange?: (chapterId: number, sectionKey: string, rules: DomainBusinessRule[]) => void;
+  handleAttachmentsChange?: (chapterId: number, sectionKey: string, attachments: SectionAttachment[]) => void;
   handleNavigateSection: (direction: 'prev' | 'next') => void;
   schedulePersistence: () => void;
   currentUser: LocalUser | null;
@@ -45,9 +47,11 @@ export default function WorkspaceView({
   handleSelectSection,
   handleInputChange,
   handleBusinessRulesChange,
+  handleAttachmentsChange,
   handleNavigateSection,
   schedulePersistence,
 }: WorkspaceViewProps) {
+  const { pick } = useLanguage();
   const [mobilePane, setMobilePane] = useState<'editor' | 'preview'>('editor');
   const splitContainerRef = useRef<HTMLDivElement>(null);
 
@@ -117,18 +121,18 @@ export default function WorkspaceView({
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-[#FFFFFF] text-[#000000] font-sans selection:bg-[#000000] selection:text-[#FFFFFF]">
+    <div className="flex flex-col min-h-screen w-full bg-[var(--theme-canvas)] text-[var(--theme-ink-strong)] font-sans selection:bg-[var(--theme-ink-strong)] selection:text-[var(--theme-canvas)]">
       <Navbar mobilePane={mobilePane} onChangeMobilePane={setMobilePane} />
 
       {/* Main Workspace Shell: Full Remaining Viewport Height with Independent Pane Scrolling */}
-      <div className={`h-[calc(100vh-136px)] min-h-[580px] shrink-0 flex overflow-hidden bg-[#FFFFFF] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
+      <div className={`h-[calc(100vh-136px)] min-h-[580px] shrink-0 flex overflow-hidden bg-[var(--theme-canvas)] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
         <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">
-          {/* 50% Left Editor Pane (#FFFFFF) */}
+          {/* 50% Left Editor Pane */}
           <div
             style={{ '--split-left': `${splitPercent}%` } as React.CSSProperties}
             className={`${
               mobilePane === 'editor' ? 'flex w-full' : 'hidden lg:flex'
-            } lg:shrink-0 lg:w-[var(--split-left)] min-w-0 h-full bg-[#FFFFFF] overflow-hidden flex-col`}
+            } lg:shrink-0 lg:w-[var(--split-left)] min-w-0 h-full bg-[var(--theme-canvas)] overflow-hidden flex-col`}
           >
             <WritingCanvas
               currentChapter={project.currentChapter}
@@ -136,6 +140,7 @@ export default function WorkspaceView({
               formInputs={formInputs}
               onInputChange={handleInputChange}
               onBusinessRulesChange={handleBusinessRulesChange}
+              onAttachmentsChange={handleAttachmentsChange}
               onNavigateSection={handleNavigateSection}
               plan={plan}
               setPlan={setPlan}
@@ -148,7 +153,7 @@ export default function WorkspaceView({
             />
           </div>
 
-          {/* Single 1px solid #E4E2DC Vertical Divider (Desktop lg+ only) */}
+          {/* Single 1px Vertical Divider (Desktop lg+ only) */}
           <div
             role="separator"
             tabIndex={0}
@@ -156,16 +161,26 @@ export default function WorkspaceView({
             aria-valuenow={Math.round(splitPercent)}
             aria-valuemin={35}
             aria-valuemax={65}
-            aria-label="에디터 및 미리보기 분할 비율 조절"
+            aria-label={pick({
+              ko: '에디터 및 미리보기 분할 비율 조절',
+              en: 'Adjust editor and preview split ratio',
+              ja: 'エディタとプレビューの分割比率を調整',
+              id: 'Atur rasio pemisahan editor dan pratinjau',
+            })}
             onKeyDown={handleResizerKeyDown}
             onMouseDown={handleMouseDownResizer}
             onDoubleClick={handleResetSplit}
-            title="드래그하여 비율 조절 (더블클릭 시 50:50 초기화)"
-            className="hidden lg:block w-px bg-[#E4E2DC] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[#111111] group"
+            title={pick({
+              ko: '드래그하여 비율 조절 (더블클릭 시 50:50 초기화)',
+              en: 'Drag to resize (double-click to reset 50:50)',
+              ja: 'ドラッグして比率調整（ダブルクリックで50:50に戻す）',
+              id: 'Seret untuk mengubah ukuran (klik ganda untuk reset 50:50)',
+            })}
+            className="hidden lg:block w-px bg-[var(--theme-border-hairline)] shrink-0 relative z-20 select-none outline-none focus-visible:bg-[var(--theme-ink-primary)] group"
           >
             <div
               className={`absolute inset-y-0 -left-1 -right-1 cursor-col-resize transition-colors ${
-                isResizing ? 'bg-[#111111]/15' : 'group-hover:bg-[#111111]/10'
+                isResizing ? 'bg-[var(--theme-ink-primary)]/15' : 'group-hover:bg-[var(--theme-ink-primary)]/10'
               }`}
             />
           </div>
@@ -174,12 +189,12 @@ export default function WorkspaceView({
             <div className="fixed inset-0 z-40 cursor-col-resize select-none bg-transparent" />
           )}
 
-          {/* 50% Right Exhibition Preview Stage (#F6F5F1) */}
+          {/* 50% Right Exhibition Preview Stage */}
           <div
             style={{ '--split-right': `${100 - splitPercent}%` } as React.CSSProperties}
             className={`${
               mobilePane === 'preview' ? 'flex w-full' : 'hidden lg:flex'
-            } lg:shrink-0 lg:w-[var(--split-right)] min-w-0 h-full bg-[#F6F5F1] overflow-hidden flex-col`}
+            } lg:shrink-0 lg:w-[var(--split-right)] min-w-0 h-full bg-[var(--theme-stage)] overflow-hidden flex-col`}
           >
             <SpecPreviewPanel
               plan={plan}

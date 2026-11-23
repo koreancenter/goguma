@@ -8,7 +8,9 @@ import {
 } from 'lucide-react';
 import { SitePlan, FormInputEntity } from '../../types';
 import { getSectionBusinessRules, hasMeaningfulRuleContent, serializeRulesToMarkdown } from '../../lib/businessRulesSerializer';
-import { GOGUMA_CHAPTERS } from '../../lib/chapterData';
+import { getChapters } from '../../lib/chapterData';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export type SitePlanNodeType = 
   | 'root'               // 최상위 서비스/프로젝트
@@ -54,6 +56,13 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
   onSelectSection,
   onPageClick,
 }) => {
+  const { theme } = useTheme();
+  const { language, pick } = useLanguage();
+  const chapters = useMemo(() => getChapters(language), [language]);
+  const chTitle = useCallback((id: number, fallback: string) => {
+    const ch = chapters.find(c => c.id === id);
+    return ch ? `Ch.${String(ch.id).padStart(2, '0')} ${ch.title}` : fallback;
+  }, [chapters]);
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomBehaviorRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
@@ -105,16 +114,34 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
     }
 
     const defaultPages = [
-      { id: 'p1', name: '메인 관리 대시보드', slug: '/', script: '실시간 리소스 현황 조회, 키워드 검색, 주요 상태 지표 요약', depth: 1 },
-      { id: 'p2', name: '신규 리소스 등록 모달', slug: '/new', script: '빠른 신규 레코드 생성 폼 (제목, 분류, 담당자, 상태)', depth: 2 },
-      { id: 'p3', name: '상세 정보 및 편집 드로어', slug: '/detail', script: '상세 속성 및 변경 이력 타임라인, 상태 전이 제어', depth: 2 },
+      {
+        id: 'p1',
+        name: pick({ ko: '메인 관리 대시보드', en: 'Main Management Dashboard', ja: 'メイン管理ダッシュボード', id: 'Dasbor Manajemen Utama' }),
+        slug: '/',
+        script: pick({ ko: '실시간 리소스 현황 조회, 키워드 검색, 주요 상태 지표 요약', en: 'Live resource status, keyword search, and key metrics summary', ja: 'リアルタイムリソース状況照会・検索・主要指標サマリー', id: 'Status sumber daya real-time, pencarian kata kunci, ringkasan metrik' }),
+        depth: 1,
+      },
+      {
+        id: 'p2',
+        name: pick({ ko: '신규 리소스 등록 모달', en: 'New Resource Modal', ja: '新規リソース登録モーダル', id: 'Modal Sumber Daya Baru' }),
+        slug: '/new',
+        script: pick({ ko: '빠른 신규 레코드 생성 폼 (제목, 분류, 담당자, 상태)', en: 'Quick record creation form (title, category, assignee, status)', ja: '新規レコード作成フォーム（タイトル・分類・担当・状態）', id: 'Formulir buat catatan cepat (judul, kategori, penanggung jawab, status)' }),
+        depth: 2,
+      },
+      {
+        id: 'p3',
+        name: pick({ ko: '상세 정보 및 편집 드로어', en: 'Detail & Edit Drawer', ja: '詳細・編集ドロワー', id: 'Laci Detail & Edit' }),
+        slug: '/detail',
+        script: pick({ ko: '상세 속성 및 변경 이력 타임라인, 상태 전이 제어', en: 'Detailed properties, change history timeline, and state transition controls', ja: '詳細属性・変更履歴タイムライン・状態遷移制御', id: 'Properti detail, linimasa perubahan, & kontrol transisi status' }),
+        depth: 2,
+      },
     ];
 
     const pagesToRender = pageStructure.length > 0 ? pageStructure : defaultPages;
 
     pagesToRender.forEach((p, pIdx) => {
       const pageSlug = p.slug || (pIdx === 0 ? '/' : `/${p.name.toLowerCase().replace(/\s+/g, '-')}`);
-      const pageScript = p.script || formInputs['6_pages_structure']?.userRawInput || '주요 기능 렌더링 화면';
+      const pageScript = p.script || formInputs['6_pages_structure']?.userRawInput || pick({ ko: '주요 기능 렌더링 화면', en: 'Primary feature rendering screen', ja: '主要機能レンダリング画面', id: 'Layar rendering fitur utama' });
       const pageType: SitePlanNodeType = (p.depth && p.depth > 1) || pageSlug.includes('modal') || pageSlug.includes('detail') 
         ? 'subpage' 
         : 'page';
@@ -134,14 +161,14 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         mappedFeatures.forEach((mf, mfIdx) => {
           pageNodeChildren.push({
             id: `page_${p.id || pIdx}_feature_${mfIdx}`,
-            name: `매핑 기능: ${mf.name}`,
+            name: `${pick({ ko: '매핑 기능', en: 'Mapped Feature', ja: 'マップ機能', id: 'Fitur Terpetakan' })}: ${mf.name}`,
             type: 'feature',
-            badge: mf.priority || '연동 기능',
+            badge: mf.priority || pick({ ko: '연동 기능', en: 'Linked', ja: '連携機能', id: 'Terhubung' }),
             badgeColor: 'terracotta',
             chapterId: 3,
             sectionKey: 'key_features',
-            chapterTitle: '제3장: 핵심 기능 명세',
-            sourceText: `화면 [${p.name}]에 직접 마운트된 기능: ${mf.name}`,
+            chapterTitle: chTitle(3, 'Ch.3'),
+            sourceText: `${p.name} ➔ ${mf.name}`,
             isUserInput: true,
           });
         });
@@ -151,13 +178,13 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       if (p.script) {
         pageNodeChildren.push({
           id: `page_${p.id || pIdx}_script`,
-          name: `화면 요구스펙: ${p.script.slice(0, 24)}...`,
+          name: `${pick({ ko: '화면 스펙', en: 'Screen Spec', ja: '画面仕様', id: 'Spek Layar' })}: ${p.script.slice(0, 24)}...`,
           type: 'user_input',
-          badge: '기획 스펙',
+          badge: pick({ ko: '기획 스펙', en: 'Spec', ja: '企画仕様', id: 'Spek' }),
           badgeColor: 'emerald',
           chapterId: 6,
           sectionKey: 'pages_structure',
-          chapterTitle: '제6장: 사이트맵 및 화면 정의',
+          chapterTitle: chTitle(6, 'Ch.6'),
           sourceText: p.script,
           charCount: p.script.length,
           isUserInput: true,
@@ -168,26 +195,26 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       if (pIdx === 0 || pageSlug === '/') {
         pageNodeChildren.push({
           id: `page_${p.id || pIdx}_entity_proj`,
-          name: '연동 데이터: ProjectEntity',
+          name: `${pick({ ko: '연동 데이터', en: 'Linked Entity', ja: '連携データ', id: 'Entitas Terkait' })}: ProjectEntity`,
           type: 'data_entity',
-          badge: 'DB 스키마',
+          badge: pick({ ko: 'DB 스키마', en: 'DB Schema', ja: 'DB スキーマ', id: 'Skema DB' }),
           badgeColor: 'indigo',
           chapterId: 4,
           sectionKey: 'data_columns',
-          chapterTitle: '제4장: 데이터 모델 & 엔터티',
+          chapterTitle: chTitle(4, 'Ch.4'),
           sourceText: 'ProjectEntity { id: UUID, name: string, plan: SitePlan, updatedAt: ISO8601 }',
           isUserInput: true,
         });
       } else if (pageSlug.includes('new') || pageSlug.includes('detail')) {
         pageNodeChildren.push({
           id: `page_${p.id || pIdx}_entity_target`,
-          name: '연동 데이터: TargetAppItem (CRUD)',
+          name: `${pick({ ko: '연동 데이터', en: 'Linked Entity', ja: '連携データ', id: 'Entitas Terkait' })}: TargetAppItem (CRUD)`,
           type: 'data_entity',
           badge: 'LocalStore',
           badgeColor: 'indigo',
           chapterId: 4,
           sectionKey: 'data_columns',
-          chapterTitle: '제4장: 데이터 모델 & 엔터티',
+          chapterTitle: chTitle(4, 'Ch.4'),
           sourceText: 'TargetAppItem { id: string, title: string, status: PENDING | CONFIRMED, createdAt: ISO8601 }',
           isUserInput: true,
         });
@@ -202,7 +229,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         badgeColor: 'emerald',
         chapterId: 6,
         sectionKey: 'pages_structure',
-        chapterTitle: '제6장: 사이트맵 및 화면 정의',
+        chapterTitle: chTitle(6, 'Ch.6'),
         sourceText: pageScript,
         charCount: pageScript.length,
         isUserInput: true,
@@ -216,9 +243,9 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
 
     // Add Key Features
     const defaultFeatureItems = [
-      { name: '사용자 인증 및 세션 관리 (JWT & SSO)', priority: 'P0 필수', route: '/auth/login' },
-      { name: '실시간 메트릭 대시보드 (KPI Overview)', priority: 'P0 필수', route: '/' },
-      { name: '고성능 데이터 테이블 & 스마트 검색', priority: 'P1 중요', route: '/detail' },
+      { name: pick({ ko: '사용자 인증 및 세션 관리 (JWT & SSO)', en: 'User Auth & Session Management (JWT & SSO)', ja: 'ユーザー認証＆セッション管理 (JWT & SSO)', id: 'Autentikasi & Manajemen Sesi (JWT & SSO)' }), priority: 'P0', route: '/auth/login' },
+      { name: pick({ ko: '실시간 메트릭 대시보드 (KPI Overview)', en: 'Live Metrics Dashboard (KPI Overview)', ja: 'リアルタイム指標ダッシュボード (KPI)', id: 'Dasbor Metrik Langsung (KPI)' }), priority: 'P0', route: '/' },
+      { name: pick({ ko: '고성능 데이터 테이블 & 스마트 검색', en: 'High-Speed Data Table & Smart Search', ja: '高速データテーブル＆スマート検索', id: 'Tabel Data Cepat & Pencarian Pintar' }), priority: 'P1', route: '/detail' },
     ];
     const featuresSource = parsedFeaturesList.length > 0 ? parsedFeaturesList : defaultFeatureItems;
 
@@ -228,26 +255,26 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         id: `feat_${idx}`,
         name: f.name,
         type: 'feature',
-        badge: f.priority || 'P0 필수',
+        badge: f.priority || 'P0',
         badgeColor: 'terracotta',
         route: targetRoute,
         chapterId: 3,
         sectionKey: 'key_features',
-        chapterTitle: '제3장: 핵심 기능 명세',
-        sourceText: `[기능 명세] ${f.name} ➔ 대상 화면: ${targetRoute}`,
+        chapterTitle: chTitle(3, 'Ch.3'),
+        sourceText: `${f.name} ➔ ${targetRoute}`,
         isUserInput: Boolean(formInputs['3_key_features']?.userRawInput),
         children: [
           {
             id: `feat_${idx}_link`,
-            name: `연결 대상 화면 ➔ [${targetRoute}]`,
+            name: `${pick({ ko: '연결 화면', en: 'Bound Screen', ja: '連携画面', id: 'Layar Terikat' })} ➔ [${targetRoute}]`,
             type: 'page',
-            badge: '화면 바인딩',
+            badge: pick({ ko: '화면 바인딩', en: 'Screen Bind', ja: '画面バインド', id: 'Ikat Layar' }),
             badgeColor: 'emerald',
             route: targetRoute,
             chapterId: 6,
             sectionKey: 'pages_structure',
-            chapterTitle: '제6장: 사이트맵 연결',
-            sourceText: `기능 [${f.name}]은 라우트 [${targetRoute}]에서 실행됩니다.`,
+            chapterTitle: chTitle(6, 'Ch.6'),
+            sourceText: `${f.name} ➔ [${targetRoute}]`,
           }
         ]
       });
@@ -264,7 +291,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         badgeColor: 'terracotta',
         chapterId: 3,
         sectionKey: 'happy_path',
-        chapterTitle: '제3장: 유저 플로우 (Happy Path)',
+        chapterTitle: chTitle(3, 'Ch.3'),
         sourceText: st,
         charCount: st.length,
         isUserInput: true,
@@ -272,13 +299,13 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
 
       featureChildren.push({
         id: 'feat_happy_path_group',
-        name: '엔드투엔드 유저 플로우 (Happy Path)',
+        name: pick({ ko: '엔드투엔드 유저 플로우 (Happy Path)', en: 'End-to-End User Flow (Happy Path)', ja: 'E2E ユーザーフロー (Happy Path)', id: 'Alur Pengguna E2E (Happy Path)' }),
         type: 'flow_step',
-        badge: `${steps.length}단계 흐름`,
+        badge: `${steps.length} ${pick({ ko: '단계', en: 'steps', ja: '段階', id: 'langkah' })}`,
         badgeColor: 'terracotta',
         chapterId: 3,
         sectionKey: 'happy_path',
-        chapterTitle: '제3장: 유저 플로우',
+        chapterTitle: chTitle(3, 'Ch.3'),
         sourceText: happyPathRaw,
         isUserInput: true,
         children: flowStepChildren,
@@ -293,40 +320,40 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
     const personaChildren: SitePlanTreeNode[] = [
       {
         id: 'persona_target',
-        name: targetPersonaRaw ? `타깃: ${targetPersonaRaw.split('\n')[0].slice(0, 25)}...` : '타깃 페르소나 (B2B SaaS PM & 개발자)',
+        name: targetPersonaRaw ? `${pick({ ko: '타깃', en: 'Target', ja: '対象', id: 'Target' })}: ${targetPersonaRaw.split('\n')[0].slice(0, 25)}...` : pick({ ko: '타깃 페르소나 (B2B SaaS PM & 개발자)', en: 'Target Persona (PM & Engineers)', ja: 'ターゲットペルソナ (PM・開発者)', id: 'Persona Target (PM & Engineer)' }),
         type: 'user_input',
-        badge: '주요 사용자군',
+        badge: pick({ ko: '주요 사용자', en: 'Audience', ja: '主要ユーザー', id: 'Audiens' }),
         badgeColor: 'amber',
         chapterId: 2,
         sectionKey: 'target_persona',
-        chapterTitle: '제2장: 타깃 사용자 명세',
-        sourceText: targetPersonaRaw || '서비스 주 사용자 및 지원 환경 정의',
+        chapterTitle: chTitle(2, 'Ch.2'),
+        sourceText: targetPersonaRaw || pick({ ko: '서비스 주 사용자 및 지원 환경 정의', en: 'Primary user segments and target devices', ja: '主要ユーザーと利用環境の定義', id: 'Segmen pengguna utama dan perangkat target' }),
         charCount: targetPersonaRaw.length,
         isUserInput: Boolean(targetPersonaRaw),
       },
       {
         id: 'persona_problem',
-        name: userProblemsRaw ? `해결 과제: ${userProblemsRaw.split('\n')[0].slice(0, 24)}...` : '사용자 Pain Points & 결핍 해소',
+        name: userProblemsRaw ? `${pick({ ko: '해결 과제', en: 'Pain Point', ja: '課題', id: 'Masalah' })}: ${userProblemsRaw.split('\n')[0].slice(0, 24)}...` : pick({ ko: '사용자 Pain Points & 결핍 해소', en: 'User Pain Points & Core Needs', ja: 'ユーザーペインポイント解消', id: 'Masalah Pengguna & Kebutuhan Inti' }),
         type: 'user_input',
         badge: 'Pain Point',
         badgeColor: 'amber',
         chapterId: 2,
         sectionKey: 'user_problems',
-        chapterTitle: '제2장: 사용자 요구사항',
-        sourceText: userProblemsRaw || '해결하고자 하는 사용자의 핵심 결핍 사항',
+        chapterTitle: chTitle(2, 'Ch.2'),
+        sourceText: userProblemsRaw || pick({ ko: '해결하고자 하는 사용자의 핵심 결핍 사항', en: 'Key user bottlenecks this product resolves', ja: '解決すべきユーザーの主要課題', id: 'Hambatan utama pengguna yang diselesaikan' }),
         charCount: userProblemsRaw.length,
         isUserInput: Boolean(userProblemsRaw),
       },
       {
         id: 'persona_goal',
-        name: problemBackgroundRaw ? `개발 배경: ${problemBackgroundRaw.split('\n')[0].slice(0, 24)}...` : '개발 목표 및 기대 효과',
+        name: problemBackgroundRaw ? `${pick({ ko: '개발 배경', en: 'Goal', ja: '開発背景', id: 'Tujuan' })}: ${problemBackgroundRaw.split('\n')[0].slice(0, 24)}...` : pick({ ko: '개발 목표 및 기대 효과', en: 'Project Goals & Impact', ja: '開発目標と期待効果', id: 'Tujuan Proyek & Dampak' }),
         type: 'user_input',
-        badge: '기술 목표',
+        badge: pick({ ko: '기술 목표', en: 'Objective', ja: '技術目標', id: 'Objektif' }),
         badgeColor: 'amber',
         chapterId: 1,
         sectionKey: 'problem_background',
-        chapterTitle: '제1장: 개발 배경 및 기술 목표',
-        sourceText: problemBackgroundRaw || '시스템 구축 배경 및 11종 사양서 사출 목표',
+        chapterTitle: chTitle(1, 'Ch.1'),
+        sourceText: problemBackgroundRaw || pick({ ko: '시스템 구축 배경 및 11종 사양서 사출 목표', en: 'System rationale and 11-spec extraction goals', ja: 'システム構築背景と11種仕様書出力目標', id: 'Latar belakang sistem & target ekspor 11 spek' }),
         charCount: problemBackgroundRaw.length,
         isUserInput: Boolean(problemBackgroundRaw),
       }
@@ -348,7 +375,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         badgeColor: 'indigo',
         chapterId: 4,
         sectionKey: 'data_columns',
-        chapterTitle: '제4장: 데이터 모델 & 엔터티',
+        chapterTitle: chTitle(4, 'Ch.4'),
         sourceText: 'ProjectEntity { id: UUID, name: string, plan: SitePlan, currentChapter: number, updatedAt: ISO8601 }',
         isUserInput: true,
       },
@@ -360,7 +387,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         badgeColor: 'indigo',
         chapterId: 4,
         sectionKey: 'data_columns',
-        chapterTitle: '제4장: 데이터 모델 & 엔터티',
+        chapterTitle: chTitle(4, 'Ch.4'),
         sourceText: dataColumnsRaw || 'TargetAppItem { id: string, title: string, status: PENDING | CONFIRMED, createdAt: ISO8601 }',
         charCount: dataColumnsRaw.length,
         isUserInput: Boolean(dataColumnsRaw),
@@ -368,17 +395,17 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       {
         id: 'data_business_rules',
         name: businessRulesRaw
-          ? `유효성 규칙: ${businessRulesRaw.split('\n')[0].slice(0, 22)}...`
+          ? `${pick({ ko: '유효성 규칙', en: 'Validation', ja: '検証ルール', id: 'Validasi' })}: ${businessRulesRaw.split('\n')[0].slice(0, 22)}...`
           : ch4Rules.length > 0
-          ? `도메인 규칙 ${ch4Rules.length}건 정의됨`
-          : '비즈니스 로직 & 300ms 디바운스',
+          ? pick({ ko: `도메인 규칙 ${ch4Rules.length}건 정의됨`, en: `${ch4Rules.length} Domain Rules Defined`, ja: `ドメイン規則 ${ch4Rules.length}件定義済`, id: `${ch4Rules.length} Aturan Domain Ditentukan` })
+          : pick({ ko: '비즈니스 로직 & 300ms 디바운스', en: 'Business Logic & 300ms Debounce', ja: 'ビジネスロジック＆300ms デバウンス', id: 'Logika Bisnis & Debounce 300ms' }),
         type: 'user_input',
-        badge: ch4Rules.length > 0 ? `규칙 ${ch4Rules.length}건` : '무결성 규칙',
+        badge: ch4Rules.length > 0 ? `${ch4Rules.length} ${pick({ ko: '건', en: 'rules', ja: '件', id: 'aturan' })}` : pick({ ko: '무결성 규칙', en: 'Integrity', ja: '整合性', id: 'Integritas' }),
         badgeColor: 'indigo',
         chapterId: 4,
         sectionKey: 'business_rules',
-        chapterTitle: '제4장: 비즈니스 규칙 & 유효성 검증',
-        sourceText: combinedRulesText || '모든 데이터 300ms 디바운스 및 브라우저 온디바이스 무손실 영속성',
+        chapterTitle: chTitle(4, 'Ch.4'),
+        sourceText: combinedRulesText || pick({ ko: '모든 데이터 300ms 디바운스 및 브라우저 온디바이스 무손실 영속성', en: '300ms debounced writes with lossless browser IndexedDB persistence', ja: '全データの 300ms デバウンス＆端末内 IndexedDB 永続化', id: 'Penulisan debounce 300ms & persistensi IndexedDB lokal' }),
         charCount: combinedRulesText.length,
         isUserInput: Boolean(combinedRulesText),
       }
@@ -391,40 +418,40 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
     const techChildren: SitePlanTreeNode[] = [
       {
         id: 'tech_design_token',
-        name: `비주얼 테마: ${brandMoodRaw ? brandMoodRaw.split('\n')[0].slice(0, 22) : 'Archival Paper & Sumuk Ink'}`,
+        name: `${pick({ ko: '비주얼 테마', en: 'Visual Theme', ja: 'テーマ', id: 'Tema Visual' })}: ${brandMoodRaw ? brandMoodRaw.split('\n')[0].slice(0, 22) : 'Archival Paper & Sumuk Ink'}`,
         type: 'tech_token',
         badge: plan.design?.themeColor || '#23392D',
         badgeColor: 'slate',
         chapterId: 5,
         sectionKey: 'brand_mood',
-        chapterTitle: '제5장: 비주얼 테마 및 컬러 토큰',
-        sourceText: brandMoodRaw || '모노크롬 테마 토큰, 1px 헤어라인 테두리 (#E5E0D8), 제로 필 규약',
+        chapterTitle: chTitle(5, 'Ch.5'),
+        sourceText: brandMoodRaw || pick({ ko: '모노크롬 테마 토큰, 1px 헤어라인 테두리, 제로 필 규약', en: 'Editorial theme tokens, 1px hairline borders, zero-pill discipline', ja: 'テーマトークン・1px ヘアライン境界線・ゼロピル規約', id: 'Token tema editorial, garis batas 1px, disiplin zero-pill' }),
         charCount: brandMoodRaw.length,
         isUserInput: Boolean(brandMoodRaw),
       },
       {
         id: 'tech_stack',
-        name: `기술 스택: ${stackReqRaw ? stackReqRaw.split('\n')[0].slice(0, 24) : 'React 19 + TypeScript + Vite + Tailwind'}`,
+        name: `${pick({ ko: '기술 스택', en: 'Tech Stack', ja: '技術スタック', id: 'Tech Stack' })}: ${stackReqRaw ? stackReqRaw.split('\n')[0].slice(0, 24) : 'React 19 + TypeScript + Vite + Tailwind'}`,
         type: 'tech_token',
         badge: 'React 19',
         badgeColor: 'slate',
         chapterId: 7,
         sectionKey: 'stack_requirements',
-        chapterTitle: '제7장: 기술 스택 및 프레임워크',
+        chapterTitle: chTitle(7, 'Ch.7'),
         sourceText: stackReqRaw || 'React 19 + TypeScript + Tailwind CSS + IndexedDB Local-First',
         charCount: stackReqRaw.length,
         isUserInput: Boolean(stackReqRaw),
       },
       {
         id: 'tech_export_bundle',
-        name: '산출물: 11종 기술 사양서 + prototype.html',
+        name: pick({ ko: '산출물: 11종 기술 사양서 + prototype.html', en: 'Output: 11 Tech Specs + prototype.html', ja: '成果物: 11種技術仕様書 + prototype.html', id: 'Keluaran: 11 Spek Teknis + prototype.html' }),
         type: 'tech_token',
         badge: '11 Docs ZIP',
         badgeColor: 'emerald',
         chapterId: 8,
         sectionKey: 'export_summary',
-        chapterTitle: '제8장: 최종 개발 명세서 번들',
-        sourceText: 'docs/ 디렉터리 11개 마크다운 문서 및 단일 파일 독립 프로토타입 패키지',
+        chapterTitle: chTitle(8, 'Ch.8'),
+        sourceText: pick({ ko: 'docs/ 디렉터리 11개 마크다운 문서 및 단일 파일 독립 프로토타입 패키지', en: '11 Markdown documents in docs/ plus standalone prototype.html bundle', ja: 'docs/ フォルダ内の11種マークダウン＆独立プロトタイプバンドル', id: '11 dokumen Markdown di docs/ dan bundel prototipe mandiri' }),
         isUserInput: true,
       }
     ];
@@ -440,7 +467,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         badgeColor: 'sumuk',
         chapterId: 1,
         sectionKey: 'project_name',
-        chapterTitle: '제1장: 서비스 개요',
+        chapterTitle: chTitle(1, 'Ch.1'),
         sourceText: formInputs['1_project_name']?.userRawInput || rawProjectName,
         isUserInput: isProjectCustom,
         children: pageChildren,
@@ -451,17 +478,17 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       // Linear Traceability Pipeline Tree
       return {
         id: 'root_traceability',
-        name: `${rawProjectName} (기획 요구사항 추적 매트릭스)`,
+        name: `${rawProjectName} (${pick({ ko: '요구사항 추적 매트릭스', en: 'Requirements Traceability Matrix', ja: '要件トレーサビリティマトリクス', id: 'Matriks Pelacakan Kebutuhan' })})`,
         type: 'root',
         badge: 'Traceability Flow',
         badgeColor: 'sumuk',
         chapterId: 1,
         sectionKey: 'project_name',
-        sourceText: '요구사항(문제) ➔ 페르소나 ➔ 핵심 기능 ➔ 화면 ➔ 데이터 모델 파이프라인',
+        sourceText: pick({ ko: '요구사항(문제) ➔ 페르소나 ➔ 핵심 기능 ➔ 화면 ➔ 데이터 모델 파이프라인', en: 'Problem ➔ Persona ➔ Core Features ➔ Screens ➔ Data Model Pipeline', ja: '課題 ➔ ペルソナ ➔ 主要機能 ➔ 画面 ➔ データモデル', id: 'Masalah ➔ Persona ➔ Fitur Inti ➔ Layar ➔ Model Data' }),
         children: [
           {
             id: 'trace_problems',
-            name: '1단계: 해결 과제 및 문제 정의 (Ch. 1 & 2)',
+            name: pick({ ko: '1단계: 해결 과제 및 문제 정의 (Ch. 1 & 2)', en: 'Step 1: Problem & Persona Definition (Ch. 1 & 2)', ja: '第1段階: 課題・ペルソナ定義 (Ch. 1 & 2)', id: 'Tahap 1: Definisi Masalah & Persona (Bab 1 & 2)' }),
             type: 'category',
             badge: 'Problem',
             badgeColor: 'amber',
@@ -469,7 +496,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           },
           {
             id: 'trace_features',
-            name: '2단계: 핵심 기능 및 유저 플로우 (Ch. 3)',
+            name: pick({ ko: '2단계: 핵심 기능 및 유저 플로우 (Ch. 3)', en: 'Step 2: Core Features & User Flows (Ch. 3)', ja: '第2段階: 主要機能・ユーザーフロー (Ch. 3)', id: 'Tahap 2: Fitur Inti & Alur Pengguna (Bab 3)' }),
             type: 'category',
             badge: 'Feature',
             badgeColor: 'terracotta',
@@ -477,7 +504,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           },
           {
             id: 'trace_pages',
-            name: '3단계: 화면 구조 및 라우팅 (Ch. 6)',
+            name: pick({ ko: '3단계: 화면 구조 및 라우팅 (Ch. 6)', en: 'Step 3: Screen Structure & Routing (Ch. 6)', ja: '第3段階: 画面構成・ルーティング (Ch. 6)', id: 'Tahap 3: Struktur Layar & Rute (Bab 6)' }),
             type: 'category',
             badge: 'Page Structure',
             badgeColor: 'emerald',
@@ -485,7 +512,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           },
           {
             id: 'trace_data',
-            name: '4단계: 데이터 모델 및 배포 산출물 (Ch. 4, 7, 8)',
+            name: pick({ ko: '4단계: 데이터 모델 및 배포 산출물 (Ch. 4, 7, 8)', en: 'Step 4: Data Model & Release Artifacts (Ch. 4, 7, 8)', ja: '第4段階: データモデル＆出力成果物 (Ch. 4, 7, 8)', id: 'Tahap 4: Model Data & Artefak Rilis (Bab 4, 7, 8)' }),
             type: 'category',
             badge: 'Schema & Release',
             badgeColor: 'indigo',
@@ -504,73 +531,73 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       badgeColor: 'sumuk',
       chapterId: 1,
       sectionKey: 'project_name',
-      chapterTitle: '제1장: 서비스 명칭 및 정의',
+      chapterTitle: chTitle(1, 'Ch.1'),
       sourceText: formInputs['1_project_name']?.userRawInput || rawProjectName,
       isUserInput: isProjectCustom,
       children: [
         {
           id: 'cat_pages',
-          name: '사이트맵 및 화면 구조 (Site Pages & IA)',
+          name: pick({ ko: '사이트맵 및 화면 구조 (Site Pages & IA)', en: 'Sitemap & Screen Structure (Site Pages & IA)', ja: 'サイトマップ・画面構成 (Site Pages & IA)', id: 'Peta Situs & Struktur Layar (IA)' }),
           type: 'category',
-          badge: `${pagesToRender.length}개 화면`,
+          badge: `${pagesToRender.length} ${pick({ ko: '화면', en: 'pages', ja: '画面', id: 'hal' })}`,
           badgeColor: 'emerald',
           chapterId: 6,
           sectionKey: 'pages_structure',
-          chapterTitle: '제6장: 정보구조 및 화면 정의서',
-          sourceText: formInputs['6_pages_structure']?.userRawInput || '전체 화면 목록 및 라우팅 경로',
+          chapterTitle: chTitle(6, 'Ch.6'),
+          sourceText: formInputs['6_pages_structure']?.userRawInput || pick({ ko: '전체 화면 목록 및 라우팅 경로', en: 'Full screen directory and routing paths', ja: '全画面一覧およびルーティング経路', id: 'Daftar lengkap layar dan rute navigasi' }),
           children: pageChildren,
         },
         {
           id: 'cat_features',
-          name: '핵심 기능 및 유저 플로우 (Features & Flow)',
+          name: pick({ ko: '핵심 기능 및 유저 플로우 (Features & Flow)', en: 'Core Features & User Flows (Features & Flow)', ja: '主要機能＆ユーザーフロー (Features & Flow)', id: 'Fitur Inti & Alur Pengguna' }),
           type: 'category',
-          badge: `${featuresSource.length}개 기능`,
+          badge: `${featuresSource.length} ${pick({ ko: '기능', en: 'feats', ja: '機能', id: 'fitur' })}`,
           badgeColor: 'terracotta',
           chapterId: 3,
           sectionKey: 'key_features',
-          chapterTitle: '제3장: 핵심 기능 명세 및 플로우',
-          sourceText: formInputs['3_key_features']?.userRawInput || '필수 기능 요구사항 및 엔드투엔드 동선',
+          chapterTitle: chTitle(3, 'Ch.3'),
+          sourceText: formInputs['3_key_features']?.userRawInput || pick({ ko: '필수 기능 요구사항 및 엔드투엔드 동선', en: 'Essential feature specs and end-to-end journeys', ja: '必須機能要件およびE2E導線', id: 'Kebutuhan fitur inti dan alur end-to-end' }),
           children: featureChildren,
         },
         {
           id: 'cat_persona',
-          name: '타깃 페르소나 및 요구사항 (Persona & Needs)',
+          name: pick({ ko: '타깃 페르소나 및 요구사항 (Persona & Needs)', en: 'Target Persona & Needs', ja: 'ターゲットペルソナ＆要望', id: 'Persona Target & Kebutuhan' }),
           type: 'category',
-          badge: '목표 & 결핍',
+          badge: pick({ ko: '목표 & 결핍', en: 'Goals & Needs', ja: '目標＆課題', id: 'Tujuan & Masalah' }),
           badgeColor: 'amber',
           chapterId: 2,
           sectionKey: 'target_persona',
-          chapterTitle: '제2장: 타깃 사용자 및 요구사항',
-          sourceText: formInputs['2_target_persona']?.userRawInput || '사용자 그룹 및 디바이스 환경 명세',
+          chapterTitle: chTitle(2, 'Ch.2'),
+          sourceText: formInputs['2_target_persona']?.userRawInput || pick({ ko: '사용자 그룹 및 디바이스 환경 명세', en: 'Target user cohorts and device environments', ja: '対象ユーザー群および利用端末仕様', id: 'Kelompok pengguna & lingkungan perangkat' }),
           children: personaChildren,
         },
         {
           id: 'cat_data',
-          name: '데이터 모델 및 비즈니스 규칙 (Data & Rules)',
+          name: pick({ ko: '데이터 모델 및 비즈니스 규칙 (Data & Rules)', en: 'Data Model & Business Rules', ja: 'データモデル＆ビジネス規則', id: 'Model Data & Aturan Bisnis' }),
           type: 'category',
-          badge: 'DB 스키마',
+          badge: pick({ ko: 'DB 스키마', en: 'DB Schema', ja: 'DB スキーマ', id: 'Skema DB' }),
           badgeColor: 'indigo',
           chapterId: 4,
           sectionKey: 'data_columns',
-          chapterTitle: '제4장: 데이터 모델 & 엔터티 명세',
-          sourceText: formInputs['4_data_columns']?.userRawInput || '엔터티 구조 및 비즈니스 무결성 규칙',
+          chapterTitle: chTitle(4, 'Ch.4'),
+          sourceText: formInputs['4_data_columns']?.userRawInput || pick({ ko: '엔터티 구조 및 비즈니스 무결성 규칙', en: 'Entity schemas and business integrity rules', ja: 'エンティティ構造および整合性ルール', id: 'Struktur entitas dan aturan integritas bisnis' }),
           children: dataChildren,
         },
         {
           id: 'cat_tech',
-          name: '디자인 시스템 및 기술 스택 (Tokens & Tech)',
+          name: pick({ ko: '디자인 시스템 및 기술 스택 (Tokens & Tech)', en: 'Design System & Tech Stack', ja: 'デザインシステム＆技術スタック', id: 'Sistem Desain & Tech Stack' }),
           type: 'category',
-          badge: '아키텍처',
+          badge: pick({ ko: '아키텍처', en: 'Architecture', ja: 'アーキテクチャ', id: 'Arsitektur' }),
           badgeColor: 'slate',
           chapterId: 7,
           sectionKey: 'stack_requirements',
-          chapterTitle: '제7장: 기술 스택 및 프레임워크 규약',
+          chapterTitle: chTitle(7, 'Ch.7'),
           sourceText: formInputs['7_stack_requirements']?.userRawInput || 'React 19 + TypeScript + Tailwind CSS',
           children: techChildren,
         }
       ]
     };
-  }, [plan, formInputs, viewMode]);
+  }, [plan, formInputs, viewMode, language, chTitle]);
 
   // Collapsed state store: id -> boolean
   const [collapsedMap, setCollapsedMap] = useState<Record<string, boolean>>({});
@@ -603,32 +630,33 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
     setCollapsedMap(newMap);
   }, [treeData]);
 
-  // Color mapping helper (Editorial Light Palette)
-  const getNodeColor = (type: SitePlanNodeType, badgeColor?: string) => {
+  // Color mapping helper (5-Theme Reactive Editorial Palette)
+  const getNodeColor = useCallback((type: SitePlanNodeType, badgeColor?: string) => {
+    const t = theme.tokens;
     switch (badgeColor || type) {
       case 'sumuk':
       case 'root':
-        return { bg: '#EFF6FF', border: '#1E3A8A', text: '#111827', badgeBg: '#1E3A8A', badgeText: '#FFFFFF' };
+        return { bg: t.stage, border: t.inkStrong, text: t.inkStrong, badgeBg: t.activeBg, badgeText: t.activeText };
       case 'emerald':
       case 'page':
       case 'subpage':
-        return { bg: '#FFFFFF', border: '#1E3A8A', text: '#111827', badgeBg: '#EFF6FF', badgeText: '#1E3A8A' };
+        return { bg: t.elevated, border: t.success, text: t.inkPrimary, badgeBg: t.successBg, badgeText: t.success };
       case 'terracotta':
       case 'feature':
       case 'flow_step':
-        return { bg: '#FFFFFF', border: '#2563EB', text: '#111827', badgeBg: '#EFF6FF', badgeText: '#1D4ED8' };
+        return { bg: t.elevated, border: t.seal, text: t.inkPrimary, badgeBg: t.dangerBg, badgeText: t.seal };
       case 'amber':
-        return { bg: '#FFFFFF', border: '#0EA5E9', text: '#111827', badgeBg: '#F0F9FF', badgeText: '#0369A1' };
+        return { bg: t.elevated, border: t.warning, text: t.inkPrimary, badgeBg: t.warningBg, badgeText: t.warning };
       case 'indigo':
       case 'data_entity':
-        return { bg: '#FFFFFF', border: '#4F46E5', text: '#111827', badgeBg: '#EEF2FF', badgeText: '#4338CA' };
+        return { bg: t.elevated, border: t.inkStrong, text: t.inkPrimary, badgeBg: t.subtle, badgeText: t.inkStrong };
       case 'slate':
       case 'tech_token':
-        return { bg: '#F7F8FA', border: '#CBD5E1', text: '#111827', badgeBg: '#FFFFFF', badgeText: '#4B5563' };
+        return { bg: t.stage, border: t.borderStrong, text: t.inkPrimary, badgeBg: t.elevated, badgeText: t.inkSecondary };
       default:
-        return { bg: '#FFFFFF', border: '#E5E7EB', text: '#111827', badgeBg: '#F7F8FA', badgeText: '#4B5563' };
+        return { bg: t.elevated, border: t.borderHairline, text: t.inkPrimary, badgeBg: t.stage, badgeText: t.inkSecondary };
     }
-  };
+  }, [theme]);
 
   // Node Icon Helper
   const getNodeIcon = (type: SitePlanNodeType) => {
@@ -734,7 +762,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           d.target.data.name.toLowerCase().includes(query) ||
           d.source.data.name.toLowerCase().includes(query)
         );
-        return isMatched ? '#1E3A8A' : '#CBD5E1';
+        return isMatched ? theme.tokens.seal : theme.tokens.d3Link;
       })
       .attr('stroke-width', (d) => {
         const isMatched = query && (
@@ -787,18 +815,18 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         .attr('y', -nodeCardHeight / 2)
         .attr('width', nodeCardWidth)
         .attr('height', nodeCardHeight)
-        .attr('rx', 8)
-        .attr('ry', 8)
+        .attr('rx', 2)
+        .attr('ry', 2)
         .attr('fill', colors.bg)
-        .attr('stroke', isSelected ? '#1E3A8A' : isMatched ? '#1E3A8A' : colors.border)
+        .attr('stroke', isSelected ? theme.tokens.seal : isMatched ? theme.tokens.seal : colors.border)
         .attr('stroke-width', isSelected ? 2 : isMatched ? 1.8 : 1)
-        .style('filter', isSelected ? 'drop-shadow(0 6px 16px rgba(30,58,138,0.16))' : 'drop-shadow(0 2px 6px rgba(15,23,42,0.06))')
+        .style('filter', isSelected ? 'drop-shadow(0 6px 16px rgba(0,0,0,0.16))' : 'drop-shadow(0 2px 6px rgba(0,0,0,0.06))')
         .on('mouseenter', function() {
-          d3.select(this).attr('stroke', '#1E3A8A').attr('stroke-width', 1.8);
+          d3.select(this).attr('stroke', theme.tokens.inkStrong).attr('stroke-width', 1.8);
         })
         .on('mouseleave', function() {
           if (!isSelected) {
-            d3.select(this).attr('stroke', isMatched ? '#1E3A8A' : colors.border).attr('stroke-width', isMatched ? 1.8 : 1);
+            d3.select(this).attr('stroke', isMatched ? theme.tokens.seal : colors.border).attr('stroke-width', isMatched ? 1.8 : 1);
           }
         });
 
@@ -808,8 +836,8 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         .attr('y', -nodeCardHeight / 2)
         .attr('width', 3.5)
         .attr('height', nodeCardHeight)
-        .attr('rx', 2)
-        .attr('fill', isSelected ? '#1E3A8A' : colors.border);
+        .attr('rx', 1)
+        .attr('fill', isSelected ? theme.tokens.seal : colors.border);
 
       // Node Icon Emoji
       nodeG.append('text')
@@ -840,7 +868,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       nodeG.append('text')
         .attr('x', 24)
         .attr('y', 8)
-        .attr('fill', data.type === 'root' ? '#1E3A8A' : '#6B7280')
+        .attr('fill', data.type === 'root' ? theme.tokens.seal : theme.tokens.inkSecondary)
         .attr('font-size', '9.5px')
         .attr('font-family', "'DM Sans', 'SUIT Variable', -apple-system, BlinkMacSystemFont, sans-serif")
         .attr('dominant-baseline', 'middle')
@@ -862,7 +890,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           .attr('y', -4)
           .attr('width', badgeText.length * 6 + 10)
           .attr('height', 14)
-          .attr('rx', 3)
+          .attr('rx', 2)
           .attr('fill', colors.badgeBg)
           .attr('opacity', 0.95);
 
@@ -884,9 +912,9 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           .attr('cx', nodeCardWidth - 18)
           .attr('cy', nodeCardHeight / 2 - 12)
           .attr('r', 3)
-          .attr('fill', '#1E3A8A')
+          .attr('fill', theme.tokens.seal)
           .append('title')
-          .text('사용자 기획 입력 실시간 연동됨');
+          .text(pick({ ko: '사용자 기획 입력 실시간 연동됨', en: 'Synced with user spec input', ja: 'ユーザー企画入力とリアルタイム連携中', id: 'Tersinkron dengan input spek pengguna' }));
       }
 
       // Expand / Collapse Circle Toggle
@@ -901,10 +929,10 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
 
         toggleG.append('circle')
           .attr('r', 8)
-          .attr('fill', '#FFFFFF')
+          .attr('fill', theme.tokens.elevated)
           .attr('stroke', colors.border)
           .attr('stroke-width', 1.2)
-          .style('filter', 'drop-shadow(0 1px 2px rgba(15,23,42,0.12))');
+          .style('filter', 'drop-shadow(0 1px 2px rgba(0,0,0,0.12))');
 
         toggleG.append('text')
           .attr('text-anchor', 'middle')
@@ -936,7 +964,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       );
     }
 
-  }, [treeData, collapsedMap, searchQuery, selectedNode, viewMode, toggleNodeCollapse]);
+  }, [treeData, collapsedMap, searchQuery, selectedNode, viewMode, toggleNodeCollapse, theme, getNodeColor]);
 
   // Zoom control handlers
   const handleZoomIn = () => {
@@ -997,50 +1025,50 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-white relative select-none overflow-hidden text-[#111827]">
+    <div className="w-full h-full flex flex-col bg-[var(--theme-canvas)] relative select-none overflow-hidden text-[var(--theme-ink-primary)]">
       {/* Top D3 Toolbar */}
-      <div className="bg-white px-4 py-2.5 border-b border-[#E5E7EB]/80 flex flex-wrap items-center justify-between gap-2 shrink-0 z-10">
+      <div className="bg-[var(--theme-canvas)] px-4 py-2.5 border-b border-[var(--theme-border-hairline)] flex flex-wrap items-center justify-between gap-2 shrink-0 z-10">
         {/* Left: View Mode Tabs & Live Sync indicator */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 bg-[#F7F8FA] p-0.5 rounded-lg border border-[#E5E7EB] text-xs">
+          <div className="flex items-center gap-1 bg-[var(--theme-stage)] p-0.5 rounded-[2px] border border-[var(--theme-border-hairline)] text-xs">
             <button
               onClick={() => setViewMode('all')}
-              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
+              className={`px-2.5 py-1 rounded-[2px] font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 viewMode === 'all'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'text-[#4B5563] hover:text-[#111827]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
+                  : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)]'
               }`}
-              title="사이트 구조와 8개 챕터 기획 전체 연결망"
+              title={pick({ ko: '사이트 구조와 8개 챕터 기획 전체 연결망', en: 'Full map across sitemap & 8 chapters', ja: 'サイト構造と全8章の連携マップ', id: 'Peta lengkap struktur situs & 8 bab' })}
             >
-              통합 기획 연계
+              {pick({ ko: '통합 기획 연계', en: 'Full Traceability', ja: '統合企画連携', id: 'Keterkaitan Penuh' })}
             </button>
             <button
               onClick={() => setViewMode('pages')}
-              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
+              className={`px-2.5 py-1 rounded-[2px] font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 viewMode === 'pages'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'text-[#4B5563] hover:text-[#111827]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
+                  : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)]'
               }`}
-              title="화면(Site Pages) 중심 기획 및 기능 바인딩"
+              title={pick({ ko: '화면(Site Pages) 중심 기획 및 기능 바인딩', en: 'Page-centric specs & feature bindings', ja: '画面(Site Pages)中心の仕様と機能バインド', id: 'Spesifikasi berpusat halaman & ikatan fitur' })}
             >
-              화면-기획 매핑
+              {pick({ ko: '화면-기획 매핑', en: 'Screen Mapping', ja: '画面-企画マップ', id: 'Pemetaan Layar' })}
             </button>
             <button
               onClick={() => setViewMode('traceability')}
-              className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
+              className={`px-2.5 py-1 rounded-[2px] font-medium text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 viewMode === 'traceability'
-                  ? 'bg-[#1E3A8A] text-white font-semibold'
-                  : 'text-[#4B5563] hover:text-[#111827]'
+                  ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
+                  : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)]'
               }`}
-              title="문제 ➔ 타깃 ➔ 기능 ➔ 화면 ➔ 데이터 추적 파이프라인"
+              title={pick({ ko: '문제 ➔ 타깃 ➔ 기능 ➔ 화면 ➔ 데이터 추적 파이프라인', en: 'Problem ➔ Target ➔ Feature ➔ Screen ➔ Data pipeline', ja: '課題 ➔ 対象 ➔ 機能 ➔ 画面 ➔ データ追跡パイプライン', id: 'Alur pelacakan Masalah ➔ Target ➔ Fitur ➔ Layar ➔ Data' })}
             >
-              요구사항 추적
+              {pick({ ko: '요구사항 추적', en: 'Requirements Flow', ja: '要件トレーサビリティ', id: 'Alur Kebutuhan' })}
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-[#EFF6FF] rounded-lg text-[10px] font-sans text-[#1E3A8A]">
-            <span className={`w-1.5 h-1.5 rounded-full ${isLivePulse ? 'bg-[#1E3A8A] animate-ping' : 'bg-[#1E3A8A]'}`} />
-            <span className="font-medium">실시간 연동</span>
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-[2px] text-[10px] font-sans text-[var(--theme-ink-strong)]">
+            <span className={`w-1.5 h-1.5 rounded-full bg-[var(--theme-seal)] ${isLivePulse ? 'animate-ping' : ''}`} />
+            <span className="font-medium">{pick({ ko: '실시간 연동', en: 'Live Sync', ja: 'リアルタイム連携', id: 'Sinkron Langsung' })}</span>
           </div>
         </div>
 
@@ -1048,66 +1076,66 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         <div className="flex items-center gap-1.5">
           {/* Search Input */}
           <div className="relative w-36 sm:w-44">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--theme-ink-muted)]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="노드 / 라우트 검색..."
-              className="w-full pl-7 pr-2 py-1 text-xs font-sans bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1E3A8A] focus:bg-white"
+              placeholder={pick({ ko: '노드 / 라우트 검색...', en: 'Search nodes / routes...', ja: 'ノード / ルート検索...', id: 'Cari node / rute...' })}
+              className="w-full pl-7 pr-2 py-1 text-xs font-sans bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-[2px] text-[var(--theme-ink-primary)] placeholder-[var(--theme-ink-muted)] focus:outline-none focus:border-[var(--theme-ink-strong)] focus:bg-[var(--theme-canvas)]"
             />
             {searchQuery && (
-              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-sans tabular-nums text-[#1E3A8A] font-semibold">
-                {matchedCount}개
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-sans tabular-nums text-[var(--theme-seal)] font-semibold">
+                {matchedCount}
               </span>
             )}
           </div>
 
           {/* Expand / Collapse All */}
-          <div className="hidden md:flex items-center gap-1 border-l border-[#E5E7EB] pl-1.5">
+          <div className="hidden md:flex items-center gap-1 border-l border-[var(--theme-border-hairline)] pl-1.5">
             <button
               onClick={expandAllNodes}
-              className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] text-[11px] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer"
-              title="모든 노드 펼치기"
+              className="px-2.5 py-1 rounded-[2px] bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] text-[11px] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-subtle)] transition-colors cursor-pointer"
+              title={pick({ ko: '모든 노드 펼치기', en: 'Expand all nodes', ja: 'すべてのノードを展開', id: 'Bentangkan semua node' })}
             >
-              모두 펼치기
+              {pick({ ko: '모두 펼치기', en: 'Expand All', ja: 'すべて展開', id: 'Bentangkan Semua' })}
             </button>
             <button
               onClick={collapseToCategories}
-              className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] text-[11px] text-[#4B5563] hover:text-[#1E3A8A] hover:bg-[#EFF6FF] transition-colors cursor-pointer"
-              title="하위 노드 접기"
+              className="px-2.5 py-1 rounded-[2px] bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] text-[11px] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-subtle)] transition-colors cursor-pointer"
+              title={pick({ ko: '하위 노드 접기', en: 'Collapse child nodes', ja: '子ノードを折りたたむ', id: 'Ciutkan node anak' })}
             >
-              접기
+              {pick({ ko: '접기', en: 'Collapse', ja: '折りたたむ', id: 'Ciutkan' })}
             </button>
           </div>
 
           {/* Zoom Buttons */}
-          <div className="flex items-center gap-1 border-l border-[#E5E7EB] pl-1.5">
+          <div className="flex items-center gap-1 border-l border-[var(--theme-border-hairline)] pl-1.5">
             <button
               onClick={handleZoomIn}
-              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] hover:bg-[#EFF6FF] text-[#4B5563] hover:text-[#1E3A8A] transition-colors cursor-pointer"
-              title="확대 (+)"
+              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] hover:bg-[var(--theme-subtle)] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] transition-colors cursor-pointer"
+              title={pick({ ko: '확대 (+)', en: 'Zoom In (+)', ja: '拡大 (+)', id: 'Perbesar (+)' })}
             >
               <ZoomIn size={13} />
             </button>
             <button
               onClick={handleZoomOut}
-              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] hover:bg-[#EFF6FF] text-[#4B5563] hover:text-[#1E3A8A] transition-colors cursor-pointer"
-              title="축소 (-)"
+              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] hover:bg-[var(--theme-subtle)] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] transition-colors cursor-pointer"
+              title={pick({ ko: '축소 (-)', en: 'Zoom Out (-)', ja: '縮小 (-)', id: 'Perkecil (-)' })}
             >
               <ZoomOut size={13} />
             </button>
             <button
               onClick={handleFitView}
-              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] hover:bg-[#EFF6FF] text-[#4B5563] hover:text-[#1E3A8A] transition-colors cursor-pointer"
-              title="화면 맞춤"
+              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] hover:bg-[var(--theme-subtle)] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] transition-colors cursor-pointer"
+              title={pick({ ko: '화면 맞춤', en: 'Fit to View', ja: '画面に合わせる', id: 'Paskan ke Layar' })}
             >
               <Maximize2 size={13} />
             </button>
             <button
               onClick={handleExportSvg}
-              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] hover:bg-[#EFF6FF] text-[#4B5563] hover:text-[#1E3A8A] transition-colors cursor-pointer"
-              title="SVG 다운로드"
+              className="p-1.5 min-h-[28px] min-w-[28px] flex items-center justify-center rounded-[2px] bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] hover:bg-[var(--theme-subtle)] text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] transition-colors cursor-pointer"
+              title={pick({ ko: 'SVG 다운로드', en: 'Download SVG', ja: 'SVG ダウンロード', id: 'Unduh SVG' })}
             >
               <Download size={13} />
             </button>
@@ -1118,9 +1146,9 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
       {/* D3 Canvas Mount */}
       <div 
         ref={containerRef} 
-        className="flex-1 w-full h-full relative overflow-hidden bg-white"
+        className="flex-1 w-full h-full relative overflow-hidden bg-[var(--theme-canvas)]"
         style={{
-          backgroundImage: 'radial-gradient(rgba(17, 24, 39, 0.08) 1.2px, transparent 1.2px)',
+          backgroundImage: `radial-gradient(${theme.isDark ? 'rgba(242, 239, 233, 0.08)' : 'rgba(17, 24, 39, 0.08)'} 1.2px, transparent 1.2px)`,
           backgroundSize: '24px 24px',
         }}
       >
@@ -1130,55 +1158,55 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         />
 
         {/* Floating Mini Legend */}
-        <div className="absolute bottom-3 left-3 pointer-events-none bg-white/95 backdrop-blur-xs border border-[#E5E7EB] rounded-xl px-3 py-2 text-[10px] font-sans text-[#4B5563] flex flex-wrap gap-3 shadow-xs">
+        <div className="absolute bottom-3 left-3 pointer-events-none bg-[var(--theme-elevated)]/95 backdrop-blur-xs border border-[var(--theme-border-hairline)] rounded-[2px] px-3 py-2 text-[10px] font-sans text-[var(--theme-ink-secondary)] flex flex-wrap gap-3 shadow-xs">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#EFF6FF] border border-[#1E3A8A]" />
-            <span>화면 및 사이트맵</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--theme-success-bg)] border border-[var(--theme-success)]" />
+            <span>{pick({ ko: '화면 및 사이트맵', en: 'Screens & Sitemap', ja: '画面＆サイトマップ', id: 'Layar & Peta Situs' })}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#EFF6FF] border border-[#2563EB]" />
-            <span>핵심 기능 및 플로우</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--theme-danger-bg)] border border-[var(--theme-seal)]" />
+            <span>{pick({ ko: '핵심 기능 및 플로우', en: 'Core Features & Flows', ja: '主要機能＆フロー', id: 'Fitur Inti & Alur' })}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#F0F9FF] border border-[#0EA5E9]" />
-            <span>사용자 기획 입력</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--theme-warning-bg)] border border-[var(--theme-warning)]" />
+            <span>{pick({ ko: '사용자 기획 입력', en: 'User Spec Input', ja: 'ユーザー企画入力', id: 'Input Spek Pengguna' })}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#EEF2FF] border border-[#4F46E5]" />
-            <span>데이터 모델</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--theme-subtle)] border border-[var(--theme-ink-strong)]" />
+            <span>{pick({ ko: '데이터 모델', en: 'Data Models', ja: 'データモデル', id: 'Model Data' })}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A]" />
-            <span className="text-[#1E3A8A] font-semibold">입력 연동됨</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--theme-seal)]" />
+            <span className="text-[var(--theme-seal)] font-semibold">{pick({ ko: '입력 연동됨', en: 'Input Linked', ja: '入力連携済', id: 'Input Terkait' })}</span>
           </div>
         </div>
       </div>
 
       {/* Selected Node Details Drawer / Inspection Panel */}
       {selectedNode && (
-        <div className="border-t border-[#E5E7EB] bg-[#F7F8FA] p-4 text-xs shrink-0 flex flex-col gap-2.5 text-[#111827]">
+        <div className="border-t border-[var(--theme-border-hairline)] bg-[var(--theme-stage)] p-4 text-xs shrink-0 flex flex-col gap-2.5 text-[var(--theme-ink-primary)]">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-base">{getNodeIcon(selectedNode.type)}</span>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="font-sans font-semibold text-sm text-[#111827] truncate tracking-tight">
+                  <h4 className="font-sans font-semibold text-sm text-[var(--theme-ink-strong)] truncate tracking-tight">
                     {selectedNode.name}
                   </h4>
                   {selectedNode.badge && (
-                    <span className="text-[10px] font-sans bg-[#EFF6FF] px-2 py-0.5 rounded-md text-[#1E3A8A] font-semibold">
+                    <span className="text-[10px] font-sans bg-[var(--theme-subtle)] px-2 py-0.5 rounded-[2px] text-[var(--theme-ink-strong)] font-semibold">
                       {selectedNode.badge}
                     </span>
                   )}
                   {selectedNode.route && (
-                    <span className="text-[10px] font-sans text-[#1E3A8A] bg-white border border-[#E5E7EB] px-2 py-0.5 rounded-md">
-                      경로: {selectedNode.route}
+                    <span className="text-[10px] font-sans text-[var(--theme-ink-primary)] bg-[var(--theme-canvas)] border border-[var(--theme-border-hairline)] px-2 py-0.5 rounded-[2px]">
+                      {pick({ ko: '경로', en: 'Route', ja: 'ルート', id: 'Rute' })}: {selectedNode.route}
                     </span>
                   )}
                 </div>
                 {selectedNode.chapterTitle && (
-                  <p className="text-[11px] text-[#6B7280] mt-0.5 font-sans">
-                    연동 출처: {selectedNode.chapterTitle}
+                  <p className="text-[11px] text-[var(--theme-ink-secondary)] mt-0.5 font-sans">
+                    {pick({ ko: '연동 출처', en: 'Source', ja: '連携元', id: 'Sumber' })}: {selectedNode.chapterTitle}
                   </p>
                 )}
               </div>
@@ -1188,17 +1216,17 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
               {selectedNode.chapterId && (
                 <button
                   onClick={() => handleJumpToEditor(selectedNode.chapterId, selectedNode.sectionKey)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E3A8A] text-white text-xs font-semibold hover:bg-[#172554] transition-colors cursor-pointer"
-                  title="이 기획 내용을 편집할 수 있는 워크스페이스 섹션으로 이동"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)] text-xs font-semibold hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer"
+                  title={pick({ ko: '이 기획 내용을 편집할 수 있는 워크스페이스 섹션으로 이동', en: 'Jump to the workspace section to edit this spec', ja: 'この仕様を編集するワークスペースセクションへ移動', id: 'Buka bagian ruang kerja untuk mengedit spek ini' })}
                 >
                   <FileText size={12} />
-                  <span>기획 편집기로 이동</span>
+                  <span>{pick({ ko: '기획 편집기로 이동', en: 'Open in Editor', ja: 'エディタで開く', id: 'Buka di Editor' })}</span>
                 </button>
               )}
               <button
                 onClick={() => setSelectedNode(null)}
-                className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#111827] hover:bg-white transition-colors cursor-pointer"
-                title="닫기"
+                className="p-1.5 rounded-[2px] text-[var(--theme-ink-muted)] hover:text-[var(--theme-ink-strong)] hover:bg-[var(--theme-canvas)] transition-colors cursor-pointer"
+                title={pick({ ko: '닫기', en: 'Close', ja: '閉じる', id: 'Tutup' })}
               >
                 ✕
               </button>
@@ -1207,18 +1235,22 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
 
           {/* User Input or Source Text */}
           {selectedNode.sourceText && (
-            <div className="bg-white p-3 rounded-xl border border-[#E5E7EB] text-[11px] font-sans text-[#111827] leading-relaxed max-h-24 overflow-y-auto select-text">
-              <span className="text-[#6B7280] block mb-1 text-[10px]">기획 사양 내용:</span>
+            <div className="bg-[var(--theme-canvas)] p-3 rounded-[2px] border border-[var(--theme-border-hairline)] text-[11px] font-sans text-[var(--theme-ink-body)] leading-relaxed max-h-24 overflow-y-auto select-text">
+              <span className="text-[var(--theme-ink-muted)] block mb-1 text-[10px]">
+                {pick({ ko: '기획 사양 내용', en: 'Specification Details', ja: '企画仕様内容', id: 'Detail Spesifikasi' })}:
+              </span>
               {selectedNode.sourceText}
             </div>
           )}
 
-          <div className="flex items-center justify-between text-[10px] font-sans text-[#6B7280]">
+          <div className="flex items-center justify-between text-[10px] font-sans text-[var(--theme-ink-secondary)]">
             <span>
-              {selectedNode.isUserInput ? '✓ 사용자가 입력한 기획과 실시간 동기화 완료' : '표준 템플릿 기본 정의'}
+              {selectedNode.isUserInput
+                ? pick({ ko: '✓ 사용자가 입력한 기획과 실시간 동기화 완료', en: '✓ Live-synced with user specification input', ja: '✓ ユーザー入力仕様とリアルタイム同期済', id: '✓ Tersinkron langsung dengan input pengguna' })
+                : pick({ ko: '표준 템플릿 기본 정의', en: 'Standard template default definition', ja: '標準テンプレート基本定義', id: 'Definisi default templat standar' })}
             </span>
             {selectedNode.charCount !== undefined && (
-              <span>작성 글자 수: {selectedNode.charCount}자</span>
+              <span>{pick({ ko: `작성 글자 수: ${selectedNode.charCount}자`, en: `Characters: ${selectedNode.charCount}`, ja: `文字数: ${selectedNode.charCount}文字`, id: `Jumlah karakter: ${selectedNode.charCount}` })}</span>
             )}
           </div>
         </div>

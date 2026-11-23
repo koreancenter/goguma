@@ -6,7 +6,7 @@ import { ChevronRight, ChevronLeft, X, Sparkles } from 'lucide-react';
 
 export const OnboardingTutorial: React.FC = () => {
   const { isActive, currentStepIndex, steps, nextStep, prevStep, stopTutorial } = useTutorial();
-  const { t } = useLanguage();
+  const { t, pick } = useLanguage();
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const currentStep = steps[currentStepIndex];
 
@@ -118,10 +118,10 @@ export const OnboardingTutorial: React.FC = () => {
               left: targetRect.left - 6,
               width: targetRect.width + 12,
               height: targetRect.height + 12,
-              border: '2px solid #1E3A8A',
+              border: '2px solid var(--theme-ink-strong)',
               borderRadius: '10px',
               zIndex: 10001,
-              boxShadow: '0 0 0 10000px rgba(17, 24, 39, 0.42), 0 0 24px rgba(30, 58, 138, 0.28)',
+              boxShadow: '0 0 0 10000px rgba(0, 0, 0, 0.45), 0 0 24px rgba(0, 0, 0, 0.25)',
             }}
             transition={{ type: 'spring', damping: 25, stiffness: 120 }}
           />
@@ -136,36 +136,38 @@ export const OnboardingTutorial: React.FC = () => {
             className="fixed z-[10001] pointer-events-auto"
             style={getTooltipStyle()}
           >
-            <div className="bg-[#FFFFFF] rounded-2xl p-6 shadow-[0_24px_48px_-12px_rgba(15,23,42,0.18)] border border-[#E5E7EB] max-w-[380px] w-full text-[#111827] font-sans">
-              <div className="flex items-center justify-between mb-3 border-b border-[#E5E7EB] pb-2.5">
+            <div className="bg-[var(--theme-elevated)] rounded-2xl p-6 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.28)] border border-[var(--theme-border-hairline)] max-w-[380px] w-full text-[var(--theme-ink-primary)] font-sans">
+              <div className="flex items-center justify-between mb-3 border-b border-[var(--theme-border-hairline)] pb-2.5">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-[#EFF6FF] border border-[#1E3A8A]/20 text-[#1E3A8A] flex items-center justify-center rounded-md font-bold text-xs">
+                  <div className="w-6 h-6 bg-[var(--theme-active-bg)] border border-[var(--theme-border-strong)] text-[var(--theme-active-text)] flex items-center justify-center rounded-md font-bold text-xs">
                     ✦
                   </div>
-                  <span className="text-[10px] font-sans font-semibold text-[#6B7280] uppercase tracking-widest">ONBOARDING GUIDE</span>
+                  <span className="text-[10px] font-sans font-semibold text-[var(--theme-ink-muted)] uppercase tracking-widest">
+                    {pick({ ko: '스튜디오 가이드', en: 'ONBOARDING GUIDE', ja: 'スタジオガイド', id: 'PANDUAN STUDIO' })}
+                  </span>
                 </div>
                 <button 
                   onClick={stopTutorial}
-                  className="text-[#6B7280] hover:text-[#111827] transition-colors cursor-pointer"
+                  className="text-[var(--theme-ink-muted)] hover:text-[var(--theme-ink-strong)] transition-colors cursor-pointer"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              <h3 className="text-base font-semibold text-[#111827] tracking-tight mb-1.5">
+              <h3 className="text-base font-semibold text-[var(--theme-ink-strong)] tracking-tight mb-1.5">
                 {t(currentStep.titleKey)}
               </h3>
-              <p className="text-xs text-[#4B5563] font-sans leading-relaxed mb-6">
+              <p className="text-xs text-[var(--theme-ink-secondary)] font-sans leading-relaxed mb-6">
                 {t(currentStep.descriptionKey)}
               </p>
 
-              <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB]">
+              <div className="flex items-center justify-between pt-4 border-t border-[var(--theme-border-hairline)]">
                 <div className="flex items-center gap-1.5">
                   {steps.map((_, idx) => (
                     <div 
                       key={`dot-${idx}`}
                       className={`h-1 rounded-full transition-all duration-300 ${
-                        idx === currentStepIndex ? 'w-4 bg-[#1E3A8A]' : 'w-1.5 bg-[#E5E7EB]'
+                        idx === currentStepIndex ? 'w-4 bg-[var(--theme-ink-strong)]' : 'w-1.5 bg-[var(--theme-border-hairline)]'
                       }`}
                     />
                   ))}
@@ -174,16 +176,20 @@ export const OnboardingTutorial: React.FC = () => {
                   {currentStepIndex > 0 && (
                     <button
                       onClick={prevStep}
-                      className="p-1.5 text-[#4B5563] hover:text-[#111827] transition-colors cursor-pointer"
+                      className="p-1.5 text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)] transition-colors cursor-pointer"
                     >
                       <ChevronLeft size={16} />
                     </button>
                   )}
                   <button
                     onClick={nextStep}
-                    className="flex items-center gap-1.5 bg-[#1E3A8A] hover:bg-[#172554] px-4 py-1.5 rounded-lg text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 bg-[var(--theme-btn-bg)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] px-4 py-1.5 rounded-lg text-[var(--theme-btn-text)] text-xs font-semibold shadow-xs transition-colors cursor-pointer"
                   >
-                    <span>{currentStepIndex === steps.length - 1 ? t('start_exploring') : t('next_step')}</span>
+                    <span>
+                      {currentStepIndex === steps.length - 1
+                        ? t('start_exploring')
+                        : pick({ ko: '다음 단계', en: 'Next Step', ja: '次へ', id: 'Langkah Berikutnya' })}
+                    </span>
                     <ChevronRight size={14} />
                   </button>
                 </div>
