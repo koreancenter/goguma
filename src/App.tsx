@@ -166,25 +166,11 @@ export default function App() {
 
     async function hydrateFromLocalDb() {
       try {
-        // Load active project doc (backward-compatible: default lockedChapters to [] if undefined)
-        const projSnap = await getDoc(doc(db, 'projects', 'active_project'));
-        if (projSnap.exists() && isMounted) {
-          const loadedProj = projSnap.data() as ProjectEntity;
-          setProject({
-            ...loadedProj,
-            lockedChapters: Array.isArray(loadedProj.lockedChapters) ? loadedProj.lockedChapters : [],
-          });
-        }
-
-        // Load active plan doc
-        const planSnap = await getDoc(doc(db, 'plans', 'active_plan'));
-        if (planSnap.exists() && isMounted) {
-          const loadedPlan = planSnap.data() as SitePlan;
-          setPlan(loadedPlan);
-        }
-
-        // Load form inputs map (backward-compatible: default businessRules to [] & isLocked to false if undefined)
+        // Load form inputs map first so we can migrate legacy Ch 8 export sections -> Ch 9 safely
         const inputsSnap = await getDoc(doc(db, 'form_inputs', 'active_inputs'));
+        let hasLegacyExportData = false;
+        let hasNewRoadmapData = false;
+
         if (inputsSnap.exists() && isMounted) {
           const loadedInputs = (inputsSnap.data() || {}) as Record<string, FormInputEntity>;
           const normalizedInputs: Record<string, FormInputEntity> = {};
@@ -197,7 +183,66 @@ export default function App() {
               isLocked: Boolean(entry.isLocked),
             };
           }
+
+          hasNewRoadmapData = Boolean(
+            normalizedInputs['8_milestone_phases'] || normalizedInputs['8_rollout_readiness']
+          );
+          hasLegacyExportData = Boolean(
+            normalizedInputs['8_export_summary'] || normalizedInputs['8_verification_checklist']
+          );
+
+          // Migrate legacy Chapter 8 export keys to Chapter 9 when not yet migrated
+          if (normalizedInputs['8_export_summary']) {
+            if (!normalizedInputs['9_export_summary']) {
+              normalizedInputs['9_export_summary'] = {
+                ...normalizedInputs['8_export_summary'],
+                id: 'input_9_export_summary',
+                chapterId: 9,
+              };
+            }
+            delete normalizedInputs['8_export_summary'];
+          }
+          if (normalizedInputs['8_verification_checklist']) {
+            if (!normalizedInputs['9_verification_checklist']) {
+              normalizedInputs['9_verification_checklist'] = {
+                ...normalizedInputs['8_verification_checklist'],
+                id: 'input_9_verification_checklist',
+                chapterId: 9,
+              };
+            }
+            delete normalizedInputs['8_verification_checklist'];
+          }
+
           setFormInputs(normalizedInputs);
+        }
+
+        // Load active project doc (backward-compatible: default lockedChapters to [] & shift legacy Ch 8 artifact nav -> Ch 9)
+        const projSnap = await getDoc(doc(db, 'projects', 'active_project'));
+        if (projSnap.exists() && isMounted) {
+          const loadedProj = projSnap.data() as ProjectEntity;
+          const rawLocked = Array.isArray(loadedProj.lockedChapters) ? loadedProj.lockedChapters : [];
+          const migratedLocked =
+            hasLegacyExportData && !hasNewRoadmapData && rawLocked.includes(8) && !rawLocked.includes(9)
+              ? Array.from(new Set(rawLocked.map(id => (id === 8 ? 9 : id)))).sort((a, b) => a - b)
+              : rawLocked;
+
+          const isLegacyExportNav =
+            loadedProj.currentChapter === 8 &&
+            (loadedProj.currentSection === 'export_summary' ||
+              loadedProj.currentSection === 'verification_checklist');
+
+          setProject({
+            ...loadedProj,
+            currentChapter: isLegacyExportNav ? 9 : loadedProj.currentChapter,
+            lockedChapters: migratedLocked,
+          });
+        }
+
+        // Load active plan doc
+        const planSnap = await getDoc(doc(db, 'plans', 'active_plan'));
+        if (planSnap.exists() && isMounted) {
+          const loadedPlan = planSnap.data() as SitePlan;
+          setPlan(loadedPlan);
         }
       } catch (err) {
         console.warn('Local database hydration notice (first load or fresh browser session):', err);
@@ -329,6 +374,24 @@ export default function App() {
           description: plainText,
         }
       }));
+    } else if (chapterId === 8 && sectionKey === 'milestone_phases' && plainText && !plainText.includes('- Deliverables:')) {
+      // If user authors direct Roadmap lines (`Category: Task [Start - End] {Owner}`), reflect into schedule
+      const scheduleLines = plainText
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => /^[^:]+:\s*[^\[\{]+\[[^\]-]+\s*-\s*[^\]]+\]/.test(line));
+      if (scheduleLines.length > 0) {
+        setPlan(prev => ({
+          ...prev,
+          metadata: {
+            ...prev.metadata,
+            projectOverview: {
+              ...prev.metadata.projectOverview,
+              schedule: scheduleLines.join('\n'),
+            },
+          },
+        }));
+      }
     }
 
     schedulePersistence();

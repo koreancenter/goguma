@@ -140,22 +140,22 @@ export default function DevNotesPage() {
             {pick({
               ko: (
                 <>
-                  <strong>8-Chapter 17-Section 통합 엔진:</strong> 서비스 개요부터 산출물 검수까지 입력된 원고를 단일 <code>SitePlan</code> 상태로 정규화하여 실시간 미리보기와 사양서 문서를 동기화합니다.
+                  <strong>9-Chapter 18-Section 통합 엔진:</strong> 서비스 개요부터 빅테크 표준 로드맵과 산출물 검수까지 입력된 원고를 단일 <code>SitePlan</code> 상태로 정규화하여 실시간 미리보기와 사양서 문서를 동기화합니다.
                 </>
               ),
               en: (
                 <>
-                  <strong>8-Chapter 17-Section Engine:</strong> Normalizes manuscripts across 8 chapters into a unified <code>SitePlan</code> graph, keeping live previews and generated documents in lockstep.
+                  <strong>9-Chapter 18-Section Engine:</strong> Normalizes manuscripts across 9 chapters into a unified <code>SitePlan</code> graph, keeping live previews and generated documents in lockstep.
                 </>
               ),
               ja: (
                 <>
-                  <strong>8-Chapter 17-Section 統合エンジン:</strong> 入力原稿を単一の <code>SitePlan</code> 状態へ正規化し、ライブプレビューと仕様書をリアルタイム同期します。
+                  <strong>9-Chapter 18-Section 統合エンジン:</strong> 入力原稿を単一の <code>SitePlan</code> 状態へ正規化し、ライブプレビューと仕様書をリアルタイム同期します。
                 </>
               ),
               id: (
                 <>
-                  <strong>Mesin Terpadu 8-Bab 17-Bagian:</strong> Menormalisasi draf naskah menjadi grafik <code>SitePlan</code> tunggal agar pratinjau dan dokumen tetap sinkron.
+                  <strong>Mesin Terpadu 9-Bab 18-Bagian:</strong> Menormalisasi draf naskah menjadi grafik <code>SitePlan</code> tunggal agar pratinjau dan dokumen tetap sinkron.
                 </>
               ),
             })}

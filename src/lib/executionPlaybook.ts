@@ -96,7 +96,11 @@ export function generateExecutionPlaybook(projectData: ExecutionPlaybookInput): 
     '3_happy_path',
     'Entry -> Authentication -> Dashboard -> Primary Action -> Confirmation'
   );
-  const verificationRaw = getRawInput(formInputs, '8_verification_checklist', '');
+  const verificationRaw =
+    getRawInput(formInputs, '9_verification_checklist', '') ||
+    getRawInput(formInputs, '8_verification_checklist', '');
+  const roadmapMilestonesRaw = getRawInput(formInputs, '8_milestone_phases', '');
+  const rolloutReadinessRaw = getRawInput(formInputs, '8_rollout_readiness', '');
 
   const pages =
     plan.navigation?.pageStructure && plan.navigation.pageStructure.length > 0
@@ -222,7 +226,11 @@ Do not invent extra screens or install unapproved state libraries. Output the fo
 Once the shell compiles cleanly, feed the domain logic and data model specifications:
 - **Primary References:** \`docs/02_roadmap.md\`, \`docs/04_SPEC.md\`, \`docs/06_DATA_SCHEMA.md\`
 - **Data Entity Fields:** \`${dataColumns.join('`, `')}\`
-- **Target Happy Path:** \`${happyPathRaw}\`
+- **Target Happy Path:** \`${happyPathRaw}\`${
+    roadmapMilestonesRaw || rolloutReadinessRaw
+      ? `\n\n### Big-Tech Roadmap & Release Gates (Chapter 08)\n${[roadmapMilestonesRaw, rolloutReadinessRaw].filter(Boolean).join('\n\n')}`
+      : ''
+  }
 
 ### Active Business Rules
 ${activeRulesPreview}

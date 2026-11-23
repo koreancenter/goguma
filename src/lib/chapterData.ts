@@ -158,6 +158,36 @@ const CHAPTERS_BY_LANG: Record<Language, LocalizedChapterText[]> = {
       ],
     },
     {
+      title: '제품 및 엔지니어링 로드맵',
+      description: '빅테크 표준(M0–M4 마일스톤, P0/P1/P2 스코프, 카나리 출시 게이트 및 리스크 대응) 기준으로 앱/웹 개발 로드맵을 수립합니다.',
+      sections: [
+        {
+          key: 'milestone_phases',
+          title: '마일스톤 & 단계별 실행 타임라인 (M0–M4)',
+          question: 'RFC 설계 동결(M0)부터 알파·베타·카나리 GA 출시(M3) 및 고도화(M4)까지 빅테크 표준 마일스톤과 워크스트림 일정을 정의하세요.',
+          placeholder: `[M0: Discovery & RFC Lock] PRD·기술 RFC 승인, API/DB 스키마 계약 동결, 디자인 토큰 확정 [1월 - 2월] {PM/Architect}
+[M1: Core MVP / Alpha] 인증(SSO/RBAC), 핵심 P0 플로우, CI/CD 및 텔레메트리 구축 (사내 도그푸딩) [3월 - 5월] {FE/BE Lead}
+[M2: Feature Complete / Closed Beta] 엣지 케이스, E2E·부하 테스트, 보안·접근성 감사(WCAG AA), Crash-Free ≥ 99.5% 검증 [6월 - 7월] {QA/Security}
+[M3: GA Launch & Canary Rollout] 피처 플래그 기반 점진 배포(1% → 10% → 50% → 100%), 온콜 런북 및 SLO 경보 가동 [8월 - 9월] {SRE/Release}
+[M4: Post-Launch & P1/P2 Growth] 북극성 KPI 퍼널 실험(A/B), Core Web Vitals 튜닝, 차기 P1/P2 기능 확장 [10월 - 12월] {Growth/Eng}`,
+        },
+        {
+          key: 'rollout_readiness',
+          title: '스코프 우선순위(P0–P2) & 출시 게이트(LRR)',
+          question: 'P0 출시 필수 범위, 팀 간 의존성, Go/No-Go 출시 승인 게이트, 핵심 지표(KPI) 및 롤백 기준을 정의하세요.',
+          placeholder: `## Scope Tiering (Now / Next / Later)
+- P0 (Must-Ship Blocker): 핵심 인증/권한, 메인 CRUD 워크플로우, 무중단 로컬/DB 동기화, 기본 에러 복구
+- P1 (Fast-Follow): 고급 필터·내보내기, 실시간 알림 최적화, 다국어 확장
+- P2 (Backlog): AI 자동 추천, 외부 엔터프라이즈 웹훅 마켓플레이스
+
+## Launch Readiness Review (Go / No-Go Exit Criteria)
+- 성능 SLA: P95 API 응답 < 200ms, 웹 LCP < 1.8s, 앱 Crash-Free Rate ≥ 99.8%
+- 품질·보안: P0/Sev-1 결함 0건, OWASP 보안 점검 및 RBAC 권한 우회 테스트 통과
+- 카나리 롤백 트리거: 5xx 오류율 > 0.5% 또는 P99 지연 > 1,000ms 시 60초 내 Feature Flag Kill-Switch 작동`,
+        },
+      ],
+    },
+    {
       title: '개발 산출물 및 배포 명세',
       description: '11종 마크다운 기술 사양서 번들과 프로토타입 산출물을 검수하고 배포합니다.',
       sections: [
@@ -300,6 +330,36 @@ const CHAPTERS_BY_LANG: Record<Language, LocalizedChapterText[]> = {
           title: 'Security & Performance Policies',
           question: 'Define encryption, session security, and rendering optimization policies.',
           placeholder: 'TLS transport encryption, secure token storage, code splitting, 60fps UI',
+        },
+      ],
+    },
+    {
+      title: 'Product & Engineering Roadmap',
+      description: 'Define Big-Tech standard App/Web delivery milestones (M0–M4), P0/P1/P2 scope tiers, launch readiness gates, and rollback controls.',
+      sections: [
+        {
+          key: 'milestone_phases',
+          title: 'Milestones & Phased Delivery Timeline (M0–M4)',
+          question: 'Outline Big-Tech lifecycle milestones from RFC/Design Lock (M0) through Alpha, Beta, Canary GA Launch (M3), and Growth Optimization (M4).',
+          placeholder: `[M0: Discovery & RFC Lock] PRD & Tech RFC sign-off, API/DB schema contract freeze, design token lock [Jan - Feb] {PM/Architect}
+[M1: Core MVP / Alpha] Auth (SSO/RBAC), P0 workflows, CI/CD & observability baseline (Internal Dogfood) [Mar - May] {FE/BE Lead}
+[M2: Feature Complete / Closed Beta] Edge cases, E2E & load testing, security/WCAG audit, Crash-Free >= 99.5% [Jun - Jul] {QA/Security}
+[M3: GA Launch & Canary Rollout] Feature-flagged phased rollout (1% -> 10% -> 50% -> 100%), on-call runbook & SLO alerts [Aug - Sep] {SRE/Release}
+[M4: Post-Launch & P1/P2 Growth] North Star KPI experiments (A/B), Core Web Vitals tuning, P1/P2 expansion [Oct - Dec] {Growth/Eng}`,
+        },
+        {
+          key: 'rollout_readiness',
+          title: 'Scope Tiers (P0–P2) & Launch Readiness Gates (LRR)',
+          question: 'Specify P0 release blockers, cross-team dependencies, Go/No-Go exit criteria, KPIs, and automated rollback triggers.',
+          placeholder: `## Scope Tiering (Now / Next / Later)
+- P0 (Must-Ship Blocker): Core Auth/RBAC, primary CRUD workflow, local/DB persistence, baseline recovery
+- P1 (Fast-Follow): Advanced filtering & exports, real-time notification tuning, multi-locale expansion
+- P2 (Backlog): AI workflow automation, enterprise webhook marketplace
+
+## Launch Readiness Review (Go / No-Go Exit Criteria)
+- Performance SLA: P95 API latency < 200ms, Web LCP < 1.8s, Mobile Crash-Free >= 99.8%
+- Quality & Security: 0 Sev-0/Sev-1 bugs, OWASP security review & RBAC penetration checks passed
+- Canary Rollback Trigger: Auto-revert feature flag within 60s if 5xx error rate > 0.5% or P99 > 1,000ms`,
         },
       ],
     },
@@ -450,6 +510,36 @@ const CHAPTERS_BY_LANG: Record<Language, LocalizedChapterText[]> = {
       ],
     },
     {
+      title: '製品・開発ロードマップ',
+      description: 'ビッグテック標準（M0–M4マイルストーン、P0/P1/P2優先度、カナリア公開ゲート＆リスク管理）に基づくアプリ/Web開発ロードマップを策定します。',
+      sections: [
+        {
+          key: 'milestone_phases',
+          title: 'マイルストーン＆段階的スケジュール (M0–M4)',
+          question: 'RFC設計凍結（M0）からAlpha、Beta、カナリアGA公開（M3）、最適化（M4）までの標準マイルストーンを定義してください。',
+          placeholder: `[M0: Discovery & RFC Lock] PRD・技術RFC承認、API/DBスキーマ凍結、トークン確定 [1月 - 2月] {PM/Architect}
+[M1: Core MVP / Alpha] 認証(SSO/RBAC)、P0主要フロー、CI/CD・計測基盤構築 (社内ドッグフーディング) [3月 - 5月] {FE/BE Lead}
+[M2: Feature Complete / Closed Beta] 境界ケース、E2E・負荷テスト、セキュリティ・WCAG監査 [6月 - 7月] {QA/Security}
+[M3: GA Launch & Canary Rollout] Feature Flag段階公開 (1% → 10% → 50% → 100%)、オンコール手順・SLO監視 [8月 - 9月] {SRE/Release}
+[M4: Post-Launch & P1/P2 Growth] North Star KPI実験(A/B)、Web Vitals最適化、P1/P2拡張 [10月 - 12月] {Growth/Eng}`,
+        },
+        {
+          key: 'rollout_readiness',
+          title: '優先度スコープ(P0–P2)＆リリースゲート(LRR)',
+          question: 'P0必須要件、チーム間依存関係、Go/No-Goリリース承認ゲート、KPI、自動ロールバック基準を定義してください。',
+          placeholder: `## Scope Tiering (Now / Next / Later)
+- P0 (Must-Ship Blocker): 認証/RBAC、主要CRUDフロー、ローカル/DB永続化、基本エラー回復
+- P1 (Fast-Follow): 高度な検索・出力、リアルタイム通知最適化、多言語拡張
+- P2 (Backlog): AIワークフロー自動化、外部Webhookマーケットプレイス
+
+## Launch Readiness Review (Go / No-Go Exit Criteria)
+- 性能SLA: P95 API応答 < 200ms、Web LCP < 1.8s、Crash-Free率 ≥ 99.8%
+- 品質・セキュリティ: Sev-0/Sev-1不具合0件、OWASP診断・RBAC権限テスト合格
+- カナリアロールバック基準: 5xx率 > 0.5% または P99 > 1,000ms 時に60秒以内自動切り戻し`,
+        },
+      ],
+    },
+    {
       title: '成果物・リリース仕様',
       description: '11種のMarkdown技術仕様書バンドルとプロトタイプを検証・出力します。',
       sections: [
@@ -596,6 +686,36 @@ const CHAPTERS_BY_LANG: Record<Language, LocalizedChapterText[]> = {
       ],
     },
     {
+      title: 'Peta Jalan Produk & Rekayasa',
+      description: 'Tetapkan peta jalan pengembangan Aplikasi/Web standar Big-Tech (tonggak M0–M4, prioritas P0/P1/P2, gerbang rilis kenari & mitigasi risiko).',
+      sections: [
+        {
+          key: 'milestone_phases',
+          title: 'Tonggak & Linimasa Eksekusi Bertahap (M0–M4)',
+          question: 'Definisikan tonggak standar Big-Tech mulai dari RFC Lock (M0), Alpha, Closed Beta, Peluncuran GA Kenari (M3), hingga Optimasi (M4).',
+          placeholder: `[M0: Discovery & RFC Lock] Persetujuan PRD & Tech RFC, pembekuan kontrak API/DB, penguncian token desain [1 - 2] {PM/Architect}
+[M1: Core MVP / Alpha] Autentikasi (SSO/RBAC), alur P0 inti, CI/CD & telemetri dasar (Dogfood Internal) [3 - 5] {FE/BE Lead}
+[M2: Feature Complete / Closed Beta] Kasus tepi, uji E2E & beban, audit keamanan/WCAG, Crash-Free >= 99.5% [6 - 7] {QA/Security}
+[M3: GA Launch & Canary Rollout] Rilis bertahap Feature Flag (1% -> 10% -> 50% -> 100%), runbook on-call & alarm SLO [8 - 9] {SRE/Release}
+[M4: Post-Launch & P1/P2 Growth] Eksperimen KPI utama (A/B), tuning Core Web Vitals, perluasan P1/P2 [10 - 12] {Growth/Eng}`,
+        },
+        {
+          key: 'rollout_readiness',
+          title: 'Prioritas Lingkup (P0–P2) & Gerbang Kesiapan Rilis (LRR)',
+          question: 'Tentukan lingkup wajib P0, ketergantungan lintas tim, kriteria Go/No-Go, KPI target, dan pemicu rollback otomatis.',
+          placeholder: `## Scope Tiering (Now / Next / Later)
+- P0 (Must-Ship Blocker): Autentikasi/RBAC inti, alur CRUD utama, persistensi lokal/DB, pemulihan galat dasar
+- P1 (Fast-Follow): Filter lanjutan & ekspor, optimasi notifikasi real-time, perluasan multi-bahasa
+- P2 (Backlog): Otomasi AI, marketplace webhook eksternal
+
+## Launch Readiness Review (Go / No-Go Exit Criteria)
+- SLA Performa: Latensi P95 API < 200ms, Web LCP < 1.8s, Crash-Free >= 99.8%
+- Kualitas & Keamanan: 0 bug Sev-0/Sev-1, lulus audit OWASP & uji izin RBAC
+- Pemicu Rollback Kenari: Nonaktifkan Feature Flag dalam 60 detik jika rasio error 5xx > 0.5% atau P99 > 1.000ms`,
+        },
+      ],
+    },
+    {
       title: 'Artefak & Spesifikasi Rilis',
       description: 'Tinjau dan ekspor bundel 11 spesifikasi teknis Markdown serta prototipe.',
       sections: [
@@ -624,6 +744,7 @@ const ENG_TITLES = [
   'Design System & Tokens',
   'Information Architecture',
   'Architecture & Security',
+  'Product & Eng Roadmap',
   'Artifacts & Release',
 ];
 

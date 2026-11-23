@@ -9,22 +9,22 @@ export type SpecImpactStatus = 'updated' | 'locked' | 'idle';
  * to the GOGUMA chapters that feed into it.
  */
 export const DOC_CONTRIBUTING_CHAPTERS: Record<string, number[]> = {
-  '00_EXECUTION_PLAYBOOK': [1, 2, 3, 4, 5, 6, 7, 8],
+  '00_EXECUTION_PLAYBOOK': [1, 2, 3, 4, 5, 6, 7, 8, 9],
   '01_proposal': [1, 2],
-  '02_roadmap': [3, 4],
+  '02_roadmap': [3, 4, 8],
   '03_DESIGN': [5],
   '04_SPEC': [3, 4, 6],
   '05_ARCH_CONSTITUTION': [5, 7],
   '06_DATA_SCHEMA': [4],
   '07_SECURITY': [7],
-  '08_TEST_CHECKLIST': [4, 8],
-  '09_ENV_SETUP': [7, 8],
-  '10_agent': [1, 3, 4, 5, 6, 7],
-  '11_system-instructions': [1, 3, 4, 5, 6, 7],
+  '08_TEST_CHECKLIST': [4, 8, 9],
+  '09_ENV_SETUP': [7, 8, 9],
+  '10_agent': [1, 3, 4, 5, 6, 7, 8],
+  '11_system-instructions': [1, 3, 4, 5, 6, 7, 8],
   cursorrules: [3, 4, 5, 7],
 };
 
-// Specs that aggregate cross-chapter domain business rules across chapters 1..8
+// Specs that aggregate cross-chapter domain business rules across chapters 1..9
 const CROSS_CHAPTER_RULE_DOCS = new Set([
   '00_EXECUTION_PLAYBOOK',
   '04_SPEC',

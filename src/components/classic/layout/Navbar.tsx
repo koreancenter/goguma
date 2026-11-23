@@ -22,7 +22,8 @@ const CHAPTER_SHORT_LABELS_MAP: Record<Language, Record<number, string>> = {
     5: '디자인',
     6: '화면',
     7: '아키텍처',
-    8: '산출물',
+    8: '로드맵',
+    9: '산출물',
   },
   en: {
     1: 'Overview',
@@ -32,7 +33,8 @@ const CHAPTER_SHORT_LABELS_MAP: Record<Language, Record<number, string>> = {
     5: 'Design',
     6: 'Screens',
     7: 'Arch',
-    8: 'Release',
+    8: 'Roadmap',
+    9: 'Release',
   },
   ja: {
     1: '概要',
@@ -42,7 +44,8 @@ const CHAPTER_SHORT_LABELS_MAP: Record<Language, Record<number, string>> = {
     5: 'デザイン',
     6: '画面',
     7: '構成',
-    8: '成果物',
+    8: 'ロードマップ',
+    9: '成果物',
   },
   id: {
     1: 'Ikhtisar',
@@ -52,7 +55,8 @@ const CHAPTER_SHORT_LABELS_MAP: Record<Language, Record<number, string>> = {
     5: 'Desain',
     6: 'Layar',
     7: 'Sistem',
-    8: 'Rilis',
+    8: 'Peta Jalan',
+    9: 'Rilis',
   },
 };
 
@@ -73,10 +77,11 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   } = useStudioHeader();
 
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
-  const [openPageSubmenu, setOpenPageSubmenu] = useState<'settings' | 'help' | null>(null);
   const [isAppsMenuOpen, setIsAppsMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [hoveredMenuId, setHoveredMenuId] = useState<number | 'settings' | 'help'>(currentChapter);
+  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
+  const [isHelpMenuOpen, setIsHelpMenuOpen] = useState(false);
+  const [hoveredMenuId, setHoveredMenuId] = useState<number>(currentChapter);
   const [isMobileChapterDrawerOpen, setIsMobileChapterDrawerOpen] = useState(false);
   const headerWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -86,38 +91,35 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
 
   useEffect(() => {
     setIsMegaMenuOpen(false);
-    setOpenPageSubmenu(null);
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
+    setIsSettingsMenuOpen(false);
+    setIsHelpMenuOpen(false);
     setIsMobileChapterDrawerOpen(false);
   }, [location.pathname, location.search]);
 
-  const navigateFromMenu = (path: string) => {
+  const closeAllMenus = () => {
     setIsMegaMenuOpen(false);
-    setOpenPageSubmenu(null);
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
+    setIsSettingsMenuOpen(false);
+    setIsHelpMenuOpen(false);
     setIsMobileChapterDrawerOpen(false);
+  };
+
+  const navigateFromMenu = (path: string) => {
+    closeAllMenus();
     navigate(path);
   };
 
-  const handleOpenMegaMenu = (menuId: number | 'settings' | 'help') => {
-    if (isAppsMenuOpen || isLangMenuOpen) return;
+  const handleOpenMegaMenu = (menuId: number) => {
+    if (isAppsMenuOpen || isLangMenuOpen || isSettingsMenuOpen || isHelpMenuOpen) return;
     setHoveredMenuId(menuId);
     setIsMegaMenuOpen(true);
   };
 
-  const handleOpenPageSubmenu = (menuId: 'settings' | 'help') => {
-    if (isAppsMenuOpen || isLangMenuOpen) return;
-    setOpenPageSubmenu(menuId);
-  };
-
   const handleChapterClick = (chapterId: number) => {
-    setIsAppsMenuOpen(false);
-    setIsLangMenuOpen(false);
-    setIsMegaMenuOpen(false);
-    setOpenPageSubmenu(null);
-    setIsMobileChapterDrawerOpen(false);
+    closeAllMenus();
     onSelectChapter(chapterId);
     if (location.pathname !== '/workspace') {
       navigate('/workspace');
@@ -125,11 +127,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   };
 
   const handleSectionClick = (chapterId: number, sectionKey: string) => {
-    setIsAppsMenuOpen(false);
-    setIsLangMenuOpen(false);
-    setIsMegaMenuOpen(false);
-    setOpenPageSubmenu(null);
-    setIsMobileChapterDrawerOpen(false);
+    closeAllMenus();
     onSelectChapter(chapterId);
     onSelectSection(sectionKey);
     if (location.pathname !== '/workspace') {
@@ -138,23 +136,24 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   };
 
   useEffect(() => {
-    if (!isMegaMenuOpen && !openPageSubmenu && !isMobileChapterDrawerOpen && !isAppsMenuOpen && !isLangMenuOpen) return;
+    if (
+      !isMegaMenuOpen &&
+      !isMobileChapterDrawerOpen &&
+      !isAppsMenuOpen &&
+      !isLangMenuOpen &&
+      !isSettingsMenuOpen &&
+      !isHelpMenuOpen
+    ) {
+      return;
+    }
     const handleClickOutside = (e: MouseEvent) => {
       if (headerWrapperRef.current && !headerWrapperRef.current.contains(e.target as Node)) {
-        setIsMegaMenuOpen(false);
-        setOpenPageSubmenu(null);
-        setIsAppsMenuOpen(false);
-        setIsLangMenuOpen(false);
-        setIsMobileChapterDrawerOpen(false);
+        closeAllMenus();
       }
     };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsMegaMenuOpen(false);
-        setOpenPageSubmenu(null);
-        setIsAppsMenuOpen(false);
-        setIsLangMenuOpen(false);
-        setIsMobileChapterDrawerOpen(false);
+        closeAllMenus();
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -163,7 +162,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isMegaMenuOpen, openPageSubmenu, isMobileChapterDrawerOpen, isAppsMenuOpen, isLangMenuOpen]);
+  }, [isMegaMenuOpen, isMobileChapterDrawerOpen, isAppsMenuOpen, isLangMenuOpen, isSettingsMenuOpen, isHelpMenuOpen]);
 
   const isWorkspaceRoute = location.pathname === '/workspace';
   const isBlogRoute = location.pathname === '/blog';
@@ -233,13 +232,6 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       label: pick({ ko: '내 계정 및 프로필', en: 'Account & Profile', ja: 'アカウント・プロフィール', id: 'Akun & Profil' }),
       action: () => navigateFromMenu(currentUser ? '/profile' : '/login'),
     },
-    {
-      id: 'logout',
-      label: currentUser
-        ? pick({ ko: '로그아웃', en: 'Sign Out', ja: 'ログアウト', id: 'Keluar' })
-        : pick({ ko: '로그인', en: 'Sign In', ja: 'ログイン', id: 'Masuk' }),
-      action: () => navigateFromMenu(currentUser ? '/logout' : '/login'),
-    },
   ];
 
   const HELP_MENU_ITEMS: {
@@ -299,7 +291,6 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       ref={headerWrapperRef}
       onMouseLeave={() => {
         setIsMegaMenuOpen(false);
-        setOpenPageSubmenu(null);
       }}
       className="no-print sticky top-0 shrink-0 z-40 select-none bg-[var(--theme-canvas)]"
     >
@@ -361,8 +352,9 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               onClick={() => {
                 setIsAppsMenuOpen(prev => !prev);
                 setIsLangMenuOpen(false);
+                setIsSettingsMenuOpen(false);
+                setIsHelpMenuOpen(false);
                 setIsMegaMenuOpen(false);
-                setOpenPageSubmenu(null);
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isAppsMenuOpen
@@ -399,8 +391,9 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               onClick={() => {
                 setIsLangMenuOpen(prev => !prev);
                 setIsAppsMenuOpen(false);
+                setIsSettingsMenuOpen(false);
+                setIsHelpMenuOpen(false);
                 setIsMegaMenuOpen(false);
-                setOpenPageSubmenu(null);
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isLangMenuOpen
@@ -446,12 +439,92 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
             )}
           </div>
 
-          {/* 3. Create Local Account */}
+          {/* 3. [Settings] */}
+          <div className="relative hidden sm:flex items-stretch">
+            <button
+              type="button"
+              onClick={() => {
+                setIsSettingsMenuOpen(prev => !prev);
+                setIsHelpMenuOpen(false);
+                setIsAppsMenuOpen(false);
+                setIsLangMenuOpen(false);
+                setIsMegaMenuOpen(false);
+              }}
+              className={`h-full px-3 sm:px-4 flex items-center gap-1 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
+                isSettingsMenuOpen
+                  ? 'bg-[var(--theme-hover-bg)] text-[var(--theme-hover-text)]'
+                  : isSettingsRoute
+                  ? 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-accent)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
+                  : 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
+              }`}
+            >
+              <span>{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Setelan' })}</span>
+              <ChevronDown size={13} className="shrink-0" />
+            </button>
+
+            {isSettingsMenuOpen && (
+              <div className="absolute right-0 top-full w-60 bg-[var(--theme-bar-bg)] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
+                {SETTINGS_MENU_ITEMS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={item.action}
+                    className="w-full px-4 py-3 text-left text-[13px] font-bold text-[var(--theme-bar-text)] rounded-none flex items-center justify-between gap-2 hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
+                  >
+                    <span>{item.label}</span>
+                    <ChevronRight size={13} className="shrink-0 opacity-60" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 4. [Help] */}
+          <div className="relative hidden sm:flex items-stretch">
+            <button
+              type="button"
+              onClick={() => {
+                setIsHelpMenuOpen(prev => !prev);
+                setIsSettingsMenuOpen(false);
+                setIsAppsMenuOpen(false);
+                setIsLangMenuOpen(false);
+                setIsMegaMenuOpen(false);
+              }}
+              className={`h-full px-3 sm:px-4 flex items-center gap-1 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
+                isHelpMenuOpen
+                  ? 'bg-[var(--theme-hover-bg)] text-[var(--theme-hover-text)]'
+                  : isHelpRoute
+                  ? 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-accent)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
+                  : 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
+              }`}
+            >
+              <span>{pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })}</span>
+              <ChevronDown size={13} className="shrink-0" />
+            </button>
+
+            {isHelpMenuOpen && (
+              <div className="absolute right-0 top-full w-60 bg-[var(--theme-bar-bg)] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
+                {HELP_MENU_ITEMS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={item.action}
+                    className="w-full px-4 py-3 text-left text-[13px] font-bold text-[var(--theme-bar-text)] rounded-none flex items-center justify-between gap-2 hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
+                  >
+                    <span>{item.label}</span>
+                    <ChevronRight size={13} className="shrink-0 opacity-60" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 5. Create Local Account */}
           {(!currentUser || currentUser.isAnonymous) && (
             <button
               type="button"
               onClick={() => navigateFromMenu('/create-account')}
-              className="hidden sm:flex h-full px-3 sm:px-4 items-center text-[13px] sm:text-[14px] font-bold text-[var(--theme-bar-text)] bg-[var(--theme-bar-bg)] rounded-none hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
+              className="hidden md:flex h-full px-3 sm:px-4 items-center text-[13px] sm:text-[14px] font-bold text-[var(--theme-bar-text)] bg-[var(--theme-bar-bg)] rounded-none hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
             >
               {currentUser?.isAnonymous
                 ? pick({ ko: '정식 프로필 등록', en: 'Register Profile', ja: '本登録', id: 'Daftar Profil' })
@@ -459,7 +532,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
             </button>
           )}
 
-          {/* 4. Sign In / Sign Out */}
+          {/* 6. Sign In / Sign Out */}
           <button
             type="button"
             onClick={() => navigateFromMenu(currentUser ? '/logout' : '/login')}
@@ -470,7 +543,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               : pick({ ko: '로그인', en: 'Sign In', ja: 'ログイン', id: 'Masuk' })}
           </button>
 
-          {/* 5. Account Icon */}
+          {/* 7. Account Icon */}
           <button
             type="button"
             onClick={() => navigateFromMenu(currentUser ? '/profile' : '/login')}
@@ -487,11 +560,11 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
         </div>
       </div>
 
-      {/* Tier 2: Workspace 10-Column Menu OR Page-Only Right-Aligned 4-Item Menu */}
+      {/* Tier 2: Workspace 9-Chapter Menu OR Page-Only Right-Aligned Menu */}
       <header className="relative z-30 bg-[var(--theme-canvas)] border-b border-[var(--theme-border-hairline)]">
         {isWorkspaceRoute ? (
           <nav
-            className="hidden lg:grid grid-cols-10 divide-x divide-[var(--theme-border-hairline)] h-20 w-full"
+            className="hidden lg:grid grid-cols-9 divide-x divide-[var(--theme-border-hairline)] h-20 w-full"
             aria-label={pick({ ko: '기획서 주요 메뉴', en: 'Specification Navigation', ja: '仕様書メインメニュー', id: 'Navigasi Spesifikasi' })}
           >
             {chapters.map((ch) => {
@@ -505,10 +578,12 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                   onMouseEnter={() => handleOpenMegaMenu(ch.id)}
                   onFocus={() => handleOpenMegaMenu(ch.id)}
                   onClick={() => handleChapterClick(ch.id)}
-                  className={`relative h-full w-full px-1.5 flex items-center justify-center text-center ${
-                    language === 'ko' || language === 'ja'
-                      ? 'text-[17px] xl:text-[20px] 2xl:text-[23px]'
-                      : 'text-[14px] xl:text-[16px] 2xl:text-[18px]'
+                  className={`relative h-full w-full px-1 flex items-center justify-center text-center ${
+                    language === 'ko'
+                      ? 'text-[15px] xl:text-[18px] 2xl:text-[21px]'
+                      : language === 'ja'
+                      ? 'text-[13px] xl:text-[16px] 2xl:text-[19px]'
+                      : 'text-[13px] xl:text-[15px] 2xl:text-[17px]'
                   } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                     isHovered
                       ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
@@ -522,50 +597,6 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 </button>
               );
             })}
-
-            {/* 9th Unified Column: [Settings] */}
-            <button
-              type="button"
-              onMouseEnter={() => handleOpenMegaMenu('settings')}
-              onFocus={() => handleOpenMegaMenu('settings')}
-              onClick={() => navigateFromMenu('/settings?tab=engine')}
-              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center ${
-                language === 'ko' || language === 'ja'
-                  ? 'text-[17px] xl:text-[20px] 2xl:text-[23px]'
-                  : 'text-[14px] xl:text-[16px] 2xl:text-[18px]'
-              } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
-                isMegaMenuOpen && hoveredMenuId === 'settings'
-                  ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
-                  : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
-              }`}
-            >
-              <span>{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Setelan' })}</span>
-              {isSettingsRoute && !(isMegaMenuOpen && hoveredMenuId === 'settings') && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
-              )}
-            </button>
-
-            {/* 10th Unified Column: [Help] */}
-            <button
-              type="button"
-              onMouseEnter={() => handleOpenMegaMenu('help')}
-              onFocus={() => handleOpenMegaMenu('help')}
-              onClick={() => navigateFromMenu('/support')}
-              className={`relative h-full w-full px-1.5 flex items-center justify-center text-center ${
-                language === 'ko' || language === 'ja'
-                  ? 'text-[17px] xl:text-[20px] 2xl:text-[23px]'
-                  : 'text-[14px] xl:text-[16px] 2xl:text-[18px]'
-              } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
-                isMegaMenuOpen && hoveredMenuId === 'help'
-                  ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
-                  : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
-              }`}
-            >
-              <span>{pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })}</span>
-              {isHelpRoute && !(isMegaMenuOpen && hoveredMenuId === 'help') && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
-              )}
-            </button>
           </nav>
         ) : (
           <nav
@@ -576,7 +607,6 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               {/* 1. [Blog] */}
               <button
                 type="button"
-                onMouseEnter={() => setOpenPageSubmenu(null)}
                 onClick={() => navigateFromMenu('/blog')}
                 className="relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)] transition-colors duration-150 cursor-pointer"
               >
@@ -586,88 +616,9 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 )}
               </button>
 
-              {/* 2. [Settings] */}
-              <div
-                className="relative flex items-stretch h-full"
-                onMouseEnter={() => handleOpenPageSubmenu('settings')}
-                onMouseLeave={() => setOpenPageSubmenu(prev => (prev === 'settings' ? null : prev))}
-              >
-                <button
-                  type="button"
-                  onFocus={() => handleOpenPageSubmenu('settings')}
-                  onClick={() => navigateFromMenu('/settings?tab=engine')}
-                  className={`relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
-                    openPageSubmenu === 'settings'
-                      ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
-                      : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
-                  }`}
-                >
-                  <span>{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Pengaturan' })}</span>
-                  {isSettingsRoute && openPageSubmenu !== 'settings' && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
-                  )}
-                </button>
-
-                {openPageSubmenu === 'settings' && (
-                  <div className="absolute right-0 top-full min-w-[230px] bg-[var(--theme-elevated)] border-x border-b border-[var(--theme-ink-strong)] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40 p-2.5 flex flex-col gap-1">
-                    {SETTINGS_MENU_ITEMS.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={item.action}
-                        className="w-full px-3 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
-                      >
-                        <span className="break-keep">{item.label}</span>
-                        <ChevronRight size={13} className="shrink-0 opacity-60" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* 3. [Help] */}
-              <div
-                className="relative flex items-stretch h-full"
-                onMouseEnter={() => handleOpenPageSubmenu('help')}
-                onMouseLeave={() => setOpenPageSubmenu(prev => (prev === 'help' ? null : prev))}
-              >
-                <button
-                  type="button"
-                  onFocus={() => handleOpenPageSubmenu('help')}
-                  onClick={() => navigateFromMenu('/support')}
-                  className={`relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
-                    openPageSubmenu === 'help'
-                      ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
-                      : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
-                  }`}
-                >
-                  <span>{pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })}</span>
-                  {isHelpRoute && openPageSubmenu !== 'help' && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
-                  )}
-                </button>
-
-                {openPageSubmenu === 'help' && (
-                  <div className="absolute right-0 top-full min-w-[240px] bg-[var(--theme-elevated)] border-x border-b border-[var(--theme-ink-strong)] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40 p-2.5 flex flex-col gap-1">
-                    {HELP_MENU_ITEMS.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={item.action}
-                        className="w-full px-3 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-2 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
-                      >
-                        <span className="break-keep">{item.label}</span>
-                        <ChevronRight size={13} className="shrink-0 opacity-60" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* 4. [Enter Workspace] */}
+              {/* 2. [Enter Workspace] */}
               <button
                 type="button"
-                onMouseEnter={() => setOpenPageSubmenu(null)}
                 onClick={() => navigateFromMenu('/workspace')}
                 className="relative h-full px-7 xl:px-9 flex items-center justify-center text-center text-[17px] xl:text-[20px] 2xl:text-[23px] font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)] transition-colors duration-150 cursor-pointer"
               >
@@ -744,14 +695,14 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
         </div>
       </header>
 
-      {/* Full-Width 10-Column Sub-Menu Panel (Workspace Only) */}
+      {/* Full-Width 9-Column Chapter Sub-Menu Panel (Workspace Only) */}
       {isWorkspaceRoute && isMegaMenuOpen && (
         <div
           className="hidden lg:block absolute left-0 right-0 top-full bg-[var(--theme-elevated)] border-b border-[var(--theme-ink-strong)] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40"
           role="region"
-          aria-label={pick({ ko: '전체 하위 메뉴, 환경 설정 및 도움말', en: 'Sub-menu, Settings & Help', ja: 'サブメニュー・設定・ヘルプ', id: 'Sub-menu, Pengaturan & Bantuan' })}
+          aria-label={pick({ ko: '전체 하위 섹션 메뉴', en: 'Chapter Sub-menu', ja: 'チャプターサブメニュー', id: 'Sub-menu Bab' })}
         >
-          <div className="grid grid-cols-10 divide-x divide-[var(--theme-border-hairline)]">
+          <div className="grid grid-cols-9 divide-x divide-[var(--theme-border-hairline)]">
             {chapters.map((ch) => (
               <div
                 key={ch.id}
@@ -783,7 +734,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                     </button>
                   );
                 })}
-                {ch.id === 8 && (
+                {ch.id === 9 && (
                   <button
                     type="button"
                     onClick={() => navigateFromMenu('/export')}
@@ -795,42 +746,6 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 )}
               </div>
             ))}
-
-            {/* 9th Column Sub-Items: [Settings] */}
-            <div
-              onMouseEnter={() => setHoveredMenuId('settings')}
-              className="flex flex-col min-h-[200px] p-2.5 gap-1 bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]"
-            >
-              {SETTINGS_MENU_ITEMS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={item.action}
-                  className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
-                >
-                  <span className="break-keep">{item.label}</span>
-                  <ChevronRight size={13} className="shrink-0 opacity-60" />
-                </button>
-              ))}
-            </div>
-
-            {/* 10th Column Sub-Items: [Help] */}
-            <div
-              onMouseEnter={() => setHoveredMenuId('help')}
-              className="flex flex-col min-h-[200px] p-2.5 gap-1 bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]"
-            >
-              {HELP_MENU_ITEMS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={item.action}
-                  className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
-                >
-                  <span className="break-keep">{item.label}</span>
-                  <ChevronRight size={13} className="shrink-0 opacity-60" />
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       )}
@@ -918,7 +833,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                         {sec.title}
                       </button>
                     ))}
-                    {ch.id === 8 && (
+                    {ch.id === 9 && (
                       <button
                         type="button"
                         onClick={() => navigateFromMenu('/export')}

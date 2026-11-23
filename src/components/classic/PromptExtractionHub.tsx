@@ -172,7 +172,7 @@ export default function PromptExtractionHub({
       <div className="space-y-8">
         <div className="flex items-center justify-between gap-4">
           <span className="text-[15px] sm:text-[16px] font-bold uppercase tracking-[0.16em] text-[var(--theme-ink-secondary)]">
-            CHAPTER 08 · ARTIFACTS &amp; VIBE-CODING HUB
+            CHAPTER 09 · ARTIFACTS &amp; VIBE-CODING HUB
           </span>
         </div>
 

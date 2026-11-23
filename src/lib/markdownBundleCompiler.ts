@@ -123,8 +123,35 @@ export function compileMarkdownBundle(
   const stackRequirements = getRaw('7_stack_requirements', 'React 19 + TypeScript + Tailwind CSS, Vite 번들러, RESTful API / GraphQL, Cloud Run 배포');
   const dataSovereignty = getRaw('7_data_sovereignty', '전송 구간 TLS 암호화, 안전한 세션 토큰 보관, 불필요한 서드파티 텔레메트리 스크립트 차단');
 
-  // Ch 8 Inputs
-  const verificationChecklist = getRaw('8_verification_checklist', '1. 주요 기능 조작 및 실시간 데이터 갱신 정상 작동 확인\n2. 반응형 뷰포트(Desktop / Tablet / Mobile Web) 호환성 검증\n3. 브라우저 콘솔 에러 제로 및 Lighthouse 코어 웹 바이탈 최적화');
+  // Ch 8 Inputs (Big-Tech Product & Engineering Roadmap)
+  const milestonePhases = getRaw(
+    '8_milestone_phases',
+    `[M0: Discovery & RFC Lock] PRD·Tech RFC 승인, API/DB 스키마 동결, 디자인 토큰 확정 [1월 - 2월] {PM/Architect}
+[M1: Core MVP / Alpha] 인증(SSO/RBAC), 핵심 P0 플로우, CI/CD·텔레메트리 구축 (사내 도그푸딩) [3월 - 5월] {FE/BE Lead}
+[M2: Feature Complete / Closed Beta] 엣지 케이스, E2E·부하 테스트, OWASP·WCAG AA 감사, Crash-Free >= 99.5% [6월 - 7월] {QA/SecOps}
+[M3: GA Launch & Canary Rollout] Feature Flag 점진 배포(1%→10%→50%→100%), 온콜 SLO 및 자동 롤백 가동 [8월 - 9월] {SRE/Release}
+[M4: Post-Launch & P1/P2 Growth] 북극성 KPI A/B 실험, Core Web Vitals 최적화, P1/P2 기능 확장 [10월 - 12월] {Growth/Eng}`
+  );
+  const rolloutReadiness = getRaw(
+    '8_rollout_readiness',
+    `## Scope Tiering (Now / Next / Later)
+- P0 (Must-Ship Blocker): 핵심 인증/권한, 메인 CRUD 워크플로우, 무중단 데이터 동기화, 기본 에러 복구
+- P1 (Fast-Follow): 고급 필터·내보내기, 실시간 알림 최적화, 다국어 확장
+- P2 (Backlog): AI 자동 추천, 엔터프라이즈 웹훅 마켓플레이스
+
+## Launch Readiness Review (Go / No-Go Exit Criteria)
+- 성능 SLA: P95 API 응답 < 200ms, 웹 LCP < 1.8s, 앱 Crash-Free Rate >= 99.8%
+- 품질·보안: P0/Sev-1 결함 0건, OWASP 보안 점검 및 RBAC 권한 우회 테스트 통과
+- 카나리 롤백 트리거: 5xx 오류율 > 0.5% 또는 P99 지연 > 1,000ms 시 60초 내 Feature Flag Kill-Switch 작동`
+  );
+
+  // Ch 9 Inputs (with fallback to legacy 8_verification_checklist key)
+  const legacyVerificationRaw = formInputs?.['8_verification_checklist']?.userRawInput?.trim() || '';
+  const verificationChecklist = getRaw(
+    '9_verification_checklist',
+    legacyVerificationRaw ||
+      '1. 주요 기능 조작 및 실시간 데이터 갱신 정상 작동 확인\n2. 반응형 뷰포트(Desktop / Tablet / Mobile Web) 호환성 검증\n3. 브라우저 콘솔 에러 제로 및 Lighthouse 코어 웹 바이탈 최적화'
+  );
 
   const now = new Date().toISOString();
 
@@ -165,13 +192,23 @@ ${userProblems}
   // --------------------------------------------------------------------------
   // 2. docs/02_roadmap.md
   // --------------------------------------------------------------------------
-  const roadmapMd = `# ${projectName} - 개발 로드맵 및 유저 플로우 (02_roadmap.md)
+  const roadmapMd = `# ${projectName} - 빅테크 표준 개발 로드맵 및 출시 게이트 (02_roadmap.md)
 
-> **목적**: 단계별 마일스톤과 사용자 핵심 여정(Happy Path)을 체계적으로 관리하는 실행 가이드
+> **목적**: M0–M4 단계별 마일스톤, P0–P2 스코프 우선순위, Launch Readiness Review(Go/No-Go) 게이트 및 사용자 핵심 여정(Happy Path)을 통합 관리하는 엔지니어링 로드맵
 
 ---
 
-## 1. 사용자 성공 여정 (End-to-End User Flow)
+## 1. 제품 및 엔지니어링 마일스톤 (M0–M4 Phased Timeline)
+${milestonePhases}
+
+---
+
+## 2. 스코프 우선순위 & 출시 준비 점검 게이트 (Scope & Launch Readiness Review)
+${rolloutReadiness}
+
+---
+
+## 3. 사용자 성공 여정 (End-to-End User Flow)
 사용자가 시스템에 접속하여 최종 목적을 달성할 때까지의 표준 인터랙션 플로우:
 \`\`\`text
 ${happyPath}
@@ -179,12 +216,12 @@ ${happyPath}
 
 ---
 
-## 2. 점진적 개발 마일스톤 (Milestones)
+## 4. 엔지니어링 태스크 분해 (Engineering Workstreams)
 
 ### 📌 Milestone 1: 프로토타입 및 코어 UI 레이아웃
 - **목표**: \`prototype.html\` 및 코어 레이아웃 기반의 시각적 컴포넌트 렌더링.
 - **주요 작업**:
-  - 모노크롬 딥 오닉스(#050505) 및 고대비 타이포그래피 토큰 적용
+  - 디자인 토큰(${themeColor} / ${accentColor}) 및 고대비 타이포그래피 적용
   - 글로벌 네비게이션 및 반응형 그리드 뷰포트 구성
   - 핵심 화면 와이어프레임 1:1 렌더링
 
@@ -195,12 +232,12 @@ ${happyPath}
   - 신규 데이터 생성 모달 및 상태 전이 인터랙션 구현
   - 비동기 데이터 패칭 및 에러 핸들링
 
-### 📌 Milestone 3: 검색 최적화, 보안 및 배포
-- **목표**: 실시간 인라인 필터링, 보안 헤더 적용 및 프로덕션 빌드.
+### 📌 Milestone 3: QA, 보안 감사, 카나리 롤아웃 및 배포
+- **목표**: 실시간 인라인 필터링, LRR Go/No-Go 게이트 검증 및 프로덕션 카나리 배포.
 - **주요 작업**:
   - 디바운스 검색 및 다중 조건 정렬 필터 최적화
   - RBAC 권한 분리 및 클라이언트 세션 무결성 검증
-  - Lighthouse 웹 바이탈 성능 측정 및 최종 배포
+  - Feature Flag 카나리 롤아웃(1%→10%→50%→100%) 및 Lighthouse 코어 웹 바이탈 검증
 `;
 
   // --------------------------------------------------------------------------

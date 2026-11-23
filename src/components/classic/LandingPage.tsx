@@ -129,10 +129,10 @@ export default function LandingPage() {
               <div className="lg:col-span-6 space-y-10">
                 <p className="text-[21px] sm:text-[23px] text-[var(--theme-ink-body)] leading-[1.75] max-w-2xl">
                   {pick({
-                    ko: '외부 서버로 로그인 정보나 기획 원고가 일체 전송되지 않는 독립된 Local-First 환경입니다. 8개의 구조화된 챕터를 따라 아이디어를 서술하면 실시간 프로토타입과 11종의 엔지니어링 사양서가 즉시 완성됩니다.',
-                    en: 'A sovereign Local-First studio where no credentials or specifications leave your device. Author across 8 structured chapters to manifest live prototypes and 11 engineering specifications instantly.',
-                    ja: 'ログイン情報や企画原稿が外部サーバーに一切送信されない独立したLocal-First環境です。構造化された8つのチャプターに沿ってアイデアを記述すると、ライブプロトタイプと11種類のエンジニアリング仕様書が即座に完成します。',
-                    id: 'Studio Local-First berdaulat di mana kredensial maupun draf spesifikasi tidak pernah meninggalkan perangkat Anda. Susun ide melalui 8 bab terstruktur untuk menghasilkan prototipe langsung dan 11 spesifikasi teknis seketika.',
+                    ko: '외부 서버로 로그인 정보나 기획 원고가 일체 전송되지 않는 독립된 Local-First 환경입니다. 9개의 구조화된 챕터를 따라 아이디어를 서술하면 실시간 프로토타입과 11종의 엔지니어링 사양서가 즉시 완성됩니다.',
+                    en: 'A sovereign Local-First studio where no credentials or specifications leave your device. Author across 9 structured chapters to manifest live prototypes and 11 engineering specifications instantly.',
+                    ja: 'ログイン情報や企画原稿が外部サーバーに一切送信されない独立したLocal-First環境です。構造化された9つのチャプターに沿ってアイデアを記述すると、ライブプロトタイプと11種類のエンジニアリング仕様書が即座に完成します。',
+                    id: 'Studio Local-First berdaulat di mana kredensial maupun draf spesifikasi tidak pernah meninggalkan perangkat Anda. Susun ide melalui 9 bab terstruktur untuk menghasilkan prototipe langsung dan 11 spesifikasi teknis seketika.',
                   })}
                 </p>
 
@@ -195,7 +195,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Sejong-Style Curated Program Index (Chapters 01 - 08) */}
+        {/* Sejong-Style Curated Program Index (Chapters 01 - 09) */}
         <section className="bg-[var(--theme-stage)] border-t border-[var(--theme-border-hairline)] py-24 lg:py-32">
           <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 space-y-12">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-8 border-b-2 border-[var(--theme-ink-strong)]">
@@ -210,19 +210,19 @@ export default function LandingPage() {
                 </span>
                 <h2 className="font-display text-[32px] sm:text-[40px] font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.03em] leading-tight">
                   {pick({
-                    ko: '8단계 아키텍처 집필 프로그램',
-                    en: 'Eight-Chapter Specification Index',
-                    ja: '8段階アーキテクチャ執筆プログラム',
-                    id: 'Indeks Spesifikasi Delapan Bab',
+                    ko: '9단계 아키텍처 집필 프로그램',
+                    en: 'Nine-Chapter Specification Index',
+                    ja: '9段階アーキテクチャ執筆プログラム',
+                    id: 'Indeks Spesifikasi Sembilan Bab',
                   })}
                 </h2>
               </div>
               <span className="text-[17px] sm:text-[18px] font-bold font-sans tabular-nums text-[var(--theme-ink-secondary)]">
                 {pick({
-                  ko: '01 — 08 챕터 · 17개 섹션',
-                  en: '01 — 08 Chapters · 17 Sections',
-                  ja: '01 — 08 チャプター · 17 セクション',
-                  id: '01 — 08 Bab · 17 Bagian',
+                  ko: '01 — 09 챕터 · 18개 섹션',
+                  en: '01 — 09 Chapters · 18 Sections',
+                  ja: '01 — 09 チャプター · 18 セクション',
+                  id: '01 — 09 Bab · 18 Bagian',
                 })}
               </span>
             </div>

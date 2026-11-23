@@ -22,6 +22,7 @@ import { FeatureMappingInteractiveWidget } from './FeatureMappingInteractiveWidg
 import { DesignSystemInteractiveWidget } from './DesignSystemInteractiveWidget';
 import { NavigationArchitectureInteractiveWidget } from './NavigationArchitectureInteractiveWidget';
 import { VisualSchemaBridgeWidget } from './VisualSchemaBridgeWidget';
+import { RoadmapInteractiveWidget } from './RoadmapInteractiveWidget';
 import { TiptapThinkingCanvas } from './TiptapThinkingCanvas';
 import { DomainRulesSection } from './DomainRulesSection';
 
@@ -84,7 +85,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
 
   const currentSectionIdx = chapter.sections.findIndex(s => s.key === section.key);
   const isFirstSection = currentChapter === 1 && currentSectionIdx === 0;
-  const isLastSection = currentChapter === 8 && currentSectionIdx === chapter.sections.length - 1;
+  const isLastSection = currentChapter === chapters.length && currentSectionIdx === chapter.sections.length - 1;
 
   // 1. Inline AI Refinement: synthesizes editor text + attached documents + domain rules into crisp spec prose
   const buildDeterministicRefinement = (rawPlain: string, attachments: SectionAttachment[]): string => {
@@ -111,6 +112,11 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
         lines.push(`- **실행 주체**: 인증된 시스템 사용자`);
         lines.push(`- **사전 조건**: 필수 항목 유효성 검증 통과`);
         lines.push(`- **사후 결과**: 로컬 IndexedDB 즉시 반영 및 상태 동기화`);
+      } else if (currentChapter === 8) {
+        lines.push(`## 빅테크 표준 제품/엔지니어링 로드맵 (${section.title})`);
+        lines.push(`- **단계별 실행 기준**: ${rawPlain}`);
+        lines.push(`- **스코프 분류**: P0 (Must-Ship Blocker) / P1 (Fast-Follow) / P2 (Backlog)`);
+        lines.push(`- **출시 승인 게이트 (LRR)**: 5xx < 0.1%, Core Web Vitals LCP < 1.8s, Feature Flag 카나리 롤백 < 60s`);
       } else {
         lines.push(`## 공식 규격 명세`);
         lines.push(`- **핵심 내용**: ${rawPlain}`);
@@ -369,13 +375,25 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
       }
 
       case 7:
+        return null;
+
+      case 8: {
+        return (
+          <RoadmapInteractiveWidget
+            plan={plan}
+            setPlan={setPlan}
+            onInputChange={onInputChange}
+          />
+        );
+      }
+
       default:
         return null;
     }
   };
 
-  // Chapter 8 is the dedicated Master Artifacts & Vibe Coding Hub
-  if (currentChapter === 8) {
+  // Chapter 9 is the dedicated Master Artifacts & Vibe Coding Hub
+  if (currentChapter === 9) {
     return (
       <section 
         className="flex-1 min-w-0 w-full h-full flex flex-col bg-[var(--theme-canvas)] overflow-y-auto selection:bg-[var(--theme-ink-strong)] selection:text-[var(--theme-canvas)]"
@@ -395,7 +413,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
     );
   }
 
-  // Chapters 1 to 7: Sejong Editorial Magazine Writing Canvas
+  // Chapters 1 to 8: Sejong Editorial Magazine Writing Canvas
   return (
     <section 
       className="flex-1 min-w-0 w-full h-full flex flex-col bg-[var(--theme-canvas)] overflow-y-auto selection:bg-[var(--theme-ink-strong)] selection:text-[var(--theme-canvas)]"
@@ -548,7 +566,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           />
         </div>
 
-        {/* 03. Unified Chapter Interactive Widget Section (Chapters 3-6) */}
+        {/* 03. Unified Chapter Interactive Widget Section (Chapters 3-8) */}
         {renderChapterInteractiveWidget() && (
           <div
             aria-disabled={isChapterLocked}
@@ -575,7 +593,7 @@ export const WritingCanvas: React.FC<WritingCanvasProps> = ({
           </button>
 
           <div className="hidden sm:flex items-center gap-2.5 text-[16px] font-bold tabular-nums tracking-[0.12em] uppercase text-[var(--theme-ink-secondary)]">
-            <span>0{chapter.id} / 08</span>
+            <span>0{chapter.id} / 0{chapters.length}</span>
             <span>·</span>
             <span>{currentSectionIdx + 1} / {chapter.sections.length}</span>
           </div>

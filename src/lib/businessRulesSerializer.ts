@@ -113,7 +113,7 @@ export function serializeSectionBusinessRulesToMarkdown(
 }
 
 /**
- * Deterministically serializes all structured business rules across all 8 chapters,
+ * Deterministically serializes all structured business rules across all 9 chapters,
  * iterating strictly in canonical GOGUMA_CHAPTERS -> sections order.
  */
 export function serializeAllBusinessRulesToMarkdown(

@@ -443,14 +443,34 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
         isUserInput: Boolean(stackReqRaw),
       },
       {
+        id: 'tech_roadmap',
+        name: `${pick({ ko: '개발 로드맵', en: 'Eng Roadmap', ja: '開発ロードマップ', id: 'Peta Jalan' })}: M0–M4 · LRR`,
+        type: 'tech_token',
+        badge: 'M0–M4',
+        badgeColor: 'amber',
+        chapterId: 8,
+        sectionKey: 'milestone_phases',
+        chapterTitle: chTitle(8, 'Ch.8'),
+        sourceText:
+          formInputs['8_milestone_phases']?.userRawInput ||
+          pick({
+            ko: 'RFC 동결(M0) → Alpha(M1) → Beta(M2) → Canary GA(M3) → 성장(M4) 및 Go/No-Go 게이트',
+            en: 'RFC Lock(M0) → Alpha(M1) → Beta(M2) → Canary GA(M3) → Growth(M4) & Go/No-Go Gates',
+            ja: 'RFC凍結(M0) → Alpha(M1) → Beta(M2) → Canary GA(M3) → 拡張(M4)＆承認ゲート',
+            id: 'RFC Lock(M0) → Alpha(M1) → Beta(M2) → Kenari GA(M3) → Ekspansi(M4) & Gerbang Rilis',
+          }),
+        charCount: (formInputs['8_milestone_phases']?.userRawInput || '').length,
+        isUserInput: Boolean(formInputs['8_milestone_phases']?.userRawInput),
+      },
+      {
         id: 'tech_export_bundle',
         name: pick({ ko: '산출물: 11종 기술 사양서 + prototype.html', en: 'Output: 11 Tech Specs + prototype.html', ja: '成果物: 11種技術仕様書 + prototype.html', id: 'Keluaran: 11 Spek Teknis + prototype.html' }),
         type: 'tech_token',
         badge: '11 Docs ZIP',
         badgeColor: 'emerald',
-        chapterId: 8,
+        chapterId: 9,
         sectionKey: 'export_summary',
-        chapterTitle: chTitle(8, 'Ch.8'),
+        chapterTitle: chTitle(9, 'Ch.9'),
         sourceText: pick({ ko: 'docs/ 디렉터리 11개 마크다운 문서 및 단일 파일 독립 프로토타입 패키지', en: '11 Markdown documents in docs/ plus standalone prototype.html bundle', ja: 'docs/ フォルダ内の11種マークダウン＆独立プロトタイプバンドル', id: '11 dokumen Markdown di docs/ dan bundel prototipe mandiri' }),
         isUserInput: true,
       }
@@ -512,7 +532,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
           },
           {
             id: 'trace_data',
-            name: pick({ ko: '4단계: 데이터 모델 및 배포 산출물 (Ch. 4, 7, 8)', en: 'Step 4: Data Model & Release Artifacts (Ch. 4, 7, 8)', ja: '第4段階: データモデル＆出力成果物 (Ch. 4, 7, 8)', id: 'Tahap 4: Model Data & Artefak Rilis (Bab 4, 7, 8)' }),
+            name: pick({ ko: '4단계: 데이터 모델 · 로드맵 및 배포 산출물 (Ch. 4, 7, 8, 9)', en: 'Step 4: Data Model, Roadmap & Release Artifacts (Ch. 4, 7, 8, 9)', ja: '第4段階: データモデル・工程表＆出力成果物 (Ch. 4, 7, 8, 9)', id: 'Tahap 4: Model Data, Peta Jalan & Artefak Rilis (Bab 4, 7, 8, 9)' }),
             type: 'category',
             badge: 'Schema & Release',
             badgeColor: 'indigo',
@@ -1038,7 +1058,7 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
                   ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] font-semibold'
                   : 'text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink-strong)]'
               }`}
-              title={pick({ ko: '사이트 구조와 8개 챕터 기획 전체 연결망', en: 'Full map across sitemap & 8 chapters', ja: 'サイト構造と全8章の連携マップ', id: 'Peta lengkap struktur situs & 8 bab' })}
+              title={pick({ ko: '사이트 구조와 9개 챕터 기획 전체 연결망', en: 'Full map across sitemap & 9 chapters', ja: 'サイト構造と全9章の連携マップ', id: 'Peta lengkap struktur situs & 9 bab' })}
             >
               {pick({ ko: '통합 기획 연계', en: 'Full Traceability', ja: '統合企画連携', id: 'Keterkaitan Penuh' })}
             </button>
