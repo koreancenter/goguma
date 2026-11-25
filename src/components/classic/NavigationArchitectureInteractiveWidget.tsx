@@ -18,12 +18,14 @@ interface NavigationArchitectureInteractiveWidgetProps {
   plan: SitePlan;
   setPlan: (plan: SitePlan) => void;
   onInputChange: (chapterId: number, sectionKey: string, text: string) => void;
+  largeTextMode?: boolean;
 }
 
 export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchitectureInteractiveWidgetProps> = ({
   plan,
   setPlan,
   onInputChange,
+  largeTextMode = false,
 }) => {
   const { pick } = useLanguage();
 
@@ -262,19 +264,23 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
     <div className="space-y-10 text-[var(--theme-ink-primary)] font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[var(--theme-ink-strong)]">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em]">
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex items-baseline gap-3.5 flex-wrap">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em] shrink-0">
               03
             </span>
-            <h3 className="font-extrabold text-[var(--theme-ink-strong)] text-[22px] sm:text-[26px] tracking-[-0.02em]">
+            <h2
+              className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.02em] leading-snug ${
+                largeTextMode ? 'text-[26px] sm:text-[30px]' : 'text-[22px] sm:text-[26px]'
+              }`}
+            >
               {pick({
                 ko: '화면 구조 및 내비게이션 아키텍처',
                 en: 'Screen Structure & Navigation Architecture',
                 ja: '画面構成およびナビゲーション設計',
                 id: 'Struktur Layar & Arsitektur Navigasi',
               })}
-            </h3>
+            </h2>
             <span className="text-[15px] font-bold text-[var(--theme-ink-secondary)] tabular-nums">
               {pick({
                 ko: `${pages.length}개 화면 연동`,
@@ -284,7 +290,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
               })}
             </span>
           </div>
-          <p className="text-[17px] sm:text-[19px] text-[var(--theme-ink-secondary)] leading-[1.7] pl-8">
+          <p className={`text-[var(--theme-ink-secondary)] pl-9 ${largeTextMode ? 'text-[17px]' : 'text-[15px]'}`}>
             {pick({
               ko: '서비스에 필요한 핵심 화면을 정의하고 이용 동선(Happy Path Flow)을 연결합니다.',
               en: 'Define the core screens for your service and connect them into a cohesive user flow.',
@@ -310,11 +316,16 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
         </div>
       )}
 
-      {/* 1. Interactive Page Cards List */}
+      {/* A. Interactive Page Cards List */}
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 text-[17px] sm:text-[18px]">
-          <div className="flex items-center gap-2 font-extrabold text-[var(--theme-ink-strong)]">
-            <Layers size={18} className="text-[var(--theme-ink-strong)]" />
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3
+            className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+              largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+            }`}
+          >
+            <Layers size={18} className="shrink-0" />
+            <span className="font-mono text-[var(--theme-ink-secondary)]">A.</span>
             <span>
               {pick({
                 ko: '화면 및 모달 목록 (Information Architecture)',
@@ -323,7 +334,7 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
                 id: 'Daftar Layar & Modal (Arsitektur Informasi)',
               })}
             </span>
-          </div>
+          </h3>
           <span className="text-[15px] text-[var(--theme-ink-muted)]">
             {pick({
               ko: '편집 아이콘을 눌러 세부 수정 가능',
@@ -491,10 +502,15 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
         </div>
       </div>
 
-      {/* 2. Navigation Flow & Pattern Selection */}
+      {/* B. Navigation Flow & Pattern Selection */}
       <div className="space-y-4 pt-6 border-t border-[var(--theme-border-hairline)]">
-        <label className="text-[17px] sm:text-[18px] font-extrabold text-[var(--theme-ink-strong)] flex items-center gap-2">
-          <MoveRight size={17} className="text-[var(--theme-ink-strong)]" />
+        <h3
+          className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+            largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+          }`}
+        >
+          <MoveRight size={18} className="shrink-0" />
+          <span className="font-mono text-[var(--theme-ink-secondary)]">B.</span>
           <span>
             {pick({
               ko: '화면 간 이동 및 인터랙션 방식',
@@ -503,97 +519,131 @@ export const NavigationArchitectureInteractiveWidget: React.FC<NavigationArchite
               id: 'Pola Navigasi & Interaksi Antar Layar',
             })}
           </span>
-        </label>
+        </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-3.5">
           <button
             type="button"
             onClick={() => handlePatternChange('modal_flow')}
-            className={`p-5 rounded-none text-left transition-colors cursor-pointer space-y-2 border ${
+            aria-pressed={navPattern === 'modal_flow'}
+            className={`w-full p-5 sm:p-6 rounded-none text-left transition-colors cursor-pointer flex items-start justify-between gap-4 ${
               navPattern === 'modal_flow'
                 ? 'bg-[var(--theme-canvas)] border-2 border-[var(--theme-ink-strong)]'
-                : 'bg-[var(--theme-stage)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
+                : 'bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
             }`}
           >
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-extrabold text-[16px] text-[var(--theme-ink-strong)]">
+            <div className="space-y-1.5 min-w-0 flex-1">
+              <div className="text-[17px] sm:text-[18px] font-extrabold text-[var(--theme-ink-strong)] leading-snug">
                 {pick({ ko: '모달 기반 팝업 워크플로우', en: 'Modal Popup Workflow', ja: 'モーダルポップアップ型', id: 'Alur Modal Popup' })}
-              </span>
-              {navPattern === 'modal_flow' && <Check size={16} className="text-[var(--theme-ink-strong)] shrink-0" />}
+              </div>
+              <p className="text-[15px] text-[var(--theme-ink-secondary)] leading-[1.65]">
+                {pick({
+                  ko: '화면 전환 없이 현재 뷰 위에서 모달로 빠르게 등록 및 확인',
+                  en: 'Create and inspect via modal overlays without losing context',
+                  ja: '画面遷移なしで現在のビュー上から素早く登録・確認',
+                  id: 'Buat dan tinjau cepat lewat modal tanpa berpindah halaman',
+                })}
+              </p>
             </div>
-            <p className="text-[15px] text-[var(--theme-ink-secondary)] leading-relaxed">
-              {pick({
-                ko: '화면 전환 없이 현재 뷰 위에서 모달로 빠르게 등록 및 확인',
-                en: 'Create and inspect via modal overlays without losing context',
-                ja: '画面遷移なしで現在のビュー上から素早く登録・確認',
-                id: 'Buat dan tinjau cepat lewat modal tanpa berpindah halaman',
-              })}
-            </p>
+            <div className="shrink-0 pt-0.5">
+              {navPattern === 'modal_flow' ? (
+                <span className="w-6 h-6 rounded-none bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] flex items-center justify-center">
+                  <Check size={14} strokeWidth={3} />
+                </span>
+              ) : (
+                <span className="w-6 h-6 rounded-none border border-[var(--theme-border-strong)] bg-[var(--theme-canvas)] block" />
+              )}
+            </div>
           </button>
 
           <button
             type="button"
             onClick={() => handlePatternChange('sidebar_flow')}
-            className={`p-5 rounded-none text-left transition-colors cursor-pointer space-y-2 border ${
+            aria-pressed={navPattern === 'sidebar_flow'}
+            className={`w-full p-5 sm:p-6 rounded-none text-left transition-colors cursor-pointer flex items-start justify-between gap-4 ${
               navPattern === 'sidebar_flow'
                 ? 'bg-[var(--theme-canvas)] border-2 border-[var(--theme-ink-strong)]'
-                : 'bg-[var(--theme-stage)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
+                : 'bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
             }`}
           >
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-extrabold text-[16px] text-[var(--theme-ink-strong)]">
+            <div className="space-y-1.5 min-w-0 flex-1">
+              <div className="text-[17px] sm:text-[18px] font-extrabold text-[var(--theme-ink-strong)] leading-snug">
                 {pick({ ko: '사이드바 + 상세 드로어', en: 'Sidebar + Detail Drawer', ja: 'サイドバー + 詳細ドロワー', id: 'Sidebar + Laci Detail' })}
-              </span>
-              {navPattern === 'sidebar_flow' && <Check size={16} className="text-[var(--theme-ink-strong)] shrink-0" />}
+              </div>
+              <p className="text-[15px] text-[var(--theme-ink-secondary)] leading-[1.65]">
+                {pick({
+                  ko: '사이드바 메뉴 ➔ 중앙 데이터 그리드 ➔ 우측 슬라이드 서랍 형태',
+                  en: 'Sidebar menu ➔ central data grid ➔ right slide-over drawer',
+                  ja: 'サイドバー ➔ 中央データグリッド ➔ 右スライドドロワー構成',
+                  id: 'Menu sidebar ➔ grid data tengah ➔ laci geser kanan',
+                })}
+              </p>
             </div>
-            <p className="text-[15px] text-[var(--theme-ink-secondary)] leading-relaxed">
-              {pick({
-                ko: '사이드바 메뉴 ➔ 중앙 데이터 그리드 ➔ 우측 슬라이드 서랍 형태',
-                en: 'Sidebar menu ➔ central data grid ➔ right slide-over drawer',
-                ja: 'サイドバー ➔ 中央データグリッド ➔ 右スライドドロワー構成',
-                id: 'Menu sidebar ➔ grid data tengah ➔ laci geser kanan',
-              })}
-            </p>
+            <div className="shrink-0 pt-0.5">
+              {navPattern === 'sidebar_flow' ? (
+                <span className="w-6 h-6 rounded-none bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] flex items-center justify-center">
+                  <Check size={14} strokeWidth={3} />
+                </span>
+              ) : (
+                <span className="w-6 h-6 rounded-none border border-[var(--theme-border-strong)] bg-[var(--theme-canvas)] block" />
+              )}
+            </div>
           </button>
 
           <button
             type="button"
             onClick={() => handlePatternChange('tab_flow')}
-            className={`p-5 rounded-none text-left transition-colors cursor-pointer space-y-2 border ${
+            aria-pressed={navPattern === 'tab_flow'}
+            className={`w-full p-5 sm:p-6 rounded-none text-left transition-colors cursor-pointer flex items-start justify-between gap-4 ${
               navPattern === 'tab_flow'
                 ? 'bg-[var(--theme-canvas)] border-2 border-[var(--theme-ink-strong)]'
-                : 'bg-[var(--theme-stage)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
+                : 'bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
             }`}
           >
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-extrabold text-[16px] text-[var(--theme-ink-strong)]">
+            <div className="space-y-1.5 min-w-0 flex-1">
+              <div className="text-[17px] sm:text-[18px] font-extrabold text-[var(--theme-ink-strong)] leading-snug">
                 {pick({ ko: '상단 탭 바 이동', en: 'Top Tab Navigation', ja: '上部タブバー移動', id: 'Navigasi Tab Atas' })}
-              </span>
-              {navPattern === 'tab_flow' && <Check size={16} className="text-[var(--theme-ink-strong)] shrink-0" />}
+              </div>
+              <p className="text-[15px] text-[var(--theme-ink-secondary)] leading-[1.65]">
+                {pick({
+                  ko: '상단 탭으로 전체/오늘/완료 상태를 빠르게 넘겨보는 직관적 뷰',
+                  en: 'Switch rapidly between All / Today / Completed views via top tabs',
+                  ja: '上部タブで全件・本日・完了を素早く切り替える直感的ビュー',
+                  id: 'Beralih cepat antar tab Semua / Hari Ini / Selesai di bagian atas',
+                })}
+              </p>
             </div>
-            <p className="text-[15px] text-[var(--theme-ink-secondary)] leading-relaxed">
-              {pick({
-                ko: '상단 탭으로 전체/오늘/완료 상태를 빠르게 넘겨보는 직관적 뷰',
-                en: 'Switch rapidly between All / Today / Completed views via top tabs',
-                ja: '上部タブで全件・本日・完了を素早く切り替える直感的ビュー',
-                id: 'Beralih cepat antar tab Semua / Hari Ini / Selesai di bagian atas',
-              })}
-            </p>
+            <div className="shrink-0 pt-0.5">
+              {navPattern === 'tab_flow' ? (
+                <span className="w-6 h-6 rounded-none bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] flex items-center justify-center">
+                  <Check size={14} strokeWidth={3} />
+                </span>
+              ) : (
+                <span className="w-6 h-6 rounded-none border border-[var(--theme-border-strong)] bg-[var(--theme-canvas)] block" />
+              )}
+            </div>
           </button>
         </div>
       </div>
 
-      {/* 3. Visual Connection Flow Diagram */}
+      {/* C. Visual Connection Flow Diagram */}
       <div className="p-6 bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] rounded-none space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 text-[16px]">
-          <span className="font-extrabold text-[var(--theme-ink-strong)]">
-            {pick({
-              ko: '실시간 화면 동선 시각화',
-              en: 'Live Screen Flow Visualization',
-              ja: 'リアルタイム画面動線ビジュアライザー',
-              id: 'Visualisasi Alur Layar Langsung',
-            })}
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3
+            className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+              largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+            }`}
+          >
+            <span className="font-mono text-[var(--theme-ink-secondary)]">C.</span>
+            <span>
+              {pick({
+                ko: '실시간 화면 동선 시각화',
+                en: 'Live Screen Flow Visualization',
+                ja: 'リアルタイム画面動線ビジュアライザー',
+                id: 'Visualisasi Alur Layar Langsung',
+              })}
+            </span>
+          </h3>
           <span className="font-mono text-[15px] text-[var(--theme-ink-secondary)]">
             {pick({
               ko: '04_SPEC.md 자동 동기화',

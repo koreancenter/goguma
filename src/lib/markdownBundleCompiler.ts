@@ -72,12 +72,33 @@ export function compileMarkdownBundle(
 
   const projectName = plan.metadata?.projectName?.trim() || formInputs?.['1_project_name']?.userRawInput?.trim() || '모던 웹 서비스 기획서';
   const platform = plan.metadata?.platform === 'APP' ? 'APP' : 'WEB';
+  const appProfile = plan.metadata?.appProfile;
+  const appFormLabelMap: Record<string, string> = {
+    web_responsive: 'Responsive Web Application (Web / SaaS)',
+    web_pwa: 'Installable PWA (Progressive Web App)',
+    mobile_hybrid: 'Cross-Platform Mobile App (iOS & Android)',
+    mobile_native: 'Native Mobile App (Swift / Kotlin)',
+    desktop_app: 'Desktop Application (macOS / Windows)',
+    multi_platform: 'Unified Web + Mobile Platform',
+  };
+  const pwaLabelMap: Record<string, string> = {
+    none: '미적용 (Standard Web / Store App)',
+    installable: '기본 설치형 PWA (Web Manifest + Home Screen)',
+    offline_first: '완전 오프라인 PWA (Service Worker + IndexedDB Sync)',
+  };
+  const resolvedAppForm = appProfile?.formType ? appFormLabelMap[appProfile.formType] || `${platform} Application` : `${platform} Application`;
+  const resolvedPwa = appProfile?.pwaSupport ? pwaLabelMap[appProfile.pwaSupport] : '미적용';
+  const resolvedTargets = appProfile?.targetDevices?.length ? appProfile.targetDevices.join(', ') : 'desktop, mobile';
   const themeColor = plan.design?.themeColor || '#050505';
   const accentColor = plan.design?.accentColor || '#FFFFFF';
 
   // Ch 1 Inputs
   const projectNameRaw = getRaw('1_project_name', `${projectName} - 프로덕션 웹 애플리케이션 아키텍처 기획서`);
   const problemBackground = getRaw('1_problem_background', plan.metadata?.projectOverview?.purpose || '고성능 반응형 웹 서비스 구축을 위한 요구사항을 명확히 정의하고, 엔지니어링 팀의 생산성을 극대화합니다.');
+  const appPlatformSummary = getRaw(
+    '1_app_platform',
+    `- **애플리케이션 형태**: ${resolvedAppForm}\n- **핵심 플랫폼 축**: ${platform}\n- **PWA 지원 여부**: ${resolvedPwa}\n- **지원 타깃 기기**: ${resolvedTargets}`
+  );
 
   // Ch 2 Inputs
   const targetPersona = getRaw('2_target_persona', plan.metadata?.projectOverview?.target || '데스크톱 및 모바일 웹 환경에서 웹 서비스를 이용하는 실무 사용자와 관리자');
@@ -161,8 +182,9 @@ export function compileMarkdownBundle(
   const proposalMd = `# ${projectName} - 웹 서비스 기획서 (01_proposal.md)
 
 > **프로젝트 명칭**: ${projectName}  
-> **타깃 플랫폼**: ${platform} Web Application  
-> **아키텍처**: Modern Full-Stack Web Architecture  
+> **타깃 플랫폼**: ${resolvedAppForm} (${platform})  
+> **PWA 지원 여부**: ${resolvedPwa}  
+> **아키텍처**: Modern Full-Stack Architecture  
 > **작성 일시**: ${now}  
 
 ---
@@ -171,6 +193,9 @@ export function compileMarkdownBundle(
 - **명칭 및 서비스 정의**: ${projectNameRaw}
 - **개발 배경 및 해결 과제**:
 ${problemBackground}
+
+### 애플리케이션 형태 및 배포 규격 (Platform & PWA)
+${appPlatformSummary}
 
 ---
 

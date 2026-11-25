@@ -69,7 +69,27 @@ export function generateExecutionPlaybook(projectData: ExecutionPlaybookInput): 
     projectData.projectName?.trim() ||
     plan.metadata?.projectName?.trim() ||
     getRawInput(formInputs, '1_project_name', 'GOGUMA Project');
-  const platform = plan.metadata?.platform === 'APP' ? 'Mobile Web / PWA (APP)' : 'Web Application (WEB)';
+  const appProfile = plan.metadata?.appProfile;
+  const formLabelMap: Record<string, string> = {
+    web_responsive: 'Responsive Web App (WEB)',
+    web_pwa: 'Installable PWA (WEB + PWA)',
+    mobile_hybrid: 'Cross-Platform Mobile App (APP)',
+    mobile_native: 'Native Mobile App (APP)',
+    desktop_app: 'Desktop Application (Electron/Tauri)',
+    multi_platform: 'Unified Web + Mobile App (Multi-Platform)',
+  };
+  const pwaNote =
+    appProfile?.pwaSupport === 'offline_first'
+      ? ' · Offline-First PWA'
+      : appProfile?.pwaSupport === 'installable'
+      ? ' · Installable PWA'
+      : '';
+  const platform =
+    (appProfile?.formType && formLabelMap[appProfile.formType]
+      ? `${formLabelMap[appProfile.formType]}${pwaNote}`
+      : plan.metadata?.platform === 'APP'
+      ? 'Mobile Web / PWA (APP)'
+      : 'Web Application (WEB)');
 
   const allRules = collectProjectRules(formInputs, lockedChapters);
   const lockedRules = allRules.filter(item => item.isLocked);

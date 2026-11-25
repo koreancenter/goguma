@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSitePlan } from '../../contexts/SitePlanContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { 
   Check, Terminal, Download, Copy, ExternalLink,
-  FileCode, FolderArchive
+  FileCode, FolderArchive, Printer
 } from 'lucide-react';
 import { FormInputEntity } from '../../types';
 import { compileMarkdownBundle, getMarkdownDocsList, MarkdownDocInfo } from '../../lib/markdownBundleCompiler';
@@ -27,6 +28,7 @@ export default function PromptExtractionHub({
   lockedChapters = [],
   updatedChapters,
 }: PromptExtractionHubProps) {
+  const navigate = useNavigate();
   const { plan } = useSitePlan();
   const { pick } = useLanguage();
 
@@ -205,7 +207,16 @@ export default function PromptExtractionHub({
             </p>
           </div>
 
-          <div className="shrink-0 flex items-center gap-2">
+          <div className="shrink-0 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => navigate('/export')}
+              className="flex items-center gap-2 px-4 py-3.5 rounded-none border border-[var(--theme-ink-strong)] bg-[var(--theme-canvas)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] hover:border-[var(--theme-hover-bg)] text-[var(--theme-ink-strong)] font-bold text-[16px] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <Printer size={16} />
+              <span>{pick({ ko: '사양서 인쇄·내보내기', en: 'Print / Export Spec', ja: '仕様書印刷・出力', id: 'Cetak / Ekspor' })}</span>
+            </button>
+
             <button
               type="button"
               onClick={handleDownloadZip}

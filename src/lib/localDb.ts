@@ -60,7 +60,7 @@ function getInitialCollectionData(name: string): Record<string, any> {
   if (name === 'users') {
     return {
       'admin_kwave': {
-        email: 'mrpark@kwavemission.org',
+        email: 'master@goguma.app',
         displayName: 'Administrator Park',
         role: 'ADMIN',
         status: 'ACTIVE',

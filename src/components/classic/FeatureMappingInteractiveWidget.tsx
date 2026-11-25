@@ -10,6 +10,7 @@ interface FeatureMappingInteractiveWidgetProps {
   plan: SitePlan;
   setPlan: (plan: SitePlan) => void;
   onInputChange: (chapterId: number, sectionKey: string, text: string) => void;
+  largeTextMode?: boolean;
 }
 
 interface FeatureItem {
@@ -30,6 +31,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
   plan,
   setPlan,
   onInputChange,
+  largeTextMode = false,
 }) => {
   const { pick } = useLanguage();
 
@@ -306,24 +308,28 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
     <div className="space-y-12 text-[var(--theme-ink-primary)] font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[var(--theme-ink-strong)]">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em]">
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex items-baseline gap-3.5 flex-wrap">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em] shrink-0">
               03
             </span>
-            <h3 className="font-extrabold text-[var(--theme-ink-strong)] text-[22px] sm:text-[26px] tracking-[-0.02em]">
+            <h2
+              className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.02em] leading-snug ${
+                largeTextMode ? 'text-[26px] sm:text-[30px]' : 'text-[22px] sm:text-[26px]'
+              }`}
+            >
               {pick({
                 ko: '핵심 기능 ↔ 화면 매핑 및 성공 여정',
                 en: 'Core Features ↔ Screen Mapping & Happy Path',
                 ja: '主要機能 ↔ 画面マッピング & ハッピーパス',
                 id: 'Pemetaan Fitur Inti ↔ Layar & Alur Sukses',
               })}
-            </h3>
+            </h2>
             <span className="text-[15px] font-bold font-mono text-[var(--theme-ink-secondary)]">
               02_roadmap.md
             </span>
           </div>
-          <p className="text-[17px] sm:text-[19px] text-[var(--theme-ink-secondary)] leading-[1.7] pl-8">
+          <p className={`text-[var(--theme-ink-secondary)] pl-9 ${largeTextMode ? 'text-[17px]' : 'text-[15px]'}`}>
             {pick({
               ko: '소프트웨어가 제공할 필수 기능을 정의하고, 대상 화면과 사용자의 가장 이상적인 이용 동선을 매핑합니다.',
               en: 'Define essential software capabilities and map each feature to target screens and optimal user journeys.',
@@ -343,11 +349,16 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
         </button>
       </div>
 
-      {/* 1. Feature to Screen Mapping */}
+      {/* A. Feature to Screen Mapping */}
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 text-[18px] sm:text-[20px] font-extrabold text-[var(--theme-ink-strong)]">
-            <Layers size={18} className="text-[var(--theme-ink-strong)]" />
+          <h3
+            className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+              largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+            }`}
+          >
+            <Layers size={18} className="shrink-0" />
+            <span className="font-mono text-[var(--theme-ink-secondary)]">A.</span>
             <span>
               {pick({
                 ko: '필수 핵심 기능 ↔ 대상 화면 매핑',
@@ -356,7 +367,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                 id: 'Pemetaan Fitur Utama ↔ Layar Target',
               })}
             </span>
-          </div>
+          </h3>
           <span className="text-[15px] text-[var(--theme-ink-muted)] font-medium">
             {pick({
               ko: '각 기능이 어느 화면에서 동작하는지 지정',
@@ -447,10 +458,16 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
       </div>
 
       {/* 2. State Machine / Lifecycle Cycler */}
+      {/* B. Resource Lifecycle State Machine */}
       <div className="space-y-5 pt-8 border-t border-[var(--theme-border-hairline)]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="text-[18px] sm:text-[20px] font-extrabold text-[var(--theme-ink-strong)] flex items-center gap-2.5">
-            <RefreshCw size={18} className="text-[var(--theme-ink-strong)]" />
+          <h3
+            className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+              largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+            }`}
+          >
+            <RefreshCw size={18} className="shrink-0" />
+            <span className="font-mono text-[var(--theme-ink-secondary)]">B.</span>
             <span>
               {pick({
                 ko: '리소스 상태 전이 수명주기 (State Machine)',
@@ -459,7 +476,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                 id: 'Siklus Hidup Transisi Status (State Machine)',
               })}
             </span>
-          </div>
+          </h3>
 
           <div className="flex flex-wrap items-center gap-2">
             {statusTemplates.map((tpl, idx) => (
@@ -534,11 +551,16 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
         </div>
       </div>
 
-      {/* 3. Happy Path Step Builder */}
+      {/* C. Happy Path Step Builder */}
       <div className="space-y-5 pt-8 border-t border-[var(--theme-border-hairline)]">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="text-[18px] sm:text-[20px] font-extrabold text-[var(--theme-ink-strong)] flex items-center gap-2.5">
-            <ArrowRightCircle size={18} className="text-[var(--theme-ink-strong)]" />
+          <h3
+            className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+              largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+            }`}
+          >
+            <ArrowRightCircle size={18} className="shrink-0" />
+            <span className="font-mono text-[var(--theme-ink-secondary)]">C.</span>
             <span>
               {pick({
                 ko: '사용자 성공 여정 (Happy Path 4단계)',
@@ -547,7 +569,7 @@ export const FeatureMappingInteractiveWidget: React.FC<FeatureMappingInteractive
                 id: 'Alur Sukses Pengguna (Happy Path 4 Langkah)',
               })}
             </span>
-          </div>
+          </h3>
           <span className="text-[15px] text-[var(--theme-ink-muted)] font-medium">
             {pick({
               ko: '목적 달성까지의 최단 무장애 경로',

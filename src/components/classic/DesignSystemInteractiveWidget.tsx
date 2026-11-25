@@ -71,12 +71,14 @@ interface DesignSystemInteractiveWidgetProps {
   plan: SitePlan;
   setPlan: (plan: SitePlan) => void;
   onInputChange: (chapterId: number, sectionKey: string, text: string) => void;
+  largeTextMode?: boolean;
 }
 
 export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidgetProps> = ({
   plan,
   setPlan,
   onInputChange,
+  largeTextMode = false,
 }) => {
   const { pick } = useLanguage();
   const currentThemeColor = plan.design?.themeColor || '#2563EB';
@@ -198,24 +200,28 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
     <div className="space-y-10 text-[var(--theme-ink-primary)] font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[var(--theme-ink-strong)]">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em]">
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex items-baseline gap-3.5 flex-wrap">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em] shrink-0">
               03
             </span>
-            <h3 className="font-extrabold text-[var(--theme-ink-strong)] text-[22px] sm:text-[26px] tracking-[-0.02em]">
+            <h2
+              className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.02em] leading-snug ${
+                largeTextMode ? 'text-[26px] sm:text-[30px]' : 'text-[22px] sm:text-[26px]'
+              }`}
+            >
               {pick({
                 ko: '비주얼 테마 및 디자인 규약 조율',
                 en: 'Visual Theme & Design System Calibration',
                 ja: 'ビジュアルテーマ・デザイン規範調整',
                 id: 'Kalibrasi Tema Visual & Sistem Desain',
               })}
-            </h3>
+            </h2>
             <span className="text-[15px] font-bold font-mono text-[var(--theme-ink-secondary)]">
               05_design_system.md
             </span>
           </div>
-          <p className="text-[17px] sm:text-[19px] text-[var(--theme-ink-secondary)] leading-[1.7] pl-8">
+          <p className={`text-[var(--theme-ink-secondary)] pl-9 ${largeTextMode ? 'text-[17px]' : 'text-[15px]'}`}>
             {pick({
               ko: '원하는 테마 프리셋을 선택하면 11종 사양서와 프로토타입에 디자인 규약이 즉시 동기화됩니다.',
               en: 'Selecting a theme preset immediately syncs design tokens across the 11 specs and standalone prototype.',
@@ -231,18 +237,25 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
         </div>
       </div>
 
-      {/* 1. 4 Signature Theme Preset Cards */}
+      {/* A. 4 Signature Theme Preset Cards (Single Column Standard) */}
       <div className="space-y-4">
-        <label className="text-[17px] sm:text-[18px] font-extrabold text-[var(--theme-ink-strong)] block">
-          {pick({
-            ko: '4종 감성 미니멀리즘 테마 프리셋',
-            en: '4 Signature Minimalist Theme Presets',
-            ja: '4種のミニマリズムテーマプリセット',
-            id: '4 Prasetel Tema Minimalis Khas',
-          })}
-        </label>
+        <h3
+          className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+            largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+          }`}
+        >
+          <span className="font-mono text-[var(--theme-ink-secondary)]">A.</span>
+          <span>
+            {pick({
+              ko: '4종 감성 미니멀리즘 테마 프리셋',
+              en: '4 Signature Minimalist Theme Presets',
+              ja: '4種のミニマリズムテーマプリセット',
+              id: '4 Prasetel Tema Minimalis Khas',
+            })}
+          </span>
+        </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-3.5">
           {THEME_PRESETS.map((preset) => {
             const isSelected = activePreset.id === preset.id;
             const loc = presetLocaleMap[preset.id] || {
@@ -319,8 +332,24 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
         </div>
       </div>
 
-      {/* 2. Typography & Input Style Customizer */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-6 border-t border-[var(--theme-border-hairline)]">
+      {/* B. Typography & Input Style Customizer */}
+      <div className="space-y-4 pt-6 border-t border-[var(--theme-border-hairline)]">
+        <h3
+          className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+            largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+          }`}
+        >
+          <span className="font-mono text-[var(--theme-ink-secondary)]">B.</span>
+          <span>
+            {pick({
+              ko: '타이포그래피 및 입력 · 레이아웃 규격',
+              en: 'Typography, Input & Layout Calibration',
+              ja: 'タイポグラフィ・入力・レイアウト調整',
+              id: 'Kalibrasi Tipografi, Input & Tata Letak',
+            })}
+          </span>
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {/* Sans Weight Selector */}
         <div className="space-y-3">
           <label className="text-[16px] font-extrabold text-[var(--theme-ink-strong)] flex items-center gap-2">
@@ -415,14 +444,22 @@ export const DesignSystemInteractiveWidget: React.FC<DesignSystemInteractiveWidg
             </button>
           </div>
         </div>
+        </div>
       </div>
 
-      {/* 3. Live UI Component Preview Card */}
+      {/* C. Live UI Component Preview Card */}
       <div className="pt-6 border-t border-[var(--theme-border-hairline)]">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-4 text-[16px]">
-          <span className="font-extrabold text-[var(--theme-ink-strong)]">
-            {pick({ ko: '선택된 테마 토큰 프리뷰', en: 'Selected Theme Token Preview', ja: '選択中テーマトークンプレビュー', id: 'Pratinjau Token Tema Terpilih' })}
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <h3
+            className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+              largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+            }`}
+          >
+            <span className="font-mono text-[var(--theme-ink-secondary)]">C.</span>
+            <span>
+              {pick({ ko: '선택된 테마 토큰 프리뷰', en: 'Selected Theme Token Preview', ja: '選択中テーマトークンプレビュー', id: 'Pratinjau Token Tema Terpilih' })}
+            </span>
+          </h3>
           <span className="font-mono text-[15px] text-[var(--theme-ink-secondary)]">
             {activePreset.engName} · {activePreset.primaryColor}
           </span>

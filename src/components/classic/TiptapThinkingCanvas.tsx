@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -94,6 +94,11 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
       id: 'Tuliskan ide Anda dalam satu baris atau kalimat...',
     });
   const isInternalUpdateRef = useRef(false);
+  const placeholderRef = useRef(resolvedPlaceholder);
+  placeholderRef.current = resolvedPlaceholder;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [isParsingAttachment, setIsParsingAttachment] = useState(false);
@@ -105,8 +110,8 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const floatingMenuRef = useRef<HTMLDivElement>(null);
 
-  const editor = useEditor({
-    extensions: [
+  const extensions = useMemo(
+    () => [
       StarterKit.configure({
         heading: {
           levels: [1, 2, 3],
@@ -133,7 +138,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
       }),
       Placeholder.configure({
-        placeholder: resolvedPlaceholder,
+        placeholder: () => placeholderRef.current,
         emptyEditorClass:
           'is-editor-empty before:content-[attr(data-placeholder)] before:text-[var(--theme-ink-muted)] before:float-left before:pointer-events-none before:h-0',
       }),
@@ -163,6 +168,11 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         },
       }),
     ],
+    []
+  );
+
+  const editor = useEditor({
+    extensions,
     editable: !readOnly,
     content: value || '',
     editorProps: {
@@ -234,12 +244,13 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
         return false;
       },
     },
-    onUpdate: ({ editor }) => {
+    onUpdate: ({ editor: activeEditor }) => {
+      if (activeEditor.isDestroyed || !activeEditor.schema) return;
       isInternalUpdateRef.current = true;
-      const content = editor.isEmpty ? '' : editor.getHTML();
-      onChange(content);
+      const content = activeEditor.isEmpty ? '' : activeEditor.getHTML();
+      onChangeRef.current(content);
     },
-  }, [resolvedPlaceholder]);
+  }, []);
 
   // Handle attaching reference documents (md, txt, pdf, office)
   const handleDocumentFilesSelected = async (fileList: FileList | null) => {
@@ -317,9 +328,21 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     };
   }, [isImageModalOpen]);
 
+  // Refresh placeholder decorations safely without destroying the editor instance
+  useEffect(() => {
+    if (!editor || editor.isDestroyed || !editor.schema) return;
+    try {
+      if (editor.view && !editor.view.isDestroyed) {
+        editor.view.dispatch(editor.state.tr.setMeta('placeholderRefresh', true));
+      }
+    } catch {
+      // Ignore transient view states before mount
+    }
+  }, [editor, resolvedPlaceholder]);
+
   // Sync external changes (such as 1-Line Refine, Sample Chips, or Chapter switches)
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || editor.isDestroyed || !editor.schema) return;
 
     if (isInternalUpdateRef.current) {
       isInternalUpdateRef.current = false;
@@ -335,16 +358,17 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   // Sync readOnly lock state safely without resetting editor content
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || editor.isDestroyed || !editor.schema) return;
     editor.setEditable(!readOnly);
     if (readOnly) {
       setIsImageModalOpen(false);
     }
   }, [editor, readOnly]);
 
-  const isTableActive = editor ? editor.isActive('table') : false;
-  const isImageActive = editor ? editor.isActive('image') : false;
-  const selection = editor?.state.selection;
+  const isEditorReady = Boolean(editor && !editor.isDestroyed && editor.schema);
+  const isTableActive = isEditorReady && editor ? editor.isActive('table') : false;
+  const isImageActive = isEditorReady && editor ? editor.isActive('image') : false;
+  const selection = isEditorReady && editor ? editor.state.selection : undefined;
   const isCellSelection = Boolean(selection && '$anchorCell' in selection);
   const hasTextSelection = Boolean(selection && !selection.empty && !isImageActive && !isCellSelection);
 
@@ -383,7 +407,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
 
   // Position floating bubble menu without overlapping top toolbar or active cells
   const updateFloatingMenuPosition = useCallback(() => {
-    if (!editor || !containerRef.current || isImageModalOpen) {
+    if (!editor || editor.isDestroyed || !editor.schema || !containerRef.current || isImageModalOpen) {
       setFloatingMenuPos(null);
       return;
     }
@@ -501,7 +525,7 @@ export const TiptapThinkingCanvas: React.FC<TiptapThinkingCanvasProps> = ({
     return () => cancelAnimationFrame(rafId);
   }, [isMenuVisible, isTableActive, isImageActive, hasTextSelection, hasAnyTableStyle, updateFloatingMenuPosition]);
 
-  if (!editor) {
+  if (!editor || editor.isDestroyed || !editor.schema) {
     return (
       <div className="w-full min-h-[200px] bg-transparent p-2 animate-pulse text-[var(--theme-ink-muted)] text-[18px] font-sans">
         {pick({

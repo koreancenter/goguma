@@ -8,6 +8,7 @@ interface RoadmapInteractiveWidgetProps {
   plan: SitePlan;
   setPlan: (plan: SitePlan) => void;
   onInputChange: (chapterId: number, sectionKey: string, text: string) => void;
+  largeTextMode?: boolean;
 }
 
 interface MilestoneRow {
@@ -34,6 +35,7 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
   plan,
   setPlan,
   onInputChange,
+  largeTextMode = false,
 }) => {
   const { pick } = useLanguage();
 
@@ -599,24 +601,28 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
     <div className="space-y-12 text-[var(--theme-ink-primary)] font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[var(--theme-ink-strong)]">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em]">
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex items-baseline gap-3.5 flex-wrap">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em] shrink-0">
               03
             </span>
-            <h3 className="font-extrabold text-[var(--theme-ink-strong)] text-[22px] sm:text-[26px] tracking-[-0.02em]">
+            <h2
+              className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.02em] leading-snug ${
+                largeTextMode ? 'text-[26px] sm:text-[30px]' : 'text-[22px] sm:text-[26px]'
+              }`}
+            >
               {pick({
                 ko: '빅테크 표준 앱/웹 로드맵 빌더 (M0–M4 · LRR)',
                 en: 'Big-Tech App/Web Roadmap Builder (M0–M4 · LRR)',
                 ja: 'ビッグテック標準アプリ/Webロードマップ (M0–M4 · LRR)',
                 id: 'Penyusun Peta Jalan Standar Big-Tech (M0–M4 · LRR)',
               })}
-            </h3>
+            </h2>
             <span className="text-[15px] font-bold font-mono text-[var(--theme-ink-secondary)]">
               02_roadmap.md
             </span>
           </div>
-          <p className="text-[17px] sm:text-[19px] text-[var(--theme-ink-secondary)] leading-[1.7] pl-8">
+          <p className={`text-[var(--theme-ink-secondary)] pl-9 ${largeTextMode ? 'text-[17px]' : 'text-[15px]'}`}>
             {pick({
               ko: '표준 아키타입을 선택하거나 마일스톤(M0–M4), 우선순위(P0–P2), 출시 게이트를 편집하면 02_roadmap.md와 간트 차트가 즉시 동기화됩니다.',
               en: 'Select a Big-Tech archetype or customize M0–M4 milestones, P0–P2 tiers, and Launch Readiness Gates to sync 02_roadmap.md and Gantt charts live.',
@@ -636,11 +642,16 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
         </button>
       </div>
 
-      {/* 1. Big-Tech Archetype Presets */}
+      {/* A. Big-Tech Archetype Presets */}
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5 text-[18px] sm:text-[20px] font-extrabold text-[var(--theme-ink-strong)]">
-            <Layers size={18} />
+          <h3
+            className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+              largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+            }`}
+          >
+            <Layers size={18} className="shrink-0" />
+            <span className="font-mono text-[var(--theme-ink-secondary)]">A.</span>
             <span>
               {pick({
                 ko: '표준 로드맵 아키타입 적용',
@@ -649,7 +660,7 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
                 id: 'Terapkan Arketipe Peta Jalan Standar',
               })}
             </span>
-          </div>
+          </h3>
           <span className="text-[14px] text-[var(--theme-ink-muted)] font-medium">
             {pick({
               ko: '클릭 시 양식 전체 자동 반영',
@@ -660,7 +671,7 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           {presets.map((preset) => {
             const isSelected = selectedPresetId === preset.id;
             return (
@@ -668,24 +679,38 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
                 key={preset.id}
                 type="button"
                 onClick={() => handleSelectPreset(preset.id)}
-                className={`px-4 py-3.5 rounded-none text-left text-[15px] font-bold transition-colors cursor-pointer border ${
+                className={`w-full px-5 py-4 rounded-none text-left text-[16px] font-bold transition-colors cursor-pointer flex items-center justify-between gap-3 ${
                   isSelected
-                    ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-ink-strong)]'
-                    : 'bg-[var(--theme-stage)] text-[var(--theme-ink-primary)] border-[var(--theme-border-hairline)] hover:border-[var(--theme-ink-strong)]'
+                    ? 'bg-[var(--theme-canvas)] border-2 border-[var(--theme-ink-strong)] text-[var(--theme-ink-strong)]'
+                    : 'bg-[var(--theme-stage)] border border-[var(--theme-border-hairline)] text-[var(--theme-ink-primary)] hover:border-[var(--theme-ink-strong)]'
                 }`}
               >
-                {preset.label}
+                <span>{preset.label}</span>
+                <span
+                  className={`px-2.5 py-0.5 text-[11px] font-mono font-bold border shrink-0 ${
+                    isSelected
+                      ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)] border-[var(--theme-ink-strong)]'
+                      : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-muted)] border-[var(--theme-border-hairline)]'
+                  }`}
+                >
+                  {isSelected ? 'ACTIVE' : 'SELECT'}
+                </span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* 2. Milestone Rows Editor */}
+      {/* B. Milestone Rows Editor */}
       <div className="space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 text-[18px] sm:text-[20px] font-extrabold text-[var(--theme-ink-strong)]">
-            <CalendarRange size={18} />
+          <h3
+            className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+              largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+            }`}
+          >
+            <CalendarRange size={18} className="shrink-0" />
+            <span className="font-mono text-[var(--theme-ink-secondary)]">B.</span>
             <span>
               {pick({
                 ko: '단계별 엔지니어링 마일스톤 (M0–M4)',
@@ -694,7 +719,7 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
                 id: 'Tonggak Rekayasa Bertahap (M0–M4)',
               })}
             </span>
-          </div>
+          </h3>
           <span className="text-[14px] text-[var(--theme-ink-muted)] tabular-nums font-bold">
             {milestones.length} {pick({ ko: '단계 활성', en: 'Phases Active', ja: 'フェーズ設定済', id: 'Fase Aktif' })}
           </span>
@@ -811,10 +836,15 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
         </div>
       </div>
 
-      {/* 3. Launch Readiness Review (LRR) Go / No-Go Gates */}
+      {/* C. Launch Readiness Review (LRR) Go / No-Go Gates */}
       <div className="space-y-4 pt-8 border-t border-[var(--theme-border-hairline)]">
-        <div className="flex items-center gap-2.5 text-[18px] sm:text-[20px] font-extrabold text-[var(--theme-ink-strong)]">
-          <ShieldCheck size={18} />
+        <h3
+          className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.015em] leading-snug flex items-center gap-2.5 ${
+            largeTextMode ? 'text-[20px] sm:text-[22px]' : 'text-[18px] sm:text-[20px]'
+          }`}
+        >
+          <ShieldCheck size={18} className="shrink-0" />
+          <span className="font-mono text-[var(--theme-ink-secondary)]">C.</span>
           <span>
             {pick({
               ko: '출시 준비 점검 게이트 (Launch Readiness Review)',
@@ -823,9 +853,9 @@ export const RoadmapInteractiveWidget: React.FC<RoadmapInteractiveWidgetProps> =
               id: 'Tinjauan Kesiapan Rilis (Gerbang Go / No-Go)',
             })}
           </span>
-        </div>
+        </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           {gates.map((gate) => (
             <button
               key={gate.id}

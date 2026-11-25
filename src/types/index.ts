@@ -82,6 +82,26 @@ export interface MetadataConfig {
   };
   platform: 'WEB' | 'APP';
   projectMode?: 'personal' | 'enterprise' | 'commercial';
+  appProfile?: AppPlatformProfile;
+}
+
+export type ApplicationFormType =
+  | 'web_responsive'
+  | 'web_pwa'
+  | 'mobile_hybrid'
+  | 'mobile_native'
+  | 'desktop_app'
+  | 'multi_platform';
+
+export type PwaSupportMode = 'none' | 'installable' | 'offline_first';
+
+export type TargetDeviceType = 'desktop' | 'mobile' | 'tablet' | 'push_notifications';
+
+export interface AppPlatformProfile {
+  formType: ApplicationFormType;
+  pwaSupport: PwaSupportMode;
+  targetDevices: TargetDeviceType[];
+  distributionChannel: 'web_url' | 'app_store' | 'both' | 'desktop_binary';
 }
 
 export interface DesignConfig {
@@ -206,6 +226,20 @@ export function normalizePlan(p: any): SitePlan {
       },
       platform: p.metadata?.platform || 'WEB',
       projectMode: p.metadata?.projectMode || 'personal',
+      appProfile: {
+        formType:
+          p.metadata?.appProfile?.formType ||
+          (p.metadata?.platform === 'APP' ? 'mobile_hybrid' : 'web_responsive'),
+        pwaSupport: p.metadata?.appProfile?.pwaSupport || 'none',
+        targetDevices: Array.isArray(p.metadata?.appProfile?.targetDevices)
+          ? p.metadata.appProfile.targetDevices
+          : p.metadata?.platform === 'APP'
+          ? ['mobile', 'tablet']
+          : ['desktop', 'mobile'],
+        distributionChannel:
+          p.metadata?.appProfile?.distributionChannel ||
+          (p.metadata?.platform === 'APP' ? 'app_store' : 'web_url'),
+      },
     },
     design: {
       themeColor: '#3B82F6',

@@ -51,13 +51,13 @@ const LOCAL_AUTH_LABELS = {
 
 export const DEFAULT_DIRECTOR_PROFILE: LocalUser = {
   uid: 'local-director-user',
-  email: 'mrpark@kwavemission.org',
+  email: 'masterGgoguma.app',
   displayName: 'Lead Director (GOGUMA)',
   companyName: 'K-Wave Mission Hub',
   emailVerified: true,
   isAnonymous: false,
   role: 'ADMIN',
-  providerData: [{ providerId: 'local-first', email: 'mrpark@kwavemission.org' }],
+  providerData: [{ providerId: 'local-first', email: 'mster@goguma.app' }],
   lastLoginAt: new Date().toISOString(),
 };
 

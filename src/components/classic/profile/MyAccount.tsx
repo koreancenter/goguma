@@ -31,7 +31,6 @@ import { useLanguage } from '../../../contexts/LanguageContext';
 import {
   EditorialPageLayout,
   EditorialSection,
-  EditorialTabItem,
 } from '../layout/EditorialPageLayout';
 
 export default function MyAccount() {
@@ -60,29 +59,6 @@ export default function MyAccount() {
 
   const [storageStats, setStorageStats] = useState(getStorageUsageStats);
   const [backupExportSuccess, setBackupExportSuccess] = useState(false);
-
-  const accountTabs: EditorialTabItem[] = [
-    {
-      id: 'profile',
-      label: pick({ ko: '내 계정 및 프로필', en: 'Account & Profile', ja: 'アカウント・プロフィール', id: 'Akun & Profil' }),
-      to: '/profile',
-    },
-    {
-      id: 'settings',
-      label: pick({ ko: '환경 설정', en: 'Preferences', ja: '環境設定', id: 'Preferensi' }),
-      to: '/settings?tab=engine',
-    },
-    {
-      id: 'backup',
-      label: pick({ ko: '보관함 및 로컬 백업', en: 'Vault & Local Backup', ja: '保管庫・ローカルバックアップ', id: 'Brankas & Cadangan Lokal' }),
-      to: '/backup?tab=storage',
-    },
-    {
-      id: 'logout',
-      label: pick({ ko: '로그아웃', en: 'Sign Out', ja: 'サインアウト', id: 'Keluar' }),
-      to: '/logout',
-    },
-  ];
 
   const loadAccountData = useCallback(async (user: LocalUser | null) => {
     setSavedProfiles(auth.getSavedProfiles());
@@ -296,8 +272,6 @@ export default function MyAccount() {
         ja: '個人プロフィール情報とローカルデータベースストレージを管理します。',
         id: 'Kelola identitas profil lokal dan cadangan penyimpanan perangkat Anda.',
       })}
-      tabs={accountTabs}
-      activeTabId="profile"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
         {/* Left Main Columns */}

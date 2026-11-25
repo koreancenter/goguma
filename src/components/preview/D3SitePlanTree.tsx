@@ -86,7 +86,22 @@ export const D3SitePlanTree: React.FC<D3SitePlanTreeProps> = ({
     const rawProjectName = formInputs['1_project_name']?.userRawInput?.trim() 
       || plan.metadata?.projectName 
       || 'GOGUMA 웹 서비스';
-    const rawPlatform = plan.metadata?.platform === 'APP' ? 'PWA Mobile App' : 'Responsive Web';
+    const appProfile = plan.metadata?.appProfile;
+    const rawPlatform = appProfile?.formType === 'web_pwa'
+      ? 'Web + Installable PWA'
+      : appProfile?.formType === 'mobile_native'
+      ? 'Native Mobile App'
+      : appProfile?.formType === 'mobile_hybrid'
+      ? 'Cross-Platform App'
+      : appProfile?.formType === 'desktop_app'
+      ? 'Desktop App'
+      : appProfile?.formType === 'multi_platform'
+      ? 'Web + Mobile App'
+      : plan.metadata?.platform === 'APP'
+      ? 'PWA Mobile App'
+      : appProfile?.pwaSupport && appProfile.pwaSupport !== 'none'
+      ? 'Responsive Web + PWA'
+      : 'Responsive Web';
     const isProjectCustom = Boolean(formInputs['1_project_name']?.userRawInput?.trim());
 
     // --- Branch 1: Site Pages & Screen Structure (Ch. 6 + SitePlan.navigation) ---

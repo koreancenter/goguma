@@ -7,7 +7,6 @@ import { WritingCanvas } from '../classic/WritingCanvas';
 import { SpecPreviewPanel } from '../preview/SpecPreviewPanel';
 import { WorkspaceDropZoneOverlay } from '../classic/WorkspaceDropZoneOverlay';
 import Navbar from '../classic/layout/Navbar';
-import Footer from '../classic/layout/Footer';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface WorkspaceViewProps {
@@ -121,11 +120,11 @@ export default function WorkspaceView({
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-[var(--theme-canvas)] text-[var(--theme-ink-strong)] font-sans selection:bg-[var(--theme-ink-strong)] selection:text-[var(--theme-canvas)]">
+    <div className="flex flex-col h-screen overflow-hidden w-full bg-[var(--theme-canvas)] text-[var(--theme-ink-strong)] font-sans selection:bg-[var(--theme-ink-strong)] selection:text-[var(--theme-canvas)]">
       <Navbar mobilePane={mobilePane} onChangeMobilePane={setMobilePane} />
 
       {/* Main Workspace Shell: Full Remaining Viewport Height with Independent Pane Scrolling */}
-      <div className={`h-[calc(100vh-136px)] min-h-[580px] shrink-0 flex overflow-hidden bg-[var(--theme-canvas)] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
+      <div className={`flex-1 min-h-0 flex overflow-hidden bg-[var(--theme-canvas)] ${largeTextMode ? 'goguma-large-mode' : ''}`}>
         <div ref={splitContainerRef} className="flex-1 flex min-w-0 h-full overflow-hidden">
           {/* 50% Left Editor Pane */}
           <div
@@ -209,9 +208,6 @@ export default function WorkspaceView({
           </div>
         </div>
       </div>
-
-      {/* Common Global Editorial Footer */}
-      <Footer />
 
       <WorkspaceDropZoneOverlay
         onProjectLoaded={(loadedPlan) => {

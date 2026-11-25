@@ -67,42 +67,28 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   const {
     projectName,
     currentChapter,
-    currentSection,
-    formInputs,
     completedChapters,
     currentUser,
     onUpdateProjectName,
     onSelectChapter,
-    onSelectSection,
   } = useStudioHeader();
 
-  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isAppsMenuOpen, setIsAppsMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
   const [isHelpMenuOpen, setIsHelpMenuOpen] = useState(false);
-  const [hoveredMenuId, setHoveredMenuId] = useState<number>(currentChapter);
   const [isMobileChapterDrawerOpen, setIsMobileChapterDrawerOpen] = useState(false);
   const headerWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setHoveredMenuId(currentChapter);
-  }, [currentChapter]);
-
-  useEffect(() => {
-    setIsMegaMenuOpen(false);
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
-    setIsSettingsMenuOpen(false);
     setIsHelpMenuOpen(false);
     setIsMobileChapterDrawerOpen(false);
   }, [location.pathname, location.search]);
 
   const closeAllMenus = () => {
-    setIsMegaMenuOpen(false);
     setIsAppsMenuOpen(false);
     setIsLangMenuOpen(false);
-    setIsSettingsMenuOpen(false);
     setIsHelpMenuOpen(false);
     setIsMobileChapterDrawerOpen(false);
   };
@@ -110,12 +96,6 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   const navigateFromMenu = (path: string) => {
     closeAllMenus();
     navigate(path);
-  };
-
-  const handleOpenMegaMenu = (menuId: number) => {
-    if (isAppsMenuOpen || isLangMenuOpen || isSettingsMenuOpen || isHelpMenuOpen) return;
-    setHoveredMenuId(menuId);
-    setIsMegaMenuOpen(true);
   };
 
   const handleChapterClick = (chapterId: number) => {
@@ -126,22 +106,11 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
     }
   };
 
-  const handleSectionClick = (chapterId: number, sectionKey: string) => {
-    closeAllMenus();
-    onSelectChapter(chapterId);
-    onSelectSection(sectionKey);
-    if (location.pathname !== '/workspace') {
-      navigate('/workspace');
-    }
-  };
-
   useEffect(() => {
     if (
-      !isMegaMenuOpen &&
       !isMobileChapterDrawerOpen &&
       !isAppsMenuOpen &&
       !isLangMenuOpen &&
-      !isSettingsMenuOpen &&
       !isHelpMenuOpen
     ) {
       return;
@@ -162,14 +131,15 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isMegaMenuOpen, isMobileChapterDrawerOpen, isAppsMenuOpen, isLangMenuOpen, isSettingsMenuOpen, isHelpMenuOpen]);
+  }, [isMobileChapterDrawerOpen, isAppsMenuOpen, isLangMenuOpen, isHelpMenuOpen]);
 
   const isWorkspaceRoute = location.pathname === '/workspace';
   const isBlogRoute = location.pathname === '/blog';
   const isSettingsRoute =
     location.pathname === '/settings' ||
     location.pathname === '/templates' ||
-    location.pathname === '/backup';
+    location.pathname === '/backup' ||
+    location.pathname === '/profile';
   const isHelpRoute =
     location.pathname === '/support' ||
     location.pathname === '/dev-notes' ||
@@ -192,15 +162,19 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
     { label: pick({ ko: 'AI 일정관리', en: 'AI Calendar', ja: 'AI 日程管理', id: 'AI Jadwal' }), url: 'https://vibecalendar.goguma.app' },
   ];
 
-  const currentPageLabel = isBlogRoute
-    ? pick({ ko: '블로그', en: 'Blog', ja: 'ブログ', id: 'Blog' })
-    : isSettingsRoute
-    ? pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Pengaturan' })
-    : isHelpRoute
-    ? pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })
-    : pick({ ko: '메뉴', en: 'Menu', ja: 'メニュー', id: 'Menu' });
-
-  const currentChapterObj = chapters.find(c => c.id === currentChapter) || chapters[0];
+  const searchTab = new URLSearchParams(location.search).get('tab');
+  const activeSettingsTabId =
+    location.pathname === '/templates'
+      ? 'templates'
+      : location.pathname === '/backup' || (location.pathname === '/settings' && searchTab === 'storage')
+      ? 'storage'
+      : location.pathname === '/profile' || (location.pathname === '/settings' && searchTab === 'account')
+      ? 'account'
+      : location.pathname === '/settings' && searchTab === 'display'
+      ? 'display'
+      : location.pathname === '/settings'
+      ? 'engine'
+      : null;
 
   const SETTINGS_MENU_ITEMS: {
     id: string;
@@ -233,6 +207,18 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
       action: () => navigateFromMenu(currentUser ? '/profile' : '/login'),
     },
   ];
+
+  const activeSettingsItem = SETTINGS_MENU_ITEMS.find(item => item.id === activeSettingsTabId) || null;
+
+  const currentPageLabel = isBlogRoute
+    ? pick({ ko: '블로그', en: 'Blog', ja: 'ブログ', id: 'Blog' })
+    : isSettingsRoute
+    ? activeSettingsItem?.label || pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Pengaturan' })
+    : isHelpRoute
+    ? pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })
+    : pick({ ko: '메뉴', en: 'Menu', ja: 'メニュー', id: 'Menu' });
+
+  const currentChapterObj = chapters.find(c => c.id === currentChapter) || chapters[0];
 
   const HELP_MENU_ITEMS: {
     id: string;
@@ -289,9 +275,6 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
   return (
     <div
       ref={headerWrapperRef}
-      onMouseLeave={() => {
-        setIsMegaMenuOpen(false);
-      }}
       className="no-print sticky top-0 shrink-0 z-40 select-none bg-[var(--theme-canvas)]"
     >
       {/* Tier 1: Editorial Utility Strip */}
@@ -345,6 +328,16 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
 
         {/* Tier 1 Right: Rectangular Editorial Utility Strip */}
         <div className="flex items-stretch h-full shrink-0 border-l border-white/20 divide-x divide-white/20">
+          {isSettingsRoute && (
+            <button
+              type="button"
+              onClick={() => navigateFromMenu('/workspace')}
+              className="hidden lg:flex h-full px-3 sm:px-4 items-center text-[13px] sm:text-[14px] font-bold text-[var(--theme-bar-text)] bg-[var(--theme-bar-bg)] rounded-none hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              {pick({ ko: '작업실 입장', en: 'Workspace', ja: 'スタジオへ', id: 'Ruang Kerja' })}
+            </button>
+          )}
+
           {/* 1. [GOGUMA Apps] */}
           <div className="relative flex items-stretch">
             <button
@@ -352,9 +345,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               onClick={() => {
                 setIsAppsMenuOpen(prev => !prev);
                 setIsLangMenuOpen(false);
-                setIsSettingsMenuOpen(false);
                 setIsHelpMenuOpen(false);
-                setIsMegaMenuOpen(false);
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isAppsMenuOpen
@@ -391,9 +382,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               onClick={() => {
                 setIsLangMenuOpen(prev => !prev);
                 setIsAppsMenuOpen(false);
-                setIsSettingsMenuOpen(false);
                 setIsHelpMenuOpen(false);
-                setIsMegaMenuOpen(false);
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isLangMenuOpen
@@ -439,45 +428,18 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
             )}
           </div>
 
-          {/* 3. [Settings] */}
-          <div className="relative hidden sm:flex items-stretch">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSettingsMenuOpen(prev => !prev);
-                setIsHelpMenuOpen(false);
-                setIsAppsMenuOpen(false);
-                setIsLangMenuOpen(false);
-                setIsMegaMenuOpen(false);
-              }}
-              className={`h-full px-3 sm:px-4 flex items-center gap-1 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
-                isSettingsMenuOpen
-                  ? 'bg-[var(--theme-hover-bg)] text-[var(--theme-hover-text)]'
-                  : isSettingsRoute
-                  ? 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-accent)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
-                  : 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
-              }`}
-            >
-              <span>{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Setelan' })}</span>
-              <ChevronDown size={13} className="shrink-0" />
-            </button>
-
-            {isSettingsMenuOpen && (
-              <div className="absolute right-0 top-full w-60 bg-[var(--theme-bar-bg)] border border-white/25 z-[70] rounded-none divide-y divide-white/15 shadow-xl">
-                {SETTINGS_MENU_ITEMS.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={item.action}
-                    className="w-full px-4 py-3 text-left text-[13px] font-bold text-[var(--theme-bar-text)] rounded-none flex items-center justify-between gap-2 hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)] transition-colors cursor-pointer whitespace-nowrap"
-                  >
-                    <span>{item.label}</span>
-                    <ChevronRight size={13} className="shrink-0 opacity-60" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* 3. [Settings] Direct Main Entry */}
+          <button
+            type="button"
+            onClick={() => navigateFromMenu('/settings?tab=engine')}
+            className={`hidden sm:flex h-full px-3 sm:px-4 items-center text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
+              isSettingsRoute
+                ? 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-accent)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
+                : 'bg-[var(--theme-bar-bg)] text-[var(--theme-bar-text)] hover:bg-[var(--theme-hover-bg)] hover:text-[var(--theme-hover-text)]'
+            }`}
+          >
+            <span>{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Setelan' })}</span>
+          </button>
 
           {/* 4. [Help] */}
           <div className="relative hidden sm:flex items-stretch">
@@ -485,10 +447,8 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
               type="button"
               onClick={() => {
                 setIsHelpMenuOpen(prev => !prev);
-                setIsSettingsMenuOpen(false);
                 setIsAppsMenuOpen(false);
                 setIsLangMenuOpen(false);
-                setIsMegaMenuOpen(false);
               }}
               className={`h-full px-3 sm:px-4 flex items-center gap-1 text-[13px] sm:text-[14px] font-bold rounded-none transition-colors cursor-pointer whitespace-nowrap ${
                 isHelpMenuOpen
@@ -560,7 +520,7 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
         </div>
       </div>
 
-      {/* Tier 2: Workspace 9-Chapter Menu OR Page-Only Right-Aligned Menu */}
+      {/* Tier 2: Workspace 9-Chapter Menu OR Settings 5-Item Main Menu OR Page-Only Right-Aligned Menu */}
       <header className="relative z-30 bg-[var(--theme-canvas)] border-b border-[var(--theme-border-hairline)]">
         {isWorkspaceRoute ? (
           <nav
@@ -569,14 +529,11 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
           >
             {chapters.map((ch) => {
               const isCurrent = ch.id === currentChapter;
-              const isHovered = isMegaMenuOpen && hoveredMenuId === ch.id;
 
               return (
                 <button
                   key={ch.id}
                   type="button"
-                  onMouseEnter={() => handleOpenMegaMenu(ch.id)}
-                  onFocus={() => handleOpenMegaMenu(ch.id)}
                   onClick={() => handleChapterClick(ch.id)}
                   className={`relative h-full w-full px-1 flex items-center justify-center text-center ${
                     language === 'ko'
@@ -584,14 +541,39 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                       : language === 'ja'
                       ? 'text-[13px] xl:text-[16px] 2xl:text-[19px]'
                       : 'text-[13px] xl:text-[15px] 2xl:text-[17px]'
-                  } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer ${
-                    isHovered
-                      ? 'bg-[var(--theme-btn-bg)] text-[var(--theme-btn-text)]'
-                      : 'bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]'
-                  }`}
+                  } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]`}
                 >
                   <span>{shortLabels[ch.id] || ch.title}</span>
-                  {isCurrent && !isHovered && (
+                  {isCurrent && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        ) : isSettingsRoute ? (
+          <nav
+            className="hidden lg:grid grid-cols-5 divide-x divide-[var(--theme-border-hairline)] h-20 w-full"
+            aria-label={pick({ ko: '환경 설정 주요 메뉴', en: 'Settings Main Menu', ja: '設定メインメニュー', id: 'Menu Utama Pengaturan' })}
+          >
+            {SETTINGS_MENU_ITEMS.map((item) => {
+              const isCurrent = item.id === activeSettingsTabId;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={item.action}
+                  className={`relative h-full w-full px-3 flex items-center justify-center text-center ${
+                    language === 'ko'
+                      ? 'text-[15px] xl:text-[18px] 2xl:text-[21px]'
+                      : language === 'ja'
+                      ? 'text-[13px] xl:text-[16px] 2xl:text-[19px]'
+                      : 'text-[13px] xl:text-[15px] 2xl:text-[17px]'
+                  } font-extrabold tracking-[-0.03em] leading-none whitespace-nowrap transition-colors duration-150 cursor-pointer bg-[var(--theme-canvas)] text-[var(--theme-ink-primary)] hover:bg-[var(--theme-btn-bg)] hover:text-[var(--theme-btn-text)]`}
+                >
+                  <span className="truncate">{item.label}</span>
+                  {isCurrent && (
                     <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--theme-ink-strong)]" />
                   )}
                 </button>
@@ -695,64 +677,34 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
         </div>
       </header>
 
-      {/* Full-Width 9-Column Chapter Sub-Menu Panel (Workspace Only) */}
-      {isWorkspaceRoute && isMegaMenuOpen && (
-        <div
-          className="hidden lg:block absolute left-0 right-0 top-full bg-[var(--theme-elevated)] border-b border-[var(--theme-ink-strong)] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.2)] z-40"
-          role="region"
-          aria-label={pick({ ko: '전체 하위 섹션 메뉴', en: 'Chapter Sub-menu', ja: 'チャプターサブメニュー', id: 'Sub-menu Bab' })}
-        >
-          <div className="grid grid-cols-9 divide-x divide-[var(--theme-border-hairline)]">
-            {chapters.map((ch) => (
-              <div
-                key={ch.id}
-                onMouseEnter={() => setHoveredMenuId(ch.id)}
-                className="flex flex-col min-h-[200px] p-2.5 gap-1.5 bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]"
-              >
-                {ch.sections.map((sec) => {
-                  const isSecCurrent = isWorkspaceRoute && currentChapter === ch.id && currentSection === sec.key;
-                  const secEntry = formInputs[`${ch.id}_${sec.key}`];
-                  const isSecFilled = Boolean(secEntry?.userRawInput?.trim());
-
-                  return (
-                    <button
-                      key={sec.key}
-                      type="button"
-                      onClick={() => handleSectionClick(ch.id, sec.key)}
-                      className={`w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-start justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                        isSecCurrent
-                          ? 'bg-[var(--theme-stage)] text-[var(--theme-ink-strong)] font-bold'
-                          : 'text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]'
-                      }`}
-                    >
-                      <span className="break-keep">{sec.title}</span>
-                      {isSecFilled ? (
-                        <Check size={13} className="shrink-0 mt-0.5 text-[var(--theme-success)]" />
-                      ) : (
-                        <ChevronRight size={13} className="shrink-0 mt-0.5 opacity-60" />
-                      )}
-                    </button>
-                  );
-                })}
-                {ch.id === 9 && (
-                  <button
-                    type="button"
-                    onClick={() => navigateFromMenu('/export')}
-                    className="w-full px-2 py-2 text-left text-[13px] xl:text-[14px] font-semibold leading-snug flex items-center justify-between gap-1.5 rounded-[2px] transition-colors cursor-pointer text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]"
-                  >
-                    <span className="break-keep">{pick({ ko: '사양서 내보내기', en: 'Export Spec', ja: '仕様書エクスポート', id: 'Ekspor Spesifikasi' })}</span>
-                    <ChevronRight size={13} className="shrink-0 opacity-60" />
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Mobile & Tablet Drawer (< lg) */}
       {isMobileChapterDrawerOpen && (
         <div className="lg:hidden absolute left-0 right-0 top-full bg-[var(--theme-elevated)] border-b border-[var(--theme-ink-strong)] shadow-lg z-50 max-h-[75vh] overflow-y-auto">
+          {isSettingsRoute && (
+            <div className="divide-y divide-[var(--theme-border-hairline)] border-b border-[var(--theme-border-hairline)]">
+              {SETTINGS_MENU_ITEMS.map((item, idx) => {
+                const isActive = item.id === activeSettingsTabId;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={item.action}
+                    className={`w-full px-5 py-3.5 text-left flex items-center justify-between text-base font-extrabold cursor-pointer transition-colors ${
+                      isActive
+                        ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)]'
+                        : 'bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]'
+                    }`}
+                  >
+                    <span>
+                      0{idx + 1}. {item.label}
+                    </span>
+                    {isActive && <Check size={15} />}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           <div className="p-4 border-b border-[var(--theme-border-hairline)] bg-[var(--theme-stage)] space-y-4">
             {!isWorkspaceRoute && (
               <div className="grid grid-cols-2 gap-2">
@@ -772,21 +724,23 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
                 </button>
               </div>
             )}
-            <div>
-              <div className="text-xs font-extrabold text-[var(--theme-ink-strong)] mb-2">{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Pengaturan' })}</div>
-              <div className="grid grid-cols-2 gap-2">
-                {SETTINGS_MENU_ITEMS.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={item.action}
-                    className="px-3 py-2.5 bg-[var(--theme-elevated)] border border-[var(--theme-border-strong)] text-xs font-bold text-[var(--theme-ink-strong)] flex items-center rounded-[2px] cursor-pointer text-left"
-                  >
-                    <span className="truncate">{item.label}</span>
-                  </button>
-                ))}
+            {!isSettingsRoute && (
+              <div>
+                <div className="text-xs font-extrabold text-[var(--theme-ink-strong)] mb-2">{pick({ ko: '환경 설정', en: 'Settings', ja: '設定', id: 'Pengaturan' })}</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {SETTINGS_MENU_ITEMS.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={item.action}
+                      className="px-3 py-2.5 bg-[var(--theme-elevated)] border border-[var(--theme-border-strong)] text-xs font-bold text-[var(--theme-ink-strong)] flex items-center rounded-[2px] cursor-pointer text-left"
+                    >
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
             <div>
               <div className="text-xs font-extrabold text-[var(--theme-ink-strong)] mb-2">{pick({ ko: '도움말', en: 'Help', ja: 'ヘルプ', id: 'Bantuan' })}</div>
               <div className="grid grid-cols-2 gap-2">
@@ -806,50 +760,26 @@ export default function Navbar({ mobilePane, onChangeMobilePane }: NavbarProps =
 
           {isWorkspaceRoute && (
             <div className="divide-y divide-[var(--theme-border-hairline)]">
-            {chapters.map((ch) => {
-              const isActive = isWorkspaceRoute && ch.id === currentChapter;
-              return (
-                <div key={ch.id} className={isActive ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)]' : 'bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)]'}>
+              {chapters.map((ch) => {
+                const isActive = isWorkspaceRoute && ch.id === currentChapter;
+                return (
                   <button
+                    key={ch.id}
                     type="button"
                     onClick={() => handleChapterClick(ch.id)}
-                    className="w-full px-5 py-3.5 text-left flex items-center justify-between text-base font-extrabold cursor-pointer"
+                    className={`w-full px-5 py-3.5 text-left flex items-center justify-between text-base font-extrabold cursor-pointer transition-colors ${
+                      isActive
+                        ? 'bg-[var(--theme-active-bg)] text-[var(--theme-active-text)]'
+                        : 'bg-[var(--theme-elevated)] text-[var(--theme-ink-strong)] hover:bg-[var(--theme-stage)]'
+                    }`}
                   >
-                    <span>{ch.title}</span>
+                    <span>
+                      0{ch.id}. {ch.title}
+                    </span>
                     {completedChapters.has(ch.id) && <Check size={15} />}
                   </button>
-                  <div className="px-5 pb-3.5 flex flex-wrap gap-2">
-                    {ch.sections.map((sec) => (
-                      <button
-                        key={sec.key}
-                        type="button"
-                        onClick={() => handleSectionClick(ch.id, sec.key)}
-                        className={`px-3 py-1.5 text-xs font-semibold rounded-[2px] border cursor-pointer ${
-                          isActive
-                            ? 'border-current/40 text-current'
-                            : 'border-[var(--theme-border-strong)] text-[var(--theme-ink-strong)]'
-                        }`}
-                      >
-                        {sec.title}
-                      </button>
-                    ))}
-                    {ch.id === 9 && (
-                      <button
-                        type="button"
-                        onClick={() => navigateFromMenu('/export')}
-                        className={`px-3 py-1.5 text-xs font-bold rounded-[2px] border cursor-pointer ${
-                          isActive
-                            ? 'border-current text-current'
-                            : 'border-[var(--theme-ink-strong)] text-[var(--theme-ink-strong)]'
-                        }`}
-                      >
-                        {pick({ ko: '사양서 내보내기', en: 'Export Spec', ja: '仕様書出力', id: 'Ekspor Spesifikasi' })}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           )}
         </div>

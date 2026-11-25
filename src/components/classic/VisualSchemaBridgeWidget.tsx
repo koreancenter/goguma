@@ -24,11 +24,13 @@ interface VisualSchemaBridgeWidgetProps {
   plan: SitePlan;
   setPlan?: (plan: SitePlan) => void;
   onInputChange: (chapterId: number, sectionKey: string, text: string) => void;
+  largeTextMode?: boolean;
 }
 
 export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> = ({
   rawInput,
   onInputChange,
+  largeTextMode = false,
 }) => {
   const { pick } = useLanguage();
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
@@ -270,21 +272,25 @@ export const VisualSchemaBridgeWidget: React.FC<VisualSchemaBridgeWidgetProps> =
     <div className="space-y-10 font-sans text-[var(--theme-ink-primary)]">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-4 border-b border-[var(--theme-ink-strong)]">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em]">
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex items-baseline gap-3.5 flex-wrap">
+            <span className="text-[16px] sm:text-[18px] font-extrabold tabular-nums text-[var(--theme-ink-secondary)] tracking-[0.08em] shrink-0">
               03
             </span>
-            <h3 className="font-extrabold text-[22px] sm:text-[26px] text-[var(--theme-ink-strong)] tracking-[-0.02em]">
+            <h2
+              className={`font-extrabold text-[var(--theme-ink-strong)] tracking-[-0.02em] leading-snug ${
+                largeTextMode ? 'text-[26px] sm:text-[30px]' : 'text-[22px] sm:text-[26px]'
+              }`}
+            >
               {pick({
                 ko: '엑셀 장부 1:1 자동 매핑 미리보기',
                 en: 'Live Domain Schema & UI Mapping Preview',
                 ja: 'データ台帳 1:1 自動マッピングプレビュー',
                 id: 'Pratinjau Pemetaan Skema Data 1:1',
               })}
-            </h3>
+            </h2>
           </div>
-          <p className="text-[17px] sm:text-[19px] text-[var(--theme-ink-secondary)] leading-[1.7] pl-8">
+          <p className={`text-[var(--theme-ink-secondary)] pl-9 ${largeTextMode ? 'text-[17px]' : 'text-[15px]'}`}>
             {pick({
               ko: '서술하신 업무 단어가 실제 소프트웨어의 입력창과 데이터베이스로 어떻게 변환되는지 실시간으로 보여줍니다.',
               en: 'Preview in real time how your domain terms translate into UI form fields and database columns.',

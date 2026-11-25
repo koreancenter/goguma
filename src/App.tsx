@@ -526,40 +526,20 @@ export default function App() {
     schedulePersistence();
   }, [schedulePersistence]);
 
-  // Navigate next / prev section
+  // Navigate next / prev chapter directly (all sections of a chapter render on one page)
   const handleNavigateSection = useCallback((direction: 'prev' | 'next') => {
-    const currentCh = GOGUMA_CHAPTERS.find(c => c.id === project.currentChapter) || GOGUMA_CHAPTERS[0];
-    const currentIndex = currentCh.sections.findIndex(s => s.key === project.currentSection);
-
     if (direction === 'next') {
-      if (currentIndex < currentCh.sections.length - 1) {
-        handleSelectSection(currentCh.sections[currentIndex + 1].key);
-      } else {
-        const nextChapterId = project.currentChapter + 1;
-        if (nextChapterId <= GOGUMA_CHAPTERS.length) {
-          handleSelectChapter(nextChapterId);
-        }
+      const nextChapterId = project.currentChapter + 1;
+      if (nextChapterId <= GOGUMA_CHAPTERS.length) {
+        handleSelectChapter(nextChapterId);
       }
     } else {
-      if (currentIndex > 0) {
-        handleSelectSection(currentCh.sections[currentIndex - 1].key);
-      } else {
-        const prevChapterId = project.currentChapter - 1;
-        if (prevChapterId >= 1) {
-          const prevCh = GOGUMA_CHAPTERS.find(c => c.id === prevChapterId);
-          if (prevCh) {
-            setProject(prev => ({
-              ...prev,
-              currentChapter: prevChapterId,
-              currentSection: prevCh.sections[prevCh.sections.length - 1].key,
-              updatedAt: new Date().toISOString(),
-            }));
-            schedulePersistence();
-          }
-        }
+      const prevChapterId = project.currentChapter - 1;
+      if (prevChapterId >= 1) {
+        handleSelectChapter(prevChapterId);
       }
     }
-  }, [project.currentChapter, project.currentSection, handleSelectSection, handleSelectChapter, schedulePersistence]);
+  }, [project.currentChapter, handleSelectChapter]);
 
   // Global Ergonomic Shortcuts (Cmd+Enter: next, Cmd+E: export zip)
   useEffect(() => {

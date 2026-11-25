@@ -32,7 +32,7 @@ export default function PreferencesPage({
   currentUser,
 }: PreferencesPageProps) {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { language, setLanguage, pick } = useLanguage();
   const { themeId, setTheme } = useTheme();
 
@@ -58,14 +58,11 @@ export default function PreferencesPage({
   useEffect(() => {
     if (paramTab && ['engine', 'display', 'storage', 'account'].includes(paramTab)) {
       setActiveTab(paramTab);
+    } else {
+      setActiveTab('engine');
     }
-  }, [paramTab]);
-
-  const selectTab = (tab: PreferencesTab) => {
-    setActiveTab(tab);
-    setSearchParams({ tab }, { replace: true });
     setTestResult(null);
-  };
+  }, [paramTab]);
 
   const handleSaveEngine = () => {
     saveAISettings(settings);
@@ -248,25 +245,56 @@ export default function PreferencesPage({
 
   const isLarge = largeTextMode ?? localLargeText;
 
-  const tabs = [
-    { id: 'engine', label: pick({ ko: '인공지능 엔진', en: 'AI Engine', ja: 'AIエンジン', id: 'Mesin AI' }), onClick: () => selectTab('engine') },
-    { id: 'display', label: pick({ ko: '화면 · 테마 · 가독성', en: 'Display · Theme · Reading', ja: '画面・テーマ・可読性', id: 'Tampilan · Tema · Bacaan' }), onClick: () => selectTab('display') },
-    { id: 'storage', label: pick({ ko: '보관함 및 템플릿', en: 'Storage & Templates', ja: 'ストレージ・テンプレート', id: 'Penyimpanan & Templat' }), onClick: () => selectTab('storage') },
-    { id: 'account', label: pick({ ko: '계정 및 세션', en: 'Account & Session', ja: 'アカウント・セッション', id: 'Akun & Sesi' }), onClick: () => selectTab('account') },
-  ];
+  const sectionMeta: Record<PreferencesTab, { category: string; title: string; subtitle: string }> = {
+    engine: {
+      category: 'STUDIO PREFERENCES · AI ENGINE',
+      title: pick({ ko: '인공지능 엔진 설정', en: 'AI Engine Settings', ja: 'AIエンジン設定', id: 'Pengaturan Mesin AI' }),
+      subtitle: pick({
+        ko: '인공지능 인퍼런스 엔진(Gemini BYOK / Ollama 로컬 서버 / 브라우저 WebLLM) 연결 및 추론 모델을 구성합니다.',
+        en: 'Configure AI inference engines (Gemini BYOK / Ollama local server / in-browser WebLLM) and model routing.',
+        ja: 'AI推論エンジン（Gemini BYOK / Ollamaローカルサーバー / ブラウザWebLLM）の接続と推論モデルを設定します。',
+        id: 'Konfigurasikan koneksi mesin inferensi AI (Gemini BYOK / server lokal Ollama / WebLLM peramban) dan pilihan model.',
+      }),
+    },
+    display: {
+      category: 'STUDIO PREFERENCES · DISPLAY & THEME',
+      title: pick({ ko: '화면 · 테마 · 가독성', en: 'Display · Theme · Language', ja: '画面・テーマ・言語', id: 'Tampilan · Tema · Bahasa' }),
+      subtitle: pick({
+        ko: '한국의 사계절 스튜디오 테마와 컬러셋, 큰 글씨 가독성 모드, 인터페이스 언어를 설정합니다.',
+        en: 'Customize Korean seasonal studio themes, color palettes, large-text readability mode, and interface language.',
+        ja: '韓国の四季スタジオテーマとカラーセット、大きな文字・可読性モード、インターフェース言語を設定します。',
+        id: 'Atur tema musiman studio, palet warna, mode teks besar, dan bahasa antarmuka studio.',
+      }),
+    },
+    storage: {
+      category: 'STUDIO PREFERENCES · STORAGE',
+      title: pick({ ko: '보관함 및 로컬 백업', en: 'Library & Local Backup', ja: '保管庫・ローカルBackup', id: 'Pustaka & Cadangan Lokal' }),
+      subtitle: pick({
+        ko: '브라우저 로컬 저장소 현황을 확인하고 템플릿 및 백업 허브로 이동합니다.',
+        en: 'Inspect browser local storage usage and access standard templates or the local backup hub.',
+        ja: 'ブラウザのローカルストレージ状況を確認し、テンプレートやバックアップハブへ移動します。',
+        id: 'Periksa penggunaan penyimpanan lokal browser dan akses templat standar atau pusat cadangan lokal.',
+      }),
+    },
+    account: {
+      category: 'STUDIO PREFERENCES · ACCOUNT',
+      title: pick({ ko: '내 계정 및 프로필', en: 'Account & Profile', ja: 'アカウント・プロフィール', id: 'Akun & Profil' }),
+      subtitle: pick({
+        ko: '현재 활성화된 로컬 작업자 세션과 프로필 정보를 확인하고 관리합니다.',
+        en: 'Inspect and manage your active local worker session and profile identity.',
+        ja: '現在アクティブなローカル作業者セッションとプロフィール情報を確認・管理します。',
+        id: 'Periksa dan kelola sesi pekerja lokal yang aktif serta identitas profil Anda.',
+      }),
+    },
+  };
+
+  const activeMeta = sectionMeta[activeTab];
 
   return (
     <EditorialPageLayout
-      category="STUDIO PREFERENCES"
-      title={pick({ ko: '환경 설정', en: 'Preferences', ja: '環境設定', id: 'Preferensi' })}
-      subtitle={pick({
-        ko: '인공지능 인퍼런스 엔진(BYOK / Ollama / WebLLM), 한국의 사계절 테마·컬러셋, 가독성, 언어 및 로컬 보관함 환경을 구성합니다.',
-        en: 'Configure AI inference engines (BYOK / Ollama / WebLLM), Five-Season Studio themes, readability, language, and local storage.',
-        ja: 'AI推論エンジン（BYOK / Ollama / WebLLM）、季節テーマ・カラーセット、可読性、言語、ローカルストレージを設定します。',
-        id: 'Konfigurasikan mesin inferensi AI (BYOK / Ollama / WebLLM), tema musiman, keterbacaan, bahasa, dan penyimpanan lokal.',
-      })}
-      tabs={tabs}
-      activeTabId={activeTab}
+      category={activeMeta.category}
+      title={activeMeta.title}
+      subtitle={activeMeta.subtitle}
     >
       {activeTab === 'engine' && (
         <div className="space-y-12">
